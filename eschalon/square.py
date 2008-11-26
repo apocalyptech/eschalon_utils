@@ -50,24 +50,24 @@ class Square:
     def read(self, df):
         """ Given a file descriptor, read in the square. """
 
-        self.wall = df.readchar()
-        self.floorimg = df.readchar()
-        self.unknown3 = df.readchar()
-        self.wallimg = df.readchar()
-        self.unknown5 = df.readchar()
-        self.unknown6 = df.readchar()
-        self.unknown7 = df.readchar()
+        self.wall = df.readuchar()
+        self.floorimg = df.readuchar()
+        self.unknown3 = df.readuchar()
+        self.wallimg = df.readuchar()
+        self.unknown5 = df.readuchar()
+        self.unknown6 = df.readuchar()
+        self.unknown7 = df.readuchar()
 
     def write(self, df):
         """ Write the square to the file. """
 
-        df.writechar(self.wall)
-        df.writechar(self.floorimg)
-        df.writechar(self.unknown3)
-        df.writechar(self.wallimg)
-        df.writechar(self.unknown5)
-        df.writechar(self.unknown6)
-        df.writechar(self.unknown7)
+        df.writeuchar(self.wall)
+        df.writeuchar(self.floorimg)
+        df.writeuchar(self.unknown3)
+        df.writeuchar(self.wallimg)
+        df.writeuchar(self.unknown5)
+        df.writeuchar(self.unknown6)
+        df.writeuchar(self.unknown7)
 
     def hasdata(self):
         """ Do we have something other than zeroes? """

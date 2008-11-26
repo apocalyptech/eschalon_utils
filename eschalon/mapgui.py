@@ -296,10 +296,10 @@ class MapGUI:
         self.maparea.set_size_request(mapsize, mapsize)
         style = self.maparea.get_style()
         pixmap = gtk.gdk.Pixmap(self.maparea.window, mapsize, mapsize)
-        hilightgc = gtk.gdk.GC(self.maparea.window)
-        hilightgc.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
-        scriptgc = gtk.gdk.GC(self.maparea.window)
-        scriptgc.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+        gc_red = gtk.gdk.GC(self.maparea.window)
+        gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
+        gc_green = gtk.gdk.GC(self.maparea.window)
+        gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
         pixmap.draw_rectangle(style.black_gc, True, 0, 0, mapsize, mapsize)
         for y in range(len(self.map.squares)):
             if (y % 2 == 1):
@@ -308,9 +308,9 @@ class MapGUI:
                 xpad = 0
             for x in range(len(self.map.squares[y])):
                 if (x == myx and y == myy):
-                    color = hilightgc
+                    color = gc_red
                 elif (self.map.squares[y][x].unknown7 != 0):
-                    color = scriptgc
+                    color = gc_green
                 else:
                     color = style.white_gc
                 if (self.map.squares[y][x].wall == 1 or (x == myx and y == myy)):
