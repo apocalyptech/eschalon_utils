@@ -76,8 +76,8 @@ class MapCLI:
                     print 
         pass
 
-    def display_exits(self, unknowns=False):
-        """ Print out a textual representation of the map's exits."""
+    def display_scripts(self, unknowns=False):
+        """ Print out a textual representation of the map's scripts."""
         pass
 
     def display_txtmap(self):
@@ -128,8 +128,8 @@ class MapCLI:
         if (listoptions['squares']):
             self.display_squares(unknowns)
 
-        if (listoptions['exits']):
-            self.display_exits(unknowns)
+        if (listoptions['scripts']):
+            self.display_scripts(unknowns)
 
         if (listoptions['txtmap']):
             print "Note: you need a really small font for this to make any sense."

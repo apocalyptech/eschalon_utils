@@ -31,7 +31,9 @@ class Square:
         self.wallimg = -1
         self.unknown5 = -1
         self.unknown6 = -1
-        self.unknown7 = -1
+        self.scriptid = -1
+
+        self.scriptidx = -1
 
     def replicate(self):
         newsquare = Square()
@@ -43,7 +45,8 @@ class Square:
         newsquare.wallimg = self.wallimg
         newsquare.unknown5 = self.unknown5
         newsquare.unknown6 = self.unknown6
-        newsquare.unknown7 = self.unknown7
+        newsquare.scriptid = self.scriptid
+        newsquare.scriptidx = self.scriptidx
 
         # ... aaand return our new object
         return newsquare
@@ -57,7 +60,7 @@ class Square:
         self.wallimg = df.readuchar()
         self.unknown5 = df.readuchar()
         self.unknown6 = df.readuchar()
-        self.unknown7 = df.readuchar()
+        self.scriptid = df.readuchar()
 
     def write(self, df):
         """ Write the square to the file. """
@@ -68,14 +71,14 @@ class Square:
         df.writeuchar(self.wallimg)
         df.writeuchar(self.unknown5)
         df.writeuchar(self.unknown6)
-        df.writeuchar(self.unknown7)
+        df.writeuchar(self.scriptid)
 
     def hasdata(self):
         """ Do we have something other than zeroes? """
         return (self.wall != 0 or self.floorimg != 0 or
                 self.unknown3 != 0 or self.wallimg != 0 or
                 self.unknown5 != 0 or self.unknown6 != 0 or
-                self.unknown7 != 0)
+                self.scriptid != 0)
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -83,8 +86,8 @@ class Square:
         print "    Wall Flag: %d" % self.wall
         print "    Floor Image: %d" % self.floorimg
         print "    Wall Image: %d" % self.wallimg
+        print "    Script ID: %d" % self.scriptid
         if (unknowns):
             print "    Unknown 3: %d" % self.unknown3
             print "    Unknown 5: %d" % self.unknown5
             print "    Unknown 6: %d" % self.unknown6
-            print "    Unknown 7: %d" % self.unknown7

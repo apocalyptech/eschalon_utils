@@ -22,7 +22,7 @@
 import struct
 from eschalonb1.savefile import Savefile
 from eschalonb1.square import Square
-from eschalonb1.exit import Exit
+from eschalonb1.mapscript import Mapscript
 from eschalonb1.loadexception import LoadException
 
 class Map:
@@ -64,12 +64,14 @@ class Map:
         self.cursqrow = 0
 
         self.squares = []
+        self.scriptcount = 0
+        self.scriptidx = []
         for i in range(200):
             self.squares.append([])
             for j in range(100):
                 self.squares[i].append(Square())
 
-        self.exits = []
+        self.scripts = []
 
         self.df = Savefile(filename)
 
@@ -108,11 +110,11 @@ class Map:
         for i in range(200):
             for j in range(100):
                 newmap.squares[i][j] = self.squares[i][j].replicate()
-        for exit in self.exits:
-            if (exit is None):
-                newmap.exits.append(None)
+        for script in self.scripts:
+            if (script is None):
+                newmap.scripts.append(None)
             else:
-                newmap.exits.append(exit.replicate())
+                newmap.scripts.append(script.replicate())
 
         # Now return our duplicated object
         return newmap
@@ -121,14 +123,18 @@ class Map:
         """ Add a new square, assuming that the squares are stored in a
             left-to-right, top-to-bottom format in the map. """
         self.squares[self.cursqrow][self.cursqcol].read(self.df)
+        if (self.squares[self.cursqrow][self.cursqcol].scriptid != 0):
+            self.squares[self.cursqrow][self.cursqcol].scriptidx = self.scriptcount
+            self.scriptcount = self.scriptcount + 1
+            print " - Square %d x %d has script %d, ID: %d" % (self.cursqcol, self.cursqrow, self.scriptcount, self.squares[self.cursqrow][self.cursqcol].scriptid)
         self.cursqcol = self.cursqcol + 1
         if (self.cursqcol == 100):
             self.cursqcol = 0
             self.cursqrow = self.cursqrow + 1
 
-    def addexit(self):
-        """ Add an exit. """
-        self.exits.append(Exit().read(self.df))
+    def addscript(self):
+        """ Add a mapscript. """
+        self.scripts.append(Mapscript().read(self.df))
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -168,15 +174,22 @@ class Map:
             for i in range(200*100):
                 self.addsquare()
 
-            # Exits
-            for i in range(2):
-                self.addexit()
+            # Scripts
+            print "Scriptcount: %d" % self.scriptcount
+            try:
+                for i in range(self.scriptcount):
+                    self.addscript()
+            except Exception, e:
+                print " * Exception loading scripts! *"
+            print "Scripts actually loaded: %d" % len(self.scripts)
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            #if (len(self.extradata)>0):
-            #    raise LoadException('Extra data at end of file')
+            if (len(self.extradata)>0):
+                # TODO: We should except here, but until we get it figured out, we won't
+                print " * Extra data at end of file *"
+                #raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()
@@ -219,9 +232,9 @@ class Map:
             for square in row:
                 square.write(self.df)
 
-        # Exits
-        for exit in self.exits:
-            exit.write(self.df)
+        # Scripts
+        for script in self.scripts:
+            scripts.write(self.df)
 
         # Any extra data we might have
         if (len(self.extradata) > 0):

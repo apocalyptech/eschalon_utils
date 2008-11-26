@@ -40,7 +40,7 @@ except:
 
 from eschalonb1.map import Map
 from eschalonb1.square import Square
-from eschalonb1.exit import Exit
+from eschalonb1.mapscript import Mapscript
 from eschalonb1.loadexception import LoadException
 from eschalonb1 import app_name, version, url, authors
 
@@ -61,12 +61,21 @@ class MapGUI:
 
         self.mousex = -1
         self.mousey = -1
+        self.sq_x = -1
+        self.sq_y = -1
+        self.sq_x_prev = -1
+        self.sq_y_prev = -1
+        self.cleansquares = []
+
+        self.mapinit = False
 
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.get_widget('mainwindow')
         self.maparea = self.get_widget('maparea')
+        self.mapname_label = self.get_widget('mapname')
+        self.coords_label = self.get_widget('coords')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -95,6 +104,7 @@ class MapGUI:
                     return
 
         # Start the main gtk loop
+        self.set_zoom_vars(8)
         self.window.show()
         gtk.main()
 
@@ -155,7 +165,7 @@ class MapGUI:
                     rundialog = True
             elif response == gtk.RESPONSE_CANCEL:
                 # Check to see if this was the initial load, started without a filename
-                if (self.char == None):
+                if (self.map == None):
                     return False
 
         # Clean up
@@ -195,8 +205,12 @@ class MapGUI:
         # Update our status bar
         self.putstatus('Editing ' + self.map.df.filename)
 
+        # Update the map title
+        self.mapname_label.set_text(self.map.mapname)
+
         # Load information from the character
         #self.populate_form_from_char()
+        self.mapinit = False
         self.draw_map()
 
         # Return success
@@ -249,24 +263,54 @@ class MapGUI:
         about.hide()
         #self.mainbook.set_sensitive(True)
 
+    def set_zoom_vars(self, width):
+        """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """
+        self.z_width = width
+        self.z_height = int(self.z_width/2)
+        self.z_halfwidth = self.z_height
+        self.z_halfheight = int(self.z_height/2)
+        self.z_mapsize = self.z_width*101
+        self.mapinit = False
+        # TODO: Should queue a redraw here, probably...
+
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
         self.mousex = event.x
         self.mousey = event.y
+
+        # TODO: This needs to be actually-accurate, instead of our current approximation
+        self.sq_x = int(self.mousex / self.z_width)
+        self.sq_y = int(self.mousey / self.z_height)
+        if (self.sq_x > 99):
+            self.sq_x = 99
+        if (self.sq_y > 199):
+            self.sq_y = 199
+        if (self.sq_x != self.sq_x_prev or self.sq_y != self.sq_y_prev):
+            # It's possible we cause duplication here, but it the CPU cost should be negligible
+            self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
+            self.cleansquares.append((self.sq_x, self.sq_y))
+            self.sq_x_prev = self.sq_x
+            self.sq_y_prev = self.sq_y
+        self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.sq_x, self.sq_y))
+
+        # Now queue up a draw
         self.maparea.queue_draw()
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
-        # TODO: This is duplicated in expose_map, and should be cleaned up, at any rate.
-        squarewidth = 8
-        squareheight = int(squarewidth/2)
-        myx = int(self.mousex / squarewidth)
-        myy = int(self.mousey / squareheight)
 
-        if (myy < len(self.map.squares)):
-            if (myx < len(self.map.squares[myy])):
-                print "Square at %d x %d - " % (myx, myy)
-                self.map.squares[myy][myx].display(True)
+        if (self.sq_y < len(self.map.squares)):
+            if (self.sq_x < len(self.map.squares[self.sq_y])):
+                print "Square at %d x %d - " % (self.sq_x, self.sq_y)
+                self.map.squares[self.sq_y][self.sq_x].display(True)
+                # TODO: This mechanic is pretty dumb, should just happen Automatically with the display() call
+                if (self.map.squares[self.sq_y][self.sq_x].scriptidx != -1):
+                    print
+                    if (self.map.squares[self.sq_y][self.sq_x].scriptidx < len(self.map.scripts)):
+                        print "  Associated Script:"
+                        self.map.scripts[self.map.squares[self.sq_y][self.sq_x].scriptidx].display(True)
+                    else:
+                        print "  Has associated script, but we're not reading those correctly yet."
                 print
 
     def draw_map(self):
@@ -277,55 +321,69 @@ class MapGUI:
     def realize_map(self, event):
         pass
 
+    def draw_square(self, x, y):
+        """ Draw a single square of the map. """
+
+        if (x == self.sq_x and y == self.sq_y):
+            color = self.gc_red
+        elif (self.map.squares[y][x].scriptid != 0):
+            color = self.gc_green
+        elif (self.map.squares[y][x].wall == 1):
+            color = self.gc_white
+        elif (self.map.squares[y][x].floorimg == 126):
+            color = self.gc_blue
+        else:
+            color = self.gc_black
+
+        # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
+        # (for instance, when initially loading the map)
+        if (y % 2 == 1):
+            xpad = self.z_halfwidth
+        else:
+            xpad = 0
+
+        # Coordinates
+        x1 = (x*self.z_width)+xpad
+        y1 = (y*self.z_height)+self.z_halfheight
+        x2 = (x*self.z_width)+self.z_halfwidth+xpad
+        y2 = y*self.z_height
+        x3 = (x*self.z_width)+self.z_width+xpad
+        y3 = y1
+        x4 = x2
+        y4 = (y*self.z_height)+self.z_height
+
+        # Draw the square
+        self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+
     def expose_map(self, widget, event):
-        # TODO: get this to happen in draw_map instead
-
-        # How large are the squares?  (will zoom, later)
-        squarewidth = 8
-
-        # Other things we only want to calculate once
-        halfwidth = int(squarewidth/2)
-        squareheight = halfwidth
-        halfheight = int(squareheight/2)
-        mapsize = squarewidth*102
-
-        # Check for mouse stuffs
-        myx = int(self.mousex / squarewidth)
-        myy = int(self.mousey / squareheight)
+        # TODO: get most of this to happen in draw_map instead, only redraw squares that have changed
 
         # Now do our work
-        self.maparea.set_size_request(mapsize, mapsize)
-        style = self.maparea.get_style()
-        pixmap = gtk.gdk.Pixmap(self.maparea.window, mapsize, mapsize)
-        gc_red = gtk.gdk.GC(self.maparea.window)
-        gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
-        gc_green = gtk.gdk.GC(self.maparea.window)
-        gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
-        pixmap.draw_rectangle(style.black_gc, True, 0, 0, mapsize, mapsize)
-        for y in range(len(self.map.squares)):
-            if (y % 2 == 1):
-                xpad = halfwidth
-            else:
-                xpad = 0
-            for x in range(len(self.map.squares[y])):
-                if (x == myx and y == myy):
-                    color = gc_red
-                elif (self.map.squares[y][x].unknown7 != 0):
-                    color = gc_green
-                else:
-                    color = style.white_gc
-                if (self.map.squares[y][x].wall == 1 or (x == myx and y == myy)):
-                    x1 = (x*squarewidth)+xpad
-                    y1 = (y*squareheight)+halfheight
-                    x2 = (x*squarewidth)+halfwidth+xpad
-                    y2 = y*squareheight
-                    x3 = (x*squarewidth)+squarewidth+xpad
-                    y3 = y1
-                    x4 = x2
-                    y4 = (y*squareheight)+squareheight
-                    pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
-        self.pixmap = pixmap
+        if (self.mapinit):
+            for (x, y) in self.cleansquares:
+                self.draw_square(x, y)
+        else:
+            self.maparea.set_size_request(self.z_mapsize, self.z_mapsize)
+            self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize, self.z_mapsize)
+            self.gc_red = gtk.gdk.GC(self.maparea.window)
+            self.gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
+            self.gc_green = gtk.gdk.GC(self.maparea.window)
+            self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.gc_blue = gtk.gdk.GC(self.maparea.window)
+            self.gc_blue.set_rgb_fg_color(gtk.gdk.Color(0, 0, 65535))
+            self.gc_white = gtk.gdk.GC(self.maparea.window)
+            self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
+            self.gc_black = gtk.gdk.GC(self.maparea.window)
+            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
+            self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize, self.z_mapsize)
+            for y in range(len(self.map.squares)):
+                for x in range(len(self.map.squares[y])):
+                    self.draw_square(x, y)
+            self.mapinit = True
+
+        # Make sure our to-clean list is empty
+        self.cleansquares = []
 
         # This is about all we should *actually* need in here
-        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, mapsize, mapsize)
+        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize, self.z_mapsize)
 
