@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 app_name = 'Eschalon Book 1 Savefile Manipulator'
-version = '0.1.0'
+version = '0.2.0'
 
 __all__ = [ 'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI',
         'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable' ]

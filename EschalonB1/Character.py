@@ -61,6 +61,9 @@ class Character:
             self.inventory.append([])
             for j in range(7):
                 self.inventory[i].append(Item.Item())
+        self.readyitems = []
+        for i in range(8):
+            self.readyitems.append(Item.Item())
         self.curinvcol = 0
         self.curinvrow = 0
         self.quiver = Item.Item()
@@ -143,6 +146,8 @@ class Character:
         for i in range(10):
             for j in range(7):
                 newchar.inventory[i][j] = self.inventory[i][j].replicate()
+        for i in range(8):
+            newchar.readyitems[i] = self.readyitems[i].replicate()
         newchar.quiver = self.quiver.replicate()
         newchar.helm = self.helm.replicate()
         newchar.cloak = self.cloak.replicate()
@@ -326,9 +331,9 @@ class Character:
         self.feet.read(self.df);
         self.weap_alt.read(self.df);
 
-        # Unknown items
+        # Readied items
         for i in range(8):
-            self.unknown.items[i].read(self.df)
+            self.readyitems[i].read(self.df)
 
         # For some reason, the last of the spells here.
         for i in range(4):
@@ -462,8 +467,8 @@ class Character:
         self.feet.write(self.df);
         self.weap_alt.write(self.df);
 
-        # Unknown items
-        for item in self.unknown.items:
+        # Readied items
+        for item in self.readyitems:
             item.write(self.df)
 
         # For some reason, the last four spells

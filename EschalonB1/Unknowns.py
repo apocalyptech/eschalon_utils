@@ -48,9 +48,6 @@ class Unknowns:
         self.preinvs2 = ''
         self.preinvzero1 = -1
         self.preinvzero2 = -1
-        self.items = []
-        for i in range(8):
-            self.items.append(Item.Item())
         self.extradata = ''
 
     def replicate(self):
@@ -88,10 +85,6 @@ class Unknowns:
         for val in self.iblock2:
             newunknown.iblock2.append(val)
 
-        # Objects
-        for i in range(8):
-            newunknown.items[i] = self.items[i].replicate()
-
         # ... aaand return our new object
         return newunknown
 
@@ -128,8 +121,5 @@ class Unknowns:
         print "Pre-inventory blank string 2: %s" % self.preinvs2
         print "Pre-inventory zero 1: %d" % self.preinvzero1
         print "Pre-inventory zero 2: %d" % self.preinvzero2
-        print "Extra inventory items:"
-        for item in self.items:
-            item.display()
         if (len(self.extradata) != 0):
             print "File has extra data appended at the end: %d bytes" % len(self.extradata)

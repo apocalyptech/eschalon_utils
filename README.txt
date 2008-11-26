@@ -58,7 +58,7 @@ probably the best location).  For example:
    $ ln -s /path/to/eschalon_b1_char.py .
 
 Everything should work fine at that point, or at least it does on my system.
-I should have this straightened out by the time 0.2.0 rolls around.
+I should have this straightened out by the time 0.3.0 rolls around.
 
 USAGE
 -----

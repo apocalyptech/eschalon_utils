@@ -177,6 +177,15 @@ class MainCLI:
         print "\tCurrent torch used for %d turns" % char.torchused
         print
 
+        print "READY ITEMS"
+        print "-----------"
+        print
+        i = 0
+        for item in char.readyitems:
+            i = i + 1
+            print "Ready Item %d:" % (i)
+            item.display()
+
         if (unknowns):
             print
             print "UNKNOWNS"

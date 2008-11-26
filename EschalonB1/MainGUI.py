@@ -43,6 +43,7 @@ from EschalonB1 import Item, diseasetable, flagstable
 ITEM_NONE=0
 ITEM_EQUIP=1
 ITEM_INV=2
+ITEM_READY=3
 
 class MainGUI:
 
@@ -147,6 +148,10 @@ class MainGUI:
             labelname = 'inv_%d_%d' % (self.curitem[0], self.curitem[1])
             (labelwidget, label) = self.get_label_cache(labelname)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
+        elif self.curitemtype == ITEM_READY:
+            labelname = 'ready_%d' % (self.curitem)
+            (labelwidget, label) = self.get_label_cache(labelname)
+            self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         else:
             pass
 
@@ -187,6 +192,9 @@ class MainGUI:
         elif (self.curitemtype == ITEM_INV):
             obj = self.char.inventory[self.curitem[0]][self.curitem[1]]
             origobj = self.origchar.inventory[self.curitem[0]][self.curitem[1]]
+        elif (self.curitemtype == ITEM_READY):
+            obj = self.char.readyitems[self.curitem]
+            origobj = self.origchar.readyitems[self.curitem]
         else:
             obj = self.char
             origobj = self.origchar
@@ -331,6 +339,18 @@ class MainGUI:
         if (doshow):
             self.itemwindow.show()
 
+    def on_ready_clicked(self, widget, doshow=True):
+        """ What to do when our readied-item button is clicked. """
+        wname = widget.get_name()
+        (foo, num, bar) = wname.rsplit('_', 2)
+        num = int(num)
+        self.curitemtype = ITEM_READY
+        self.curitem = num
+        self.populate_itemform_from_item(self.char.readyitems[num])
+        self.get_widget('item_notebook').set_current_page(0)
+        if (doshow):
+            self.itemwindow.show()
+
     def register_equip_change(self, name):
         """
         When loading in a new item, redraw the button and make sure that changes
@@ -345,6 +365,14 @@ class MainGUI:
         are entered into the system properly.
         """
         self.on_inv_clicked(self.get_widget('inv_%d_%d_button' % (row, col)), False)
+        self.on_item_close_clicked(None, False)
+
+    def register_ready_change(self, num):
+        """
+        When loading in a new item, redraw the button and make sure that changes
+        are entered into the system properly.
+        """
+        self.on_ready_clicked(self.get_widget('ready_%d_button' % (num)), False)
         self.on_item_close_clicked(None, False)
 
     def on_equip_action_clicked(self, widget):
@@ -394,6 +422,8 @@ class MainGUI:
             self.populate_equip_button(self.curitem)
         elif (self.curitemtype == ITEM_INV):
             self.populate_inv_button(self.curitem[0], self.curitem[1])
+        elif (self.curitemtype == ITEM_READY):
+            self.populate_ready_button(self.curitem)
         for name in self.itemchanged.keys():
             (labelwidget, label) = self.get_label_cache(name)
             self.set_changed_widget(True, name, labelwidget, label, False)
@@ -401,6 +431,27 @@ class MainGUI:
         self.curitemtype = ITEM_NONE
         if (dohide):
             self.itemwindow.hide()
+
+    def on_ready_action_clicked(self, widget):
+        """ What to do when we cut/copy/paste/delete a readied item. """
+        wname = widget.get_name()
+        (foo, num, action) = wname.rsplit('_', 2)
+        num = int(num)
+        if (action == 'cut'):
+            self.on_ready_action_clicked(self.get_widget('ready_%d_copy' % (num)))
+            self.on_ready_action_clicked(self.get_widget('ready_%d_delete' % (num)))
+        elif (action == 'copy'):
+            self.itemclipboard = self.char.readyitems[num]
+        elif (action == 'paste'):
+            if (self.itemclipboard != None):
+                self.char.readyitems[num] = self.itemclipboard.replicate()
+                self.register_ready_change(num)
+            pass
+        elif (action == 'delete'):
+            self.char.readyitems[num] = Item.Item(True)
+            self.register_ready_change(num)
+        else:
+            raise Exception('invalid action')
 
     def on_fxblock_button_clicked(self, widget):
         fx0 = self.get_widget('fxblock_0')
@@ -508,6 +559,14 @@ class MainGUI:
             item = self.char.__dict__[name]
         self.populate_item_button(item, widget, self.get_widget('equiptable'))
 
+    def populate_ready_button(self, num, orig=False):
+        widget = self.get_widget('ready_%d_text' % (num))
+        if orig:
+            item = self.origchar.readyitems[num]
+        else:
+            item = self.char.readyitems[num]
+        self.populate_item_button(item, widget, self.get_widget('readytable'))
+
     def on_revert(self, widget):
         """ What to do when we're told to Revert. """
         self.char = self.origchar.replicate()
@@ -573,6 +632,13 @@ class MainGUI:
         for row in range(10):
             for col in range(7):
                 self.populate_inv_button(row, col, True)
+
+        for num in range(8):
+            self.populate_ready_button(num, True)
+
+        self.get_widget('gold').set_value(char.gold)
+        self.get_widget('torches').set_value(char.torches)
+        self.get_widget('torchused').set_value(char.torchused)
 
     def populate_itemform_from_item(self, item):
         """ Populates the Item GUI from the given object. """
@@ -677,6 +743,10 @@ class MainGUI:
         equip_viewport = self.get_widget('equip_viewport')
         self.gui_add_equip_page(equip_viewport)
 
+        # Now our readied items
+        ready_viewport = self.get_widget('ready_viewport')
+        self.gui_add_ready_page(ready_viewport)
+
     def gui_item_page(self, container, pagetitle, rows, tablename):
         """ Sets up a page to store item information. """
         vbox = gtk.VBox()
@@ -730,6 +800,14 @@ class MainGUI:
         for num in range(7):
             table.attach(self.gui_item_label('Column %d:' % (num+1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('inv_%d_%d' % (rownum, num), self.on_inv_clicked, self.on_inv_action_clicked),
+                    2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+
+    def gui_add_ready_page(self, container):
+        """ Create a page for our readied items. """
+        table = self.gui_item_page(container, '<b>Readied Items</b>', 8, 'readytable')
+        for num in range(8):
+            table.attach(self.gui_item_label('Item %d:' % (num+1), 'ready_%d_label' % (num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
+            table.attach(self.gui_item('ready_%d' % (num), self.on_ready_clicked, self.on_ready_action_clicked),
                     2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
 
     def gui_item_label(self, label, name):
