@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # vim: set expandtab tabstop=4 shiftwidth=4:
+# $Id$
 #
 # Eschalon Book 1 Character Editor
 # Copyright (C) 2008 CJ Kucera
