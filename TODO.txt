@@ -16,14 +16,14 @@ Data
 GUI
 ---
  * Implement the "Unknowns" screen
- * New/Open/SaveAs functionality (though, really, "New" might not make sense)
- * Implement "About" screen
  * Highlight the Inventory Notebook labels when there's a change in one
    of them
- * Notification that the last inventory slot is probably unused by Eschalon
  * Support old AND new Tooltip style, so this doesn't break with PyGTK 3.0
- * Confirmation of close when there's unsaved changes
  * Mouseover notification of previous values (for changed values)
+ * Figure out default save file location on Windows/Cygwin/Darwin, and how
+   to get at them
+ * (and CLI, actually) - show some more useful messages when a file can't
+   be loaded
 
 Internal
 --------

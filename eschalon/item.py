@@ -18,7 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from EschalonB1 import typetable, skilltable, attrtable, itemincrtable, flagstable
+from eschalonb1 import typetable, skilltable, attrtable, itemincrtable, flagstable
 
 class Item:
     """Class to hold a single Item's information."""

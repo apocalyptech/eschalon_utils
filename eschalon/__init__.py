@@ -18,10 +18,13 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-app_name = 'Eschalon Book 1 Savefile Manipulator'
-version = '0.2.0'
+app_name = 'Eschalon Book 1 Savefile Editor'
+version = '0.3.0'
+url = 'http://apocalyptech.com/eschalon/'
+authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 
-__all__ = [ 'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI',
+__all__ = [ 'app_name', 'version', 'url', 'authors'
+        'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
         'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable' ]
 
 # Lookup tables

@@ -18,9 +18,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import sys, os
+import sys
+import os
 
-# Load in our Glade stuff, required for now.
+# Load in our PyGTK deps
 pygtkreq = '2.0'
 try:
     import pygtk
@@ -37,7 +38,11 @@ except:
     sys.exit(1)
 
 # Lookup tables we'll need
-from EschalonB1 import Item, diseasetable, flagstable
+from eschalonb1.character import Character
+from eschalonb1.item import Item
+from eschalonb1.loadexception import LoadException
+from eschalonb1 import diseasetable, flagstable
+from eschalonb1 import app_name, version, url, authors
 
 # Constants
 ITEM_NONE=0
@@ -47,31 +52,30 @@ ITEM_READY=3
 
 class MainGUI:
 
-    def __init__(self, filename, char):
+    def __init__(self, options):
+        self.options = options
 
-        self.filename = filename
-        self.origchar = char
-        self.char = char.replicate()
-        self.labelcache = {}
+    def run(self):
+
+        # Some vars we need regardless of whether we have a file or not
         self.widgetcache = {}
-        self.changed = {}
-
-        # Support for our item screens
-        self.curitemtype = ITEM_NONE
-        self.curitem = ''
-        self.itemchanged = {}
-        self.itemclipboard = None
 
         # We need this because Not Everything's in Glade anymore
         # Note that we have a couple of widget caches now, so those should
         # be consolidated
         self.fullwidgetcache = {}
 
+        # Let's make sure that char exists, too
+        self.char = None
+
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'maingui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
+        self.loadwindow = self.get_widget('loadwindow')
+        self.aboutwindow = self.get_widget('aboutwindow')
+        self.mainbook = self.get_widget('mainbook')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -81,6 +85,9 @@ class MainGUI:
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_revert': self.on_revert,
+                'on_load': self.on_load,
+                'on_about': self.on_about,
+                'on_save_as': self.on_save_as,
                 'save_char': self.save_char,
                 'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
                 'on_item_close_clicked': self.on_item_close_clicked,
@@ -98,10 +105,193 @@ class MainGUI:
                 }
         self.wTree.signal_autoconnect(dic)
 
-        # Populate the statusbar
+        # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
-        self.putstatus('Editing ' + self.filename)
+
+        # If we were given a filename, load it.  If not, display the load dialog
+        if (self.options['filename'] == None):
+            if (not self.on_load()):
+                return
+        else:
+            if (not self.load_from_file(self.options['filename'])):
+                if (not self.on_load()):
+                    return
+
+        # Start the main gtk loop
+        self.window.show()
+        gtk.main()
+
+    # Use this to display the loading dialog, and deal with the main window accordingly
+    def on_load(self, widget=None):
+        
+        # Blank out the main area
+        self.mainbook.set_sensitive(False)
+
+        # Create the dialog
+        dialog = gtk.FileChooserDialog('Open New Character File...', None,
+                                       gtk.FILE_CHOOSER_ACTION_OPEN,
+                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                        gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+
+        # Figure out what our initial path should be
+        path = ''
+        if (self.char == None):
+            # Don't know where to find most of these
+            if 'win32' in sys.platform:
+                pass
+            elif 'cygwin' in sys.platform:
+                pass
+            elif 'darwin' in sys.platform:
+                pass
+            else:
+                # Assume Linux.  Some fiddling here because apparently the Greenhouse and
+                # non-Greenhouse versions of the game store the saves in different places.
+                path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
+                if (not os.path.isdir(path)):
+                    path = os.path.join(os.path.expanduser('~'), '.eschalon_b1_saved_games')
+        else:
+            path = os.path.dirname(self.char.df.filename)
+
+        # Set the initial path
+        if (path != '' and os.path.isdir(path)):
+            dialog.set_current_folder(path)
+
+        filter = gtk.FileFilter()
+        filter.set_name("Character Files")
+        filter.add_pattern("char")
+        filter.add_pattern("char.*")
+        dialog.add_filter(filter)
+
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        dialog.add_filter(filter)
+
+        # Run the dialog and process its return values
+        rundialog = True
+        while (rundialog):
+            rundialog = False
+            response = dialog.run()
+            if response == gtk.RESPONSE_OK:
+                if (not self.load_from_file(dialog.get_filename())):
+                    rundialog = True
+            elif response == gtk.RESPONSE_CANCEL:
+                # Check to see if this was the initial load, started without a filename
+                if (self.char == None):
+                    return False
+
+        # Clean up
+        dialog.destroy()
+        self.mainbook.set_sensitive(True)
+
+        return True
+
+    # Show the Save As dialog
+    def on_save_as(self, widget=None):
+
+        # Blank out the main area
+        self.mainbook.set_sensitive(False)
+
+        # Create the dialog
+        dialog = gtk.FileChooserDialog('Save Character File...', None,
+                                       gtk.FILE_CHOOSER_ACTION_SAVE,
+                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_do_overwrite_confirmation(True)
+        if (self.char != None):
+            path = os.path.dirname(self.char.df.filename)
+            if (path != ''):
+                dialog.set_current_folder(path)
+
+        filter = gtk.FileFilter()
+        filter.set_name("Character Files")
+        filter.add_pattern("char")
+        filter.add_pattern("char.*")
+        dialog.add_filter(filter)
+
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        dialog.add_filter(filter)
+
+        # Run the dialog and process its return values
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            self.char.df.filename = dialog.get_filename()
+            self.save_char()
+            self.putstatus('Saved as %s' % (self.char.df.filename))
+            self.get_widget('saveaswindow').run()
+            self.get_widget('saveaswindow').hide()
+
+        # Clean up
+        dialog.destroy()
+        self.mainbook.set_sensitive(True)
+
+    # Show the About dialog
+    def on_about(self, widget):
+        global app_name, version, url, authors
+
+        about = self.get_widget('aboutwindow')
+
+        # If the object doesn't exist in our cache, create it
+        if (about == None):
+            about = gtk.AboutDialog()
+            about.set_name(app_name)
+            about.set_version(version)
+            about.set_website(url)
+            about.set_authors(authors)
+            licensepath = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'COPYING.txt')
+            if (os.path.isfile(licensepath)):
+                try:
+                    df = open(licensepath, 'r')
+                    about.set_license(df.read())
+                    df.close()
+                except:
+                    pass
+            iconpath = os.path.join(os.path.dirname(__file__), 'eb1_icon_64.png')
+            if (os.path.isfile(iconpath)):
+                try:
+                    about.set_logo(gtk.gdk.pixbuf_new_from_file(iconpath))
+                except:
+                    pass
+            self.register_widget('aboutwindow', about, False)
+
+        # Show the about dialog
+        self.mainbook.set_sensitive(False)
+        about.run()
+        about.hide()
+        self.mainbook.set_sensitive(True)
+
+    # Use this to load in a character from a file
+    def load_from_file(self, filename):
+
+        # Load the file, if we can
+        try:
+            char = Character(filename)
+            char.read()
+        except LoadException, e:
+            errordiag = self.get_widget('loaderrorwindow')
+            errordiag.run()
+            errordiag.hide()
+            return False
+
+        # Basic vars
+        self.origchar = char
+        self.char = char.replicate()
+        self.labelcache = {}
+        self.changed = {}
+
+        # Support for our item screens
+        self.curitemtype = ITEM_NONE
+        self.curitem = ''
+        self.itemchanged = {}
+        self.itemclipboard = None
+
+        # Update our status bar
+        self.putstatus('Editing ' + self.char.df.filename)
 
         # Load information from the character
         self.populate_form_from_char()
@@ -109,8 +299,13 @@ class MainGUI:
         # Load default dropdowns, since Glade apparently can't
         self.get_widget('fxblock_dropdown').set_active(0)
 
-        # ... and start
-        gtk.main()
+        # ... and switch over to the initial pages of our notebooks
+        self.mainbook.set_current_page(0)
+        self.get_widget('itemnotebook').set_current_page(0)
+        self.get_widget('invnotebook').set_current_page(0)
+
+        # Return success
+        return True
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -173,6 +368,9 @@ class MainGUI:
                 self.itemchanged[name] = True
                 self.check_item_changed()
             return labelwidget.set_markup('<span foreground="red">' + label + '</span>')
+
+    def has_unsaved_changes(self):
+        return (len(self.changed.keys()) > 0)
 
     def clear_all_changes(self):
         """ Clear out all the 'changed' notifiers on the GUI (used mostly just when saving). """
@@ -390,7 +588,7 @@ class MainGUI:
                 self.register_equip_change(equipname)
             pass
         elif (action == 'delete'):
-            self.char.__dict__[equipname] = Item.Item(True)
+            self.char.__dict__[equipname] = Item(True)
             self.register_equip_change(equipname)
         else:
             raise Exception('invalid action')
@@ -412,7 +610,7 @@ class MainGUI:
                 self.register_inv_change(row, col)
             pass
         elif (action == 'delete'):
-            self.char.inventory[row][col] = Item.Item(True)
+            self.char.inventory[row][col] = Item(True)
             self.register_inv_change(row, col)
         else:
             raise Exception('invalid action')
@@ -448,7 +646,7 @@ class MainGUI:
                 self.register_ready_change(num)
             pass
         elif (action == 'delete'):
-            self.char.readyitems[num] = Item.Item(True)
+            self.char.readyitems[num] = Item(True)
             self.register_ready_change(num)
         else:
             raise Exception('invalid action')
@@ -510,15 +708,22 @@ class MainGUI:
             fxstr = 'Torch and Gravedigger\'s Flame'
         textwidget.set_markup('<span color="blue" style="italic">%s</span>' % (fxstr))
 
-    def gtk_main_quit(self, widget):
+    def gtk_main_quit(self, widget=None):
         """ Main quit function. """
-        gtk.main_quit()
+        if (self.has_unsaved_changes()):
+            quitconfirm = self.get_widget('quitwindow')
+            response = quitconfirm.run()
+            quitconfirm.hide()
+            if (response == gtk.RESPONSE_OK):
+                gtk.main_quit()
+        else:
+            gtk.main_quit()
 
-    def save_char(self, widget):
+    def save_char(self, widget=None):
         """ Save character to disk. """
         self.char.write()
         self.clear_all_changes()
-        self.putstatus('Saved ' + self.filename)
+        self.putstatus('Saved ' + self.char.df.filename)
         self.origchar = self.char
         self.char = self.origchar.replicate()
 
@@ -728,6 +933,7 @@ class MainGUI:
         inv_book = gtk.Notebook()
         inv_book.show()
         inv_viewport.add(inv_book)
+        self.register_widget('invnotebook', inv_book)
         for num in range(10):
             wind = gtk.ScrolledWindow()
             wind.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -796,11 +1002,22 @@ class MainGUI:
 
     def gui_add_inv_page(self, container, rownum):
         """ Create an inventory page, given the row number. """
-        table = self.gui_item_page(container, '<b>Inventory Row %d</b>' % (rownum+1), 7, 'invtable%d' % (rownum))
+        if (rownum == 9):
+            lines_to_alloc = 8
+        else:
+            lines_to_alloc = 7
+        table = self.gui_item_page(container, '<b>Inventory Row %d</b>' % (rownum+1), lines_to_alloc, 'invtable%d' % (rownum))
         for num in range(7):
             table.attach(self.gui_item_label('Column %d:' % (num+1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('inv_%d_%d' % (rownum, num), self.on_inv_clicked, self.on_inv_action_clicked),
                     2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+        if (rownum == 9):
+            goldnote = gtk.Label()
+            goldnote.set_alignment(0, 0.5)
+            goldnote.set_markup('<i><b>Note:</b> Column seven is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
+            goldnote.set_line_wrap(True)
+            goldnote.show()
+            table.attach(goldnote, 2, 3, 7, 8, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
 
     def gui_add_ready_page(self, container):
         """ Create a page for our readied items. """

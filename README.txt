@@ -58,29 +58,73 @@ probably the best location).  For example:
    $ ln -s /path/to/eschalon_b1_char.py .
 
 Everything should work fine at that point, or at least it does on my system.
-I should have this straightened out by the time 0.3.0 rolls around.
+
+As of 0.3.0, use on a Windows system should be a little better, since the app
+actually supports an Open dialog to choose your own file.  If you have Python
+and PyGTK installed on Windows, you should be able to get away with just
+unpacking the application somewhere and setting up a shortcut to run the
+eschalon_b1_char.py program.  You should be presented with a dialog asking you
+to choose the character file to load.  If you do get this going on Windows,
+please let me know and I'll update the docs, or make things easier.
 
 USAGE
 -----
 
-Right now the GUI doesn't actually support opening files itself, so you've got
-to specify the filename on the commandline, like so:
+Here's the full output from the --help option:
 
-  eschalon_b1_char.py ~/eschalon_b1_saved_games/slot2/char
+To launch the GUI:
+	eschalon_b1_char.py [<charfile>]
 
-Note that at this point, you do have to point it at the "char" file, not just
-the slot directory.  If somebody gets this working on Windows or OSX, the
-procedure should be the same (so for Windows you'd have to run it from cmd).
+To list character attributes on the console:
+	eschalon_b1_char.py -l [-s <all|stats|avatar|magic|equip|inv>] [-u] <charfile>
+	eschalon_b1_char.py --list [--show=<all|stats|...>] [--unknowns] <charfile>
 
-If you'd prefer to just get a text listing of the character on the console,
-without launching any GUI, you can do so with:
+To manipulate character data from the console:
+	eschalon_b1_char.py [--set-gold=<num>] [--rm-disease]
+		[--set-mana-max=<num>] [--set-mana-cur=<num>]
+		[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>
 
-  eschalon_b1_char.py -l ~/eschalon_b1_saved_games/slot2/char
-    or
-  eschalon_b1_char.py --list ~/eschalon_b1_saved_games/slot2/char
+Wherever <charfile> appears in the above, you should specify the
+location of the file named 'char' inside your savegame folder.
 
-If you add in the -u flag (or --unknowns), it will also print out the list of
-unknown variables from the savefile.
+By default, the application will launch the GUI.  Note that
+specifying a character file is optional when you're launching
+the GUI, but required when using any of the other commandline
+options.
+
+For a textual representation of the charfile instead, use -l or
+--list.
+
+To only show a listing of specific character information, use
+the -s or --show option, which can be specified more than once.
+For instance, to show both the basic character stats and the
+character's magic information, you would use:
+
+	eschalon_b1_char.py -l -s stats -s magic <charfile>
+	or
+	eschalon_b1_char.py --list --show=stats --show=magic <charfile>
+
+Currently, the following arguments are valid for --show:
+
+	all - Show all information (this is the default)
+	stats - Base Character Statistics
+	avatar - Avatar information
+	magic - Magic information
+	equip - Equipment information (armor, weapons, etc)
+	inv - Inventory listings (including "ready" slots)
+
+When being shown the listing, specify -u or --unknowns to
+also show unknown data from the charfile.
+
+There are a few options to set your character's gold level, hitpoints,
+mana, and remove any diseases.  These should be fairly self-explanatory.
+Note that equipped items on your character may increase your effective
+HP or MP, so even if this util reports that you're at your maximum HP,
+you may find that you're slightly off when you enter the game.  Using the
+--set-hp-max or --set-mana-max options will also bring your current HP or
+MP up to the new Max level.
+
+Additionally, you may use -h or --help to view this message
 
 CONTACT
 -------

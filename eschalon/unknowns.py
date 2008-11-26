@@ -18,7 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from EschalonB1 import Item
+from eschalonb1.item import Item
 
 class Unknowns:
     """ A class to hold some unknown data, so as not to muddy up the

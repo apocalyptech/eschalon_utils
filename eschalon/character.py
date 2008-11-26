@@ -18,7 +18,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from EschalonB1 import Savefile, Item, Unknowns, skilltable, spelltable, dirtable, statustable, diseasetable
+import struct
+from eschalonb1.savefile import Savefile
+from eschalonb1.item import Item
+from eschalonb1.unknowns import Unknowns
+from eschalonb1.loadexception import LoadException
+from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class Character:
     """
@@ -30,9 +35,9 @@ class Character:
     """
 
     def __init__(self, filename):
-        """ A fresh object, with no data. """
+        """ A fresh object. """
 
-        self.df = Savefile.Savefile(filename)
+        self.df = None
         self.name = ''
         self.origin = ''
         self.axiom = ''
@@ -60,35 +65,36 @@ class Character:
         for i in range(10):
             self.inventory.append([])
             for j in range(7):
-                self.inventory[i].append(Item.Item())
+                self.inventory[i].append(Item())
         self.readyitems = []
         for i in range(8):
-            self.readyitems.append(Item.Item())
+            self.readyitems.append(Item())
         self.curinvcol = 0
         self.curinvrow = 0
-        self.quiver = Item.Item()
-        self.helm = Item.Item()
-        self.cloak = Item.Item()
-        self.amulet = Item.Item()
-        self.torso = Item.Item()
-        self.weap_prim = Item.Item()
-        self.belt = Item.Item()
-        self.gauntlet = Item.Item()
-        self.legs = Item.Item()
-        self.ring1 = Item.Item()
-        self.ring2 = Item.Item()
-        self.shield = Item.Item()
-        self.feet = Item.Item()
-        self.weap_alt = Item.Item()
+        self.quiver = Item()
+        self.helm = Item()
+        self.cloak = Item()
+        self.amulet = Item()
+        self.torso = Item()
+        self.weap_prim = Item()
+        self.belt = Item()
+        self.gauntlet = Item()
+        self.legs = Item()
+        self.ring1 = Item()
+        self.ring2 = Item()
+        self.shield = Item()
+        self.feet = Item()
+        self.weap_alt = Item()
         self.spells = []
         self.orientation = -1
         self.xpos = -1
         self.ypos = -1
-        self.unknown = Unknowns.Unknowns()
+        self.unknown = Unknowns()
         self.fxblock = []
         self.picid = -1
         self.statuses = []
         self.disease = -1
+        self.df = Savefile(filename)
 
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
@@ -167,6 +173,42 @@ class Character:
         # Now return our duplicated object
         return newchar
 
+    def setGold(self,goldValue):
+        """ Alter gold to new amount. """
+        self.gold = goldValue
+
+    def setMaxMana(self,manaValue):
+        """
+        Alter max mana value & set current to max.
+        Note that equipped-item modifiers will raise the actual in-game
+        maximums.
+        """
+        self.maxmana = manaValue
+        if (self.curmana < manaValue):
+            self.setCurMana(manaValue)
+
+    def setCurMana(self,manaValue):
+        """ Replenish mana to input value. """
+        self.curmana = manaValue
+
+    def setMaxHp(self,hpValue):
+        """
+        Alter max HP & set current to max.
+        Note that equipped-item modifiers will raise the actual in-game
+        maximums.
+        """
+        self.maxhp = hpValue
+        if (self.curhp < hpValue):
+            self.setCurHp(hpValue)
+
+    def setCurHp(self,hpValue):
+        """ Replenish HP to input value. """
+        self.curhp = hpValue
+
+    def clearDiseases(self):
+        """ clear all diseases """
+        self.disease = 0x0000
+
     def addskill(self, skillnum, level):
         """ Add a new skill at a given level. """
         self.skills[skillnum] = level
@@ -192,158 +234,166 @@ class Character:
         """ Read in the whole save file from a file descriptor. """
         global skilltable
 
-        # Open the file
-        self.df.open_r()
+        try:
 
-        # Start processing
-        self.unknown.initzero = self.df.readint()
+            # Open the file
+            self.df.open_r()
 
-        # Character info
-        self.name = self.df.readstr()
-        self.unknown.charstring = self.df.readstr()
-        self.origin = self.df.readstr()
-        self.axiom = self.df.readstr()
-        self.classname = self.df.readstr()
-        self.unknown.charone = self.df.readint()
-        self.strength = self.df.readint()
-        self.dexterity = self.df.readint()
-        self.endurance = self.df.readint()
-        self.speed = self.df.readint()
-        self.intelligence = self.df.readint()
-        self.wisdom = self.df.readint()
-        self.perception = self.df.readint()
-        self.concentration = self.df.readint()
+            # Start processing
+            self.unknown.initzero = self.df.readint()
 
-        # Skills
-        for key in skilltable.keys():
-            self.addskill(key, self.df.readint())
+            # Character info
+            self.name = self.df.readstr()
+            self.unknown.charstring = self.df.readstr()
+            self.origin = self.df.readstr()
+            self.axiom = self.df.readstr()
+            self.classname = self.df.readstr()
+            self.unknown.charone = self.df.readint()
+            self.strength = self.df.readint()
+            self.dexterity = self.df.readint()
+            self.endurance = self.df.readint()
+            self.speed = self.df.readint()
+            self.intelligence = self.df.readint()
+            self.wisdom = self.df.readint()
+            self.perception = self.df.readint()
+            self.concentration = self.df.readint()
 
-        # More stats
-        self.maxhp = self.df.readint()
-        self.maxmana = self.df.readint()
-        self.curhp = self.df.readint()
-        self.curmana = self.df.readint()
-        self.experience = self.df.readint()
-        self.level = self.df.readint()
-        self.gold = self.df.readint()
+            # Skills
+            for key in skilltable.keys():
+                self.addskill(key, self.df.readint())
 
-        # Unknowns
-        self.unknown.beginzero1 = self.df.readint()
-        self.unknown.beginzero2 = self.df.readint()
+            # More stats
+            self.maxhp = self.df.readint()
+            self.maxmana = self.df.readint()
+            self.curhp = self.df.readint()
+            self.curmana = self.df.readint()
+            self.experience = self.df.readint()
+            self.level = self.df.readint()
+            self.gold = self.df.readint()
 
-        # Character statuses
-        for i in range(26):
-            self.statuses.append(self.df.readint())
-            self.unknown.sparseiblock.append(self.df.readint())
+            # Unknowns
+            self.unknown.beginzero1 = self.df.readint()
+            self.unknown.beginzero2 = self.df.readint()
 
-        # More Unknowns
-        for i in range(17):
-            self.unknown.iblock1.append(self.df.readint())
-        for i in range(5):
-            self.unknown.ssiblocks1.append(self.df.readstr())
-            self.unknown.ssiblocks2.append(self.df.readstr())
-            self.unknown.ssiblocki.append(self.df.readint())
-        self.unknown.extstr1 = self.df.readstr()
-        self.unknown.extstr2 = self.df.readstr()
+            # Character statuses
+            for i in range(26):
+                self.statuses.append(self.df.readint())
+                self.unknown.sparseiblock.append(self.df.readint())
 
-        # Torches
-        self.torches = self.df.readint()
-        self.torchused = self.df.readint()
+            # More Unknowns
+            for i in range(17):
+                self.unknown.iblock1.append(self.df.readint())
+            for i in range(5):
+                self.unknown.ssiblocks1.append(self.df.readstr())
+                self.unknown.ssiblocks2.append(self.df.readstr())
+                self.unknown.ssiblocki.append(self.df.readint())
+            self.unknown.extstr1 = self.df.readstr()
+            self.unknown.extstr2 = self.df.readstr()
 
-        # Further unknown
-        self.unknown.anotherzero = self.df.readint()
+            # Torches
+            self.torches = self.df.readint()
+            self.torchused = self.df.readint()
 
-        # Most of the spells (minus the last four Elemental)
-        for i in range(35):
-            self.addspell()
+            # Further unknown
+            self.unknown.anotherzero = self.df.readint()
 
-        # Readied Spells
-        for i in range(10):
-            self.addreadyslot(self.df.readstr(), self.df.readint())
+            # Most of the spells (minus the last four Elemental)
+            for i in range(35):
+                self.addspell()
 
-        # Position/orientation
-        self.orientation = self.df.readint()
-        self.xpos = self.df.readint()
-        self.ypos = self.df.readint()
-        
-        # These have *something* to do with your avatar, or effects that your
-        # avatar has.  For instance, my avatar ordinarily looks like this:
-        #    00 00 00 40    - 1073741824
-        #    3F 08 00 00    - 2111
-        #    00 0A 00 00    - 2560
-        #    00 14 00 00    - 5120
-        # When I have gravedigger's flame on, though, the GUI effect is described:
-        #    04 1F 85 6B    - 1803886340
-        #    3F F0 00 00    - 61503
-        #    00 78 00 00    - 30720
-        #    00 3C 00 00    - 15360
-        # Torch on:
-        #    02 CD CC 4C    - 1288490242
-        #    3F A0 00 00    - 41023
-        #    00 96 00 00    - 38400
-        #    00 7D 00 00    - 32000
-        # Gravedigger's + Torch on:
-        #    06 1F 85 6B    - 1803886342
-        #    3F F0 00 00    - 61503
-        #    00 96 00 00    - 38400
-        #    00 7D 00 00    - 32000
-        # Invisible/Chameleon doesn't seem to apply here though.  Maybe just lighting fx?
-        # Also, these certainly could be Not Actually ints; perhaps they're something else.
-        for i in range(4):
-            self.fxblock.append(self.df.readint())
+            # Readied Spells
+            for i in range(10):
+                self.addreadyslot(self.df.readstr(), self.df.readint())
 
-        # An unknown, seems to be a multiple of 256
-        self.unknown.anotherint = self.df.readint()
+            # Position/orientation
+            self.orientation = self.df.readint()
+            self.xpos = self.df.readint()
+            self.ypos = self.df.readint()
+            
+            # These have *something* to do with your avatar, or effects that your
+            # avatar has.  For instance, my avatar ordinarily looks like this:
+            #    00 00 00 40    - 1073741824
+            #    3F 08 00 00    - 2111
+            #    00 0A 00 00    - 2560
+            #    00 14 00 00    - 5120
+            # When I have gravedigger's flame on, though, the GUI effect is described:
+            #    04 1F 85 6B    - 1803886340
+            #    3F F0 00 00    - 61503
+            #    00 78 00 00    - 30720
+            #    00 3C 00 00    - 15360
+            # Torch on:
+            #    02 CD CC 4C    - 1288490242
+            #    3F A0 00 00    - 41023
+            #    00 96 00 00    - 38400
+            #    00 7D 00 00    - 32000
+            # Gravedigger's + Torch on:
+            #    06 1F 85 6B    - 1803886342
+            #    3F F0 00 00    - 61503
+            #    00 96 00 00    - 38400
+            #    00 7D 00 00    - 32000
+            # Invisible/Chameleon doesn't seem to apply here though.  Maybe just lighting fx?
+            # Also, these certainly could be Not Actually ints; perhaps they're something else.
+            for i in range(4):
+                self.fxblock.append(self.df.readint())
 
-        # Character profile pic (multiple of 256, for some reason)
-        self.picid = self.df.readint()
+            # An unknown, seems to be a multiple of 256
+            self.unknown.anotherint = self.df.readint()
 
-        # Disease flag
-        self.disease = self.df.readint()
+            # Character profile pic (multiple of 256, for some reason)
+            self.picid = self.df.readint()
 
-        # More Unknowns.  Apparently there's one 2-byte integer in here, too.
-        self.unknown.shortval = self.df.readshort()
-        self.unknown.emptystr = self.df.readstr()
-        for i in range(21):
-            self.unknown.iblock2.append(self.df.readint())
-        self.unknown.preinvs1 = self.df.readstr()
-        self.unknown.preinvs2 = self.df.readstr()
-        self.unknown.preinvzero1 = self.df.readint()
-        self.unknown.preinvzero2 = self.df.readint()
+            # Disease flag
+            self.disease = self.df.readint()
 
-        # Inventory
-        for i in range(70):
-            self.additem()
+            # More Unknowns.  Apparently there's one 2-byte integer in here, too.
+            self.unknown.shortval = self.df.readshort()
+            self.unknown.emptystr = self.df.readstr()
+            for i in range(21):
+                self.unknown.iblock2.append(self.df.readint())
+            self.unknown.preinvs1 = self.df.readstr()
+            self.unknown.preinvs2 = self.df.readstr()
+            self.unknown.preinvzero1 = self.df.readint()
+            self.unknown.preinvzero2 = self.df.readint()
 
-        # Equipped
-        self.quiver.read(self.df);
-        self.helm.read(self.df);
-        self.cloak.read(self.df);
-        self.amulet.read(self.df);
-        self.torso.read(self.df);
-        self.weap_prim.read(self.df);
-        self.belt.read(self.df);
-        self.gauntlet.read(self.df);
-        self.legs.read(self.df);
-        self.ring1.read(self.df);
-        self.ring2.read(self.df);
-        self.shield.read(self.df);
-        self.feet.read(self.df);
-        self.weap_alt.read(self.df);
+            # Inventory
+            for i in range(70):
+                self.additem()
 
-        # Readied items
-        for i in range(8):
-            self.readyitems[i].read(self.df)
+            # Equipped
+            self.quiver.read(self.df);
+            self.helm.read(self.df);
+            self.cloak.read(self.df);
+            self.amulet.read(self.df);
+            self.torso.read(self.df);
+            self.weap_prim.read(self.df);
+            self.belt.read(self.df);
+            self.gauntlet.read(self.df);
+            self.legs.read(self.df);
+            self.ring1.read(self.df);
+            self.ring2.read(self.df);
+            self.shield.read(self.df);
+            self.feet.read(self.df);
+            self.weap_alt.read(self.df);
 
-        # For some reason, the last of the spells here.
-        for i in range(4):
-            self.addspell()
+            # Readied items
+            for i in range(8):
+                self.readyitems[i].read(self.df)
 
-        # Read any extra data, just in case
-        self.unknown.extradata = self.df.read()
+            # For some reason, the last of the spells here.
+            for i in range(4):
+                self.addspell()
 
-        # Close the file
-        self.df.close()
+            # If there's extra data at the end, we likely don't have
+            # a valid char file
+            self.unknown.extradata = self.df.read()
+            if (len(self.unknown.extradata)>0):
+                raise LoadException('Extra data at end of file')
+
+            # Close the file
+            self.df.close()
+
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
 
     def write(self):
         """ Writes out the save file to the file descriptor. """

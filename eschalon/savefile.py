@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from struct import pack, unpack
+from eschalonb1.loadexception import LoadException
 
 class Savefile:
     """ Class that wraps around a file object, to simplify things """
@@ -103,8 +104,8 @@ class Savefile:
             if (mystr[-2:] == "\r\n"):
                 return mystr[:-2]
             strpart = self.df.read(1)
-        print "ERROR, shouldn't be here"
-        return mystr
+        # Shouldn't ever get to here
+        raise LoadException('Error reading string value')
 
     def writestr(self, strval):
         """ Write a string (delimited by \r\n) to the savefile. """

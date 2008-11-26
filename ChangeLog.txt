@@ -1,5 +1,30 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+*eschalon_b1_char-0.3.0 (29 Oct 2008)
+
+   28 Oct 2008; CJ Kucera <pez@apocalyptech.com> :
+   "Open" dialog, no filename required on commandline for GUI operation.
+   "About" dialog.
+   "Save As" dialog.
+   Confirmation of quit when there's unsaved changes.
+   Cleaned up import structure a bit, to be more in line with PEP 8.
+   More text changes.
+
+   15 Oct 2008; CJ Kucera <pez@apocalyptech.com> :
+   Some item attributes can be negative; updated GUI to reflect.
+   Various text changes.
+
+   15 Oct 2008; WR Goerlich :
+   More commandline editing options, and fine-grained character
+   listing options (merged and modified slightly by CJ Kucera)
+
+   02 Sep 2008; WR Goerlich :
+   Added in various command-line switches to do simple character
+   edits (merged and modified slightly by CJ Kucera)
+
+   28 Aug 2008; CJ Kucera <pez@apocalyptech.com> :
+   Readied-spell levels only went up to 5, fixed that.
+
 *eschalon_b1_char-0.2.0 (21 Aug 2008)
 
    21 Aug 2008; CJ Kucera <pez@apocalyptech.com> :

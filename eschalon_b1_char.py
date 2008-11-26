@@ -19,78 +19,190 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import getopt, sys
-from EschalonB1 import Character, MainCLI
+from eschalonb1.character import Character
+from eschalonb1.maincli import MainCLI
 
-def processfile(filename, list=False, unknowns=False):
-    """ Given a filename, load the file and display it. """
-
-    try:
-        char = Character.Character(filename)
-        char.read()
-        if (list):
-            cli = MainCLI.MainCLI(char)
-            cli.display(unknowns)
-            #char.df.filename = '/tmp/cjchar'
-            #char.write()
-            return True
-    except IOError:
-        print '"' + filename + '" could not be opened.'
-        return False
-
-    # If we got here, we're launching the GUI (wait until now to import)
-    from EschalonB1 import MainGUI
-    app = MainGUI.MainGUI(filename, char)
-
-    # ... and return (this will never actually happen)
-    return True
-
-def usage():
-    print "Usage:"
+def usage(full=False):
+    #progname = sys.argv[0]
+    progname = 'eschalon_b1_char.py'
     print
-    print "\t%s [-l [-u]] <charfile>" % (sys.argv[0])
-    print "\t%s [--list [--unknowns]] <charfile>" % (sys.argv[0])
+    print "To launch the GUI:"
+    print "\t%s [<charfile>]" % (progname)
     print
-    print "By default, the util will launch the GUI.  For a textual"
-    print "representation of the charfile, use -l or --list."
+    print "To list character attributes on the console:"
+    print "\t%s -l [-s <all|stats|avatar|magic|equip|inv>] [-u] <charfile>" % (progname)
+    print "\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)
     print
-    print "When being shown the listing, specify -u or --unknowns to"
-    print "also show unknown data from the charfile."
+    print "To manipulate character data from the console:"
+    print "\t%s [--set-gold=<num>] [--rm-disease]" % (progname)
+    print "\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]"
+    print "\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>"
     print
-    print "Additionally, you may use -h or --help to view this message"
+    if (full):
+        print "Wherever <charfile> appears in the above, you should specify the"
+        print "location of the file named 'char' inside your savegame folder."
+        print
+        print "By default, the application will launch the GUI.  Note that"
+        print "specifying a character file is optional when you're launching"
+        print "the GUI, but required when using any of the other commandline"
+        print "options."
+        print
+        print "For a textual representation of the charfile instead, use -l or"
+        print "--list."
+        print
+        print "To only show a listing of specific character information, use"
+        print "the -s or --show option, which can be specified more than once."
+        print "For instance, to show both the basic character stats and the"
+        print "character's magic information, you would use:"
+        print
+        print "\t%s -l -s stats -s magic <charfile>" % (progname)
+        print "\tor"
+        print "\t%s --list --show=stats --show=magic <charfile>" % (progname)
+        print
+        print "Currently, the following arguments are valid for --show:"
+        print
+        print "\tall - Show all information (this is the default)"
+        print "\tstats - Base Character Statistics"
+        print "\tavatar - Avatar information"
+        print "\tmagic - Magic information"
+        print "\tequip - Equipment information (armor, weapons, etc)"
+        print "\tinv - Inventory listings (including \"ready\" slots)"
+        print
+        print "When being shown the listing, specify -u or --unknowns to"
+        print "also show unknown data from the charfile."
+        print
+        print "There are a few options to set your character's gold level, hitpoints,"
+        print "mana, and remove any diseases.  These should be fairly self-explanatory."
+        print "Note that equipped items on your character may increase your effective"
+        print "HP or MP, so even if this util reports that you're at your maximum HP,"
+        print "you may find that you're slightly off when you enter the game.  Using the"
+        print "--set-hp-max or --set-mana-max options will also bring your current HP or"
+        print "MP up to the new Max level."
+        print
+        print "Additionally, you may use -h or --help to view this message"
+    else:
+        print "To get a full help listing, with text descriptions of all the options:"
+        print "\t%s -h" % (progname)
+        print "\t%s --help" % (progname)
     print
     sys.exit(2)
 
 def main(argv=None):
 
+    # Argument var defaults
+    options = {
+            'gui': True,
+            'list': False,
+            'listoptions' : {
+                'all': True,
+                'stats': False,
+                'avatar': False,
+                'magic': False,
+                'equip': False,
+                'inv': False
+                },
+            'unknowns': False,
+            'set_gold': 0,
+            'set_mana_max': 0,
+            'set_mana_cur': 0,
+            'set_hp_max': 0,
+            'set_hp_cur': 0,
+            'rm_disease': False,
+            'filename' : None
+            }
+
     # Parse the args
     if argv is None:
         argv = sys.argv
     try:
-        opts, args = getopt.getopt(argv[1:], 'hlu', ['help', 'list', 'unknowns'])
+        opts, args = getopt.getopt(argv[1:],
+                'hls:u',
+                ['help',
+                 'list',
+                 'show=',
+                 'unknowns',
+                 'set-gold=',
+                 'set-mana-max=',
+                 'set-mana-cur=',
+                 'set-hp-max=',
+                 'set-hp-cur=',
+                 'rm-disease'])
     except getopt.GetoptError, err:
         print str(err)
         usage()
 
     # now check to see if they're proper
-    list = False
-    unknowns = False
     for o, a in opts:
         if (o in ('-h', '--help')):
-            usage()
+            usage(True)
         elif (o in ('-l', '--list')):
-            list = True
+            options['gui'] = False
+            options['list'] = True
+        elif (o in ('-s', '--show')):
+            if (a == 'all' or a == ''):
+                options['listoptions']['all'] = True
+            elif (a == 'stats'):
+                options['listoptions']['all'] = False
+                options['listoptions']['stats'] = True
+            elif (a == 'avatar'):
+                options['listoptions']['all'] = False
+                options['listoptions']['avatar'] = True
+            elif (a == 'magic'):
+                options['listoptions']['all'] = False
+                options['listoptions']['magic'] = True
+            elif (a == 'equip'):
+                options['listoptions']['all'] = False
+                options['listoptions']['equip'] = True
+            elif (a == 'inv'):
+                options['listoptions']['all'] = False
+                options['listoptions']['inv'] = True
+            else:
+                usage()
         elif (o in ('-u', '--unknowns')):
-            unknowns = True
+            options['gui'] = False
+            options['unknowns'] = True
+        elif (o in ('--set-gold')):
+            options['gui'] = False
+            options['set_gold'] = int(a)
+        elif (o in ('--set-mana-max')):
+            options['gui'] = False
+            options['set_mana_max'] = int(a)
+        elif (o in ('--set-mana-cur')):
+            options['gui'] = False
+            options['set_mana_cur'] = int(a)
+        elif (o in ('--set-hp-max')):
+            options['gui'] = False
+            options['set_hp_max'] = int(a)
+        elif (o in ('--set-hp-cur')):
+            options['gui'] = False
+            options['set_hp_cur'] = int(a)
+        elif (o in ('--rm-disease')):
+            options['gui'] = False
+            options['rm_disease'] = True
         else:
             assert False, 'unhandled option'
 
+    # Set our filename, if we have it
+    if (len(args) > 0):
+        options['filename'] = args[0]
+
     # Make sure we have a filename still
-    if (len(args) != 1):
+    if (not options['gui'] and options['filename'] == None):
         print "A filename is required"
         usage()
     
-    # Now do our stuff
-    return processfile(args[0], list, unknowns)
+    # Now load up the appropriate class
+    if (options['gui']):
+        # We're waiting until now to import, so people just using CLI don't need
+        # PyGTK installed, etc).  Not that this program follows PEP8-recommended
+        # practices anyway, but I *am* aware that doing this is discouraged.
+        from eschalonb1.maingui import MainGUI
+        prog = MainGUI(options)
+    else:
+        prog = MainCLI(options)
+
+    # ... and run it
+    return prog.run()
 
 if __name__ == '__main__':
     sys.exit(main())

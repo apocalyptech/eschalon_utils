@@ -18,36 +18,93 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from EschalonB1 import skilltable, spelltable, dirtable, statustable, diseasetable
+from eschalonb1.character import Character
+from eschalonb1.loadexception import LoadException
+from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class MainCLI:
 
-    def __init__(self, char):
+    def __init__(self, options):
         """ A fresh object, with no data. """
+        self.options = options
 
-        self.char = char
+    def run(self):
+        
+        options = self.options
 
-    def display(self, unknowns=False):
-        """ Print out a textual representation of the character."""
+        # Load in our file
+        try:
+            char = Character(options['filename'])
+            char.read()
+            self.char = char
+        except LoadException, e:
+            print '"' + options['filename'] + '" could not be opened'
+            return False
+
+        # The --list options will return automatically.  Everything
+        # else will trigger a write once everything's done
+        if (options['list']):
+            return self.display(options['listoptions'], options['unknowns'])
+
+        if (options['set_gold'] > 0):
+            print 'Old Gold: %d' % (char.gold)
+            char.setGold(options['set_gold'])
+            print 'New Gold: %d' % (char.gold)
+
+        if (options['set_hp_max'] > 0):
+            print 'Old Max HP: %d' % (char.maxhp)
+            char.setMaxHp(options['set_hp_max'])
+            print 'New Max HP: %d' % (char.maxhp)
+
+        if (options['set_hp_cur'] > 0):
+            print 'Old Current HP: %d' % (char.curhp)
+            char.setCurHp(options['set_hp_cur'])
+            print 'New Current HP: %d' % (char.curhp)
+
+        if (options['set_mana_max'] > 0):
+            print 'Old Max Mana: %d' % (char.maxmana)
+            char.setMaxMana(options['set_mana_max'])
+            print 'New Max Mana: %d' % (char.maxmana)
+
+        if (options['set_mana_cur'] > 0):
+            print 'Old Current Mana: %d' % (char.curmana)
+            char.setCurMana(options['set_mana_cur'])
+            print 'New Current Mana: %d' % (char.curmana)
+
+        if (options['rm_disease'] > 0):
+            print 'Old Disease Flags: %04X' % (char.disease)
+            char.clearDiseases();
+            print 'New Disease Flags: %04X' % (char.disease)
+        
+        # If we've gotten here, write the file
+        char.write()
+        
+        # ... and return
+        return True
+
+    def display_header(self):
+        """ Print out a textual representation of the character's name/level/orientation."""
+
+        char = self.char
+        print "%s - Lvl %d %s %s %s" % (char.name, char.level, char.origin, char.axiom, char.classname)
+        print
+
+    def display_stats(self):
+        """ Print out a textual representation of the character's stats."""
 
         global skilltable, dirtable, diseasetable
 
         char = self.char
 
-        print "%s - Lvl %d %s %s %s" % (char.name, char.level, char.origin, char.axiom, char.classname)
         if (char.picid % 256 == 0):
             print "Profile Picture %d" % (int(char.picid / 256)+1)
         else:
             print "Profile Picture ID: %d" % char.picid
         print
-        print "STR: %2d    INT: %2d" % (char.strength, char.intelligence)
-        print "DEX: %2d    WIS: %2d" % (char.dexterity, char.wisdom)
-        print "END: %2d    PCP: %2d" % (char.endurance, char.perception)
-        print "SPD: %2d    CCN: %2d" % (char.speed, char.concentration)
-        print
-
-        print "HP: %d/%d   Mana: %d/%d" % (char.curhp, char.maxhp, char.curmana, char.maxmana)
-        print "EXP: %d" % (char.experience)
+        print "STR: %2d    INT: %2d     HP: %d/%d" % (char.strength, char.intelligence, char.curhp, char.maxhp)
+        print "DEX: %2d    WIS: %2d     MP: %d/%d" % (char.dexterity, char.wisdom, char.curmana, char.maxmana)
+        print "END: %2d    PCP: %2d    EXP: %d" % (char.endurance, char.perception, char.experience)
+        print "SPD: %2d    CCN: %2d   GOLD: %d" % (char.speed, char.concentration, char.gold)
         print
         
         print "CHARACTER STATUS"
@@ -64,6 +121,18 @@ class MainCLI:
                 print "\t* Diseased: %s" % (diseasetable[key])
         print
 
+        print "SKILLS"
+        print "------"
+        print
+        for key in skilltable.keys():
+            if char.skills.has_key(key) and char.skills[key] != 0:
+                print "\t%s: %d" % (skilltable[key], char.skills[key])
+        print
+
+    def display_avatar_info(self):
+        """ Print out a textual representation of the character's avatar information."""
+
+        char = self.char
         print "AVATAR GRAPHICS FX"
         print "------------------"
         print
@@ -103,14 +172,10 @@ class MainCLI:
             print "Facing: 0x%08X" % char.orientation
         print
 
-        print "SKILLS"
-        print "------"
-        print
-        for key in skilltable.keys():
-            if char.skills.has_key(key) and char.skills[key] != 0:
-                print "\t%s: %d" % (skilltable[key], char.skills[key])
-        print
+    def display_magic(self, unknowns=False):
+        """ Print out a textual representation of the character's equipped magic stats."""
 
+        char = self.char
         print "SPELL JOURNAL"
         print "-------------"
         print
@@ -131,6 +196,10 @@ class MainCLI:
             i = i + 1
         print
 
+    def display_equip(self, unknowns=False):
+        """ Print out a textual representation of the character's equipped items."""
+
+        char = self.char
         print "EQUIPPED ITEMS"
         print "--------------"
         print
@@ -163,6 +232,10 @@ class MainCLI:
         print "Alternate Weapon:"
         char.weap_alt.display(unknowns)
         
+    def display_inventory(self, unknowns=False):
+        """ Print out a textual representation of the character's inventory. """
+
+        char = self.char
         print "INVENTORY"
         print "---------"
         print
@@ -186,9 +259,29 @@ class MainCLI:
             print "Ready Item %d:" % (i)
             item.display()
 
+    def display(self, listoptions, unknowns=False):
+        """ Print out a textual representation of the character."""
+
+        self.display_header()
+
+        if (listoptions['all'] or listoptions['stats']):
+            self.display_stats()
+
+        if (listoptions['all'] or listoptions['avatar']):
+            self.display_avatar_info()
+
+        if (listoptions['all'] or listoptions['magic']):
+            self.display_magic(unknowns)
+
+        if (listoptions['all'] or listoptions['equip']):
+            self.display_equip(unknowns)
+
+        if (listoptions['all'] or listoptions['inv']):
+            self.display_inventory(unknowns)
+
         if (unknowns):
             print
             print "UNKNOWNS"
             print "--------"
             print
-            char.unknown.display()
+            self.char.unknown.display()
