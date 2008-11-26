@@ -25,6 +25,7 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
+        'Square', 'Exit',
         'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable' ]
 
 # Lookup tables
