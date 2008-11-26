@@ -1,0 +1,30 @@
+Packaging
+---------
+ * Should do the packaging and class stuff properly; install into the
+   Python library dir, etc.
+ * Windows / OSX packaging
+
+Data
+----
+ * Figure out the rest of our unknown values
+ * Figure out our unknown item types
+ * Figure out what other bit flags there might be ("visibility" probably
+   isn't just an int)
+ * Figure out details of the visual effects values (some of that is
+   probably bit flags as well)
+
+GUI
+---
+ * Implement the "Unknowns" screen
+ * New/Open/SaveAs functionality (though, really, "New" might not make sense)
+ * Implement "About" screen
+ * Highlight the Inventory Notebook labels when there's a change in one
+   of them
+ * Notification that the last inventory slot is probably unused by Eschalon
+ * Support old AND new Tooltip style, so this doesn't break with PyGTK 3.0
+ * Confirmation of close when there's unsaved changes
+
+Internal
+--------
+ * We're doubly-caching some widgets in the GUI code, which is stupid.
+   Should consolidate those.
