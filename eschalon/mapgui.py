@@ -305,13 +305,21 @@ class MapGUI:
                 widget.set_value(newval)
         self.prev_scroll_v_max = widget.upper
 
+    # Helper function for zooms, should rename this or something...
+    def store_adjust(self):
+        hadjust = self.mainscroll.get_hadjustment()
+        vadjust = self.mainscroll.get_vadjustment()
+        # TODO: This works for zooming-in, mostly...  Less good for zooming out.
+        # I should figure out exactly what's going on.
+        self.prev_scroll_h_cur = (hadjust.page_size/4)+hadjust.value
+        self.prev_scroll_v_cur = (vadjust.page_size/4)+vadjust.value
+
     # TODO: Really need to normalize these...
     def zoom_out(self, widget):
         """ Handle a zoom-out. """
         curindex = self.zoom_levels.index(self.curzoom)
         if (curindex != 0):
-            self.prev_scroll_v_cur = self.mainscroll.get_vadjustment().value
-            self.prev_scroll_h_cur = self.mainscroll.get_hadjustment().value
+            self.store_adjust()
             self.set_zoom_vars(self.zoom_levels[curindex-1])
             if (curindex == 1):
                 self.zoom_out_button.set_sensitive(False)
@@ -322,8 +330,7 @@ class MapGUI:
         """ Handle a zoom-in. """
         curindex = self.zoom_levels.index(self.curzoom)
         if (curindex != (len(self.zoom_levels)-1)):
-            self.prev_scroll_v_cur = self.mainscroll.get_vadjustment().value
-            self.prev_scroll_h_cur = self.mainscroll.get_hadjustment().value
+            self.store_adjust()
             self.set_zoom_vars(self.zoom_levels[curindex+1])
             if (curindex == (len(self.zoom_levels)-2)):
                 self.zoom_in_button.set_sensitive(False)
