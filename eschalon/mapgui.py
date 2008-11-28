@@ -344,8 +344,8 @@ class MapGUI:
         self.mousey = event.y
 
         # TODO: This needs to be actually-accurate, instead of our current approximation
-        self.sq_x = int(self.mousex / self.z_width)
-        self.sq_y = int(self.mousey / self.z_height)
+        self.sq_x = int((self.mousex-self.z_halfwidth) / self.z_width)
+        self.sq_y = int((self.mousey-self.z_halfheight) / self.z_height * 2)
         if (self.sq_x > 99):
             self.sq_x = 99
         if (self.sq_y > 199):
@@ -425,8 +425,8 @@ class MapGUI:
         y2 = ystart+1
         y3 = y1
         y4 = ystart+self.z_height-1
-        if (y4==y2):
-            # This is just for our most-zoomed-out level
+        if (y4-y2<3):
+            # This is for our two most-zoomed-out levels
             y4 = y4 + 1
             y2 = y2 - 1
 
