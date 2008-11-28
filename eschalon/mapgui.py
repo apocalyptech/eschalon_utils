@@ -76,6 +76,9 @@ class MapGUI:
         self.maparea = self.get_widget('maparea')
         self.mapname_label = self.get_widget('mapname')
         self.coords_label = self.get_widget('coords')
+        self.mainscroll = self.get_widget('mainscroll')
+        self.zoom_in_button = self.get_widget('zoom_in_button')
+        self.zoom_out_button = self.get_widget('zoom_out_button')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -84,11 +87,21 @@ class MapGUI:
                 'on_load': self.on_load,
                 'on_about': self.on_about,
                 'on_clicked': self.on_clicked,
+                'zoom_in': self.zoom_in,
+                'zoom_out': self.zoom_out,
                 'on_mouse_changed': self.on_mouse_changed,
                 'expose_map': self.expose_map,
                 'realize_map': self.realize_map
                 }
         self.wTree.signal_autoconnect(dic)
+
+        # Manually connect a couple more signals that Glade can't handle for us automatically
+        self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
+        self.mainscroll.get_vadjustment().connect('changed', self.scroll_v_changed)
+        self.prev_scroll_h_cur = -1
+        self.prev_scroll_h_max = -1
+        self.prev_scroll_v_cur = -1
+        self.prev_scroll_v_max = -1
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -104,6 +117,7 @@ class MapGUI:
                     return
 
         # Start the main gtk loop
+        self.zoom_levels = [4, 8, 16, 24]
         self.set_zoom_vars(8)
         self.window.show()
         gtk.main()
@@ -265,6 +279,7 @@ class MapGUI:
 
     def set_zoom_vars(self, width):
         """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """
+        self.curzoom = width
         self.z_width = width
         self.z_height = int(self.z_width/2)
         self.z_halfwidth = self.z_height
@@ -272,6 +287,48 @@ class MapGUI:
         self.z_mapsize = self.z_width*101
         self.mapinit = False
         # TODO: Should queue a redraw here, probably...
+
+    def scroll_h_changed(self, widget):
+        """ Handle what to do when our scollwindow detects a change in dimensions. """
+        if (self.prev_scroll_h_cur != -1):
+            newval = int((self.prev_scroll_h_cur*widget.upper)/self.prev_scroll_h_max)
+            # TODO: check for corner cases here, and in the v_changed as well
+            if (widget.upper >= (newval + widget.page_size)):
+                widget.set_value(newval)
+        self.prev_scroll_h_max = widget.upper
+
+    def scroll_v_changed(self, widget):
+        """ Handle what to do when our scollwindow detects a change in dimensions. """
+        if (self.prev_scroll_v_cur != -1):
+            newval = int((self.prev_scroll_v_cur*widget.upper)/self.prev_scroll_v_max)
+            if (widget.upper >= (newval + widget.page_size)):
+                widget.set_value(newval)
+        self.prev_scroll_v_max = widget.upper
+
+    # TODO: Really need to normalize these...
+    def zoom_out(self, widget):
+        """ Handle a zoom-out. """
+        curindex = self.zoom_levels.index(self.curzoom)
+        if (curindex != 0):
+            self.prev_scroll_v_cur = self.mainscroll.get_vadjustment().value
+            self.prev_scroll_h_cur = self.mainscroll.get_hadjustment().value
+            self.set_zoom_vars(self.zoom_levels[curindex-1])
+            if (curindex == 1):
+                self.zoom_out_button.set_sensitive(False)
+            self.zoom_in_button.set_sensitive(True)
+            self.draw_map()
+
+    def zoom_in(self, widget):
+        """ Handle a zoom-in. """
+        curindex = self.zoom_levels.index(self.curzoom)
+        if (curindex != (len(self.zoom_levels)-1)):
+            self.prev_scroll_v_cur = self.mainscroll.get_vadjustment().value
+            self.prev_scroll_h_cur = self.mainscroll.get_hadjustment().value
+            self.set_zoom_vars(self.zoom_levels[curindex+1])
+            if (curindex == (len(self.zoom_levels)-2)):
+                self.zoom_in_button.set_sensitive(False)
+            self.zoom_out_button.set_sensitive(True)
+            self.draw_map()
 
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """

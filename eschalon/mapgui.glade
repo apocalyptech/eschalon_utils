@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Wed Nov 26 15:56:30 2008 -->
+<!--Generated with glade3 3.4.5 on Thu Nov 27 23:51:53 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -100,23 +100,83 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkHBox" id="hbox1">
+          <widget class="GtkVBox" id="vbox2">
             <property name="visible">True</property>
             <child>
-              <widget class="GtkLabel" id="mapname">
+              <widget class="GtkHBox" id="hbox2">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="xpad">8</property>
-                <property name="ypad">2</property>
+                <child>
+                  <widget class="GtkButton" id="zoom_in_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text">Zoom In</property>
+                    <property name="border_width">2</property>
+                    <property name="response_id">0</property>
+                    <signal name="clicked" handler="zoom_in"/>
+                    <child>
+                      <widget class="GtkImage" id="image1">
+                        <property name="visible">True</property>
+                        <property name="stock">gtk-zoom-in</property>
+                        <property name="icon_size">1</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkButton" id="zoom_out_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="tooltip_text">Zoom Out</property>
+                    <property name="border_width">2</property>
+                    <property name="response_id">0</property>
+                    <signal name="clicked" handler="zoom_out"/>
+                    <child>
+                      <widget class="GtkImage" id="image2">
+                        <property name="visible">True</property>
+                        <property name="stock">gtk-zoom-out</property>
+                        <property name="icon_size">1</property>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </widget>
             </child>
             <child>
-              <widget class="GtkLabel" id="coords">
+              <widget class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>
-                <property name="xalign">1</property>
-                <property name="xpad">8</property>
+                <child>
+                  <widget class="GtkLabel" id="mapname">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="xpad">8</property>
+                    <property name="ypad">2</property>
+                  </widget>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="coords">
+                    <property name="visible">True</property>
+                    <property name="xalign">1</property>
+                    <property name="xpad">8</property>
+                  </widget>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </widget>
               <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -128,7 +188,7 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkScrolledWindow" id="scrolledwindow1">
+          <widget class="GtkScrolledWindow" id="mainscroll">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
