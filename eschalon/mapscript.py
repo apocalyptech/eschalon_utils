@@ -19,13 +19,17 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import struct
+from eschalonb1.savefile import FirstItemLoadException
+
 class Mapscript:
     """ A class to hold data about a particular mapscript on a map. """
 
     def __init__(self):
         """ A fresh object with no data. """
 
-        self.unknowni1 = -1
+        self.x = -1
+        self.y = -1
         self.mapid = ''
         self.number = ''    # apparently the coords of where to spawn on the new map, Y before X (and no delimiter?), or user text
         self.unknowni2 = -1
@@ -48,7 +52,8 @@ class Mapscript:
         newmapscript = Mapscript()
 
         # Simple Values
-        newmapscript.unknowni1 = self.unknowni1
+        newmapscript.x = self.x
+        newmapscript.y = self.y
         newmapscript.mapid = self.mapid
         newmapscript.number = self.number
         newmapscript.unknowni2 = self.unknowni2
@@ -73,7 +78,18 @@ class Mapscript:
     def read(self, df):
         """ Given a file descriptor, read in the mapscript. """
 
-        self.unknowni1 = df.readint()
+        # We throw an exception because there seems to be an arbitrary
+        # number of scripts at the end of the map file, and no 'script count' anywhere.
+        # So we have to just keep loading scripts until EOF,
+        if (df.eof()):
+            raise FirstItemLoadException('Reached EOF')
+
+        # I'd just like to say "wtf" at this coordinate-storing system
+        intcoords = df.readint()
+        self.x = (intcoords % 100)
+        self.y = int(intcoords / 100)
+
+        # ... everything else
         self.mapid = df.readstr()
         self.number = df.readstr()
         self.unknowni2 = df.readint()
@@ -91,13 +107,11 @@ class Mapscript:
         self.unknowns6 = df.readstr()
         self.unknowns7 = df.readstr()
         self.unknowns8 = df.readstr()
-        # Return self here so we can do things like Mapscript().read()
-        return self
 
     def write(self, df):
         """ Write the mapscript to the file. """
 
-        df.writeint(self.unknowni1)
+        df.writeint((self.y*100)+self.x)
         df.writestr(self.mapid)
         df.writestr(self.number)
         df.writeint(self.unknowni2)
@@ -120,10 +134,10 @@ class Mapscript:
         """ Show a textual description of all fields. """
 
         print "\tMap ID: %s" % self.mapid
+        print "\tMap Location: (%d, %d)" % (self.x, self.y)
         print "\tScript: %s" % self.script
         if (unknowns):
             print "\tA Number: %s" % self.number
-            print "\tUnknown Integer 1: %d" % self.unknowni1
             print "\tUnknown Integer 2: %d" % self.unknowni2
             print "\tUnknown Integer 3: %d" % self.unknowni3
             print "\tUnknown Integer 4: %d" % self.unknowni4

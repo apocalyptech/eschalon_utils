@@ -21,7 +21,7 @@
 
 import sys
 from eschalonb1.map import Map
-from eschalonb1.loadexception import LoadException
+from eschalonb1.savefile import LoadException
 
 class MapCLI:
 
@@ -40,6 +40,7 @@ class MapCLI:
             self.map = map
         except LoadException, e:
             print '"' + options['filename'] + '" could not be opened'
+            print e
             return False
 
         # The --list options will return automatically.  Everything
@@ -78,7 +79,12 @@ class MapCLI:
 
     def display_scripts(self, unknowns=False):
         """ Print out a textual representation of the map's scripts."""
-        pass
+        i = 0
+        for script in self.map.scripts:
+            i = i + 1
+            print 'Script Number %d' % i
+            script.display(unknowns)
+            print
 
     def display_txtmap(self):
         """ Print out a little ascii map. """

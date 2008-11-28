@@ -20,7 +20,17 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from struct import pack, unpack
-from eschalonb1.loadexception import LoadException
+
+class LoadException(Exception):
+
+    def __init__(self, text):
+        self.text = text
+
+    def __str__(self):
+        return repr(self.text)
+
+class FirstItemLoadException(LoadException):
+    pass
 
 class Savefile:
     """ Class that wraps around a file object, to simplify things """
@@ -53,6 +63,17 @@ class Savefile:
         self.df = open(self.filename, 'wb')
         self.df.seek(0)
         self.opened_w = True
+
+    def eof(self):
+        """ Test to see if we're at EOF, since Python doesn't provide that for us. """
+        # Note that theoretically there's some cases where a file error masquerades as
+        # an EOF because of this code.  I can cope with that.
+        a = self.df.read(1)
+        if (len(a) == 0):
+            return True
+        else:
+            self.df.seek(-1, 1)
+            return False
 
     def read(self):
         """ Read the rest of the file from the handle. """

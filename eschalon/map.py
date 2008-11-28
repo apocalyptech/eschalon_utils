@@ -20,10 +20,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1.savefile import Savefile
+from eschalonb1.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalonb1.square import Square
 from eschalonb1.mapscript import Mapscript
-from eschalonb1.loadexception import LoadException
 
 class Map:
     """ The base Map class.  """
@@ -65,7 +64,6 @@ class Map:
 
         self.squares = []
         self.scriptcount = 0
-        self.scriptidx = []
         for i in range(200):
             self.squares.append([])
             for j in range(100):
@@ -123,10 +121,6 @@ class Map:
         """ Add a new square, assuming that the squares are stored in a
             left-to-right, top-to-bottom format in the map. """
         self.squares[self.cursqrow][self.cursqcol].read(self.df)
-        if (self.squares[self.cursqrow][self.cursqcol].scriptid != 0):
-            self.squares[self.cursqrow][self.cursqcol].scriptidx = self.scriptcount
-            self.scriptcount = self.scriptcount + 1
-            print " - Square %d x %d has script %d, ID: %d" % (self.cursqcol, self.cursqrow, self.scriptcount, self.squares[self.cursqrow][self.cursqcol].scriptid)
         self.cursqcol = self.cursqcol + 1
         if (self.cursqcol == 100):
             self.cursqcol = 0
@@ -134,7 +128,21 @@ class Map:
 
     def addscript(self):
         """ Add a mapscript. """
-        self.scripts.append(Mapscript().read(self.df))
+        try:
+            script = Mapscript()
+            script.read(self.df)
+            # Note that once we start deleting scripts, you'll have to update both constructs here.
+            # Something along the lines of this should do:
+            #   self.map.squares[y][x].scripts.remove(script)
+            #   self.scripts.remove(script)
+            # ... does that object then get put into a garbage collector or something?  Do we have to
+            # set that to None at some point, manually?
+            self.scripts.append(script)
+            if (script.x >= 0 and script.x < 100 and script.y >= 0 and script.y < 200):
+                self.squares[script.y][script.x].addscript(script)
+            return True
+        except FirstItemLoadException, e:
+            return False
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -174,22 +182,19 @@ class Map:
             for i in range(200*100):
                 self.addsquare()
 
-            # Scripts
-            print "Scriptcount: %d" % self.scriptcount
+            # Scripts...  Just keep going until EOF
             try:
-                for i in range(self.scriptcount):
-                    self.addscript()
-            except Exception, e:
-                print " * Exception loading scripts! *"
-            print "Scripts actually loaded: %d" % len(self.scripts)
+                while (self.addscript()):
+                    pass
+            except FirstItemLoadException, e:
+                pass
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
             if (len(self.extradata)>0):
                 # TODO: We should except here, but until we get it figured out, we won't
-                print " * Extra data at end of file *"
-                #raise LoadException('Extra data at end of file')
+                raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()

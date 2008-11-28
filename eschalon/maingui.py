@@ -41,7 +41,7 @@ except:
 # Lookup tables we'll need
 from eschalonb1.character import Character
 from eschalonb1.item import Item
-from eschalonb1.loadexception import LoadException
+from eschalonb1.savefile import LoadException
 from eschalonb1 import diseasetable, flagstable
 from eschalonb1 import app_name, version, url, authors
 

@@ -33,7 +33,7 @@ class Square:
         self.unknown6 = -1
         self.scriptid = -1
 
-        self.scriptidx = -1
+        self.scripts = []
 
     def replicate(self):
         newsquare = Square()
@@ -46,7 +46,10 @@ class Square:
         newsquare.unknown5 = self.unknown5
         newsquare.unknown6 = self.unknown6
         newsquare.scriptid = self.scriptid
-        newsquare.scriptidx = self.scriptidx
+
+        # Arrays
+        for script in self.scripts:
+            newsquare.scripts.append(script.replicate())
 
         # ... aaand return our new object
         return newsquare
@@ -79,6 +82,13 @@ class Square:
                 self.unknown3 != 0 or self.wallimg != 0 or
                 self.unknown5 != 0 or self.unknown6 != 0 or
                 self.scriptid != 0)
+    
+    def addscript(self, script):
+        """
+        Add a script to our script list.  Just an internal construct which isn't actually
+        stored on disk.
+        """
+        self.scripts.append(script)
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """

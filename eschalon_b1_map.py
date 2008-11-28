@@ -97,7 +97,7 @@ def main(argv=None):
             'listoptions' : {
                 'all': False,
                 'squares': False,
-                'exits': False,
+                'scripts': False,
                 'txtmap': False
                 },
             'unknowns': False,
@@ -130,8 +130,8 @@ def main(argv=None):
                 options['listoptions']['all'] = True
             elif (a == 'squares'):
                 options['listoptions']['squares'] = True
-            elif (a == 'squares'):
-                options['listoptions']['squares'] = True
+            elif (a == 'scripts'):
+                options['listoptions']['scripts'] = True
             elif (a == 'txtmap'):
                 options['listoptions']['txtmap'] = True
             else:

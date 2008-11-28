@@ -20,7 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalonb1.character import Character
-from eschalonb1.loadexception import LoadException
+from eschalonb1.savefile import LoadException
 from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class MainCLI:

@@ -41,7 +41,7 @@ except:
 from eschalonb1.map import Map
 from eschalonb1.square import Square
 from eschalonb1.mapscript import Mapscript
-from eschalonb1.loadexception import LoadException
+from eschalonb1.savefile import LoadException
 from eschalonb1 import app_name, version, url, authors
 
 class MapGUI:
@@ -304,13 +304,10 @@ class MapGUI:
                 print "Square at %d x %d - " % (self.sq_x, self.sq_y)
                 self.map.squares[self.sq_y][self.sq_x].display(True)
                 # TODO: This mechanic is pretty dumb, should just happen Automatically with the display() call
-                if (self.map.squares[self.sq_y][self.sq_x].scriptidx != -1):
+                for script in self.map.squares[self.sq_y][self.sq_x].scripts:
                     print
-                    if (self.map.squares[self.sq_y][self.sq_x].scriptidx < len(self.map.scripts)):
-                        print "  Associated Script:"
-                        self.map.scripts[self.map.squares[self.sq_y][self.sq_x].scriptidx].display(True)
-                    else:
-                        print "  Has associated script, but we're not reading those correctly yet."
+                    print "  Associated Script:"
+                    script.display(True)
                 print
 
     def draw_map(self):
@@ -326,8 +323,13 @@ class MapGUI:
 
         if (x == self.sq_x and y == self.sq_y):
             color = self.gc_red
-        elif (self.map.squares[y][x].scriptid != 0):
+        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
             color = self.gc_green
+        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) == 0):
+            color = self.gc_cyan
+        elif (self.map.squares[y][x].scriptid == 0 and len(self.map.squares[y][x].scripts) > 0):
+            # afaik, this doesn't happen.  should use something other than red here, though
+            color = self.gc_red
         elif (self.map.squares[y][x].wall == 1):
             color = self.gc_white
         elif (self.map.squares[y][x].floorimg == 126):
@@ -356,7 +358,9 @@ class MapGUI:
         self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
     def expose_map(self, widget, event):
-        # TODO: get most of this to happen in draw_map instead, only redraw squares that have changed
+        # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
+        # This may be the only way when doing startup though...  self.maparea.window isn't useful until we're in
+        # the expose event, apparently.  At least when loading the initial map.
 
         # Now do our work
         if (self.mapinit):
@@ -369,6 +373,8 @@ class MapGUI:
             self.gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
             self.gc_green = gtk.gdk.GC(self.maparea.window)
             self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.gc_cyan = gtk.gdk.GC(self.maparea.window)
+            self.gc_cyan.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 65535))
             self.gc_blue = gtk.gdk.GC(self.maparea.window)
             self.gc_blue.set_rgb_fg_color(gtk.gdk.Color(0, 0, 65535))
             self.gc_white = gtk.gdk.GC(self.maparea.window)
