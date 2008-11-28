@@ -117,7 +117,7 @@ class MapGUI:
                     return
 
         # Start the main gtk loop
-        self.zoom_levels = [4, 8, 16, 24]
+        self.zoom_levels = [4, 8, 16, 24, 32, 50]
         self.set_zoom_vars(8)
         self.window.show()
         gtk.main()
@@ -284,7 +284,8 @@ class MapGUI:
         self.z_height = int(self.z_width/2)
         self.z_halfwidth = self.z_height
         self.z_halfheight = int(self.z_height/2)
-        self.z_mapsize = self.z_width*101
+        self.z_mapsize_x = self.z_width*101
+        self.z_mapsize_y = int(self.z_mapsize_x/2)
         self.mapinit = False
         # TODO: Should queue a redraw here, probably...
 
@@ -408,15 +409,26 @@ class MapGUI:
         else:
             xpad = 0
 
+        # TODO: This still doesn't seem quite right
         # Coordinates
-        x1 = (x*self.z_width)+xpad
-        y1 = (y*self.z_height)+self.z_halfheight
-        x2 = (x*self.z_width)+self.z_halfwidth+xpad
-        y2 = y*self.z_height
-        x3 = (x*self.z_width)+self.z_width+xpad
-        y3 = y1
+        #      2
+        #   1     3
+        #      4
+        xstart = (x*self.z_width)+xpad
+        x1 = xstart+1
+        x2 = xstart+self.z_halfwidth
+        x3 = xstart+self.z_width-1
         x4 = x2
-        y4 = (y*self.z_height)+self.z_height
+
+        ystart = y*self.z_height/2
+        y1 = ystart+self.z_halfheight
+        y2 = ystart+1
+        y3 = y1
+        y4 = ystart+self.z_height-1
+        if (y4==y2):
+            # This is just for our most-zoomed-out level
+            y4 = y4 + 1
+            y2 = y2 - 1
 
         # Draw the square
         self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
@@ -431,8 +443,8 @@ class MapGUI:
             for (x, y) in self.cleansquares:
                 self.draw_square(x, y)
         else:
-            self.maparea.set_size_request(self.z_mapsize, self.z_mapsize)
-            self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize, self.z_mapsize)
+            self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
+            self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
             self.gc_red = gtk.gdk.GC(self.maparea.window)
             self.gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
             self.gc_green = gtk.gdk.GC(self.maparea.window)
@@ -445,7 +457,7 @@ class MapGUI:
             self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
             self.gc_black = gtk.gdk.GC(self.maparea.window)
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize, self.z_mapsize)
+            self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
             for y in range(len(self.map.squares)):
                 for x in range(len(self.map.squares[y])):
                     self.draw_square(x, y)
@@ -455,5 +467,5 @@ class MapGUI:
         self.cleansquares = []
 
         # This is about all we should *actually* need in here
-        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize, self.z_mapsize)
+        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
 
