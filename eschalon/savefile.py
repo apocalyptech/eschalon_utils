@@ -75,9 +75,17 @@ class Savefile:
             self.df.seek(-1, 1)
             return False
 
-    def read(self):
+    def seek(self, offset, whence=0):
+        """ Passthrough to the internal object. """
+        return self.df.seek(offset, whence)
+
+    def tell(self):
+        """ Passthrough to the internal object. """
+        return self.df.tell()
+
+    def read(self, len=-1):
         """ Read the rest of the file from the handle. """
-        return self.df.read()
+        return self.df.read(len)
 
     def readchar(self):
         """ Read a signed character (1-byte) "integer" from the savefile. """
