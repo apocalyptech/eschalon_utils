@@ -82,6 +82,7 @@ class MainGUI:
         self.aboutwindow = self.get_widget('aboutwindow')
         self.mainbook = self.get_widget('mainbook')
         self.itemsel = self.get_widget('itemselwindow')
+        self.avatarsel = self.get_widget('avatarselwindow')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -103,6 +104,21 @@ class MainGUI:
         self.itemsel_mousex_prev = -1
         self.itemsel_mousey_prev = -1
 
+        # Avatar Selection Window extras
+        self.avatarsel_init = False
+        self.avatarsel_clean = []
+        self.avatarsel_area = self.get_widget('avatarsel_area')
+        self.avatarsel_x = 480
+        self.avatarsel_y = 60
+        self.avatarsel_cols = 8
+        self.avatarsel_rows = 1
+        self.avatarsel_width = 60
+        self.avatarsel_height = 60
+        self.avatarsel_mousex = -1
+        self.avatarsel_mousey = -1
+        self.avatarsel_mousex_prev = -1
+        self.avatarsel_mousey_prev = -1
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_revert': self.on_revert,
@@ -121,14 +137,18 @@ class MainGUI:
                 'on_singleval_changed_str': self.on_singleval_changed_str,
                 'on_singleval_changed_int': self.on_singleval_changed_int,
                 'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
+                'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
                 'on_modifier_changed': self.on_modifier_changed,
                 'on_dropdown_changed': self.on_dropdown_changed,
                 'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
                 'open_itemsel': self.open_itemsel,
-                'itemsel_on_realize': self.itemsel_on_realize,
                 'itemsel_on_motion': self.itemsel_on_motion,
                 'itemsel_on_expose': self.itemsel_on_expose,
-                'itemsel_on_clicked': self.itemsel_on_click
+                'itemsel_on_clicked': self.itemsel_on_clicked,
+                'open_avatarsel': self.open_avatarsel,
+                'avatarsel_on_motion': self.avatarsel_on_motion,
+                'avatarsel_on_expose': self.avatarsel_on_expose,
+                'avatarsel_on_clicked': self.avatarsel_on_clicked
                 }
         self.wTree.signal_autoconnect(dic)
 
@@ -446,6 +466,14 @@ class MainGUI:
         """ Special-case to handle changing the item picture properly. """
         self.on_singleval_changed_int(widget)
         self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value()))
+
+    def on_singleval_changed_int_avatar(self, widget):
+        """ Special-case to handle changing the avatar picture properly. """
+        self.on_singleval_changed_int(widget)
+        if (self.get_widget('picid').get_value() % 256 == 0):
+            self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value()/256))
+        else:
+            self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
@@ -1144,10 +1172,6 @@ class MainGUI:
     def open_itemsel(self, widget):
         self.itemsel.show()
 
-    def itemsel_on_realize(self, event):
-        # TODO: do we actually need this?
-        pass
-
     def itemsel_on_motion(self, widget, event):
         self.itemsel_mousex = int(event.x/self.itemsel_width)
         self.itemsel_mousey = int(event.y/self.itemsel_height)
@@ -1201,7 +1225,6 @@ class MainGUI:
             self.itemsel_pixmap = gtk.gdk.Pixmap(self.itemsel_area.window, self.itemsel_x, self.itemsel_y)
             self.gc_white = gtk.gdk.GC(self.itemsel_area.window)
             self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
-            #self.gc_white.set_line_attributes(1, gtk.gdk.LINE_SOLID, gtk.gdk.CAP_BUTT, gtk.gdk.JOIN_BEVEL)
             self.gc_black = gtk.gdk.GC(self.itemsel_area.window)
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
             self.gc_green = gtk.gdk.GC(self.itemsel_area.window)
@@ -1215,8 +1238,77 @@ class MainGUI:
         self.itemsel_area.window.draw_drawable(self.itemsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
             self.itemsel_pixmap, 0, 0, 0, 0, self.itemsel_x, self.itemsel_y)
 
-    def itemsel_on_click(self, widget, event):
+    def itemsel_on_clicked(self, widget, event):
         self.itemsel_init = False
         self.get_widget('pictureid').set_value(self.itemsel_mousex+(10*self.itemsel_mousey))
         self.itemsel.hide()
 
+    def open_avatarsel(self, widget):
+        self.avatarsel.show()
+
+    def avatarsel_on_motion(self, widget, event):
+        self.avatarsel_mousex = int(event.x/self.avatarsel_width)
+        if (self.avatarsel_mousex > self.avatarsel_cols):
+            self.avatarsel_mousex = self.avatarsel_cols
+        if (self.avatarsel_mousex != self.avatarsel_mousex_prev):
+            self.avatarsel_clean.append(self.avatarsel_mousex_prev)
+            self.avatarsel_clean.append(self.avatarsel_mousex)
+            self.avatarsel_mousex_prev = self.avatarsel_mousex
+        self.avatarsel_area.queue_draw()
+
+    def avatarsel_draw(self, x):
+        if (x < 0 or x >= self.avatarsel_cols):
+            return
+        self.avatarsel_pixmap.draw_pixbuf(None, self.gfx.get_avatar(x), 0, 0, x*self.avatarsel_width, 0)
+        if (x == self.avatarsel_mousex):
+            color = self.gc_white
+        elif (x == self.avatarsel_curx):
+            color = self.gc_green
+        else:
+            return
+
+        # Outline points
+        x1 = x*self.avatarsel_width
+        x2 = x1 + self.avatarsel_width - 1
+        x3 = x2
+        x4 = x1
+        x5 = x1
+
+        y1 = 0
+        y2 = y1
+        y3 = y2 + self.avatarsel_height - 1
+        y4 = y3
+        y5 = y1
+
+        self.avatarsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+
+    def avatarsel_on_expose(self, widget, event):
+        if (self.avatarsel_init):
+            for x in self.avatarsel_clean:
+                self.avatarsel_draw(x)
+        else:
+            if (self.get_widget('picid').get_value() % 256 == 0):
+                self.avatarsel_curx = self.get_widget('picid').get_value() / 256
+            else:
+                self.avatarsel_curx = -1
+            self.avatarsel_area.set_size_request(self.avatarsel_x, self.avatarsel_y)
+            self.avatarsel_pixmap = gtk.gdk.Pixmap(self.avatarsel_area.window, self.avatarsel_x, self.avatarsel_y)
+            self.gc_white = gtk.gdk.GC(self.avatarsel_area.window)
+            self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
+            self.gc_black = gtk.gdk.GC(self.avatarsel_area.window)
+            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
+            self.gc_green = gtk.gdk.GC(self.avatarsel_area.window)
+            self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.avatarsel_pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.avatarsel_x, self.avatarsel_y)
+            for x in range(self.avatarsel_cols):
+                self.avatarsel_draw(x)
+            self.avatarsel_init = True
+        self.avatarsel_clean = []
+        self.avatarsel_area.window.draw_drawable(self.avatarsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
+            self.avatarsel_pixmap, 0, 0, 0, 0, self.avatarsel_x, self.avatarsel_y)
+
+    def avatarsel_on_clicked(self, widget, event):
+        self.avatarsel_init = False
+        self.get_widget('picid').set_value(self.avatarsel_mousex * 256)
+        self.avatarsel_mousex = -1
+        self.avatarsel.hide()

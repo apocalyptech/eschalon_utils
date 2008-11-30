@@ -19,6 +19,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import os
 import gtk
 import math
 import zlib
@@ -87,7 +88,8 @@ class Gfx:
         """ A fresh object with no data. """
 
         # TODO: Clearly this needs to be handled appropriately
-        self.pakloc = '/usr/local/games/eschalon_book_1/gfx.pak'
+        self.gamedir = '/usr/local/games/eschalon_book_1'
+        self.pakloc = os.path.join(self.gamedir, 'gfx.pak')
         self.df = Savefile(self.pakloc)
 
         self.unknownh1 = -1
@@ -120,6 +122,7 @@ class Gfx:
         # Some graphic-specific indexes/flags
         self.loadeditems = False
         self.itemcache = None
+        self.avatarcache = {}
 
         # Now load in the index
         decobj = zlib.decompressobj()
@@ -154,3 +157,16 @@ class Gfx:
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
             self.loadeditems = True
         return self.itemcache.getimg(itemnum, size)
+
+    def get_avatar(self, avatarnum):
+        if (avatarnum < 0 or avatarnum > 7):
+            return None
+        if (avatarnum not in self.avatarcache):
+            if (avatarnum == 7):
+                if (os.path.exists(os.path.join(self.gamedir, 'mypic.png'))):
+                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.gamedir, 'mypic.png'))
+                else:
+                    return None
+            else:
+                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
+        return self.avatarcache[avatarnum]

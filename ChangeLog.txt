@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   30 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
+   Character pictures in GUI; Character picture lookup page
+
    29 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
    Items in character editor now display the in-game icons
    Item icon lookup page implemented
