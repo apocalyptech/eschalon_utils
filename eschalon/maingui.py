@@ -39,6 +39,7 @@ except:
     sys.exit(1)
 
 # Lookup tables we'll need
+from eschalonb1.gfx import Gfx
 from eschalonb1.character import Character
 from eschalonb1.item import Item
 from eschalonb1.savefile import LoadException
@@ -69,6 +70,9 @@ class MainGUI:
         # Let's make sure that char exists, too
         self.char = None
 
+        # Set up our graphics cache
+        self.gfx = Gfx()
+
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'maingui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
@@ -77,11 +81,27 @@ class MainGUI:
         self.loadwindow = self.get_widget('loadwindow')
         self.aboutwindow = self.get_widget('aboutwindow')
         self.mainbook = self.get_widget('mainbook')
+        self.itemsel = self.get_widget('itemselwindow')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
         # GUI additions
         self.gui_finish()
+
+        # Item Selection Window extras
+        self.itemsel_init = False
+        self.itemsel_clean = []
+        self.itemsel_area = self.get_widget('itemsel_area')
+        self.itemsel_x = 420
+        self.itemsel_y = 1008
+        self.itemsel_cols = 10
+        self.itemsel_rows = 24
+        self.itemsel_width = 42
+        self.itemsel_height = 42
+        self.itemsel_mousex = -1
+        self.itemsel_mousey = -1
+        self.itemsel_mousex_prev = -1
+        self.itemsel_mousey_prev = -1
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
@@ -100,9 +120,15 @@ class MainGUI:
                 'on_multarray_changed_fx': self.on_multarray_changed_fx,
                 'on_singleval_changed_str': self.on_singleval_changed_str,
                 'on_singleval_changed_int': self.on_singleval_changed_int,
+                'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
                 'on_modifier_changed': self.on_modifier_changed,
                 'on_dropdown_changed': self.on_dropdown_changed,
-                'on_dropdownplusone_changed': self.on_dropdownplusone_changed
+                'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
+                'open_itemsel': self.open_itemsel,
+                'itemsel_on_realize': self.itemsel_on_realize,
+                'itemsel_on_motion': self.itemsel_on_motion,
+                'itemsel_on_expose': self.itemsel_on_expose,
+                'itemsel_on_clicked': self.itemsel_on_click
                 }
         self.wTree.signal_autoconnect(dic)
 
@@ -415,6 +441,11 @@ class MainGUI:
         obj.__dict__[wname] = widget.get_value()
         # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
         self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
+
+    def on_singleval_changed_int_itempic(self, widget):
+        """ Special-case to handle changing the item picture properly. """
+        self.on_singleval_changed_int(widget)
+        self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value()))
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
@@ -728,7 +759,7 @@ class MainGUI:
         self.origchar = self.char
         self.char = self.origchar.replicate()
 
-    def populate_item_button(self, item, widget, tablewidget):
+    def populate_item_button(self, item, widget, imgwidget, tablewidget):
         str = ''
         if (item.item_name == ''):
             str = '<i>(None)</i>'
@@ -744,6 +775,10 @@ class MainGUI:
             if (item.hasborder()):
                 str = '<span color="blue">' + str + '</span>'
         widget.set_markup(str)
+        if (item.item_name == ''):
+            imgwidget.set_from_stock(gtk.STOCK_EDIT, 4)
+        else:
+            imgwidget.set_from_pixbuf(self.gfx.get_item(item.pictureid, 26))
         # to resize buttons, we have to do this:
         tablewidget.check_resize()
         # ... that may be a gtk+ bug, have to submit that to find out.
@@ -751,27 +786,30 @@ class MainGUI:
 
     def populate_inv_button(self, row, col, orig=False):
         widget = self.get_widget('inv_%d_%d_text' % (row, col))
+        imgwidget = self.get_widget('inv_%d_%d_image' % (row, col))
         if orig:
             item = self.origchar.inventory[row][col]
         else:
             item = self.char.inventory[row][col]
-        self.populate_item_button(item, widget, self.get_widget('invtable%d' % (row)))
+        self.populate_item_button(item, widget, imgwidget, self.get_widget('invtable%d' % (row)))
 
     def populate_equip_button(self, name, orig=False):
         widget = self.get_widget('%s_text' % (name))
+        imgwidget = self.get_widget('%s_image' % (name))
         if orig:
             item = self.origchar.__dict__[name]
         else:
             item = self.char.__dict__[name]
-        self.populate_item_button(item, widget, self.get_widget('equiptable'))
+        self.populate_item_button(item, widget, imgwidget, self.get_widget('equiptable'))
 
     def populate_ready_button(self, num, orig=False):
         widget = self.get_widget('ready_%d_text' % (num))
+        imgwidget = self.get_widget('ready_%d_image' % (num))
         if orig:
             item = self.origchar.readyitems[num]
         else:
             item = self.char.readyitems[num]
-        self.populate_item_button(item, widget, self.get_widget('readytable'))
+        self.populate_item_button(item, widget, imgwidget, self.get_widget('readytable'))
 
     def on_revert(self, widget):
         """ What to do when we're told to Revert. """
@@ -1059,7 +1097,6 @@ class MainGUI:
         buttonimg = gtk.Image()
         buttonimg.show()
         self.register_widget('%s_image' % name, buttonimg)
-        buttonimg.set_from_stock(gtk.STOCK_EDIT, 4)
         itembutton_hbox.pack_start(buttonimg, False)
 
         buttonlabel = gtk.Label('')
@@ -1103,3 +1140,83 @@ class MainGUI:
         button.add(image)
 
         return button
+
+    def open_itemsel(self, widget):
+        self.itemsel.show()
+
+    def itemsel_on_realize(self, event):
+        # TODO: do we actually need this?
+        pass
+
+    def itemsel_on_motion(self, widget, event):
+        self.itemsel_mousex = int(event.x/self.itemsel_width)
+        self.itemsel_mousey = int(event.y/self.itemsel_height)
+        if (self.itemsel_mousex > self.itemsel_cols):
+            self.itemsel_mousex = self.itemsel_cols
+        if (self.itemsel_mousey > self.itemsel_rows):
+            self.itemsel_mousey = self.itemsel_rows
+        if (self.itemsel_mousex != self.itemsel_mousex_prev or
+            self.itemsel_mousey != self.itemsel_mousey_prev):
+            self.itemsel_clean.append((self.itemsel_mousex_prev, self.itemsel_mousey_prev))
+            self.itemsel_clean.append((self.itemsel_mousex, self.itemsel_mousey))
+            self.itemsel_mousex_prev = self.itemsel_mousex
+            self.itemsel_mousey_prev = self.itemsel_mousey
+        self.itemsel_area.queue_draw()
+
+    def itemsel_draw(self, x, y):
+        itemnum = (y*10)+x
+        if (itemnum < 0):
+            return
+        self.itemsel_pixmap.draw_pixbuf(None, self.gfx.get_item(itemnum), 0, 0, x*self.itemsel_width, y*self.itemsel_height)
+        if (x == self.itemsel_mousex and y == self.itemsel_mousey):
+            color = self.gc_white
+        elif (x == self.itemsel_curx and y == self.itemsel_cury):
+            color = self.gc_green
+        else:
+            return
+
+        # Outline points
+        x1 = x*self.itemsel_width
+        x2 = x1 + self.itemsel_width - 1
+        x3 = x2
+        x4 = x1
+        x5 = x1
+
+        y1 = y*self.itemsel_height
+        y2 = y1
+        y3 = y2 + self.itemsel_height - 1
+        y4 = y3
+        y5 = y1
+
+        self.itemsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+
+    def itemsel_on_expose(self, widget, event):
+        if (self.itemsel_init):
+            for (x, y) in self.itemsel_clean:
+                self.itemsel_draw(x, y)
+        else:
+            self.itemsel_curx = self.get_widget('pictureid').get_value() % 10
+            self.itemsel_cury = int(self.get_widget('pictureid').get_value() / 10)
+            self.itemsel_area.set_size_request(self.itemsel_x, self.itemsel_y)
+            self.itemsel_pixmap = gtk.gdk.Pixmap(self.itemsel_area.window, self.itemsel_x, self.itemsel_y)
+            self.gc_white = gtk.gdk.GC(self.itemsel_area.window)
+            self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
+            #self.gc_white.set_line_attributes(1, gtk.gdk.LINE_SOLID, gtk.gdk.CAP_BUTT, gtk.gdk.JOIN_BEVEL)
+            self.gc_black = gtk.gdk.GC(self.itemsel_area.window)
+            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
+            self.gc_green = gtk.gdk.GC(self.itemsel_area.window)
+            self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.itemsel_pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.itemsel_x, self.itemsel_y)
+            for y in range(self.itemsel_rows):
+                for x in range(self.itemsel_cols):
+                    self.itemsel_draw(x, y)
+            self.itemsel_init = True
+        self.itemsel_clean = []
+        self.itemsel_area.window.draw_drawable(self.itemsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
+            self.itemsel_pixmap, 0, 0, 0, 0, self.itemsel_x, self.itemsel_y)
+
+    def itemsel_on_click(self, widget, event):
+        self.itemsel_init = False
+        self.get_widget('pictureid').set_value(self.itemsel_mousex+(10*self.itemsel_mousey))
+        self.itemsel.hide()
+

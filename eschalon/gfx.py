@@ -19,9 +19,55 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import gtk
+import math
 import zlib
 from struct import unpack
 from eschalonb1.savefile import Savefile, LoadException
+
+class GfxCache:
+    """ A class to hold graphic data, with resizing abilities and the like. """
+
+    def __init__(self, pngdata, width, height, cols):
+        loader = gtk.gdk.PixbufLoader()
+        loader.write(pngdata)
+        self.pixbuf = loader.get_pixbuf()
+        loader.close()
+        loader = None
+        self.width = width
+        self.height = height
+        self.cols = cols
+        self.cache = {}
+
+    def getimg(self, number, sizex=None):
+        """ Grab an image from the cache. """
+        row = math.floor(number / self.cols)
+        col = number % self.cols
+        if (number not in self.cache):
+            copy_x_from = int(col*self.width)
+            copy_y_from = int(row*self.height)
+            if (copy_x_from+self.width > self.pixbuf.get_property('width') or
+                copy_y_from+self.height > self.pixbuf.get_property('height')):
+                return None
+            self.cache[number] = {}
+            self.cache[number]['orig'] = gtk.gdk.Pixbuf(self.pixbuf.get_colorspace(),
+                    self.pixbuf.get_has_alpha(),
+                    self.pixbuf.get_bits_per_sample(),
+                    self.width, self.height)
+            self.pixbuf.copy_area(copy_x_from,
+                    copy_y_from,
+                    self.width,
+                    self.height,
+                    self.cache[number]['orig'],
+                    0, 0)
+            self.cache[number][self.width] = self.cache[number]['orig']
+        if (sizex is None):
+            return self.cache[number]['orig']
+        else:
+            if (sizex not in self.cache[number]):
+                sizey = (sizex*self.height)/self.width
+                self.cache[number][sizex] = self.cache[number]['orig'].scale_simple(sizex, sizey, gtk.gdk.INTERP_BILINEAR)
+            return self.cache[number][sizex]
 
 class PakIndex:
     """ A class to hold information on an individual file in the pak. """
@@ -71,6 +117,10 @@ class Gfx:
         self.unknowni1 = df.readint()
         self.unknowni2 = df.readint()
 
+        # Some graphic-specific indexes/flags
+        self.loadeditems = False
+        self.itemcache = None
+
         # Now load in the index
         decobj = zlib.decompressobj()
         indexdata = decobj.decompress(df.read())
@@ -98,3 +148,9 @@ class Gfx:
                 raise LoadException('Filename %s not found in archive' % (filename))
         else:
             raise LoadException('PAK Index has not been loaded')
+
+    def get_item(self, itemnum, size=None):
+        if (not self.loadeditems):
+            self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
+            self.loadeditems = True
+        return self.itemcache.getimg(itemnum, size)
