@@ -59,8 +59,6 @@ class MapGUI:
         # Let's make sure our map object exists
         self.map = None
 
-        self.mousex = -1
-        self.mousey = -1
         self.sq_x = -1
         self.sq_y = -1
         self.sq_x_prev = -1
@@ -107,6 +105,9 @@ class MapGUI:
         self.statusbar = self.get_widget('mainstatusbar')
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
 
+        # Load in our mouse map (to determine which square we're pointing at
+        self.mousemap = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap.png')).get_pixels_array()
+
         # If we were given a filename, load it.  If not, display the load dialog
         if (self.options['filename'] == None):
             if (not self.on_load()):
@@ -117,8 +118,10 @@ class MapGUI:
                     return
 
         # Start the main gtk loop
-        self.zoom_levels = [4, 8, 16, 24, 32, 50]
-        self.set_zoom_vars(8)
+        self.zoom_levels = [4, 8, 16, 24, 32, 52]
+        # TODO: get this back together
+        self.set_zoom_vars(52)
+        #self.set_zoom_vars(8)
         self.window.show()
         gtk.main()
 
@@ -340,19 +343,55 @@ class MapGUI:
 
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
-        self.mousex = event.x
-        self.mousey = event.y
 
-        # TODO: This needs to be actually-accurate, instead of our current approximation
-        self.sq_x = int((self.mousex-self.z_halfwidth) / self.z_width)
-        self.sq_y = int((self.mousey-self.z_halfheight) / self.z_height * 2)
-        if (self.sq_x > 99):
+        # TODO: This is currently only accurate for the most zoomed-in level
+
+        # What x/y values we start with
+        start_x = int(event.x/self.z_width)
+        start_y = int(event.y/self.z_height)
+
+        # Value to check inside our imagemap
+        test_x = int(event.x - (start_x * self.z_width))
+        test_y = int(event.y - (start_y * self.z_height))
+
+        # We need to modify the y value before we actually process, though
+        start_y = start_y * 2
+
+        # ... and now figure out our coordinates based on the map
+        # I tried out using a dict lookup instead of the series of if/then, but
+        # the if/then ended up being about 40% faster or so.
+        testval = self.mousemap[test_y][test_x][0]
+        if (testval == 50):
+            self.sq_x = start_x-1
+            self.sq_y = start_y-1
+        elif (testval == 100):
+            self.sq_x = start_x
+            self.sq_y = start_y-1
+        elif (testval == 150):
+            self.sq_x = start_x
+            self.sq_y = start_y+1
+        elif (testval == 200):
+            self.sq_x = start_x-1
+            self.sq_y = start_y+1
+        else:
+            self.sq_x = start_x
+            self.sq_y = start_y
+
+        # Some sanity checks
+        if (self.sq_x < 0):
+            self.sq_x = 0
+        elif (self.sq_x > 99):
             self.sq_x = 99
-        if (self.sq_y > 199):
+        if (self.sq_y < 0):
+            self.sq_y = 0
+        elif (self.sq_y > 199):
             self.sq_y = 199
+
+        # See if we've changed, and queue some redraws if so
         if (self.sq_x != self.sq_x_prev or self.sq_y != self.sq_y_prev):
             # It's possible we cause duplication here, but it the CPU cost should be negligible
-            self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
+            if (self.sq_x_prev != -1):
+                self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
             self.cleansquares.append((self.sq_x, self.sq_y))
             self.sq_x_prev = self.sq_x
             self.sq_y_prev = self.sq_y
@@ -420,7 +459,7 @@ class MapGUI:
         x3 = xstart+self.z_width-1
         x4 = x2
 
-        ystart = y*self.z_height/2
+        ystart = y*self.z_halfheight
         y1 = ystart+self.z_halfheight
         y2 = ystart+1
         y3 = y1
