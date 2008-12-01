@@ -105,9 +105,6 @@ class MapGUI:
         self.statusbar = self.get_widget('mainstatusbar')
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
 
-        # Load in our mouse map (to determine which square we're pointing at
-        self.mousemap = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap.png')).get_pixels_array()
-
         # If we were given a filename, load it.  If not, display the load dialog
         if (self.options['filename'] == None):
             if (not self.on_load()):
@@ -119,9 +116,14 @@ class MapGUI:
 
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        # TODO: get this back together
-        self.set_zoom_vars(52)
-        #self.set_zoom_vars(8)
+        self.set_zoom_vars(8)
+
+        # Load in our mouse map (to determine which square we're pointing at)
+        self.mousemap = {}
+        for zoom in self.zoom_levels:
+            self.mousemap[zoom] = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))).get_pixels_array()
+
+        # Now show our window
         self.window.show()
         gtk.main()
 
@@ -360,7 +362,7 @@ class MapGUI:
         # ... and now figure out our coordinates based on the map
         # I tried out using a dict lookup instead of the series of if/then, but
         # the if/then ended up being about 40% faster or so.
-        testval = self.mousemap[test_y][test_x][0]
+        testval = self.mousemap[self.curzoom][test_y][test_x][0]
         if (testval == 50):
             self.sq_x = start_x-1
             self.sq_y = start_y-1
