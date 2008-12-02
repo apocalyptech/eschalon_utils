@@ -19,8 +19,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import sys
 import os
+import sys
+from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
 pygtkreq = '2.0'
@@ -67,6 +68,9 @@ class MapGUI:
 
         self.mapinit = False
 
+        # Graphics we'll need
+        self.gfx = Gfx()
+
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
@@ -77,6 +81,12 @@ class MapGUI:
         self.mainscroll = self.get_widget('mainscroll')
         self.zoom_in_button = self.get_widget('zoom_in_button')
         self.zoom_out_button = self.get_widget('zoom_out_button')
+        self.floor_toggle = self.get_widget('floor_button')
+        self.decal_toggle = self.get_widget('decal_button')
+        self.object_toggle = self.get_widget('object_button')
+        self.objectdecal_toggle = self.get_widget('objectdecal_button')
+        self.barrier_toggle = self.get_widget('barrier_button')
+        self.entity_toggle = self.get_widget('entity_button')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -89,7 +99,8 @@ class MapGUI:
                 'zoom_out': self.zoom_out,
                 'on_mouse_changed': self.on_mouse_changed,
                 'expose_map': self.expose_map,
-                'realize_map': self.realize_map
+                'realize_map': self.realize_map,
+                'map_toggle': self.map_toggle
                 }
         self.wTree.signal_autoconnect(dic)
 
@@ -116,7 +127,9 @@ class MapGUI:
 
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        self.set_zoom_vars(8)
+        #self.set_zoom_vars(24)
+        self.set_zoom_vars(52)
+        # TODO: reset this...
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
@@ -346,8 +359,6 @@ class MapGUI:
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
 
-        # TODO: This is currently only accurate for the most zoomed-in level
-
         # What x/y values we start with
         start_x = int(event.x/self.z_width)
         start_y = int(event.y/self.z_height)
@@ -416,6 +427,10 @@ class MapGUI:
                     script.display(True)
                 print
 
+    def map_toggle(self, widget):
+        self.mapinit = False
+        self.draw_map()
+
     def draw_map(self):
         #self.frame = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 800, 800)
         if (self.maparea.get_style().black_gc is not None):
@@ -427,20 +442,34 @@ class MapGUI:
     def draw_square(self, x, y):
         """ Draw a single square of the map. """
 
+        # TODO: Layers are pretty inefficient here, and regardless there's currently lots
+        # of graphical glitches when you move the mouse around.  That needs to get fixed.
+        barrier = False
+        entity = False
+        clear = False
+        pointer = False
+
         if (x == self.sq_x and y == self.sq_y):
+            pointer = True
             color = self.gc_red
         elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
+            entity = True
             color = self.gc_green
         elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) == 0):
+            entity = True
             color = self.gc_cyan
         elif (self.map.squares[y][x].scriptid == 0 and len(self.map.squares[y][x].scripts) > 0):
             # afaik, this doesn't happen.  should use something other than red here, though
+            entity = True
             color = self.gc_red
         elif (self.map.squares[y][x].wall == 1):
+            barrier = True
             color = self.gc_white
         elif (self.map.squares[y][x].floorimg == 126):
+            barrier = True
             color = self.gc_blue
         else:
+            clear = True
             color = self.gc_black
 
         # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
@@ -450,7 +479,6 @@ class MapGUI:
         else:
             xpad = 0
 
-        # TODO: This still doesn't seem quite right
         # Coordinates
         #      2
         #   1     3
@@ -471,8 +499,45 @@ class MapGUI:
             y4 = y4 + 1
             y2 = y2 - 1
 
-        # Draw the square
-        self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+        # Clear out, if needed (to clean up mouse)
+        if (clear):
+            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+
+        # Draw the floor tile
+        if (not pointer and self.floor_toggle.get_active()):
+            pixbuf = self.gfx.get_floor(self.map.squares[y][x].floorimg, self.curzoom)
+            if (pixbuf is not None):
+                self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2)
+
+        # Draw the floor decal
+        if (not pointer and self.decal_toggle.get_active()):
+            pixbuf = self.gfx.get_decal(self.map.squares[y][x].decalimg, self.curzoom)
+            if (pixbuf is not None):
+                self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2)
+
+        # Draw the object
+        if (not pointer and self.object_toggle.get_active()):
+            (pixbuf, pixheight) = self.gfx.get_object(self.map.squares[y][x].wallimg, self.curzoom)
+            if (pixbuf is not None):
+                self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2-(self.z_height*pixheight))
+
+        # Draw the object decal
+        if (not pointer and self.objectdecal_toggle.get_active()):
+            pixbuf = self.gfx.get_object_decal(self.map.squares[y][x].walldecalimg, self.curzoom)
+            if (pixbuf is not None):
+                self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2-self.z_width)
+
+        # Draw Barriers
+        if (barrier and self.barrier_toggle.get_active()):
+            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+
+        # Draw Entities
+        if (entity and self.entity_toggle.get_active()):
+            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+
+        # Finally, draw the mouse pointer
+        if (pointer):
+            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)

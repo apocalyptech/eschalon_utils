@@ -27,10 +27,10 @@ class Square:
 
         self.wall = -1
         self.floorimg = -1
-        self.unknown3 = -1
+        self.decalimg = -1
         self.wallimg = -1
         self.unknown5 = -1
-        self.unknown6 = -1
+        self.walldecalimg = -1
         self.scriptid = -1
 
         self.scripts = []
@@ -41,10 +41,10 @@ class Square:
         # Simple Values
         newsquare.wall = self.wall
         newsquare.floorimg = self.floorimg
-        newsquare.unknown3 = self.unknown3
+        newsquare.decalimg = self.decalimg
         newsquare.wallimg = self.wallimg
         newsquare.unknown5 = self.unknown5
-        newsquare.unknown6 = self.unknown6
+        newsquare.walldecalimg = self.walldecalimg
         newsquare.scriptid = self.scriptid
 
         # Arrays
@@ -59,10 +59,10 @@ class Square:
 
         self.wall = df.readuchar()
         self.floorimg = df.readuchar()
-        self.unknown3 = df.readuchar()
+        self.decalimg = df.readuchar()
         self.wallimg = df.readuchar()
         self.unknown5 = df.readuchar()
-        self.unknown6 = df.readuchar()
+        self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
 
     def write(self, df):
@@ -70,17 +70,17 @@ class Square:
 
         df.writeuchar(self.wall)
         df.writeuchar(self.floorimg)
-        df.writeuchar(self.unknown3)
+        df.writeuchar(self.decalimg)
         df.writeuchar(self.wallimg)
         df.writeuchar(self.unknown5)
-        df.writeuchar(self.unknown6)
+        df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
 
     def hasdata(self):
         """ Do we have something other than zeroes? """
         return (self.wall != 0 or self.floorimg != 0 or
-                self.unknown3 != 0 or self.wallimg != 0 or
-                self.unknown5 != 0 or self.unknown6 != 0 or
+                self.decalimg != 0 or self.wallimg != 0 or
+                self.unknown5 != 0 or self.walldecalimg != 0 or
                 self.scriptid != 0)
     
     def addscript(self, script):
@@ -95,9 +95,9 @@ class Square:
 
         print "    Wall Flag: %d" % self.wall
         print "    Floor Image: %d" % self.floorimg
+        print "    Decal Image: %d" % self.decalimg
         print "    Wall Image: %d" % self.wallimg
+        print "    Wall Decal Image: %d" % self.walldecalimg
         print "    Script ID: %d" % self.scriptid
         if (unknowns):
-            print "    Unknown 3: %d" % self.unknown3
             print "    Unknown 5: %d" % self.unknown5
-            print "    Unknown 6: %d" % self.unknown6

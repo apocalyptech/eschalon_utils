@@ -42,6 +42,7 @@ class GfxCache:
 
     def getimg(self, number, sizex=None):
         """ Grab an image from the cache. """
+        number = number - 1
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.cache):
@@ -120,9 +121,24 @@ class Gfx:
         self.unknowni2 = df.readint()
 
         # Some graphic-specific indexes/flags
-        self.loadeditems = False
         self.itemcache = None
+        self.floorcache = None
+        self.decalcache = None
+        self.objcache1 = None
+        self.objcache2 = None
+        self.objcache3 = None
+        self.objcache4 = None
+        self.objdecalcache = None
         self.avatarcache = {}
+
+        # wtf @ needing this
+        self.treemap = {
+            251: 4,
+            252: 5,
+            253: 1,
+            254: 2,
+            255: 3
+            }
 
         # Now load in the index
         decobj = zlib.decompressobj()
@@ -144,7 +160,7 @@ class Gfx:
             if (filename in self.fileindex):
                 self.df.open_r()
                 self.df.seek(self.zeroindex + self.fileindex[filename].abs_index)
-                filedata = zlib.decompress(self.df.read())
+                filedata = zlib.decompress(self.df.read(self.fileindex[filename].size_compressed))
                 self.df.close()
                 return filedata
             else:
@@ -153,10 +169,51 @@ class Gfx:
             raise LoadException('PAK Index has not been loaded')
 
     def get_item(self, itemnum, size=None):
-        if (not self.loadeditems):
+        if (self.itemcache is None):
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
-            self.loadeditems = True
-        return self.itemcache.getimg(itemnum, size)
+        return self.itemcache.getimg(itemnum+1, size)
+
+    def get_floor(self, floornum, size=None):
+        if (floornum == 0):
+            return None
+        if (self.floorcache is None):
+            self.floorcache = GfxCache(self.readfile('iso_tileset_base.png'), 52, 26, 6)
+        return self.floorcache.getimg(floornum, size)
+
+    def get_decal(self, decalnum, size=None):
+        if (decalnum == 0):
+            return None
+        if (self.decalcache is None):
+            self.decalcache = GfxCache(self.readfile('iso_tileset_base_decals.png'), 52, 26, 6)
+        return self.decalcache.getimg(decalnum, size)
+
+    # Returns a tuple, first item is the pixbuf, second is the extra height to add while drawing
+    def get_object(self, objnum, size=None):
+        if (objnum == 0):
+            return (None, 0)
+        if (objnum < 101):
+            if (self.objcache1 is None):
+                self.objcache1 = GfxCache(self.readfile('iso_tileset_obj_a.png'), 52, 52, 6)
+            return (self.objcache1.getimg(objnum, size), 1)
+        elif (objnum < 161):
+            if (self.objcache2 is None):
+                self.objcache2 = GfxCache(self.readfile('iso_tileset_obj_b.png'), 52, 78, 6)
+            return (self.objcache2.getimg(objnum-100, size), 2)
+        elif (objnum < 251):
+            if (self.objcache3 is None):
+                self.objcache3 = GfxCache(self.readfile('iso_tileset_obj_c.png'), 52, 78, 6)
+            return (self.objcache3.getimg(objnum-160, size), 2)
+        else:
+            if (self.objcache4 is None):
+                self.objcache4 = GfxCache(self.readfile('iso_trees.png'), 52, 130, 5)
+            return (self.objcache4.getimg(self.treemap[objnum], size), 4)
+
+    def get_object_decal(self, decalnum, size=None):
+        if (decalnum == 0):
+            return None
+        if (self.objdecalcache is None):
+            self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
+        return self.objdecalcache.getimg(decalnum, size)
 
     def get_avatar(self, avatarnum):
         if (avatarnum < 0 or avatarnum > 7):
