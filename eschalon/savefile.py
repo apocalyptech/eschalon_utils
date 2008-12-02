@@ -19,6 +19,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import os
 from struct import pack, unpack
 
 class LoadException(Exception):
@@ -41,6 +42,10 @@ class Savefile:
         self.df = None
         self.opened_r = False
         self.opened_w = False
+
+    def exists(self):
+        """ Returns true if the file currently exists. """
+        return os.path.exists(self.filename)
 
     def close(self):
         """ Closes the filehandle. """

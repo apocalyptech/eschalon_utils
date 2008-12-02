@@ -19,7 +19,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-app_name = 'Eschalon Book 1 Savefile Editor'
+app_name = 'Eschalon Book  Savefile Editor'
 version = '0.3.0'
 url = 'http://apocalyptech.com/eschalon/'
 authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
@@ -27,7 +27,7 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
         'Square', 'Mapscript',
-        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable' ]
+        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable', 'entitytable' ]
 
 # Lookup tables
 attrtable = {
@@ -193,4 +193,76 @@ diseasetable = {
         0x2000: 'Insanity Fever',
         0x4000: 'Fleshrot',
         0x8000: 'Cursed'
+    }
+
+# Entities
+entitytable = {
+        0x01: 'Fanged Salamander',
+        0x02: 'Bloodsipper',
+        0x03: 'Raptor',
+        0x04: 'Noximander',
+        0x05: 'Fungal Slime',
+        0x06: 'Walking Corpse',
+        0x07: 'Acid Grubb',
+        0x08: 'Timberland Giant',
+        0x09: 'Goblin Hacker',
+        0x0A: 'Goblin Archer',
+        0x0B: 'Goblin Warlord',
+        0x0C: 'Hive Drone',
+        0x0D: 'Hive Queen',
+        0x0E: 'Thug',
+        0x0F: 'Dimensional Eye',
+        0x10: 'Giant Arachnid',
+        0x11: 'Dirachnid',
+        0x12: 'Skeleton',
+        0x13: 'Goblin Bombthug',
+        0x14: 'Poltergeist',
+        0x15: 'Barrea Mercenary',
+        0x16: 'Taurax',
+        0x17: 'Spire Guard',
+        0x33: 'Maddock',
+        0x34: 'Michael',
+        0x35: 'Farwick',
+        0x36: 'Abygale',
+        0x37: 'Eleanor (crash)',
+        0x38: 'Garrett (crash)',
+        0x39: 'Porter',
+        0x3A: '(crash 3)',
+        0x3B: 'Lilith',
+        0x3C: 'Town Guard',
+        0x3D: 'Gruzz',
+        0x3E: 'Gatekeeper',
+        0x3F: 'Eeru',
+        0x40: 'Erik',
+        0x41: 'Darkford Guard',
+        0x42: 'Gunther',
+        0x43: 'Leurik',
+        0x44: 'Vault Master',
+        0x45: 'Paul',
+        0x46: 'Krista',
+        0x47: 'Gamfari',
+        0x48: '(your brother) (crash 4)',
+        0x49: 'Mary',
+        0x4A: 'Vekkar (crash)',
+        0x4B: 'Jonathon',
+        0x4C: 'Shady Character',
+        0x4D: '(crash 6)',
+        0x4E: 'Vault Guard',
+        0x4F: 'Vidar the Knife',
+        0x50: 'Walter',
+        0x51: 'Azure Guard',
+        0x52: 'Captain Morgan',
+        0x53: 'Erubor',
+        0x54: 'Shadowmirk Acolyte',
+        0x55: 'Phillip',
+        0x56: 'Omar',
+        0x57: 'Gramuk',
+        0x58: 'Shady Character (2)',
+        0x5A: '(crash 7)',
+        0x5B: 'Sonya',
+        0x5C: 'Aaron',
+        0x5D: 'Penelope',
+        0x5E: 'Siam',
+        0x5F: 'William',
+        0x60: 'Hesham'
     }

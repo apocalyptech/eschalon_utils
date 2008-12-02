@@ -19,10 +19,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import os
 import struct
 from eschalonb1.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalonb1.square import Square
 from eschalonb1.mapscript import Mapscript
+from eschalonb1.entity import Entity
 
 class Map:
     """ The base Map class.  """
@@ -31,6 +33,8 @@ class Map:
         """ A fresh object. """
 
         self.df = None
+        self.df_ent = None
+        self.filename_ent = ''
         self.mapid = ''
         self.mapname = ''
         self.soundfile1 = ''
@@ -63,15 +67,16 @@ class Map:
         self.cursqrow = 0
 
         self.squares = []
-        self.scriptcount = 0
         for i in range(200):
             self.squares.append([])
             for j in range(100):
                 self.squares[i].append(Square())
 
         self.scripts = []
+        self.entities = []
 
         self.df = Savefile(filename)
+        self.df_ent = Savefile(filename[:filename.rindex('.map')] + '.ent')
 
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
@@ -144,6 +149,19 @@ class Map:
         except FirstItemLoadException, e:
             return False
 
+    def addentity(self, savegame=True):
+        """ Add an entity. """
+        try:
+            entity = Entity(savegame)
+            entity.read(self.df_ent)
+            # The same note in addscript(), above, applies here
+            self.entities.append(entity)
+            if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
+                self.squares[entity.y][entity.x].addentity(entity)
+            return True
+        except FirstItemLoadException, e:
+            return False
+
     def read(self):
         """ Read in the whole map from a file descriptor. """
 
@@ -188,6 +206,18 @@ class Map:
                     pass
             except FirstItemLoadException, e:
                 pass
+
+            # Entities...  Just keep going until EOF (note that this is in a separate file)
+            # Also note that we have to support situations where there is no entity file
+            if (self.df_ent.exists()):
+                self.df_ent.open_r()
+                try:
+                    # TODO: Need to discern between global files and savegame files here
+                    while (self.addentity(False)):
+                        pass
+                except FirstItemLoadException, e:
+                    pass
+                self.df_ent.close()
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
@@ -248,3 +278,9 @@ class Map:
         # Clean up
         self.df.close()
 
+        # Now write out entities, which actually happens in a different file
+        if (len(self.entities) > 0):
+            self.df_ent.open_w()
+            for entity in self.entities:
+                entity.write(self.df_ent)
+            self.df_ent.close()

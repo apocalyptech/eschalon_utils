@@ -34,6 +34,7 @@ class Square:
         self.scriptid = -1
 
         self.scripts = []
+        self.entity = None
 
     def replicate(self):
         newsquare = Square()
@@ -50,6 +51,10 @@ class Square:
         # Arrays
         for script in self.scripts:
             newsquare.scripts.append(script.replicate())
+        
+        # Objects
+        if (self.entity is not None):
+            newsquare.entity = self.entity.replicate()
 
         # ... aaand return our new object
         return newsquare
@@ -89,6 +94,13 @@ class Square:
         stored on disk.
         """
         self.scripts.append(script)
+    
+    def addentity(self, entity):
+        """
+        Add an entity to our entity list.  Just an internal construct which isn't actually
+        stored on disk.
+        """
+        self.entity = entity
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -101,3 +113,17 @@ class Square:
         print "    Script ID: %d" % self.scriptid
         if (unknowns):
             print "    Unknown 5: %d" % self.unknown5
+
+        # Display any entities we may have
+        if (self.entity is not None):
+            print
+            print "  Associated Entity:"
+            self.entity.display(unknowns)
+            print
+
+        # Display any scripts we may have
+        for script in self.scripts:
+            print
+            print "  Associated Script:"
+            script.display(unknowns)
+        print

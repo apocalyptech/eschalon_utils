@@ -86,6 +86,7 @@ class MapGUI:
         self.object_toggle = self.get_widget('object_button')
         self.objectdecal_toggle = self.get_widget('objectdecal_button')
         self.barrier_toggle = self.get_widget('barrier_button')
+        self.script_toggle = self.get_widget('script_button')
         self.entity_toggle = self.get_widget('entity_button')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
@@ -418,12 +419,6 @@ class MapGUI:
             if (self.sq_x < len(self.map.squares[self.sq_y])):
                 print "Square at %d x %d - " % (self.sq_x, self.sq_y)
                 self.map.squares[self.sq_y][self.sq_x].display(True)
-                # TODO: This mechanic is pretty dumb, should just happen Automatically with the display() call
-                for script in self.map.squares[self.sq_y][self.sq_x].scripts:
-                    print
-                    print "  Associated Script:"
-                    script.display(True)
-                print
 
     def map_toggle(self, widget):
         self.mapinit = False
@@ -443,22 +438,29 @@ class MapGUI:
         # TODO: Layers are pretty inefficient here, and regardless there's currently lots
         # of graphical glitches when you move the mouse around.  That needs to get fixed.
         barrier = False
-        entity = False
+        script = False
         clear = False
         pointer = False
+        entity = False
 
         if (x == self.sq_x and y == self.sq_y):
             pointer = True
             color = self.gc_red
-        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
+        elif (self.map.squares[y][x].entity is not None):
             entity = True
+            if (self.map.squares[y][x].entity.friendly == 1):
+                color = self.gc_yellow
+            else:
+                color = self.gc_red
+        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
+            script = True
             color = self.gc_green
         elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) == 0):
-            entity = True
+            script = True
             color = self.gc_cyan
         elif (self.map.squares[y][x].scriptid == 0 and len(self.map.squares[y][x].scripts) > 0):
             # afaik, this doesn't happen.  should use something other than red here, though
-            entity = True
+            script = True
             color = self.gc_red
         elif (self.map.squares[y][x].wall == 1):
             barrier = True
@@ -528,6 +530,10 @@ class MapGUI:
         if (barrier and self.barrier_toggle.get_active()):
             self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
+        # Draw Scripts
+        if (script and self.script_toggle.get_active()):
+            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+
         # Draw Entities
         if (entity and self.entity_toggle.get_active()):
             self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
@@ -552,6 +558,8 @@ class MapGUI:
             self.gc_red.set_rgb_fg_color(gtk.gdk.Color(65535, 0, 0))
             self.gc_green = gtk.gdk.GC(self.maparea.window)
             self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.gc_yellow = gtk.gdk.GC(self.maparea.window)
+            self.gc_yellow.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 0))
             self.gc_cyan = gtk.gdk.GC(self.maparea.window)
             self.gc_cyan.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 65535))
             self.gc_blue = gtk.gdk.GC(self.maparea.window)

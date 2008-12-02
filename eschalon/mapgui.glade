@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Dec  1 17:43:02 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Dec  2 16:47:45 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -242,6 +242,22 @@
                   </packing>
                 </child>
                 <child>
+                  <widget class="GtkToggleButton" id="script_button">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="label" translatable="yes">Scripts</property>
+                    <property name="response_id">0</property>
+                    <signal name="clicked" handler="map_toggle"/>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">3</property>
+                    <property name="position">8</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkToggleButton" id="entity_button">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -254,7 +270,7 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">3</property>
-                    <property name="position">8</property>
+                    <property name="position">9</property>
                   </packing>
                 </child>
               </widget>

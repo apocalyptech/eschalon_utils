@@ -35,3 +35,4 @@ Internal
 --------
  * We're doubly-caching some widgets in the GUI code, which is stupid.
    Should consolidate those.
+ * Make sure that map-writing actually works
