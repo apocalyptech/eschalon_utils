@@ -127,9 +127,7 @@ class MapGUI:
 
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        #self.set_zoom_vars(24)
-        self.set_zoom_vars(52)
-        # TODO: reset this...
+        self.set_zoom_vars(24)
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
@@ -499,9 +497,8 @@ class MapGUI:
             y4 = y4 + 1
             y2 = y2 - 1
 
-        # Clear out, if needed (to clean up mouse)
-        if (clear):
-            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+        # Let's just go ahead and do this *always*
+        self.pixmap.draw_polygon(self.gc_black, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
         # Draw the floor tile
         if (not pointer and self.floor_toggle.get_active()):
