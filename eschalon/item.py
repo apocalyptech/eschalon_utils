@@ -198,66 +198,70 @@ class Item:
 
         global attrtable, skilltable, typetable, itemincrtable, flagstable
 
+        ret = []
+
         if (self.type == 0):
-            print "\t(none)"
+            ret.append("\t(none)")
         else:
-            print "\t%s" % self.item_name
+            ret.append("\t%s" % self.item_name)
             if (typetable.has_key(self.type)):
-                print "\tCategory: %s" % (typetable[self.type])
+                ret.append("\tCategory: %s" % (typetable[self.type]))
             else:
-                print "\tCategory: 0x%08X" % (self.type)
+                ret.append("\tCategory: 0x%08X" % (self.type))
             if (self.subtype != 0):
                 if (skilltable.has_key(self.subtype)):
-                    print "\tSubcategory: %s" % (skilltable[self.subtype])
+                    ret.append("\tSubcategory: %s" % (skilltable[self.subtype]))
                 else:
-                    print "\tSubcategory: 0x%08X" % (self.subtype)
+                    ret.append("\tSubcategory: 0x%08X" % (self.subtype))
             if (self.visibility == 3):
-                print "\t(Note: this item has not been identified yet)"
+                ret.append("\t(Note: this item has not been identified yet)")
             elif (self.visibility != 1):
-                print "\tNOTICE: Unknown visibility ID: %d" % self.visibility
-            print "\tPicture ID: %d" % self.pictureid
-            print "\tValue: %d" % self.value
+                ret.append("\tNOTICE: Unknown visibility ID: %d" % self.visibility)
+            ret.append("\tPicture ID: %d" % self.pictureid)
+            ret.append("\tValue: %d" % self.value)
             if (self.basedamage > 0):
-                print "\tBase Damage: %d" % self.basedamage
+                ret.append("\tBase Damage: %d" % self.basedamage)
             if (self.basearmor > 0):
-                print "\tBase Armor: %d" % self.basearmor
+                ret.append("\tBase Armor: %d" % self.basearmor)
             if (self.attr_modified > 0):
-                print "\tAttribute Modifier: +%d %s" % (self.attr_modifier, attrtable[self.attr_modified])
+                ret.append("\tAttribute Modifier: +%d %s" % (self.attr_modifier, attrtable[self.attr_modified]))
             if (self.skill_modified > 0):
-                print "\tSkill Modifier: +%d %s" % (self.skill_modifier, skilltable[self.skill_modified])
+                ret.append("\tSkill Modifier: +%d %s" % (self.skill_modifier, skilltable[self.skill_modified]))
             if (self.hitpoint > 0):
-                print "\tSpecial: +%d Hit Points" % self.hitpoint
+                ret.append("\tSpecial: +%d Hit Points" % self.hitpoint)
             if (self.mana > 0):
-                print "\tSpecial: +%d Mana Points" % self.mana
+                ret.append("\tSpecial: +%d Mana Points" % self.mana)
             if (self.tohit > 0):
-                print "\tSpecial: +%d ToHit" % self.tohit
+                ret.append("\tSpecial: +%d ToHit" % self.tohit)
             if (self.damage > 0):
-                print "\tSpecial: +%d Damage" % self.damage
+                ret.append("\tSpecial: +%d Damage" % self.damage)
             if (self.armor > 0):
-                print "\tSpecial: +%d Armor" % self.armor
+                ret.append("\tSpecial: +%d Armor" % self.armor)
             if (self.incr > 0):
                 if (itemincrtable.has_key(self.incr)):
-                    print "\tSpecial: %s +20%%" % itemincrtable[self.incr]
+                    ret.append("\tSpecial: %s +20%%" % itemincrtable[self.incr])
                 else:
-                    print "\tSpecial: 0x%08X" % self.incr
+                    ret.append("\tSpecial: 0x%08X" % self.incr)
             if (self.flags > 0):
                 if (flagstable.has_key(self.flags)):
-                    print "\tSpecial: %s" % flagstable[self.flags]
+                    ret.append("\tSpecial: %s" % flagstable[self.flags])
                 else:
-                    print "\tSpecial: 0x%08X" % self.flags
-            print "\tWeight: %0.1f lbs" % self.weight
+                    ret.append("\tSpecial: 0x%08X" % self.flags)
+            ret.append("\tWeight: %0.1f lbs" % self.weight)
             if (self.script != ''):
-                print "\tScript: %s" % self.script
+                ret.append("\tScript: %s" % self.script)
             if (self.duration > 0):
-                print "\tDuration: %d" % self.duration
+                ret.append("\tDuration: %d" % self.duration)
             if (self.canstack == 1):
-                print "\tItem can be stacked (more than one per slot)"
+                ret.append("\tItem can be stacked (more than one per slot)")
             elif (self.canstack != 0):
-                print "\tNOTICE: Unknown can-stack: %d" % self.canstack
+                ret.append("\tNOTICE: Unknown can-stack: %d" % self.canstack)
             if (self.quantity > 1):
-                print "\t(%d of this item in slot)" % self.quantity
+                ret.append("\t(%d of this item in slot)" % self.quantity)
             if (unknowns):
-                print "\tUnknown fields:"
-                print "\t\tZero 1: %d" % self.zero1
-                print "\t\tEmpty String: %s" % self.emptystr
-        print
+                ret.append("\tUnknown fields:")
+                ret.append("\t\tZero 1: %d" % self.zero1)
+                ret.append("\t\tEmpty String: %s" % self.emptystr)
+        ret.append('')
+
+        return "\n".join(ret)

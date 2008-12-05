@@ -73,7 +73,7 @@ class MapCLI:
             for x in range(len(map.squares[y])):
                 if (map.squares[y][x].hasdata() != 0):
                     print ' * Cell %d:' % x
-                    map.squares[y][x].display(unknowns)
+                    print map.squares[y][x].display(unknowns)
                     print 
         pass
 
@@ -83,7 +83,7 @@ class MapCLI:
         for script in self.map.scripts:
             i = i + 1
             print 'Script Number %d' % i
-            script.display(unknowns)
+            print script.display(unknowns)
             print
 
     def display_txtmap(self):

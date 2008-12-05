@@ -91,36 +91,42 @@ class Unknowns:
 
     def iblock(self, num, arr, desc='Block of integers'):
         """ Display a block of unknown integers. """
-        print "%s %d:" % (desc, num)
+        ret = []
+        ret.append("%s %d:" % (desc, num))
         for i in arr:
-            print "\t0x%08X - %d" % (i, i)
+            ret.append("\t0x%08X - %d" % (i, i))
+        return "\n".join(ret)
 
     def display(self):
         """ Show a textual description of all unknown fields. """
 
-        print "Initial Zero: %d" % self.initzero
-        print "Empty Character String: %s" % self.charstring
-        print "Usually 1: %d" % self.charone
-        print "Another integer 1, generally 0: %d" % self.beginzero1
-        print "Another integer 2, generally 0: %d" % self.beginzero2
-        self.iblock(1, self.sparseiblock, 'Sparse integers (interleaved with char statuses)')
-        self.iblock(1, self.iblock1)
-        print "Block of 2 Strings plus 1 Integer:"
+        ret = []
+
+        ret.append("Initial Zero: %d" % self.initzero)
+        ret.append("Empty Character String: %s" % self.charstring)
+        ret.append("Usually 1: %d" % self.charone)
+        ret.append("Another integer 1, generally 0: %d" % self.beginzero1)
+        ret.append("Another integer 2, generally 0: %d" % self.beginzero2)
+        ret.append(self.iblock(1, self.sparseiblock, 'Sparse integers (interleaved with char statuses)'))
+        ret.append(self.iblock(1, self.iblock1))
+        ret.append("Block of 2 Strings plus 1 Integer:")
         for i in range(len(self.ssiblocks1)):
-            print "\tBlock %d:" % (i+1)
-            print "\t\tString 1: %s" % self.ssiblocks1[i]
-            print "\t\tString 2: %s" % self.ssiblocks1[i]
-            print "\t\tInt: %d" % self.ssiblocki[i]
-        print "Extra string 1: %s" % self.extstr1
-        print "Extra string 2: %s" % self.extstr2
-        print "Another zero: %d" % self.anotherzero
-        print "Another int (generally a multiple of 256): %d" % self.anotherint
-        print "A short int: %d" % self.shortval
-        print "A string (always blank for me): %s" % self.emptystr
-        self.iblock(2, self.iblock2)
-        print "Pre-inventory blank string 1: %s" % self.preinvs1
-        print "Pre-inventory blank string 2: %s" % self.preinvs2
-        print "Pre-inventory zero 1: %d" % self.preinvzero1
-        print "Pre-inventory zero 2: %d" % self.preinvzero2
+            ret.append("\tBlock %d:" % (i+1))
+            ret.append("\t\tString 1: %s" % self.ssiblocks1[i])
+            ret.append("\t\tString 2: %s" % self.ssiblocks1[i])
+            ret.append("\t\tInt: %d" % self.ssiblocki[i])
+        ret.append("Extra string 1: %s" % self.extstr1)
+        ret.append("Extra string 2: %s" % self.extstr2)
+        ret.append("Another zero: %d" % self.anotherzero)
+        ret.append("Another int (generally a multiple of 256): %d" % self.anotherint)
+        ret.append("A short int: %d" % self.shortval)
+        ret.append("A string (always blank for me): %s" % self.emptystr)
+        ret.append(self.iblock(2, self.iblock2))
+        ret.append("Pre-inventory blank string 1: %s" % self.preinvs1)
+        ret.append("Pre-inventory blank string 2: %s" % self.preinvs2)
+        ret.append("Pre-inventory zero 1: %d" % self.preinvzero1)
+        ret.append("Pre-inventory zero 2: %d" % self.preinvzero2)
         if (len(self.extradata) != 0):
-            print "File has extra data appended at the end: %d bytes" % len(self.extradata)
+            ret.append("File has extra data appended at the end: %d bytes" % len(self.extradata))
+
+        return "\n".join(ret)

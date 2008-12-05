@@ -105,25 +105,29 @@ class Square:
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 
-        print "    Wall Flag: %d" % self.wall
-        print "    Floor Image: %d" % self.floorimg
-        print "    Decal Image: %d" % self.decalimg
-        print "    Wall Image: %d" % self.wallimg
-        print "    Wall Decal Image: %d" % self.walldecalimg
-        print "    Script ID: %d" % self.scriptid
+        ret = []
+        ret.append("    Wall Flag: %d" % self.wall)
+        ret.append("    Floor Image: %d" % self.floorimg)
+        ret.append("    Decal Image: %d" % self.decalimg)
+        ret.append("    Wall Image: %d" % self.wallimg)
+        ret.append("    Wall Decal Image: %d" % self.walldecalimg)
+        ret.append("    Script ID: %d" % self.scriptid)
         if (unknowns):
-            print "    Unknown 5: %d" % self.unknown5
+            ret.append("    Unknown 5: %d" % self.unknown5)
 
         # Display any entities we may have
         if (self.entity is not None):
-            print
-            print "  Associated Entity:"
-            self.entity.display(unknowns)
-            print
+            ret.append('')
+            ret.append("  Associated Entity:")
+            ret.append(self.entity.display(unknowns))
+            ret.append('')
 
         # Display any scripts we may have
         for script in self.scripts:
-            print
-            print "  Associated Script:"
-            script.display(unknowns)
-        print
+            ret.append('')
+            ret.append("  Associated Script:")
+            ret.append(script.display(unknowns))
+        ret.append('')
+
+        # Return
+        return "\n".join(ret)

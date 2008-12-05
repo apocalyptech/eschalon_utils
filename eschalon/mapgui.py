@@ -75,6 +75,7 @@ class MapGUI:
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.get_widget('mainwindow')
+        self.infowindow = self.get_widget('infowindow')
         self.maparea = self.get_widget('maparea')
         self.mapname_label = self.get_widget('mapname')
         self.coords_label = self.get_widget('coords')
@@ -88,6 +89,11 @@ class MapGUI:
         self.barrier_toggle = self.get_widget('barrier_button')
         self.script_toggle = self.get_widget('script_button')
         self.entity_toggle = self.get_widget('entity_button')
+        self.info_button = self.get_widget('info_button')
+        self.infotext = self.get_widget('infotext')
+        self.infobuffer = gtk.TextBuffer()
+        self.infotext.set_buffer(self.infobuffer)
+        self.infoscroll = self.get_widget('infoscroll')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -101,7 +107,9 @@ class MapGUI:
                 'on_mouse_changed': self.on_mouse_changed,
                 'expose_map': self.expose_map,
                 'realize_map': self.realize_map,
-                'map_toggle': self.map_toggle
+                'map_toggle': self.map_toggle,
+                'info_toggle': self.info_toggle,
+                'infowindow_clear': self.infowindow_clear
                 }
         self.wTree.signal_autoconnect(dic)
 
@@ -417,8 +425,23 @@ class MapGUI:
 
         if (self.sq_y < len(self.map.squares)):
             if (self.sq_x < len(self.map.squares[self.sq_y])):
-                print "Square at %d x %d - " % (self.sq_x, self.sq_y)
-                self.map.squares[self.sq_y][self.sq_x].display(True)
+                self.infobuffer.insert(self.infobuffer.get_end_iter(), "Square at (%d, %d):\n%s\n" % (self.sq_x, self.sq_y, self.map.squares[self.sq_y][self.sq_x].display(True)))
+                adjust = self.infoscroll.get_vadjustment()
+                adjust.set_value(adjust.upper)
+                if (not self.info_button.get_active()):
+                    self.info_button.clicked()
+                self.infowindow.show()
+                #print "Square at %d x %d - " % (self.sq_x, self.sq_y)
+                #self.map.squares[self.sq_y][self.sq_x].display(True)
+
+    def info_toggle(self, widget):
+        if (self.info_button.get_active()):
+            self.infowindow.show()
+        else:
+            self.infowindow.hide()
+
+    def infowindow_clear(self, widget):
+        self.infobuffer.set_text('')
 
     def map_toggle(self, widget):
         self.mapinit = False

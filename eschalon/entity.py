@@ -113,25 +113,29 @@ class Entity:
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 
+        ret = []
+
         if (self.entid in entitytable):
-            print "\tEntity: %s" % (entitytable[self.entid])
+            ret.append("\tEntity: %s" % (entitytable[self.entid]))
         else:
-            print "\tEntity ID: %d" % (self.entid)
-        print "\tMap Location: (%d, %d)" % (self.x, self.y)
+            ret.append("\tEntity ID: %d" % (self.entid))
+        ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
         if (self.direction in dirtable):
-            print "\tFacing %s" % (dirtable[self.direction])
+            ret.append("\tFacing %s" % (dirtable[self.direction]))
         else:
-            print "\tDirection ID: %d" % (self.direction)
-        print "\tScript: %s" % self.script
+            ret.append("\tDirection ID: %d" % (self.direction))
+        ret.append("\tScript: %s" % self.script)
         if (self.savegame):
-            print "\tFriendly: %d" % (self.friendly)
-            print "\tHealth: %d" % (self.health)
+            ret.append("\tFriendly: %d" % (self.friendly))
+            ret.append("\tHealth: %d" % (self.health))
             if (unknowns):
-                print "\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1
-                print "\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc1
-                print "\tUnknown value 3: %d" % self.unknownc1
-                print "\tUnknown value 4: %d" % self.unknownc1
-                print "\tUnknown value 5 (generally zero): %d" % self.unknownc1
-                print "\tUnknown value 6 (generally zero): %d" % self.unknownc1
+                ret.append("\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1)
+                ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc1)
+                ret.append("\tUnknown value 3: %d" % self.unknownc1)
+                ret.append("\tUnknown value 4: %d" % self.unknownc1)
+                ret.append("\tUnknown value 5 (generally zero): %d" % self.unknownc1)
+                ret.append("\tUnknown value 6 (generally zero): %d" % self.unknownc1)
         else:
-            print "\t(No extra attributes - this is the base map definition file)"
+            ret.append( "\t(No extra attributes - this is the base map definition file)")
+
+        return "\n".join(ret)

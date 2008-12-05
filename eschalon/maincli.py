@@ -205,33 +205,33 @@ class MainCLI:
         print "--------------"
         print
         print "Quiver:"
-        char.quiver.display(unknowns)
+        print char.quiver.display(unknowns)
         print "Helm:"
-        char.helm.display(unknowns)
+        print char.helm.display(unknowns)
         print "Cloak:"
-        char.cloak.display(unknowns)
+        print char.cloak.display(unknowns)
         print "Amulet:"
-        char.amulet.display(unknowns)
+        print char.amulet.display(unknowns)
         print "Torso:"
-        char.torso.display(unknowns)
+        print char.torso.display(unknowns)
         print "Primary Weapon:"
-        char.weap_prim.display(unknowns)
+        print char.weap_prim.display(unknowns)
         print "Belt:"
-        char.belt.display(unknowns)
+        print char.belt.display(unknowns)
         print "Gauntlet:"
-        char.gauntlet.display(unknowns)
+        print char.gauntlet.display(unknowns)
         print "Legs:"
-        char.legs.display(unknowns)
+        print char.legs.display(unknowns)
         print "Ring 1:"
-        char.ring1.display(unknowns)
+        print char.ring1.display(unknowns)
         print "Ring 2:"
-        char.ring2.display(unknowns)
+        print char.ring2.display(unknowns)
         print "Shield:"
-        char.shield.display(unknowns)
+        print char.shield.display(unknowns)
         print "Feet:"
-        char.feet.display(unknowns)
+        print char.feet.display(unknowns)
         print "Alternate Weapon:"
-        char.weap_alt.display(unknowns)
+        print char.weap_alt.display(unknowns)
         
     def display_inventory(self, unknowns=False):
         """ Print out a textual representation of the character's inventory. """
@@ -246,7 +246,7 @@ class MainCLI:
                 if (row == 9 and col == 6):
                     print "\tGold: %d" % (char.gold)
                 else:
-                    char.inventory[row][col].display(unknowns)
+                    print char.inventory[row][col].display(unknowns)
         print "\tTorches: %d" % char.torches
         print "\tCurrent torch used for %d turns" % char.torchused
         print
@@ -258,7 +258,7 @@ class MainCLI:
         for item in char.readyitems:
             i = i + 1
             print "Ready Item %d:" % (i)
-            item.display()
+            print item.display()
 
     def display(self, listoptions, unknowns=False):
         """ Print out a textual representation of the character."""
@@ -285,4 +285,4 @@ class MainCLI:
             print "UNKNOWNS"
             print "--------"
             print
-            self.char.unknown.display()
+            print self.char.unknown.display()

@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   04 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
+   Display map information in GUI instead of on console,
+   make information functions return strings instead of print
+
    30 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
    Character pictures in GUI; Character picture lookup page
 
@@ -7,7 +11,7 @@
    Items in character editor now display the in-game icons
    Item icon lookup page implemented
 
-   25-29 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
+   25 Nov - 01 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Initial support for reading map data
 
 *eschalon_b1_char-0.3.0 (29 Oct 2008)

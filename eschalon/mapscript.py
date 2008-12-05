@@ -133,22 +133,26 @@ class Mapscript:
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 
-        print "\tMap ID: %s" % self.mapid
-        print "\tMap Location: (%d, %d)" % (self.x, self.y)
-        print "\tScript: %s" % self.script
+        ret = []
+
+        ret.append("\tMap ID: %s" % self.mapid)
+        ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
+        ret.append("\tScript: %s" % self.script)
         if (unknowns):
-            print "\tA Number: %s" % self.number
-            print "\tUnknown Integer 2: %d" % self.unknowni2
-            print "\tUnknown Integer 3: %d" % self.unknowni3
-            print "\tUnknown Integer 4: %d" % self.unknowni4
-            print "\tUnknown Integer 5: %d" % self.unknowni5
-            print "\tUnknown Integer 6: %d" % self.unknowni6
-            print "\tUnknown Short 1: %d" % self.unknownh1
-            print "\tUnknown String 1: %s" % self.unknowns1
-            print "\tUnknown String 2: %s" % self.unknowns2
-            print "\tUnknown String 3: %s" % self.unknowns3
-            print "\tUnknown String 4: %s" % self.unknowns4
-            print "\tUnknown String 5: %s" % self.unknowns5
-            print "\tUnknown String 6: %s" % self.unknowns6
-            print "\tUnknown String 7: %s" % self.unknowns7
-            print "\tUnknown String 8: %s" % self.unknowns8
+            ret.append("\tA Number: %s" % self.number)
+            ret.append("\tUnknown Integer 2: %d" % self.unknowni2)
+            ret.append("\tUnknown Integer 3: %d" % self.unknowni3)
+            ret.append("\tUnknown Integer 4: %d" % self.unknowni4)
+            ret.append("\tUnknown Integer 5: %d" % self.unknowni5)
+            ret.append("\tUnknown Integer 6: %d" % self.unknowni6)
+            ret.append("\tUnknown Short 1: %d" % self.unknownh1)
+            ret.append("\tUnknown String 1: %s" % self.unknowns1)
+            ret.append("\tUnknown String 2: %s" % self.unknowns2)
+            ret.append("\tUnknown String 3: %s" % self.unknowns3)
+            ret.append("\tUnknown String 4: %s" % self.unknowns4)
+            ret.append("\tUnknown String 5: %s" % self.unknowns5)
+            ret.append("\tUnknown String 6: %s" % self.unknowns6)
+            ret.append("\tUnknown String 7: %s" % self.unknowns7)
+            ret.append("\tUnknown String 8: %s" % self.unknowns8)
+
+        return "\n".join(ret)
