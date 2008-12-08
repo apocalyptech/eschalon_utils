@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   08 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
+   Initial support for preferences screen
+
    04 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Display map information in GUI instead of on console,
    make information functions return strings instead of print

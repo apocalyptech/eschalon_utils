@@ -41,11 +41,12 @@ except:
 
 from eschalonb1.map import Map
 from eschalonb1.square import Square
+from eschalonb1.basegui import BaseGUI
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.savefile import LoadException
 from eschalonb1 import app_name, version, url, authors
 
-class MapGUI:
+class MapGUI(BaseGUI):
 
     def __init__(self, options):
         self.options = options
@@ -97,6 +98,9 @@ class MapGUI:
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
+        # Preferences window
+        self.prefs_init()
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_load': self.on_load,
@@ -109,7 +113,8 @@ class MapGUI:
                 'realize_map': self.realize_map,
                 'map_toggle': self.map_toggle,
                 'info_toggle': self.info_toggle,
-                'infowindow_clear': self.infowindow_clear
+                'infowindow_clear': self.infowindow_clear,
+                'on_prefs': self.on_prefs
                 }
         self.wTree.signal_autoconnect(dic)
 
