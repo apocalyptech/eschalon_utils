@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Dec  8 15:17:33 2008 -->
+<!--Generated with glade3 3.4.5 on Mon Dec  8 15:33:38 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="prefswindow">
-    <property name="width_request">500</property>
+    <property name="width_request">550</property>
     <property name="height_request">300</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
     <property name="title" translatable="yes">Preferences</property>
@@ -58,17 +58,68 @@
                     <child>
                       <widget class="GtkLabel" id="label4">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">1</property>
+                        <property name="xalign">0</property>
+                        <property name="ypad">4</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Savegame Directory&lt;/b&gt;
+&lt;i&gt;Will contain directories such as "slot1" and "slot2"&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
                       </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <widget class="GtkFileChooserButton" id="savegame_chooser">
+                        <property name="visible">True</property>
+                        <property name="action">GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER</property>
+                        <property name="show_hidden">True</property>
+                        <property name="title" translatable="yes">Choose A Directory</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <widget class="GtkLabel" id="label5">
+                        <property name="height_request">15</property>
+                        <property name="visible">True</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">2</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <widget class="GtkLabel" id="label3">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="ypad">4</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Game Data Directory&lt;/b&gt;
+&lt;i&gt;Will contain files such as "gfx.pak"&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkFileChooserButton" id="gamedata_chooser">
+                        <property name="visible">True</property>
+                        <property name="action">GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER</property>
+                        <property name="show_hidden">True</property>
+                        <property name="title" translatable="yes">Choose A Directory</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">4</property>
+                      </packing>
                     </child>
                   </widget>
                 </child>
