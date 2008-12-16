@@ -22,6 +22,7 @@
 import getopt, sys
 from eschalonb1.map import Map
 from eschalonb1.mapcli import MapCLI
+from eschalonb1.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -156,9 +157,9 @@ def main(argv=None):
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalonb1.mapgui import MapGUI
-        prog = MapGUI(options)
+        prog = MapGUI(options, Prefs())
     else:
-        prog = MapCLI(options)
+        prog = MapCLI(options, Prefs())
 
     # ... and run it
     return prog.run()

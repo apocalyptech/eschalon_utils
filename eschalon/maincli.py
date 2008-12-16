@@ -25,9 +25,10 @@ from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetab
 
 class MainCLI:
 
-    def __init__(self, options):
+    def __init__(self, options, prefs):
         """ A fresh object, with no data. """
         self.options = options
+        self.prefs = prefs
 
     def run(self):
         

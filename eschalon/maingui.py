@@ -54,8 +54,9 @@ ITEM_READY=3
 
 class MainGUI:
 
-    def __init__(self, options):
+    def __init__(self, options, prefs):
         self.options = options
+        self.prefs = prefs
 
     def run(self):
 
@@ -185,24 +186,12 @@ class MainGUI:
         # Figure out what our initial path should be
         path = ''
         if (self.char == None):
-            # Don't know where to find most of these
-            if 'win32' in sys.platform:
-                pass
-            elif 'cygwin' in sys.platform:
-                pass
-            elif 'darwin' in sys.platform:
-                pass
-            else:
-                # Assume Linux.  Some fiddling here because apparently the Greenhouse and
-                # non-Greenhouse versions of the game store the saves in different places.
-                path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
-                if (not os.path.isdir(path)):
-                    path = os.path.join(os.path.expanduser('~'), '.eschalon_b1_saved_games')
+            path = self.prefs.get_str('paths', 'savegames')
         else:
-            path = os.path.dirname(self.char.df.filename)
+            path = os.path.dirname(os.path.realpath(self.char.df.filename))
 
         # Set the initial path
-        if (path != '' and os.path.isdir(path)):
+        if (path and path != '' and os.path.isdir(path)):
             dialog.set_current_folder(path)
 
         filter = gtk.FileFilter()

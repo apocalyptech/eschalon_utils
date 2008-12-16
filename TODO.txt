@@ -28,8 +28,17 @@ GUI
    for instance)
  * Item Library - pick from objects available in the game
  * Make sure Profile Picture lookup is okay when there's no custom image
- * Fix file dialogs when started with a relative path
  * Preferences dialog (game data, save locations)
+ * Find a decent way to differentiate between savegame maps and global maps
+ * Something on the item icon selection dialog will make it disappear and be
+   very slow...
+
+Traceback (most recent call last):
+  File "/home/pez/cvs/mcp/eschalon_b1_utils/eschalonb1/maingui.py", line 1210, in itemsel_on_expose
+    self.itemsel_draw(x, y)
+  File "/home/pez/cvs/mcp/eschalon_b1_utils/eschalonb1/maingui.py", line 1184, in itemsel_draw
+    self.itemsel_pixmap.draw_pixbuf(None, self.gfx.get_item(itemnum), 0, 0, x*self.itemsel_width, y*self.itemsel_height)
+TypeError: GdkDrawable.draw_pixbuf() argument 2 must be gtk.gdk.Pixbuf, not None
 
 Internal
 --------

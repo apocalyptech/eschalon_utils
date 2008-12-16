@@ -48,8 +48,9 @@ from eschalonb1 import app_name, version, url, authors
 
 class MapGUI(BaseGUI):
 
-    def __init__(self, options):
+    def __init__(self, options, prefs):
         self.options = options
+        self.prefs = prefs
 
     def run(self):
 
@@ -172,18 +173,9 @@ class MapGUI(BaseGUI):
         # Figure out what our initial path should be
         path = ''
         if (self.map == None):
-            # Don't know where to find most of these
-            if 'win32' in sys.platform:
-                pass
-            elif 'cygwin' in sys.platform:
-                pass
-            elif 'darwin' in sys.platform:
-                pass
-            else:
-                # This actually shouldn't be assumed at all
-                path = '/usr/local/games/eschalon_book_1/data'
+            path = self.prefs.get_str('paths', 'savegames')
         else:
-            path = os.path.dirname(self.map.df.filename)
+            path = os.path.dirname(os.path.realpath(self.map.df.filename))
 
         # Set the initial path
         if (path != '' and os.path.isdir(path)):
@@ -234,9 +226,10 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map(filename)
+            map = Map(filename, self.prefs)
             map.read()
         except LoadException, e:
+            print e
             errordiag = self.get_widget('loaderrorwindow')
             errordiag.run()
             errordiag.hide()

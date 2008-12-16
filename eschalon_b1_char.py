@@ -23,6 +23,7 @@
 import getopt, sys
 from eschalonb1.character import Character
 from eschalonb1.maincli import MainCLI
+from eschalonb1.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -199,9 +200,9 @@ def main(argv=None):
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalonb1.maingui import MainGUI
-        prog = MainGUI(options)
+        prog = MainGUI(options, Prefs())
     else:
-        prog = MainCLI(options)
+        prog = MainCLI(options, Prefs())
 
     # ... and run it
     return prog.run()

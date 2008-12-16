@@ -29,9 +29,19 @@ from eschalonb1.entity import Entity
 class Map:
     """ The base Map class.  """
 
-    def __init__(self, filename):
+    def __init__(self, filename, prefs=None):
         """ A fresh object. """
+        
+        # Prefs are needed, currently, so that we can tell if we're a global map
+        # or a map from the savegame, since the format is slightly different.
+        # If not specified, assume we're replicating or whatever.
+        if (prefs is not None):
+            gamedir = prefs.get_str('paths', 'gamedir')
+            self.savegame = (os.path.commonprefix([gamedir, os.path.realpath(filename)]) != gamedir)
+        else:
+            self.savegame = True
 
+        # Everything else follows...
         self.df = None
         self.df_ent = None
         self.filename_ent = ''
@@ -83,6 +93,7 @@ class Map:
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
         newmap = Map(self.df.filename)
+        newmap.savegame = self.savegame
 
         # Single vals (no need to do actual replication)
         newmap.mapid = self.mapid
@@ -149,10 +160,10 @@ class Map:
         except FirstItemLoadException, e:
             return False
 
-    def addentity(self, savegame=True):
+    def addentity(self):
         """ Add an entity. """
         try:
-            entity = Entity(savegame)
+            entity = Entity(self.savegame)
             entity.read(self.df_ent)
             # The same note in addscript(), above, applies here
             self.entities.append(entity)
@@ -212,8 +223,7 @@ class Map:
             if (self.df_ent.exists()):
                 self.df_ent.open_r()
                 try:
-                    # TODO: Need to discern between global files and savegame files here
-                    while (self.addentity(False)):
+                    while (self.addentity()):
                         pass
                 except FirstItemLoadException, e:
                     pass
