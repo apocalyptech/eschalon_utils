@@ -91,8 +91,10 @@ class BaseGUI:
         return True
 
     def on_prefs(self, widget):
-        self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
-        self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
+        if (self.prefsobj.get_str('paths', 'savegames') != ''):
+            self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
+        if (self.prefsobj.get_str('paths', 'gamedir') != ''):
+            self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):

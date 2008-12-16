@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
+   Preferences fully implemented on Linux
+
    08 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Initial support for preferences screen
 

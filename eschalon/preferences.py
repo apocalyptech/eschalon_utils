@@ -27,6 +27,37 @@ import os.path
 # default file paths.  Mac should be quite straightforward, using plist, though
 # apparently PyGTK + Mac isn't very happy at the moment, so I'll get it... Later.
 
+class NoPrefs:
+    """
+    Generic container for systems we don't explicitly support.  No defaults are
+    supplied, and it won't read a thing from disk, but it will at least remember
+    values that you plug into it.
+    """
+
+    def __init__(self):
+        self.vars = {}
+
+    def default(self, cat, name):
+        return ''
+
+    def load(self):
+        pass
+
+    def save(self):
+        pass
+
+    def set_str(self, cat, name, val):
+        if (cat not in self.vars):
+            self.vars[cat] = {}
+        self.vars[cat][name] = val
+
+    def get_str(self, cat, name):
+        if (cat in self.vars and name in self.vars[cat]):
+            return self.vars[cat][name]
+        else:
+            # TODO: I wonder if I should return '' instead
+            return None
+
 class LinuxPrefs:
     """
     Container to hold Linux preferences.  Stores everything inside a dotfile in the
@@ -141,10 +172,10 @@ class Prefs:
             self.prefs = WindowsPrefs()
         elif 'cygwin' in sys.platform:
             self.platform = 'cygwin'
-            raise Exception('no cygwin support currently')
+            self.prefs = NoPrefs()
         elif 'darwin' in sys.platform:
             self.platform = 'darwin'
-            raise Exception('no mac support currently')
+            self.prefs = NoPrefs()
         else:
             # Assume linux
             self.platform = 'linux'
