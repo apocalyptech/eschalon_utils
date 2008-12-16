@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Mon Dec  8 14:17:26 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Dec 16 17:06:00 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -115,232 +115,23 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkVBox" id="vbox2">
+          <widget class="GtkHBox" id="hbox1">
             <property name="visible">True</property>
             <child>
-              <widget class="GtkHBox" id="hbox2">
+              <widget class="GtkLabel" id="mapname">
                 <property name="visible">True</property>
-                <child>
-                  <widget class="GtkButton" id="zoom_in_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text">Zoom In</property>
-                    <property name="border_width">2</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="zoom_in"/>
-                    <child>
-                      <widget class="GtkImage" id="image1">
-                        <property name="visible">True</property>
-                        <property name="stock">gtk-zoom-in</property>
-                        <property name="icon_size">1</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkButton" id="zoom_out_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="tooltip_text">Zoom Out</property>
-                    <property name="border_width">2</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="zoom_out"/>
-                    <child>
-                      <widget class="GtkImage" id="image2">
-                        <property name="visible">True</property>
-                        <property name="stock">gtk-zoom-out</property>
-                        <property name="icon_size">1</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkVSeparator" id="vseparator1">
-                    <property name="visible">True</property>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="floor_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Floors</property>
-                    <property name="response_id">0</property>
-                    <property name="active">True</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="decal_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Decals</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="object_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Objects</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="objectdecal_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Object Decals</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="barrier_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Barriers</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">7</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="script_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Scripts</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">8</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="entity_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Entities</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="map_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">9</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkVSeparator" id="vseparator2">
-                    <property name="visible">True</property>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">10</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkToggleButton" id="info_button">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="label" translatable="yes">Info Window</property>
-                    <property name="response_id">0</property>
-                    <signal name="clicked" handler="info_toggle"/>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">11</property>
-                  </packing>
-                </child>
+                <property name="xalign">0</property>
+                <property name="xpad">8</property>
+                <property name="ypad">2</property>
               </widget>
             </child>
             <child>
-              <widget class="GtkHBox" id="hbox1">
+              <widget class="GtkLabel" id="coords">
                 <property name="visible">True</property>
-                <child>
-                  <widget class="GtkLabel" id="mapname">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">8</property>
-                    <property name="ypad">2</property>
-                  </widget>
-                </child>
-                <child>
-                  <widget class="GtkLabel" id="coords">
-                    <property name="visible">True</property>
-                    <property name="xalign">1</property>
-                    <property name="xpad">8</property>
-                  </widget>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
+                <property name="xalign">1</property>
+                <property name="xpad">8</property>
               </widget>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -352,24 +143,347 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkScrolledWindow" id="mainscroll">
+          <widget class="GtkHBox" id="hbox4">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="spacing">2</property>
             <child>
-              <widget class="GtkViewport" id="viewport1">
+              <widget class="GtkVBox" id="vbox4">
+                <property name="width_request">150</property>
                 <property name="visible">True</property>
-                <property name="resize_mode">GTK_RESIZE_QUEUE</property>
                 <child>
-                  <widget class="GtkDrawingArea" id="maparea">
+                  <widget class="GtkFrame" id="view_frame">
                     <property name="visible">True</property>
-                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                    <signal name="expose_event" handler="expose_map"/>
-                    <signal name="button_press_event" handler="on_clicked"/>
-                    <signal name="motion_notify_event" handler="on_mouse_changed"/>
-                    <signal name="realize" handler="realize_map"/>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment1">
+                        <property name="visible">True</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <widget class="GtkHBox" id="hbox5">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkButton" id="zoom_in_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text">Zoom In</property>
+                                <property name="border_width">2</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="zoom_in"/>
+                                <child>
+                                  <widget class="GtkImage" id="image1">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-zoom-in</property>
+                                    <property name="icon_size">1</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkButton" id="zoom_out_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text">Zoom Out</property>
+                                <property name="border_width">2</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="zoom_out"/>
+                                <child>
+                                  <widget class="GtkImage" id="image4">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-zoom-out</property>
+                                    <property name="icon_size">1</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label3">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">&lt;i&gt;View&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="type">label_item</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkFrame" id="prop_frame">
+                    <property name="visible">True</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment2">
+                        <property name="visible">True</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <widget class="GtkVBox" id="vbox5">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkToggleButton" id="barrier_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Barriers</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToggleButton" id="script_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Scripts</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToggleButton" id="entity_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Entities</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label4">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Properties&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="type">label_item</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="padding">3</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkFrame" id="gfx_frame">
+                    <property name="visible">True</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment3">
+                        <property name="visible">True</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <widget class="GtkVBox" id="vbox6">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkToggleButton" id="floor_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Floors</property>
+                                <property name="response_id">0</property>
+                                <property name="active">True</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToggleButton" id="decal_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Decals</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToggleButton" id="object_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Objects</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkToggleButton" id="objectdecal_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Object Decals</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="map_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label5">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Graphics&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="type">label_item</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkFrame" id="other_frame">
+                    <property name="visible">True</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
+                    <child>
+                      <widget class="GtkAlignment" id="alignment4">
+                        <property name="visible">True</property>
+                        <property name="left_padding">12</property>
+                        <child>
+                          <widget class="GtkVBox" id="vbox7">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkToggleButton" id="info_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="label" translatable="yes">Info Window</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="info_toggle"/>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="padding">3</property>
+                              </packing>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkLabel" id="label6">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Other&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="type">label_item</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">5</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkScrolledWindow" id="mainscroll">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <widget class="GtkViewport" id="viewport1">
+                    <property name="visible">True</property>
+                    <property name="resize_mode">GTK_RESIZE_QUEUE</property>
+                    <child>
+                      <widget class="GtkDrawingArea" id="maparea">
+                        <property name="visible">True</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                        <signal name="expose_event" handler="expose_map"/>
+                        <signal name="button_press_event" handler="on_clicked"/>
+                        <signal name="motion_notify_event" handler="on_mouse_changed"/>
+                        <signal name="realize" handler="realize_map"/>
+                      </widget>
+                    </child>
                   </widget>
                 </child>
               </widget>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
           </widget>
           <packing>
