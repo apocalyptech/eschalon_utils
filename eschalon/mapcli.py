@@ -60,9 +60,21 @@ class MapCLI:
 
         map = self.map
         print "Map %s (%s)" % (map.mapid, map.mapname)
-        print "Soundfiles: %s, %s" % (map.soundfile1, map.soundfile2)
+        print "Soundfiles: %s, %s, %s" % (map.soundfile1, map.soundfile2, map.soundfile3)
         print "Skybox: %s" % (map.skybox)
+        print "Skybox Parallax 1: %d" % (map.parallax_1)
+        print "Skybox Parallax 2: %d" % (map.parallax_2)
+        print "North Exit: %s" % (map.exit_north)
+        print "East Exit: %s" % (map.exit_east)
+        print "South Exit: %s" % (map.exit_south)
+        print "West Exit: %s" % (map.exit_west)
         print "RGBA: %d/%d/%d/%d" % (map.color_r, map.color_g, map.color_b, map.color_a)
+        if (map.is_savegame()):
+            print "(This is a savegame map file)"
+        elif (map.is_global()):
+            print "(This is a global map file)"
+        else:
+            print "Savegame IDs: %d, %d, %d" % (map.savegame_1, map.savegame_2, map.savegame_3)
         print
 
     def display_squares(self, unknowns=False):
@@ -110,20 +122,8 @@ class MapCLI:
         print "UNKNOWNS"
         print "--------"
         print
-        print "Unknown string 1: %s" % (map.unknowns1)
-        print "Unknown string 2: %s" % (map.unknowns2)
-        print "Unknown string 3: %s" % (map.unknowns3)
-        print "Unknown string 4: %s" % (map.unknowns4)
-        print "Unknown string 5: %s" % (map.unknowns5)
-        print
         print "Unknown integer 1: %d" % (map.unknowni1)
-        print "Unknown integer 2: %d" % (map.unknowni2)
-        print "Unknown integer 3: %d" % (map.unknowni3)
         print "Unknown integer 4: %d" % (map.unknowni4)
-        print "Unknown integer 5: %d" % (map.unknowni5)
-        print "Unknown integer 6: %d" % (map.unknowni6)
-        print "Unknown integer 7: %d" % (map.unknowni7)
-        print
         print "Unknown short 1: %d" % (map.unknownh1)
         print
 

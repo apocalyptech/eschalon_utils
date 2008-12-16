@@ -79,6 +79,9 @@ class Map:
         self.df = Savefile(filename)
         self.df_ent = Savefile(filename[:filename.rindex('.map')] + '.ent')
 
+    def is_global(self):
+        return (self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0)
+
     def is_savegame(self):
         # Savegames are... evil?  I guess?
         return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
