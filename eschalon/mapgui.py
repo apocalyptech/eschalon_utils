@@ -70,9 +70,6 @@ class MapGUI(BaseGUI):
 
         self.mapinit = False
 
-        # Graphics we'll need
-        self.gfx = Gfx()
-
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
@@ -99,8 +96,11 @@ class MapGUI(BaseGUI):
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
-        # Preferences window
-        self.prefs_init()
+        # Preferences window - also load in our graphics
+        self.prefs_init(self.prefs)
+        if (not self.require_gfx()):
+            return
+        self.gfx = Gfx(self.prefs)
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,

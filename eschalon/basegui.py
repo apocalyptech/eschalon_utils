@@ -42,15 +42,23 @@ import gobject
 
 class BaseGUI:
 
-    def prefs_init(self):
+    def prefs_init(self, prefs):
+
+        # Prefs data object
+        self.prefsobj = prefs
 
         # Preferences window
         self.prefsgladefile = os.path.join(os.path.dirname(__file__), 'preferences.glade')
         self.prefswTree = gtk.glade.XML(self.prefsgladefile)
         self.prefswindow = self.prefswTree.get_widget('prefswindow')
+        self.gfx_req_window = self.prefswTree.get_widget('gfx_req_window')
         self.prefsview = self.prefswTree.get_widget('prefsview')
         self.prefssel = self.prefsview.get_selection()
         self.prefsnotebook = self.prefswTree.get_widget('prefsnotebook')
+
+        # Prefs fields
+        self.prefs_savegame = self.prefswTree.get_widget('savegame_chooser')
+        self.prefs_gamedir = self.prefswTree.get_widget('gamedata_chooser')
 
         # Connect handler
         self.prefssel.connect('changed', self.on_prefs_changed)
@@ -72,15 +80,25 @@ class BaseGUI:
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
         #store.set(store.append(), 0, pixbuf, 1, 'Other', 2, 1)
 
-        self.prefswTree.signal_autoconnect({
-                'on_prefs_ok': self.on_prefs_ok
-            })
+    def require_gfx(self):
+        while (not os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak'))):
+            response = self.gfx_req_window.run()
+            self.gfx_req_window.hide()
+            if (response == gtk.RESPONSE_CANCEL):
+                return False
+            else:
+                self.on_prefs(None)
+        return True
 
     def on_prefs(self, widget):
-        self.prefswindow.show()
-
-    def on_prefs_ok(self, widget):
+        self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
+        self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
+        response = self.prefswindow.run()
         self.prefswindow.hide()
+        if (response == gtk.RESPONSE_OK):
+            self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
+            self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
+            self.prefsobj.save()
 
     def on_prefs_changed(self, widget):
         (model, iter) = widget.get_selected()

@@ -28,7 +28,8 @@ GUI
    for instance)
  * Item Library - pick from objects available in the game
  * Make sure Profile Picture lookup is okay when there's no custom image
- * Preferences dialog (game data, save locations)
+ * Figure out implications of not rigorously checking gamedir on prefs screen
+   (loading new maps, etc...)
  * Something on the item icon selection dialog will make it disappear and be
    very slow...
 

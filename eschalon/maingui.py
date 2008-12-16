@@ -40,6 +40,7 @@ except:
 
 # Lookup tables we'll need
 from eschalonb1.gfx import Gfx
+from eschalonb1.basegui import BaseGUI
 from eschalonb1.character import Character
 from eschalonb1.item import Item
 from eschalonb1.savefile import LoadException
@@ -52,7 +53,7 @@ ITEM_EQUIP=1
 ITEM_INV=2
 ITEM_READY=3
 
-class MainGUI:
+class MainGUI(BaseGUI):
 
     def __init__(self, options, prefs):
         self.options = options
@@ -70,9 +71,6 @@ class MainGUI:
 
         # Let's make sure that char exists, too
         self.char = None
-
-        # Set up our graphics cache
-        self.gfx = Gfx()
 
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'maingui.glade')
@@ -120,12 +118,20 @@ class MainGUI:
         self.avatarsel_mousex_prev = -1
         self.avatarsel_mousey_prev = -1
 
+        # Set up our graphics cache
+        # TODO: IMO we shouldn't actually *require* gfx here
+        self.prefs_init(self.prefs)
+        if (not self.require_gfx()):
+            return
+        self.gfx = Gfx(self.prefs)
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_revert': self.on_revert,
                 'on_load': self.on_load,
                 'on_about': self.on_about,
                 'on_save_as': self.on_save_as,
+                'on_prefs': self.on_prefs,
                 'save_char': self.save_char,
                 'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
                 'on_item_close_clicked': self.on_item_close_clicked,

@@ -85,12 +85,11 @@ class PakIndex:
 class Gfx:
     """ A class to hold graphics data. """
 
-    def __init__(self):
+    def __init__(self, prefs):
         """ A fresh object with no data. """
 
-        # TODO: Clearly this needs to be handled appropriately
-        self.gamedir = '/usr/local/games/eschalon_book_1'
-        self.pakloc = os.path.join(self.gamedir, 'gfx.pak')
+        self.prefs = prefs
+        self.pakloc = os.path.join(self.prefs.get_str('paths', 'gamedir'), 'gfx.pak')
         self.df = Savefile(self.pakloc)
 
         self.unknownh1 = -1
@@ -220,8 +219,8 @@ class Gfx:
             return None
         if (avatarnum not in self.avatarcache):
             if (avatarnum == 7):
-                if (os.path.exists(os.path.join(self.gamedir, 'mypic.png'))):
-                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.gamedir, 'mypic.png'))
+                if (os.path.exists(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))):
+                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))
                 else:
                     return None
             else:
