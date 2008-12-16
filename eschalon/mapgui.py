@@ -226,7 +226,7 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map(filename, self.prefs)
+            map = Map(filename)
             map.read()
         except LoadException, e:
             print e

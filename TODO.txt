@@ -29,7 +29,6 @@ GUI
  * Item Library - pick from objects available in the game
  * Make sure Profile Picture lookup is okay when there's no custom image
  * Preferences dialog (game data, save locations)
- * Find a decent way to differentiate between savegame maps and global maps
  * Something on the item icon selection dialog will make it disappear and be
    very slow...
 

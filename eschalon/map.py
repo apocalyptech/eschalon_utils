@@ -29,17 +29,8 @@ from eschalonb1.entity import Entity
 class Map:
     """ The base Map class.  """
 
-    def __init__(self, filename, prefs=None):
+    def __init__(self, filename):
         """ A fresh object. """
-        
-        # Prefs are needed, currently, so that we can tell if we're a global map
-        # or a map from the savegame, since the format is slightly different.
-        # If not specified, assume we're replicating or whatever.
-        if (prefs is not None):
-            gamedir = prefs.get_str('paths', 'gamedir')
-            self.savegame = (os.path.commonprefix([gamedir, os.path.realpath(filename)]) != gamedir)
-        else:
-            self.savegame = True
 
         # Everything else follows...
         self.df = None
@@ -64,12 +55,12 @@ class Map:
         self.color_b = -1
         self.color_a = -1
 
-        self.unknowni2 = -1
-        self.unknowni3 = -1
+        self.parallax_1 = -1
+        self.parallax_2 = -1
         self.unknowni4 = -1
-        self.unknowni5 = -1
-        self.unknowni6 = -1
-        self.unknowni7 = -1
+        self.savegame_1 = -1
+        self.savegame_2 = -1
+        self.savegame_3 = -1
 
         self.extradata = ''
 
@@ -88,12 +79,15 @@ class Map:
         self.df = Savefile(filename)
         self.df_ent = Savefile(filename[:filename.rindex('.map')] + '.ent')
 
+    def is_savegame(self):
+        # Savegames are... evil?  I guess?
+        return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
+
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
         newmap = Map(self.df.filename)
-        newmap.savegame = self.savegame
 
         # Single vals (no need to do actual replication)
         newmap.mapid = self.mapid
@@ -112,12 +106,12 @@ class Map:
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
         newmap.color_a = self.color_a
-        newmap.unknowni2 = self.unknowni2
-        newmap.unknowni3 = self.unknowni3
+        newmap.parallax_1 = self.parallax_1
+        newmap.parallax_2 = self.parallax_2
         newmap.unknowni4 = self.unknowni4
-        newmap.unknowni5 = self.unknowni5
-        newmap.unknowni6 = self.unknowni6
-        newmap.unknowni7 = self.unknowni7
+        newmap.savegame_1 = self.savegame_1
+        newmap.savegame_2 = self.savegame_2
+        newmap.savegame_3 = self.savegame_3
         newmap.extradata = self.extradata
 
         # Objects that need copying
@@ -145,7 +139,7 @@ class Map:
     def addscript(self):
         """ Add a mapscript. """
         try:
-            script = Mapscript(self.savegame)
+            script = Mapscript(self.is_savegame())
             script.read(self.df)
             # Note that once we start deleting scripts, you'll have to update both constructs here.
             # Something along the lines of this should do:
@@ -163,7 +157,7 @@ class Map:
     def addentity(self):
         """ Add an entity. """
         try:
-            entity = Entity(self.savegame)
+            entity = Entity(self.is_savegame())
             entity.read(self.df_ent)
             # The same note in addscript(), above, applies here
             self.entities.append(entity)
@@ -200,12 +194,12 @@ class Map:
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
 
-            self.unknowni2 = self.df.readint()
-            self.unknowni3 = self.df.readint()
+            self.parallax_1 = self.df.readint()
+            self.parallax_2 = self.df.readint()
             self.unknowni4 = self.df.readint()
-            self.unknowni5 = self.df.readint()
-            self.unknowni6 = self.df.readint()
-            self.unknowni7 = self.df.readint()
+            self.savegame_1 = self.df.readint()
+            self.savegame_2 = self.df.readint()
+            self.savegame_3 = self.df.readint()
 
             # Squares
             for i in range(200*100):
@@ -265,12 +259,12 @@ class Map:
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.unknowni2)
-        self.df.writeint(self.unknowni3)
+        self.df.writeint(self.parallax_1)
+        self.df.writeint(self.parallax_2)
         self.df.writeint(self.unknowni4)
-        self.df.writeint(self.unknowni5)
-        self.df.writeint(self.unknowni6)
-        self.df.writeint(self.unknowni7)
+        self.df.writeint(self.savegame_1)
+        self.df.writeint(self.savegame_2)
+        self.df.writeint(self.savegame_3)
 
         # Squares
         for row in self.squares:
