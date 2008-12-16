@@ -48,13 +48,13 @@ class Map:
         self.mapid = ''
         self.mapname = ''
         self.soundfile1 = ''
-        self.unknowns1 = ''
-        self.unknowns2 = ''
-        self.unknowns3 = ''
-        self.unknowns4 = ''
-        self.unknowns5 = ''
-        self.skybox = ''
         self.soundfile2 = ''
+        self.exit_north = ''
+        self.exit_east = ''
+        self.exit_south = ''
+        self.exit_west = ''
+        self.skybox = ''
+        self.soundfile3 = ''
         self.unknowni1 = -1
         self.unknownh1 = -1
 
@@ -99,13 +99,13 @@ class Map:
         newmap.mapid = self.mapid
         newmap.mapname = self.mapname
         newmap.soundfile1 = self.soundfile1
-        newmap.unknowns1 = self.unknowns1
-        newmap.unknowns2 = self.unknowns2
-        newmap.unknowns3 = self.unknowns3
-        newmap.unknowns4 = self.unknowns4
-        newmap.unknowns5 = self.unknowns5
-        newmap.skybox = self.skybox
         newmap.soundfile2 = self.soundfile2
+        newmap.exit_north = self.exit_north
+        newmap.exit_east = self.exit_east
+        newmap.exit_south = self.exit_south
+        newmap.exit_west = self.exit_west
+        newmap.skybox = self.skybox
+        newmap.soundfile3 = self.soundfile3
         newmap.unknowni1 = self.unknowni1
         newmap.unknownh1 = self.unknownh1
         newmap.color_r = self.color_r
@@ -145,7 +145,7 @@ class Map:
     def addscript(self):
         """ Add a mapscript. """
         try:
-            script = Mapscript()
+            script = Mapscript(self.savegame)
             script.read(self.df)
             # Note that once we start deleting scripts, you'll have to update both constructs here.
             # Something along the lines of this should do:
@@ -185,13 +185,13 @@ class Map:
             self.mapid = self.df.readstr()
             self.mapname = self.df.readstr()
             self.soundfile1 = self.df.readstr()
-            self.unknowns1 = self.df.readstr()
-            self.unknowns2 = self.df.readstr()
-            self.unknowns3 = self.df.readstr()
-            self.unknowns4 = self.df.readstr()
-            self.unknowns5 = self.df.readstr()
-            self.skybox = self.df.readstr()
             self.soundfile2 = self.df.readstr()
+            self.exit_north = self.df.readstr()
+            self.exit_east = self.df.readstr()
+            self.exit_south = self.df.readstr()
+            self.exit_west = self.df.readstr()
+            self.skybox = self.df.readstr()
+            self.soundfile3 = self.df.readstr()
             self.unknowni1 = self.df.readint()
             self.unknownh1 = self.df.readshort()
 
@@ -252,13 +252,13 @@ class Map:
         self.df.writestr(self.mapid)
         self.df.writestr(self.mapname)
         self.df.writestr(self.soundfile1)
-        self.df.writestr(self.unknowns1)
-        self.df.writestr(self.unknowns2)
-        self.df.writestr(self.unknowns3)
-        self.df.writestr(self.unknowns4)
-        self.df.writestr(self.unknowns5)
-        self.df.writestr(self.skybox)
         self.df.writestr(self.soundfile2)
+        self.df.writestr(self.exit_north)
+        self.df.writestr(self.exit_east)
+        self.df.writestr(self.exit_south)
+        self.df.writestr(self.exit_west)
+        self.df.writestr(self.skybox)
+        self.df.writestr(self.soundfile3)
         self.df.writeint(self.unknowni1)
         self.df.writeshort(self.unknownh1)
         self.df.writeuchar(self.color_r)

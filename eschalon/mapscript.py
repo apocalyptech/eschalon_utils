@@ -25,9 +25,10 @@ from eschalonb1.savefile import FirstItemLoadException
 class Mapscript:
     """ A class to hold data about a particular mapscript on a map. """
 
-    def __init__(self):
+    def __init__(self, savegame=True):
         """ A fresh object with no data. """
 
+        self.savegame = savegame
         self.x = -1
         self.y = -1
         self.mapid = ''
@@ -39,19 +40,18 @@ class Mapscript:
         self.unknowni6 = -1
         self.unknownh1 = -1
         self.script = ''
-        self.unknowns1 = ''
-        self.unknowns2 = ''
-        self.unknowns3 = ''
-        self.unknowns4 = ''
-        self.unknowns5 = ''
-        self.unknowns6 = ''
-        self.unknowns7 = ''
-        self.unknowns8 = ''
+
+        self.block_unknown_i_1 = []
+        self.block_unknown_s_1 = []
+        self.block_unknown_i_2 = []
+        self.block_unknown_s_2 = []
+        self.block_unknown_i_3 = []
 
     def replicate(self):
         newmapscript = Mapscript()
 
         # Simple Values
+        newmapscript.savegame = self.savegame
         newmapscript.x = self.x
         newmapscript.y = self.y
         newmapscript.mapid = self.mapid
@@ -63,14 +63,31 @@ class Mapscript:
         newmapscript.unknowni6 = self.unknowni6
         newmapscript.unknownh1 = self.unknownh1
         newmapscript.script = self.script
-        newmapscript.unknowns1 = self.unknowns1
-        newmapscript.unknowns2 = self.unknowns2
-        newmapscript.unknowns3 = self.unknowns3
-        newmapscript.unknowns4 = self.unknowns4
-        newmapscript.unknowns5 = self.unknowns5
-        newmapscript.unknowns6 = self.unknowns6
-        newmapscript.unknowns7 = self.unknowns7
-        newmapscript.unknowns8 = self.unknowns8
+
+        # Arrays
+        for val in self.block_unknown_s_1:
+            newmapscript.block_unknown_s_1.append(val)
+        for val in self.block_unknown_i_1:
+            newmapscript.block_unknown_i_1.append(val)
+
+        # Arrays-of-arrays
+        for val in self.block_unknown_i_2:
+            newmapscript.block_unknown_i_2.append([])
+            cur_idx = len(newmapscript.block_unknown_i_2)-1
+            for val2 in val:
+                newmapscript.block_unknown_i_2[cur_idx].append(val2)
+
+        for val in self.block_unknown_s_2:
+            newmapscript.block_unknown_s_2.append([])
+            cur_idx = len(newmapscript.block_unknown_s_2)-1
+            for val2 in val:
+                newmapscript.block_unknown_s_2[cur_idx].append(val2)
+
+        for val in self.block_unknown_i_3:
+            newmapscript.block_unknown_i_3.append([])
+            cur_idx = len(newmapscript.block_unknown_i_3)-1
+            for val2 in val:
+                newmapscript.block_unknown_i_3[cur_idx].append(val2)
 
         # ... aaand return our new object
         return newmapscript
@@ -99,14 +116,23 @@ class Mapscript:
         self.unknowni6 = df.readint()
         self.unknownh1 = df.readshort()
         self.script = df.readstr()
-        self.unknowns1 = df.readstr()
-        self.unknowns2 = df.readstr()
-        self.unknowns3 = df.readstr()
-        self.unknowns4 = df.readstr()
-        self.unknowns5 = df.readstr()
-        self.unknowns6 = df.readstr()
-        self.unknowns7 = df.readstr()
-        self.unknowns8 = df.readstr()
+
+        # Blocks of information, most of which doesn't exist for global maps
+        for num in range(8):
+            if (self.savegame):
+                self.block_unknown_i_1.append(df.readint())
+            self.block_unknown_s_1.append(df.readstr())
+            if (self.savegame):
+                cur_idx = len(self.block_unknown_s_1)-1
+                self.block_unknown_i_2.append([])
+                self.block_unknown_s_2.append([])
+                self.block_unknown_i_3.append([])
+                for num2 in range(21):
+                    self.block_unknown_i_2[cur_idx].append(df.readint())
+                for num2 in range(2):
+                    self.block_unknown_s_2[cur_idx].append(df.readstr())
+                for num2 in range(2):
+                    self.block_unknown_i_3[cur_idx].append(df.readint())
 
     def write(self, df):
         """ Write the mapscript to the file. """
@@ -121,14 +147,29 @@ class Mapscript:
         df.writeint(self.unknowni6)
         df.writeshort(self.unknownh1)
         df.writestr(self.script)
-        df.writestr(self.unknowns1)
-        df.writestr(self.unknowns2)
-        df.writestr(self.unknowns3)
-        df.writestr(self.unknowns4)
-        df.writestr(self.unknowns5)
-        df.writestr(self.unknowns6)
-        df.writestr(self.unknowns7)
-        df.writestr(self.unknowns8)
+
+        for num in range(8):
+            if (self.savegame):
+                df.writeint(self.block_unknown_i_1[num])
+            df.writestr(self.block_unknown_s_1[num])
+            # We'll do some extra processing here, mostly in case the 'savegame'
+            # flag gets flipped, so the written file would be valid
+            if (self.savegame):
+                for num2 in range(21):
+                    if (num in self.block_unknown_i_2 and num2 in self.block_unknown_i_2[num]):
+                        self.writeint(self.block_unknown_i_2[num][num2])
+                    else:
+                        self.writeint(0)
+                for num2 in range(2):
+                    if (num in self.block_unknown_s_2 and num2 in self.block_unknown_s_2[num]):
+                        self.writestr(self.block_unknown_s_2[num][num2])
+                    else:
+                        self.writestr('')
+                for num2 in range(2):
+                    if (num in self.block_unknown_i_3 and num2 in self.block_unknown_i_3[num]):
+                        self.writeint(self.block_unknown_i_3[num][num2])
+                    else:
+                        self.writeint(0)
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
