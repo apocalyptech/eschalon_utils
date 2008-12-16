@@ -187,13 +187,5 @@ class Mapscript:
             ret.append("\tUnknown Integer 5: %d" % self.unknowni5)
             ret.append("\tUnknown Integer 6: %d" % self.unknowni6)
             ret.append("\tUnknown Short 1: %d" % self.unknownh1)
-            ret.append("\tUnknown String 1: %s" % self.unknowns1)
-            ret.append("\tUnknown String 2: %s" % self.unknowns2)
-            ret.append("\tUnknown String 3: %s" % self.unknowns3)
-            ret.append("\tUnknown String 4: %s" % self.unknowns4)
-            ret.append("\tUnknown String 5: %s" % self.unknowns5)
-            ret.append("\tUnknown String 6: %s" % self.unknowns6)
-            ret.append("\tUnknown String 7: %s" % self.unknowns7)
-            ret.append("\tUnknown String 8: %s" % self.unknowns8)
 
         return "\n".join(ret)
