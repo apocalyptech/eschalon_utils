@@ -143,11 +143,13 @@ class MapGUI(BaseGUI):
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
         self.set_zoom_vars(24)
+        self.guicache = None
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
         for zoom in self.zoom_levels:
             self.mousemap[zoom] = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))).get_pixels_array()
+        self.mousecursor = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousecursor.png'))
 
         # Now show our window
         self.window.show()
@@ -408,6 +410,8 @@ class MapGUI(BaseGUI):
         # See if we've changed, and queue some redraws if so
         if (self.sq_x != self.sq_x_prev or self.sq_y != self.sq_y_prev):
             # It's possible we cause duplication here, but it the CPU cost should be negligible
+            # It's also important to append the previous value FIRST, so that our graphic clean-up
+            # doesn't clobber a freshly-drawn mouse pointer
             if (self.sq_x_prev != -1):
                 self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
             self.cleansquares.append((self.sq_x, self.sq_y))
@@ -453,7 +457,7 @@ class MapGUI(BaseGUI):
     def realize_map(self, event):
         pass
 
-    def draw_square(self, x, y):
+    def draw_square(self, x, y, usecache=False):
         """ Draw a single square of the map. """
 
         # TODO: Layers are pretty inefficient here, and regardless there's currently lots
@@ -520,29 +524,41 @@ class MapGUI(BaseGUI):
             y4 = y4 + 1
             y2 = y2 - 1
 
+        # Simply redraw the area from our cache, if we should
+        if (usecache and not pointer):
+            # TODO: segfault when we go out of bounds; be sure to fix that.
+            top = y2-(self.z_height*4)
+            height = self.z_height*5
+            if (top<0):
+                height = height+top
+                top = 0
+            self.pixmap.draw_polygon(self.gc_black, True, [(x1, top), (x3, top), (x3, y4), (x1, y4)])
+            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.guicache, x1, top, x1, top, self.z_width, height)
+            return
+
         # Let's just go ahead and do this *always*
         self.pixmap.draw_polygon(self.gc_black, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
         # Draw the floor tile
-        if (not pointer and self.floor_toggle.get_active()):
+        if (self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(self.map.squares[y][x].floorimg, self.curzoom)
             if (pixbuf is not None):
                 self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2)
 
         # Draw the floor decal
-        if (not pointer and self.decal_toggle.get_active()):
+        if (self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(self.map.squares[y][x].decalimg, self.curzoom)
             if (pixbuf is not None):
                 self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2)
 
         # Draw the object
-        if (not pointer and self.object_toggle.get_active()):
+        if (self.object_toggle.get_active()):
             (pixbuf, pixheight) = self.gfx.get_object(self.map.squares[y][x].wallimg, self.curzoom)
             if (pixbuf is not None):
                 self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2-(self.z_height*pixheight))
 
         # Draw the object decal
-        if (not pointer and self.objectdecal_toggle.get_active()):
+        if (self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(self.map.squares[y][x].walldecalimg, self.curzoom)
             if (pixbuf is not None):
                 self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], pixbuf, 0, 0, x1, y2-self.z_width)
@@ -561,7 +577,8 @@ class MapGUI(BaseGUI):
 
         # Finally, draw the mouse pointer
         if (pointer):
-            self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
+            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.mousecursor, 0, 0, x1, y2)
+            #self.pixmap.draw_polygon(color, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
@@ -571,7 +588,7 @@ class MapGUI(BaseGUI):
         # Now do our work
         if (self.mapinit):
             for (x, y) in self.cleansquares:
-                self.draw_square(x, y)
+                self.draw_square(x, y, True)
         else:
             self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
             self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
@@ -594,6 +611,8 @@ class MapGUI(BaseGUI):
                 for x in range(len(self.map.squares[y])):
                     self.draw_square(x, y)
             self.mapinit = True
+            self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
+            self.guicache.get_from_drawable(self.pixmap, gtk.gdk.colormap_get_system(), 0, 0, 0, 0, -1, -1)
 
         # Make sure our to-clean list is empty
         self.cleansquares = []
