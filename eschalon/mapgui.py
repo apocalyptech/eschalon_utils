@@ -21,6 +21,7 @@
 
 import os
 import sys
+import time
 from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
@@ -311,7 +312,13 @@ class MapGUI(BaseGUI):
         self.z_halfheight = int(self.z_height/2)
         self.z_mapsize_x = self.z_width*101
         self.z_mapsize_y = int(self.z_mapsize_x/2)
+
+        # These vars help speed up square drawing
+        self.z_2xheight = self.z_height*2
+        self.z_3xheight = self.z_height*3
+        self.z_4xheight = self.z_height*4
         self.mapinit = False
+
         # TODO: Should queue a redraw here, probably...
 
     def scroll_h_changed(self, widget):
@@ -471,8 +478,7 @@ class MapGUI(BaseGUI):
     def draw_square(self, x, y, usecache=False):
         """ Draw a single square of the map. """
 
-        # TODO: Layers are pretty inefficient here, and regardless there's currently lots
-        # of graphical glitches when you move the mouse around.  That needs to get fixed.
+        # TODO: Layers are pretty inefficient and slow here
         barrier = False
         script = False
         clear = False
@@ -519,10 +525,10 @@ class MapGUI(BaseGUI):
         ystart = y*self.z_halfheight
         y2 = ystart+1
         y4 = ystart+self.z_height-1
-        if (y4-y2<3):
-            # This is for our two most-zoomed-out levels
-            y4 = y4 + 1
-            y2 = y2 - 1
+        #if (y4-y2<3):
+        #    # This is for our two most-zoomed-out levels
+        #    y4 = y4 + 1
+        #    y2 = y2 - 1
 
         # Area we're actually drawing
         top = y2-(self.z_height*4)
@@ -549,13 +555,13 @@ class MapGUI(BaseGUI):
         if (self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(self.map.squares[y][x].floorimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*4, self.z_width, self.z_height, 0, self.z_height*4, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(self.squarebuf, 0, self.z_4xheight, self.z_width, self.z_height, 0, self.z_4xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # Draw the floor decal
         if (self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(self.map.squares[y][x].decalimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*4, self.z_width, self.z_height, 0, self.z_height*4, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(self.squarebuf, 0, self.z_4xheight, self.z_width, self.z_height, 0, self.z_4xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # Draw the object
         if (self.object_toggle.get_active()):
@@ -567,7 +573,7 @@ class MapGUI(BaseGUI):
         if (self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(self.map.squares[y][x].walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*2, self.z_width, self.z_height*3, 0, self.z_height*2, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(self.squarebuf, 0, self.z_2xheight, self.z_width, self.z_3xheight, 0, self.z_2xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # Draw Barriers
         if (barrier and self.barrier_toggle.get_active()):
@@ -586,10 +592,15 @@ class MapGUI(BaseGUI):
             self.composite_simple(pointer)
 
         # Now draw the pixbuf onto our pixmap
-        self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.squarebuf,
-                0, buftop,
-                x1, top,
-                self.z_width, height)
+        if (usecache):
+            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.squarebuf,
+                    0, buftop,
+                    x1, top,
+                    self.z_width, height)
+        else:
+            # TODO: It wouldn't hurt to clean up the 'tempbuf' stuff, see if it makes sense to pass it instead, or something
+            # ... would it be a good idea to just be writing directly to the guicache at this point?
+            self.squarebuf.composite(self.tempbuf, x1, top, self.z_width, height, x1, top-buftop, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
@@ -601,18 +612,25 @@ class MapGUI(BaseGUI):
             for (x, y) in self.cleansquares:
                 self.draw_square(x, y, True)
         else:
+            time_a = time.time()
             self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
             self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
             self.gc_black = gtk.gdk.GC(self.maparea.window)
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
             self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
             self.squarebuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_width, self.z_height*5)
+            self.tempbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
+            time_c = time.time()
             for y in range(len(self.map.squares)):
                 for x in range(len(self.map.squares[y])):
                     self.draw_square(x, y)
+            time_d = time.time()
+            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.tempbuf, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
             self.mapinit = True
             self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
             self.guicache.get_from_drawable(self.pixmap, gtk.gdk.colormap_get_system(), 0, 0, 0, 0, -1, -1)
+            time_b = time.time()
+            print "Map drawn in %d seconds, squares rendered in %d seconds" % (int(time_b-time_a), int(time_d-time_c))
 
         # Make sure our to-clean list is empty
         self.cleansquares = []
