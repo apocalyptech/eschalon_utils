@@ -85,6 +85,8 @@ class MapGUI(BaseGUI):
         self.floor_toggle = self.get_widget('floor_button')
         self.decal_toggle = self.get_widget('decal_button')
         self.object_toggle = self.get_widget('object_button')
+        self.wall_toggle = self.get_widget('wall_button')
+        self.tree_toggle = self.get_widget('tree_button')
         self.objectdecal_toggle = self.get_widget('objectdecal_button')
         self.barrier_toggle = self.get_widget('barrier_button')
         self.script_toggle = self.get_widget('script_button')
@@ -317,6 +319,7 @@ class MapGUI(BaseGUI):
         self.z_2xheight = self.z_height*2
         self.z_3xheight = self.z_height*3
         self.z_4xheight = self.z_height*4
+        self.z_5xheight = self.z_height*5
         self.mapinit = False
 
         # TODO: Should queue a redraw here, probably...
@@ -531,8 +534,8 @@ class MapGUI(BaseGUI):
         #    y2 = y2 - 1
 
         # Area we're actually drawing
-        top = y2-(self.z_height*4)
-        height = self.z_height*5
+        top = y2-(self.z_4xheight)
+        height = self.z_5xheight
         buftop = 0
         if (top<0):
             height = height+top
@@ -564,8 +567,21 @@ class MapGUI(BaseGUI):
                 pixbuf.composite(self.squarebuf, 0, self.z_4xheight, self.z_width, self.z_height, 0, self.z_4xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # Draw the object
-        if (self.object_toggle.get_active()):
-            (pixbuf, pixheight) = self.gfx.get_object(self.map.squares[y][x].wallimg, self.curzoom)
+        wallid = self.map.squares[y][x].wallimg
+        if (self.object_toggle.get_active() and wallid<161):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+            if (pixbuf is not None):
+                pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+
+        # Draw walls
+        if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+            if (pixbuf is not None):
+                pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+
+        # Draw trees
+        if (self.tree_toggle.get_active() and wallid>250):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
                 pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
@@ -577,6 +593,7 @@ class MapGUI(BaseGUI):
 
         # Draw Barriers
         if (barrier and self.barrier_toggle.get_active()):
+            #self.squarebuf = self.squarebuf.composite_color_simple(self.z_width, self.z_5xheight, gtk.gdk.INTERP_NEAREST, 127, self.z_5xheight, 13158600, 13158600)
             self.composite_simple(barrier)
 
         # Draw Scripts
@@ -616,7 +633,7 @@ class MapGUI(BaseGUI):
             self.gc_black = gtk.gdk.GC(self.maparea.window)
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
             self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
-            self.squarebuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_width, self.z_height*5)
+            self.squarebuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_width, self.z_5xheight)
             self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
             time_c = time.time()
             for y in range(len(self.map.squares)):
