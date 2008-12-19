@@ -598,9 +598,7 @@ class MapGUI(BaseGUI):
                     x1, top,
                     self.z_width, height)
         else:
-            # TODO: It wouldn't hurt to clean up the 'tempbuf' stuff, see if it makes sense to pass it instead, or something
-            # ... would it be a good idea to just be writing directly to the guicache at this point?
-            self.squarebuf.composite(self.tempbuf, x1, top, self.z_width, height, x1, top-buftop, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+            self.squarebuf.composite(self.guicache, x1, top, self.z_width, height, x1, top-buftop, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
@@ -619,16 +617,14 @@ class MapGUI(BaseGUI):
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
             self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
             self.squarebuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_width, self.z_height*5)
-            self.tempbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
+            self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
             time_c = time.time()
             for y in range(len(self.map.squares)):
                 for x in range(len(self.map.squares[y])):
                     self.draw_square(x, y)
             time_d = time.time()
-            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.tempbuf, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.guicache, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
             self.mapinit = True
-            self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
-            self.guicache.get_from_drawable(self.pixmap, gtk.gdk.colormap_get_system(), 0, 0, 0, 0, -1, -1)
             time_b = time.time()
             print "Map drawn in %d seconds, squares rendered in %d seconds" % (int(time_b-time_a), int(time_d-time_c))
 
