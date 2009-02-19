@@ -45,8 +45,8 @@ One other note: Certainly let me know if you use this on other architectures
 game has a set endianness to its values or not, which could possibly weird
 some stuff out.
 
-INSTALLATION
-------------
+INSTALLATION, LINUX
+-------------------
 
 This is a very early version still, and the code's rather raw.  There's no
 official installation scripts or anything like that.  What I'd recommend on a
@@ -59,13 +59,38 @@ probably the best location).  For example:
 
 Everything should work fine at that point, or at least it does on my system.
 
-As of 0.3.0, use on a Windows system should be a little better, since the app
-actually supports an Open dialog to choose your own file.  If you have Python
-and PyGTK installed on Windows, you should be able to get away with just
-unpacking the application somewhere and setting up a shortcut to run the
-eschalon_b1_char.py program.  You should be presented with a dialog asking you
-to choose the character file to load.  If you do get this going on Windows,
-please let me know and I'll update the docs, or make things easier.
+INSTALLATION, WINDOWS
+---------------------
+
+As with the Linux version, there's no actual installation script or anything
+like that.  If you have gtk+, Python, and PyGTK installed, though, you should
+be able to just run it from wherever you unzipped it.  The various pieces of
+software you'll need to run the program are:
+
+gtk+ Runtime:
+  http://sourceforge.net/project/showfiles.php?group_id=98754&package_id=121281
+  Note that this version, from the gladewin32 Sourceforge project, is the
+  main officially-blessed gtk+ runtime endorsed by PyGTK, so it's the best to
+  use.  You can probably get it working with other gtk+ runtime packages, but
+  you may have to do more work.  If you DO have other gtk+ runtimes installed,
+  certainly be careful about installing this one side-by-side.  You probably
+  only want one installed at any given time.
+
+Python:
+  http://python.org/download/releases/2.5.2/
+  Note that as of this writing (October 2008), PyGTK only ships installation
+  packages which use Python 2.5, not Python 2.6, so you'll have to install a
+  2.5 release of Python for now.
+
+PyGTK:
+  http://www.pygtk.org/downloads.html
+  Be sure to install all three of PyCairo, PyGObject, and PyGTK.  You *need*
+  all three, otherwise it won't work.
+
+Once you've got those components installed, you should be able to just
+double-click on eschalon_b1_char.py, and it'll open up an "Open" dialog.
+
+I'll look into distributing the required packages as one bundle.
 
 USAGE
 -----
