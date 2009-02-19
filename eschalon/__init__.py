@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 app_name = 'Eschalon Book 1 Savefile Editor'
-version = '0.3.0'
+version = '0.3.1'
 url = 'http://apocalyptech.com/eschalon/'
 authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 

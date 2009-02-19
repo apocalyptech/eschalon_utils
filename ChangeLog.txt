@@ -1,5 +1,11 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+*eschalon_b1_char-0.3.1 (19 Feb 2009)
+
+   19 Feb 2009; CJ Kucera <pez@apocalyptech.com> :
+   Some versions of Eschalon omit some data from the character file, which
+   was preventing the character editor from loading the file.
+
 *eschalon_b1_char-0.3.0 (29 Oct 2008)
 
    28 Oct 2008; CJ Kucera <pez@apocalyptech.com> :
