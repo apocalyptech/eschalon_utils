@@ -20,6 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
+import gtk
 import math
 import zlib
 import cairo
@@ -45,6 +46,21 @@ class GfxCairoHelper:
         data = self.data[self.pos:newpos]
         self.pos = newpos
         return data
+
+class GfxGDKHelper:
+    """
+    A file-like class to read in PNG data from a Cairo surface, essentially
+    to export a Cairo surface to a GDK Pixbuf.  Inefficient, of course, so
+    try not to do that much.  We're doing so in the character editor, though,
+    because using DrawingAreas and Cairo objects for that stuff would be
+    just ludicrous.
+    """
+    def __init__(self):
+        self.datalist = []
+    def write(self, data):
+        self.datalist.append(data)
+    def getdata(self):
+        return ''.join(self.datalist)
 
 class GfxCache:
     """ A class to hold graphic data, with resizing abilities and the like. """
@@ -145,6 +161,7 @@ class Gfx:
 
         # Some graphic-specific indexes/flags
         self.itemcache = None
+        self.itemcache_gdk = {}
         self.floorcache = None
         self.decalcache = None
         self.objcache1 = None
@@ -153,6 +170,7 @@ class Gfx:
         self.objcache4 = None
         self.objdecalcache = None
         self.avatarcache = {}
+        self.avatarcache_gdk = {}
 
         # wtf @ needing this
         self.treemap = {
@@ -194,7 +212,10 @@ class Gfx:
     def get_item(self, itemnum, size=None):
         if (self.itemcache is None):
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
-        return self.itemcache.getimg(itemnum+1, size)
+        key = "%d-%s"%(itemnum, size)
+        if (key not in self.itemcache_gdk):
+            self.itemcache_gdk[key] = self.surface_to_pixbuf(self.itemcache.getimg(itemnum+1, size))
+        return self.itemcache_gdk[key]
 
     def get_floor(self, floornum, size=None):
         if (floornum == 0):
@@ -244,9 +265,18 @@ class Gfx:
         if (avatarnum not in self.avatarcache):
             if (avatarnum == 7):
                 if (os.path.exists(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))):
-                    self.avatarcache[avatarnum] = cairo.ImageSurface.create_from_png(self.prefs.get_str('paths', 'gamedir'), 'mypic.png')
+                    self.avatarcache[avatarnum] = cairo.ImageSurface.create_from_png(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))
                 else:
                     return None
             else:
-                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
-        return self.avatarcache[avatarnum]
+                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).surface
+            self.avatarcache_gdk[avatarnum] = self.surface_to_pixbuf(self.avatarcache[avatarnum])
+        return self.avatarcache_gdk[avatarnum]
+
+    def surface_to_pixbuf(self, surface):
+        gdkhelper = GfxGDKHelper()
+        surface.write_to_png(gdkhelper)
+        loader = gtk.gdk.PixbufLoader()
+        loader.write(gdkhelper.getdata())
+        loader.close()
+        return loader.get_pixbuf()
