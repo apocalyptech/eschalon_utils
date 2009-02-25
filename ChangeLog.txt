@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   24 Feb 2008; CJ Kucera <pez@apocalyptech.com> :
+   Converted from GDK to Cairo for map drawing
+
    16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Preferences fully implemented on Linux
 

@@ -20,55 +20,79 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-import gtk
 import math
 import zlib
+import cairo
 from struct import unpack
 from eschalonb1.savefile import Savefile, LoadException
+
+class GfxCairoHelper:
+    """
+    A file-like class to load in PNG data to a Cairo surface, since
+    PyCairo apparently only exports the function to load in PNG data from a file.
+    """
+    def __init__(self, data):
+        self.data = data
+        self.pos = 0
+
+    def read(self, sizehint=-1):
+        if (self.pos >= len(self.data)):
+            return None
+        if (sizehint < 0):
+            newpos = len(self.data)
+        else:
+            newpos = min(self.pos + sizehint, len(self.data))
+        data = self.data[self.pos:newpos]
+        self.pos = newpos
+        return data
 
 class GfxCache:
     """ A class to hold graphic data, with resizing abilities and the like. """
 
     def __init__(self, pngdata, width, height, cols):
-        loader = gtk.gdk.PixbufLoader()
-        loader.write(pngdata)
-        self.pixbuf = loader.get_pixbuf()
-        loader.close()
-        loader = None
+        self.surface = cairo.ImageSurface.create_from_png(GfxCairoHelper(pngdata))
         self.width = width
         self.height = height
         self.cols = cols
         self.cache = {}
 
     def getimg(self, number, sizex=None):
-        """ Grab an image from the cache. """
+        """ Grab an image from the cache, as a Cairo surface. """
         number = number - 1
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.cache):
             copy_x_from = int(col*self.width)
             copy_y_from = int(row*self.height)
-            if (copy_x_from+self.width > self.pixbuf.get_property('width') or
-                copy_y_from+self.height > self.pixbuf.get_property('height')):
+            if (copy_x_from+self.width > self.surface.get_width() or
+                copy_y_from+self.height > self.surface.get_height()):
                 return None
             self.cache[number] = {}
-            self.cache[number]['orig'] = gtk.gdk.Pixbuf(self.pixbuf.get_colorspace(),
-                    self.pixbuf.get_has_alpha(),
-                    self.pixbuf.get_bits_per_sample(),
-                    self.width, self.height)
-            self.pixbuf.copy_area(copy_x_from,
-                    copy_y_from,
-                    self.width,
-                    self.height,
-                    self.cache[number]['orig'],
-                    0, 0)
+            self.cache[number]['orig'] = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height)
+            ctx = cairo.Context(self.cache[number]['orig'])
+            # Note the negative values here; nothing to be worried about.
+            ctx.set_source_surface(self.surface, -copy_x_from, -copy_y_from)
+            ctx.paint()
             self.cache[number][self.width] = self.cache[number]['orig']
         if (sizex is None):
             return self.cache[number]['orig']
         else:
             if (sizex not in self.cache[number]):
                 sizey = (sizex*self.height)/self.width
-                self.cache[number][sizex] = self.cache[number]['orig'].scale_simple(sizex, sizey, gtk.gdk.INTERP_BILINEAR)
+                # This is crazy, seems like a million calls just to resize a bitmap
+                if (sizex > sizey):
+                    scale = float(self.width)/sizex
+                else:
+                    scale = float(self.height)/sizey
+                self.cache[number][sizex] = cairo.ImageSurface(cairo.FORMAT_ARGB32, sizex, sizey)
+                imgpat = cairo.SurfacePattern(self.cache[number]['orig'])
+                scaler = cairo.Matrix()
+                scaler.scale(scale, scale)
+                imgpat.set_matrix(scaler)
+                imgpat.set_filter(cairo.FILTER_BILINEAR)
+                ctx = cairo.Context(self.cache[number][sizex])
+                ctx.set_source(imgpat)
+                ctx.paint()
             return self.cache[number][sizex]
 
 class PakIndex:
@@ -186,7 +210,7 @@ class Gfx:
             self.decalcache = GfxCache(self.readfile('iso_tileset_base_decals.png'), 52, 26, 6)
         return self.decalcache.getimg(decalnum, size)
 
-    # Returns a tuple, first item is the pixbuf, second is the extra height to add while drawing
+    # Returns a tuple, first item is the surface, second is the extra height to add while drawing
     def get_object(self, objnum, size=None):
         if (objnum == 0):
             return (None, 0)
@@ -220,7 +244,7 @@ class Gfx:
         if (avatarnum not in self.avatarcache):
             if (avatarnum == 7):
                 if (os.path.exists(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))):
-                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))
+                    self.avatarcache[avatarnum] = cairo.ImageSurface.create_from_png(self.prefs.get_str('paths', 'gamedir'), 'mypic.png')
                 else:
                     return None
             else:

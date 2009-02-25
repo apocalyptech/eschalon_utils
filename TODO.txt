@@ -30,6 +30,8 @@ GUI
  * Make sure Profile Picture lookup is okay when there's no custom image
  * Figure out implications of not rigorously checking gamedir on prefs screen
    (loading new maps, etc...)
+ * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
+   flips?
  * Something on the item icon selection dialog will make it disappear and be
    very slow...
 

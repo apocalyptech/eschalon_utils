@@ -22,6 +22,7 @@
 import os
 import sys
 import time
+import cairo
 from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
@@ -467,16 +468,15 @@ class MapGUI(BaseGUI):
     def realize_map(self, event):
         pass
 
-    def composite_simple(self, color):
-        pixels = self.squarebuf.get_pixels_array()
-        for row in pixels:
-            for col in row:
-                if (color[0] > col[0]):
-                    col[0] = (col[0]+color[0])/2
-                if (color[1] > col[1]):
-                    col[1] = (col[1]+color[1])/2
-                if (color[2] > col[2]):
-                    col[2] = (col[2]+color[2])/2
+    # Assumes that the context is squarebuf_ctx, hence the hardcoded width/height
+    # We're passing it in so we're not constantly referencing self.squarebuf_ctx
+    def composite_simple(self, context, color):
+        context.save()
+        context.set_operator(cairo.OPERATOR_ATOP)
+        context.set_source_rgba(*color)
+        context.rectangle(0, 0, self.z_width, self.z_5xheight)
+        context.fill()
+        context.restore()
 
     def draw_square(self, x, y, usecache=False):
         """ Draw a single square of the map. """
@@ -489,24 +489,24 @@ class MapGUI(BaseGUI):
         entity = False
 
         if (x == self.sq_x and y == self.sq_y):
-            pointer = (255, 255, 255)
+            pointer = (1, 1, 1, 0.5)
         elif (self.map.squares[y][x].entity is not None):
             entity = True
             if (self.map.squares[y][x].entity.friendly == 1):
-                entity = (255, 255, 0)
+                entity = (1, 1, 0, 0.5)
             else:
-                entity = (255, 0, 0)
+                entity = (1, 0, 0, 0.5)
         elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
-            script = (0, 255, 0)
+            script = (0, 1, 0, 0.5)
         elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) == 0):
-            script = (0, 200, 200)
+            script = (0, .784, .784, 0.5)
         elif (self.map.squares[y][x].scriptid == 0 and len(self.map.squares[y][x].scripts) > 0):
             # afaik, this doesn't happen.  should use something other than red here, though
-            script = (255, 0, 0)
+            script = (1, 0, 0, 0.5)
         elif (self.map.squares[y][x].wall == 1):
-            barrier = (200, 200, 200)
+            barrier = (.784, .784, .784, 0.5)
         elif (self.map.squares[y][x].floorimg == 126):
-            barrier = (0, 0, 200)
+            barrier = (0, 0, .784, 0.5)
         else:
             clear = True
 
@@ -544,12 +544,19 @@ class MapGUI(BaseGUI):
 
         # Simply redraw the area from our cache, if we should
         if (usecache and not pointer):
-            self.pixmap.draw_polygon(self.gc_black, True, [(x1, top), (x3, top), (x3, y4), (x1, y4)])
-            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.guicache, x1, top, x1, top, self.z_width, height)
+            self.ctx.save()
+            self.ctx.set_operator(cairo.OPERATOR_SOURCE)
+            self.ctx.rectangle(x1, top, self.z_width, height)
+            self.ctx.set_source_surface(self.guicache, 0, 0)
+            self.ctx.fill()
+            self.ctx.restore()
             return
 
         # Prepare our pixbuf
-        self.squarebuf.fill(0)
+        self.squarebuf_ctx.save()
+        self.squarebuf_ctx.set_operator(cairo.OPERATOR_CLEAR)
+        self.squarebuf_ctx.paint()
+        self.squarebuf_ctx.restore()
 
         # TODO: Need to have our pointer display a blank tile, if necessary - so yeah.
         #self.pixmap.draw_polygon(self.gc_black, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
@@ -558,64 +565,72 @@ class MapGUI(BaseGUI):
         if (self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(self.map.squares[y][x].floorimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_4xheight, self.z_width, self.z_height, 0, self.z_4xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                self.squarebuf_ctx.paint()
 
         # Draw the floor decal
         if (self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(self.map.squares[y][x].decalimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_4xheight, self.z_width, self.z_height, 0, self.z_4xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                self.squarebuf_ctx.paint()
 
         # Draw the object
         wallid = self.map.squares[y][x].wallimg
         if (self.object_toggle.get_active() and wallid<161):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                self.squarebuf_ctx.paint()
 
         # Draw walls
         if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                self.squarebuf_ctx.paint()
 
         # Draw trees
         if (self.tree_toggle.get_active() and wallid>250):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_height*(4-pixheight), self.z_width, self.z_height*(pixheight+1), 0, self.z_height*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                self.squarebuf_ctx.paint()
 
         # Draw the object decal
         if (self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(self.map.squares[y][x].walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                pixbuf.composite(self.squarebuf, 0, self.z_2xheight, self.z_width, self.z_3xheight, 0, self.z_2xheight, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
+                self.squarebuf_ctx.paint()
 
         # Draw Barriers
+        # TODO: Drawing barriers on water is pretty lame; don't do that.
+        # (perhaps unless asked to)
         if (barrier and self.barrier_toggle.get_active()):
-            #self.squarebuf = self.squarebuf.composite_color_simple(self.z_width, self.z_5xheight, gtk.gdk.INTERP_NEAREST, 127, self.z_5xheight, 13158600, 13158600)
-            self.composite_simple(barrier)
+            self.composite_simple(self.squarebuf_ctx, barrier)
 
         # Draw Scripts
         if (script and self.script_toggle.get_active()):
-            self.composite_simple(script)
+            self.composite_simple(self.squarebuf_ctx, script)
 
         # Draw Entities
         if (entity and self.entity_toggle.get_active()):
-            self.composite_simple(entity)
+            self.composite_simple(self.squarebuf_ctx, entity)
 
         # Finally, draw the mouse pointer
         if (usecache and pointer):
-            self.composite_simple(pointer)
+            self.composite_simple(self.squarebuf_ctx, pointer)
 
         # Now draw the pixbuf onto our pixmap
         if (usecache):
-            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.squarebuf,
-                    0, buftop,
-                    x1, top,
-                    self.z_width, height)
+            # TODO: We only get here when we're the pointer, right?
+            self.ctx.set_source_surface(self.squarebuf, x1, top-buftop)
+            self.ctx.paint()
         else:
-            self.squarebuf.composite(self.guicache, x1, top, self.z_width, height, x1, top-buftop, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+            # This is typically just for the initial map draw
+            self.guicache_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
+            self.guicache_ctx.paint()
 
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
@@ -628,19 +643,33 @@ class MapGUI(BaseGUI):
                 self.draw_square(x, y, True)
         else:
             time_a = time.time()
+            self.compositecount = 0
             self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
             self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
-            self.gc_black = gtk.gdk.GC(self.maparea.window)
-            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
-            self.squarebuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_width, self.z_5xheight)
-            self.guicache = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.z_mapsize_x, self.z_mapsize_y)
+
+            self.ctx = self.pixmap.cairo_create()
+            self.ctx.set_source_rgba(0, 0, 0, 1)
+            self.ctx.paint()
+
+            self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+            self.squarebuf_ctx = cairo.Context(self.squarebuf)
+            self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
+            self.guicache_ctx = cairo.Context(self.guicache)
+            self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
+            self.guicache_ctx.paint()
+
+            # Draw the squares
             time_c = time.time()
             for y in range(len(self.map.squares)):
                 for x in range(len(self.map.squares[y])):
                     self.draw_square(x, y)
             time_d = time.time()
-            self.pixmap.draw_pixbuf(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.guicache, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+
+            # Finish drawing
+            self.ctx.set_source_surface(self.guicache, 0, 0)
+            self.ctx.paint()
+
+            # ... and finish up, and report some timing information
             self.mapinit = True
             time_b = time.time()
             print "Map drawn in %d seconds, squares rendered in %d seconds" % (int(time_b-time_a), int(time_d-time_c))
@@ -649,5 +678,6 @@ class MapGUI(BaseGUI):
         self.cleansquares = []
 
         # This is about all we should *actually* need in here
+        # TODO: do we need this when doing Cairo?
         self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
 

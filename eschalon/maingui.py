@@ -19,8 +19,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import sys
 import os
+import sys
+import cairo
 
 # Load in our PyGTK deps
 pygtkreq = '2.0'
