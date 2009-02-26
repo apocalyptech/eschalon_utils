@@ -392,7 +392,8 @@ class MapGUI(BaseGUI):
         # ... and now figure out our coordinates based on the map
         # I tried out using a dict lookup instead of the series of if/then, but
         # the if/then ended up being about 40% faster or so.
-        testval = self.mousemap[self.curzoom][test_y][test_x][0]
+        # TODO: Numeric fix here?  My upgrade to python 2.5 (numeric 24.2) necessitated the extra [0]
+        testval = self.mousemap[self.curzoom][test_y][test_x][0][0]
         if (testval == 50):
             self.sq_x = start_x-1
             self.sq_y = start_y-1
