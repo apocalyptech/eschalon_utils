@@ -63,14 +63,32 @@ class GfxGDKHelper:
         return ''.join(self.datalist)
 
 class GfxCache:
-    """ A class to hold graphic data, with resizing abilities and the like. """
+    """
+    A class to hold graphic data, with resizing abilities and the like.
+    It can return a Cairo surface (by default, via getimg()), or a GDK
+    Pixbuf (via getimg_gdk()).  There's some code duplication between
+    those two functions, which isn't ideal, but I didn't want to take the
+    time to abstract the common stuff out.  So there.
+    """
 
     def __init__(self, pngdata, width, height, cols):
+        # First load the data as a Cairo surface
         self.surface = cairo.ImageSurface.create_from_png(GfxCairoHelper(pngdata))
+
+        # For ease-of-use, we're also going to import it to a GDK Pixbuf
+        # This shouldn't hurt performance really since there's only a few files
+        loader = gtk.gdk.PixbufLoader()
+        loader.write(pngdata)
+        self.pixbuf = loader.get_pixbuf()
+        loader.close()
+        loader = None
+
+        # Now assign the rest of our attributes
         self.width = width
         self.height = height
         self.cols = cols
         self.cache = {}
+        self.gdkcache = {}
 
     def getimg(self, number, sizex=None):
         """ Grab an image from the cache, as a Cairo surface. """
@@ -110,6 +128,37 @@ class GfxCache:
                 ctx.set_source(imgpat)
                 ctx.paint()
             return self.cache[number][sizex]
+
+    def getimg_gdk(self, number, sizex=None):
+        """ Grab an image from the cache, as a GDK pixbuf """
+        number = number - 1
+        row = math.floor(number / self.cols)
+        col = number % self.cols
+        if (number not in self.gdkcache):
+            copy_x_from = int(col*self.width)
+            copy_y_from = int(row*self.height)
+            if (copy_x_from+self.width > self.pixbuf.get_property('width') or
+                copy_y_from+self.height > self.pixbuf.get_property('height')):
+                return None
+            self.gdkcache[number] = {}
+            self.gdkcache[number]['orig'] = gtk.gdk.Pixbuf(self.pixbuf.get_colorspace(),
+                    self.pixbuf.get_has_alpha(),
+                    self.pixbuf.get_bits_per_sample(),
+                    self.width, self.height)
+            self.pixbuf.copy_area(copy_x_from,
+                    copy_y_from,
+                    self.width,
+                    self.height,
+                    self.gdkcache[number]['orig'],
+                    0, 0)
+            self.gdkcache[number][self.width] = self.gdkcache[number]['orig']
+        if (sizex is None):
+            return self.gdkcache[number]['orig']
+        else:
+            if (sizex not in self.gdkcache[number]):
+                sizey = (sizex*self.height)/self.width
+                self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(sizex, sizey, gtk.gdk.INTERP_BILINEAR)
+            return self.gdkcache[number][sizex]
 
 class PakIndex:
     """ A class to hold information on an individual file in the pak. """
@@ -161,7 +210,6 @@ class Gfx:
 
         # Some graphic-specific indexes/flags
         self.itemcache = None
-        self.itemcache_gdk = {}
         self.floorcache = None
         self.decalcache = None
         self.objcache1 = None
@@ -170,7 +218,6 @@ class Gfx:
         self.objcache4 = None
         self.objdecalcache = None
         self.avatarcache = {}
-        self.avatarcache_gdk = {}
 
         # wtf @ needing this
         self.treemap = {
@@ -212,10 +259,7 @@ class Gfx:
     def get_item(self, itemnum, size=None):
         if (self.itemcache is None):
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
-        key = "%d-%s"%(itemnum, size)
-        if (key not in self.itemcache_gdk):
-            self.itemcache_gdk[key] = self.surface_to_pixbuf(self.itemcache.getimg(itemnum+1, size))
-        return self.itemcache_gdk[key]
+        return self.itemcache.getimg_gdk(itemnum+1, size)
 
     def get_floor(self, floornum, size=None):
         if (floornum == 0):
@@ -265,13 +309,12 @@ class Gfx:
         if (avatarnum not in self.avatarcache):
             if (avatarnum == 7):
                 if (os.path.exists(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))):
-                    self.avatarcache[avatarnum] = cairo.ImageSurface.create_from_png(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))
+                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.prefs.get_str('paths', 'gamedir'), 'mypic.png'))
                 else:
                     return None
             else:
-                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).surface
-            self.avatarcache_gdk[avatarnum] = self.surface_to_pixbuf(self.avatarcache[avatarnum])
-        return self.avatarcache_gdk[avatarnum]
+                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
+        return self.avatarcache[avatarnum]
 
     def surface_to_pixbuf(self, surface):
         gdkhelper = GfxGDKHelper()
