@@ -149,6 +149,7 @@ class MapGUI(BaseGUI):
         self.set_zoom_vars(24)
         self.guicache = None
         self.squarebuf = None
+        self.blanksquare = None
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
@@ -554,12 +555,10 @@ class MapGUI(BaseGUI):
 
         # Prepare our pixbuf
         self.squarebuf_ctx.save()
-        self.squarebuf_ctx.set_operator(cairo.OPERATOR_CLEAR)
+        self.squarebuf_ctx.set_operator(cairo.OPERATOR_SOURCE)
+        self.squarebuf_ctx.set_source_surface(self.blanksquare)
         self.squarebuf_ctx.paint()
         self.squarebuf_ctx.restore()
-
-        # TODO: Need to have our pointer display a blank tile, if necessary - so yeah.
-        #self.pixmap.draw_polygon(self.gc_black, True, [(x1, y1), (x2, y2), (x3, y3), (x4, y4)])
 
         # Draw the floor tile
         if (self.floor_toggle.get_active()):
@@ -657,6 +656,17 @@ class MapGUI(BaseGUI):
             self.guicache_ctx = cairo.Context(self.guicache)
             self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
             self.guicache_ctx.paint()
+
+            # Set up a "blank" tile to draw everything else on top of
+            self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+            sq_ctx = cairo.Context(self.blanksquare)
+            sq_ctx.set_source_rgba(0, 0, 0, 1)
+            sq_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
+            sq_ctx.line_to(self.z_halfwidth, self.z_4xheight)
+            sq_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
+            sq_ctx.line_to(self.z_halfwidth, self.z_5xheight)
+            sq_ctx.close_path()
+            sq_ctx.fill()
 
             # Draw the squares
             time_c = time.time()
