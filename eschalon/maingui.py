@@ -1185,7 +1185,7 @@ class MainGUI(BaseGUI):
 
     def itemsel_draw(self, x, y):
         itemnum = (y*10)+x
-        if (itemnum < 0):
+        if (itemnum < 0 or itemnum > 239):
             return
         self.itemsel_pixmap.draw_pixbuf(None, self.gfx.get_item(itemnum), 0, 0, x*self.itemsel_width, y*self.itemsel_height)
         if (x == self.itemsel_mousex and y == self.itemsel_mousey):
