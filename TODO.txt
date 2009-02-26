@@ -26,7 +26,6 @@ GUI
    be loaded
  * Confirmation of close when the window is destroyed (via the close button,
    for instance)
- * Item Library - pick from objects available in the game
  * Make sure Profile Picture lookup is okay when there's no custom image
  * Figure out implications of not rigorously checking gamedir on prefs screen
    (loading new maps, etc...)
