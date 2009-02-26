@@ -490,24 +490,29 @@ class MapGUI(BaseGUI):
         pointer = False
         entity = False
 
+        # Use local vars instead of continually calling out
+        square = self.map.squares[y][x]
+        sq_ctx = self.squarebuf_ctx
+        main_ctx = self.ctx
+
         if (x == self.sq_x and y == self.sq_y):
             pointer = (1, 1, 1, 0.5)
-        elif (self.map.squares[y][x].entity is not None):
+        elif (square.entity is not None):
             entity = True
-            if (self.map.squares[y][x].entity.friendly == 1):
+            if (square.entity.friendly == 1):
                 entity = (1, 1, 0, 0.5)
             else:
                 entity = (1, 0, 0, 0.5)
-        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) > 0):
+        elif (square.scriptid != 0 and len(square.scripts) > 0):
             script = (0, 1, 0, 0.5)
-        elif (self.map.squares[y][x].scriptid != 0 and len(self.map.squares[y][x].scripts) == 0):
+        elif (square.scriptid != 0 and len(square.scripts) == 0):
             script = (0, .784, .784, 0.5)
-        elif (self.map.squares[y][x].scriptid == 0 and len(self.map.squares[y][x].scripts) > 0):
+        elif (square.scriptid == 0 and len(square.scripts) > 0):
             # afaik, this doesn't happen.  should use something other than red here, though
             script = (1, 0, 0, 0.5)
-        elif (self.map.squares[y][x].wall == 1):
+        elif (square.wall == 1):
             barrier = (.784, .784, .784, 0.5)
-        elif (self.map.squares[y][x].floorimg == 126):
+        elif (square.floorimg == 126):
             barrier = (0, 0, .784, 0.5)
         else:
             clear = True
@@ -546,87 +551,87 @@ class MapGUI(BaseGUI):
 
         # Simply redraw the area from our cache, if we should
         if (usecache and not pointer):
-            self.ctx.save()
-            self.ctx.set_operator(cairo.OPERATOR_SOURCE)
-            self.ctx.rectangle(x1, top, self.z_width, height)
-            self.ctx.set_source_surface(self.guicache, 0, 0)
-            self.ctx.fill()
-            self.ctx.restore()
+            main_ctx.save()
+            main_ctx.set_operator(cairo.OPERATOR_SOURCE)
+            main_ctx.rectangle(x1, top, self.z_width, height)
+            main_ctx.set_source_surface(self.guicache, 0, 0)
+            main_ctx.fill()
+            main_ctx.restore()
             return
 
         # Prepare our pixbuf
-        self.squarebuf_ctx.save()
-        self.squarebuf_ctx.set_operator(cairo.OPERATOR_SOURCE)
-        self.squarebuf_ctx.set_source_surface(self.blanksquare)
-        self.squarebuf_ctx.paint()
-        self.squarebuf_ctx.restore()
+        sq_ctx.save()
+        sq_ctx.set_operator(cairo.OPERATOR_SOURCE)
+        sq_ctx.set_source_surface(self.blanksquare)
+        sq_ctx.paint()
+        sq_ctx.restore()
 
         # Draw the floor tile
         if (self.floor_toggle.get_active()):
-            pixbuf = self.gfx.get_floor(self.map.squares[y][x].floorimg, self.curzoom)
+            pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.paint()
 
         # Draw the floor decal
         if (self.decal_toggle.get_active()):
-            pixbuf = self.gfx.get_decal(self.map.squares[y][x].decalimg, self.curzoom)
+            pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.paint()
 
         # Draw the object
-        wallid = self.map.squares[y][x].wallimg
+        wallid = square.wallimg
         if (self.object_toggle.get_active() and wallid<161):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
 
         # Draw walls
         if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
 
         # Draw trees
         if (self.tree_toggle.get_active() and wallid>250):
             (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
 
         # Draw the object decal
         if (self.objectdecal_toggle.get_active()):
-            pixbuf = self.gfx.get_object_decal(self.map.squares[y][x].walldecalimg, self.curzoom)
+            pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                self.squarebuf_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
-                self.squarebuf_ctx.paint()
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
+                sq_ctx.paint()
 
         # Draw Barriers
         # TODO: Drawing barriers on water is pretty lame; don't do that.
         # (perhaps unless asked to)
         if (barrier and self.barrier_toggle.get_active()):
-            self.composite_simple(self.squarebuf_ctx, barrier)
+            self.composite_simple(sq_ctx, barrier)
 
         # Draw Scripts
         if (script and self.script_toggle.get_active()):
-            self.composite_simple(self.squarebuf_ctx, script)
+            self.composite_simple(sq_ctx, script)
 
         # Draw Entities
         if (entity and self.entity_toggle.get_active()):
-            self.composite_simple(self.squarebuf_ctx, entity)
+            self.composite_simple(sq_ctx, entity)
 
         # Finally, draw the mouse pointer
         if (usecache and pointer):
-            self.composite_simple(self.squarebuf_ctx, pointer)
+            self.composite_simple(sq_ctx, pointer)
 
         # Now draw the pixbuf onto our pixmap
         if (usecache):
             # TODO: We only get here when we're the pointer, right?
-            self.ctx.set_source_surface(self.squarebuf, x1, top-buftop)
-            self.ctx.paint()
+            main_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
+            main_ctx.paint()
         else:
             # This is typically just for the initial map draw
             self.guicache_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
