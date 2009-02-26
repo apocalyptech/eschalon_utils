@@ -467,7 +467,11 @@ class MainGUI(BaseGUI):
         """ Special-case to handle changing the avatar picture properly. """
         self.on_singleval_changed_int(widget)
         if (self.get_widget('picid').get_value() % 256 == 0):
-            self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value()/256))
+            pixbuf = self.gfx.get_avatar(widget.get_value()/256)
+            if (pixbuf is None):
+                self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+            else:
+                self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value()/256))
         else:
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
@@ -1255,7 +1259,10 @@ class MainGUI(BaseGUI):
     def avatarsel_draw(self, x):
         if (x < 0 or x >= self.avatarsel_cols):
             return
-        self.avatarsel_pixmap.draw_pixbuf(None, self.gfx.get_avatar(x), 0, 0, x*self.avatarsel_width, 0)
+        pixbuf = self.gfx.get_avatar(x)
+        if (pixbuf is None):
+            return
+        self.avatarsel_pixmap.draw_pixbuf(None, pixbuf, 0, 0, x*self.avatarsel_width, 0)
         if (x == self.avatarsel_mousex):
             color = self.gc_white
         elif (x == self.avatarsel_curx):
