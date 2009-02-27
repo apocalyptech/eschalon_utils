@@ -30,6 +30,9 @@ GUI
    (loading new maps, etc...)
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
+ * We shouldn't *always* put our black tile in-place.  For instance, when the
+   tile is decorative over a cliff, etc (see to.map).  So we should
+   special-case that.
 
 Internal
 --------

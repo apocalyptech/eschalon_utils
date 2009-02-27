@@ -77,6 +77,7 @@ class MapGUI(BaseGUI):
         self.wTree = gtk.glade.XML(self.gladefile)
         self.window = self.get_widget('mainwindow')
         self.infowindow = self.get_widget('infowindow')
+        self.squarewindow = self.get_widget('squarewindow')
         self.maparea = self.get_widget('maparea')
         self.mapname_label = self.get_widget('mapname')
         self.coords_label = self.get_widget('coords')
@@ -97,6 +98,7 @@ class MapGUI(BaseGUI):
         self.infobuffer = gtk.TextBuffer()
         self.infotext.set_buffer(self.infobuffer)
         self.infoscroll = self.get_widget('infoscroll')
+        self.composite_area = self.get_widget('composite_area')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -119,6 +121,12 @@ class MapGUI(BaseGUI):
                 'map_toggle': self.map_toggle,
                 'info_toggle': self.info_toggle,
                 'infowindow_clear': self.infowindow_clear,
+                'on_singleval_square_changed': self.on_singleval_square_changed,
+                'on_floor_changed': self.on_floor_changed,
+                'on_decal_changed': self.on_decal_changed,
+                'on_wall_changed': self.on_wall_changed,
+                'on_walldecal_changed': self.on_walldecal_changed,
+                'on_squarewindow_close': self.on_squarewindow_close,
                 'on_prefs': self.on_prefs
                 }
         self.wTree.signal_autoconnect(dic)
@@ -150,6 +158,9 @@ class MapGUI(BaseGUI):
         self.guicache = None
         self.squarebuf = None
         self.blanksquare = None
+
+        # Blank pixbuf to use in the square editing window
+        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 52, 130)
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
@@ -307,6 +318,55 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
+    def on_singleval_square_changed(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        square = self.map.squares[self.sq_y][self.sq_x]
+        square.__dict__[wname] = widget.get_value()
+
+    def on_floor_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        self.on_singleval_square_changed(widget)
+        pixbuf = self.gfx.get_floor(widget.get_value(), None, True)
+        if (pixbuf is None):
+            self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('floorimg_image').set_from_pixbuf(pixbuf)
+        self.update_composite()
+
+    def on_decal_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        self.on_singleval_square_changed(widget)
+        pixbuf = self.gfx.get_decal(widget.get_value(), None, True)
+        if (pixbuf is None):
+            self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('decalimg_image').set_from_pixbuf(pixbuf)
+        self.update_composite()
+
+    def on_wall_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        self.on_singleval_square_changed(widget)
+        (pixbuf, height) = self.gfx.get_object(widget.get_value(), None, True)
+        if (pixbuf is None):
+            self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('wallimg_image').set_from_pixbuf(pixbuf)
+        self.update_composite()
+
+    def on_walldecal_changed(self, widget):
+        self.on_singleval_square_changed(widget)
+        """ Update the appropriate image when necessary. """
+        pixbuf = self.gfx.get_object_decal(widget.get_value(), None, True)
+        if (pixbuf is None):
+            self.get_widget('walldecalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('walldecalimg_image').set_from_pixbuf(pixbuf)
+        self.update_composite()
+
+    def on_squarewindow_close(self, widget):
+        self.squarewindow.hide()
+
     def set_zoom_vars(self, width):
         """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """
         self.curzoom = width
@@ -435,19 +495,31 @@ class MapGUI(BaseGUI):
         # Now queue up a draw
         self.maparea.queue_draw()
 
+    def populate_squarewindow_from_square(self, square):
+        """ Populates the square editing screen from a given square. """
+        self.get_widget('wall').set_value(square.wall)
+        self.get_widget('floorimg').set_value(square.floorimg)
+        self.get_widget('decalimg').set_value(square.decalimg)
+        self.get_widget('wallimg').set_value(square.wallimg)
+        self.get_widget('walldecalimg').set_value(square.walldecalimg)
+        self.get_widget('scriptid').set_value(square.scriptid)
+        self.get_widget('unknown5').set_value(square.unknown5)
+
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
 
         if (self.sq_y < len(self.map.squares)):
             if (self.sq_x < len(self.map.squares[self.sq_y])):
-                self.infobuffer.insert(self.infobuffer.get_end_iter(), "Square at (%d, %d):\n%s\n" % (self.sq_x, self.sq_y, self.map.squares[self.sq_y][self.sq_x].display(True)))
-                adjust = self.infoscroll.get_vadjustment()
-                adjust.set_value(adjust.upper)
-                if (not self.info_button.get_active()):
-                    self.info_button.clicked()
-                self.infowindow.show()
-                #print "Square at %d x %d - " % (self.sq_x, self.sq_y)
-                #self.map.squares[self.sq_y][self.sq_x].display(True)
+                self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
+                self.squarewindow.show()
+                #self.infobuffer.insert(self.infobuffer.get_end_iter(), "Square at (%d, %d):\n%s\n" % (self.sq_x, self.sq_y, self.map.squares[self.sq_y][self.sq_x].display(True)))
+                #adjust = self.infoscroll.get_vadjustment()
+                #adjust.set_value(adjust.upper)
+                #if (not self.info_button.get_active()):
+                #    self.info_button.clicked()
+                #self.infowindow.show()
+                ##print "Square at %d x %d - " % (self.sq_x, self.sq_y)
+                ##self.map.squares[self.sq_y][self.sq_x].display(True)
 
     def info_toggle(self, widget):
         if (self.info_button.get_active()):
@@ -637,6 +709,34 @@ class MapGUI(BaseGUI):
             self.guicache_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
             self.guicache_ctx.paint()
 
+    def update_composite(self):
+
+        # Grab our variables and clear out the pixbuf
+        square = self.map.squares[self.sq_y][self.sq_x]
+        comp_pixbuf = self.comp_pixbuf
+        comp_pixbuf.fill(0)
+
+        # Now do all the actual compositing
+        if (square.floorimg > 0):
+            pixbuf = self.gfx.get_floor(square.floorimg, 52, True)
+            if (pixbuf is not None):
+                pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+        if (square.decalimg > 0):
+            pixbuf = self.gfx.get_decal(square.decalimg, 52, True)
+            if (pixbuf is not None):
+                pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+        if (square.wallimg > 0):
+            (pixbuf, pixheight) = self.gfx.get_object(square.wallimg, 52, True)
+            if (pixbuf is not None):
+                pixbuf.composite(comp_pixbuf, 0, 26*(4-pixheight), 52, 26*(pixheight+1), 0, 26*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+        if (square.walldecalimg > 0):
+            pixbuf = self.gfx.get_object_decal(square.walldecalimg, 52, True)
+            if (pixbuf is not None):
+                pixbuf.composite(comp_pixbuf, 0, 52, 52, 78, 0, 52, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+
+        # ... and update the main image
+        self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
+
     def expose_map(self, widget, event):
         # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
         # This may be the only way when doing startup though...  self.maparea.window isn't useful until we're in
@@ -648,7 +748,6 @@ class MapGUI(BaseGUI):
                 self.draw_square(x, y, True)
         else:
             time_a = time.time()
-            self.compositecount = 0
             self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
             self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 

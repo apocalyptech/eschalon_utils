@@ -90,8 +90,10 @@ class GfxCache:
         self.cache = {}
         self.gdkcache = {}
 
-    def getimg(self, number, sizex=None):
+    def getimg(self, number, sizex=None, gdk=False):
         """ Grab an image from the cache, as a Cairo surface. """
+        if (gdk):
+            return self.getimg_gdk(number, sizex)
         number = number - 1
         row = math.floor(number / self.cols)
         col = number % self.cols
@@ -256,52 +258,56 @@ class Gfx:
         else:
             raise LoadException('PAK Index has not been loaded')
 
-    def get_item(self, itemnum, size=None):
+    def get_item(self, itemnum, size=None, gdk=True):
         if (self.itemcache is None):
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
-        return self.itemcache.getimg_gdk(itemnum+1, size)
+        return self.itemcache.getimg(itemnum+1, size, gdk)
 
-    def get_floor(self, floornum, size=None):
+    # TODO: I probably should just push the gdk check into getimg, and consolidate those
+    def get_floor(self, floornum, size=None, gdk=False):
         if (floornum == 0):
             return None
         if (self.floorcache is None):
             self.floorcache = GfxCache(self.readfile('iso_tileset_base.png'), 52, 26, 6)
-        return self.floorcache.getimg(floornum, size)
+        return self.floorcache.getimg(floornum, size, gdk)
 
-    def get_decal(self, decalnum, size=None):
+    def get_decal(self, decalnum, size=None, gdk=False):
         if (decalnum == 0):
             return None
         if (self.decalcache is None):
             self.decalcache = GfxCache(self.readfile('iso_tileset_base_decals.png'), 52, 26, 6)
-        return self.decalcache.getimg(decalnum, size)
+        return self.decalcache.getimg(decalnum, size, gdk)
 
     # Returns a tuple, first item is the surface, second is the extra height to add while drawing
-    def get_object(self, objnum, size=None):
+    def get_object(self, objnum, size=None, gdk=False):
         if (objnum == 0):
             return (None, 0)
         if (objnum < 101):
             if (self.objcache1 is None):
                 self.objcache1 = GfxCache(self.readfile('iso_tileset_obj_a.png'), 52, 52, 6)
-            return (self.objcache1.getimg(objnum, size), 1)
+            return (self.objcache1.getimg(objnum, size, gdk), 1)
         elif (objnum < 161):
             if (self.objcache2 is None):
                 self.objcache2 = GfxCache(self.readfile('iso_tileset_obj_b.png'), 52, 78, 6)
-            return (self.objcache2.getimg(objnum-100, size), 2)
+            return (self.objcache2.getimg(objnum-100, size, gdk), 2)
         elif (objnum < 251):
             if (self.objcache3 is None):
                 self.objcache3 = GfxCache(self.readfile('iso_tileset_obj_c.png'), 52, 78, 6)
-            return (self.objcache3.getimg(objnum-160, size), 2)
+            return (self.objcache3.getimg(objnum-160, size, gdk), 2)
         else:
             if (self.objcache4 is None):
                 self.objcache4 = GfxCache(self.readfile('iso_trees.png'), 52, 130, 5)
-            return (self.objcache4.getimg(self.treemap[objnum], size), 4)
+            if (objnum in self.treemap):
+                return (self.objcache4.getimg(self.treemap[objnum], size, gdk), 4)
+            else:
+                return (None, 4)
 
-    def get_object_decal(self, decalnum, size=None):
+    def get_object_decal(self, decalnum, size=None, gdk=False):
         if (decalnum == 0):
             return None
         if (self.objdecalcache is None):
             self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
-        return self.objdecalcache.getimg(decalnum, size)
+        return self.objdecalcache.getimg(decalnum, size, gdk)
 
     def get_avatar(self, avatarnum):
         if (avatarnum < 0 or avatarnum > 7):
