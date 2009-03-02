@@ -154,7 +154,7 @@ class MapGUI(BaseGUI):
 
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        self.set_zoom_vars(24)
+        self.set_zoom_vars(52)
         self.guicache = None
         self.squarebuf = None
         self.blanksquare = None
@@ -365,6 +365,79 @@ class MapGUI(BaseGUI):
         self.update_composite()
 
     def on_squarewindow_close(self, widget):
+        """
+        Closes the square-editing window.  Our primary goal here is to redraw the
+        square that was just edited.  Because we don't really keep composite caches
+        around (should we?) this entails drawing all the squares behind the square we
+        just edited, the square itself, and then four more "levels" of squares below, as
+        well, because objects may be obscuring the one we just edited.  Because of the
+        isometric presentation, this means that we'll be redrawing 29 total squares.
+
+        Note that we could cut down on that number by doing some logic - ie: we really
+        would only have to draw the bottom-most square if it contained the tallest tree
+        graphic, and there's no need to draw the floor or floor decals on any tile below
+        the one we just edited.  Still, because this is a user-initiated action, I don't
+        think it's really worth it to optimize that out.  I don't think the extra processing
+        will be noticeable.
+
+        Also note that none of that is actually necessary if the user didn't actually change
+        anything.  Whatever.
+        """
+
+        # Figure out our dimensions
+        mid_x = self.sq_x
+        mid_y = self.sq_y - 8
+        corner_y = self.sq_y - 1 - 8
+        global_x = self.sq_x * self.z_width
+        if ((self.sq_y % 2) == 0):
+            left_x = self.sq_x - 1
+            rt_x = self.sq_x
+        else:
+            left_x = self.sq_x
+            rt_x = self.sq_x + 1
+            global_x = global_x + self.z_halfwidth
+
+        # Set up a surface to use
+        over_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        over_ctx = cairo.Context(over_surf)
+        over_ctx.set_source_rgba(0, 0, 0, 1)
+        over_ctx.paint()
+
+        # Grab some local vars
+        sq_buf = self.squarebuf
+        sq_ctx = self.squarebuf_ctx
+        squares = self.map.squares
+
+        # Loop through and composite the new image area
+        for i in range(10):
+            # Draw corners first, then mid
+            if (corner_y > -1 and corner_y < 200):
+                yval = self.z_halfheight+((i-5)*self.z_height)
+                if (left_x > -1 and left_x < 100):
+                    self.draw_square_base(squares[corner_y][left_x], sq_ctx)
+                    over_ctx.set_source_surface(sq_buf, -self.z_halfwidth, yval)
+                    over_ctx.paint()
+                if (rt_x > -1 and rt_x < 100):
+                    self.draw_square_base(squares[corner_y][rt_x], sq_ctx)
+                    over_ctx.set_source_surface(sq_buf, self.z_halfwidth, yval)
+                    over_ctx.paint()
+            if (i < 9):
+                if (mid_y > -1 and mid_y < 200 and mid_x > -1 and mid_x < 100):
+                    self.draw_square_base(squares[mid_y][mid_x], sq_ctx)
+                    over_ctx.set_source_surface(sq_buf, 0, (i-4)*self.z_height)
+                    over_ctx.paint()
+            corner_y = corner_y + 2
+            mid_y = mid_y + 2
+
+        # Now superimpose that onto our main map image
+        self.guicache_ctx.set_source_surface(over_surf, global_x, self.z_halfheight*(self.sq_y-8))
+        self.guicache_ctx.paint()
+        self.ctx.set_source_surface(over_surf, global_x, self.z_halfheight*(self.sq_y-8))
+        self.ctx.paint()
+        self.cleansquares.append((self.sq_x, self.sq_y))
+        self.maparea.queue_draw()
+
+        # Finally, close out the window
         self.squarewindow.hide()
 
     def set_zoom_vars(self, width):
@@ -552,6 +625,63 @@ class MapGUI(BaseGUI):
         context.fill()
         context.restore()
 
+    def draw_square_base(self, square, sq_ctx):
+        """
+        Draw our "base" image info onto a Cairo context.  This will be just whatever
+        object-level options we have selected via the GUI, with no highlighting.
+        Pass in the Square object you want to draw, and a context.
+        """
+
+        # Prepare our pixbuf
+        sq_ctx.save()
+        sq_ctx.set_operator(cairo.OPERATOR_SOURCE)
+        sq_ctx.set_source_surface(self.blanksquare)
+        sq_ctx.paint()
+        sq_ctx.restore()
+
+        # Draw the floor tile
+        if (self.floor_toggle.get_active()):
+            pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.paint()
+
+        # Draw the floor decal
+        if (self.decal_toggle.get_active()):
+            pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.paint()
+
+        # Draw the object
+        wallid = square.wallimg
+        if (self.object_toggle.get_active() and wallid<161):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
+
+        # Draw walls
+        if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
+
+        # Draw trees
+        if (self.tree_toggle.get_active() and wallid>250):
+            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.paint()
+
+        # Draw the object decal
+        if (self.objectdecal_toggle.get_active()):
+            pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
+            if (pixbuf is not None):
+                sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
+                sq_ctx.paint()
+
     def draw_square(self, x, y, usecache=False):
         """ Draw a single square of the map. """
 
@@ -631,55 +761,8 @@ class MapGUI(BaseGUI):
             main_ctx.restore()
             return
 
-        # Prepare our pixbuf
-        sq_ctx.save()
-        sq_ctx.set_operator(cairo.OPERATOR_SOURCE)
-        sq_ctx.set_source_surface(self.blanksquare)
-        sq_ctx.paint()
-        sq_ctx.restore()
-
-        # Draw the floor tile
-        if (self.floor_toggle.get_active()):
-            pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
-                sq_ctx.paint()
-
-        # Draw the floor decal
-        if (self.decal_toggle.get_active()):
-            pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
-                sq_ctx.paint()
-
-        # Draw the object
-        wallid = square.wallimg
-        if (self.object_toggle.get_active() and wallid<161):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-
-        # Draw walls
-        if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-
-        # Draw trees
-        if (self.tree_toggle.get_active() and wallid>250):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-
-        # Draw the object decal
-        if (self.objectdecal_toggle.get_active()):
-            pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
-                sq_ctx.paint()
+        # Draw the base object itself
+        self.draw_square_base(square, sq_ctx)
 
         # Draw Barriers
         # TODO: Drawing barriers on water is pretty lame; don't do that.
