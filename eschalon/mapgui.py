@@ -154,7 +154,7 @@ class MapGUI(BaseGUI):
 
         # Start the main gtk loop
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        self.set_zoom_vars(52)
+        self.set_zoom_vars(24)
         self.guicache = None
         self.squarebuf = None
         self.blanksquare = None
@@ -584,6 +584,7 @@ class MapGUI(BaseGUI):
         if (self.sq_y < len(self.map.squares)):
             if (self.sq_x < len(self.map.squares[self.sq_y])):
                 self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
+                self.get_widget('squarelabel').set_markup('<b>Map Square (%d, %d)</b>' % (self.sq_x, self.sq_y))
                 self.squarewindow.show()
                 #self.infobuffer.insert(self.infobuffer.get_end_iter(), "Square at (%d, %d):\n%s\n" % (self.sq_x, self.sq_y, self.map.squares[self.sq_y][self.sq_x].display(True)))
                 #adjust = self.infoscroll.get_vadjustment()
