@@ -186,8 +186,8 @@ class Gfx:
         self.unknownh1 = -1
         self.unknownh2 = -1
         self.numfiles = -1
+        self.compressed_idx_size = -1
         self.unknowni1 = -1
-        self.unknowni2 = -1
         self.loaded = False
         self.fileindex = {}
         self.zeroindex = -1
@@ -207,8 +207,8 @@ class Gfx:
         self.unknownh1 = df.readshort()
         self.unknownh2 = df.readshort()
         self.numfiles = df.readint()
+        self.compressed_idx_size = df.readint()
         self.unknowni1 = df.readint()
-        self.unknowni2 = df.readint()
 
         # Some graphic-specific indexes/flags
         self.itemcache = None
