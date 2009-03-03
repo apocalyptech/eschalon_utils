@@ -718,6 +718,26 @@ class MapGUI(BaseGUI):
         label = gtk.Label('Script #%d' % (curpages+1))
         label.show()
 
+        # Remove Button
+        remove_align = gtk.Alignment(0, 0.5, 0, 1)
+        remove_align.show()
+        remove_align.set_border_width(8)
+        remove_button = gtk.Button()
+        remove_button.show()
+        remove_button.set_name('script_remove_button_%d' % (curpages))
+        remove_button.connect('clicked', self.on_script_del)
+        remove_button_box = gtk.HBox()
+        remove_button_box.show()
+        rm_img = gtk.image_new_from_stock(gtk.STOCK_REMOVE, 4)
+        rm_img.show()
+        remove_button_box.add(rm_img)
+        rm_txt = gtk.Label('Remove Script')
+        rm_txt.show()
+        rm_txt.set_padding(6, 0)
+        remove_button_box.add(rm_txt)
+        remove_button.add(remove_button_box)
+        remove_align.add(remove_button)
+
         # Basic Information
         basic_box = gtk.VBox()
         basic_box.show()
@@ -763,6 +783,7 @@ class MapGUI(BaseGUI):
         # Tab Content
         content = gtk.VBox()
         content.show()
+        content.pack_start(remove_align, False, False)
         content.pack_start(basic_box, False, False)
         content.pack_start(contents_box, False, False)
 
@@ -772,6 +793,24 @@ class MapGUI(BaseGUI):
         """ Clears out the script notebook. """
         for i in range(self.script_notebook.get_n_pages()):
             self.script_notebook.remove_page(0)
+
+    def on_script_del(self, widget):
+        """
+        Called to remove a script.  This needs to handle renumbering the
+        remaining scripts if necessary, too.
+        """
+        wname = widget.get_name()
+        (button_name, page) = wname.rsplit('_', 1)
+        page = int(page)
+        square = self.map.squares[self.sq_y][self.sq_x]
+        if (page == len(square.scripts)-1):
+            # Simplest case, just remove from the end
+            script = square.scripts[page]
+            self.map.delscript(self.sq_x, self.sq_y, page)
+            self.script_notebook.remove_page(page)
+        else:
+            # We'll have to remove and renumber
+            pass
 
     def on_script_add(self, widget):
         """

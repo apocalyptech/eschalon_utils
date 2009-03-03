@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Mar  3 14:59:22 2009 -->
+<!--Generated with glade3 3.4.5 on Tue Mar  3 16:19:09 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -1861,7 +1861,6 @@ Northwest</property>
                             <child>
                               <widget class="GtkImage" id="image2">
                                 <property name="visible">True</property>
-                                <property name="xpad">5</property>
                                 <property name="stock">gtk-add</property>
                               </widget>
                               <packing>
@@ -1872,7 +1871,7 @@ Northwest</property>
                             <child>
                               <widget class="GtkLabel" id="label22">
                                 <property name="visible">True</property>
-                                <property name="xpad">4</property>
+                                <property name="xpad">6</property>
                                 <property name="label" translatable="yes">Add Script</property>
                               </widget>
                               <packing>

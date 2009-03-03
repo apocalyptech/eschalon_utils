@@ -117,15 +117,34 @@ class Map:
         newmap.savegame_3 = self.savegame_3
         newmap.extradata = self.extradata
 
-        # Objects that need copying
+        # Copy squares
         for i in range(200):
             for j in range(100):
                 newmap.squares[i][j] = self.squares[i][j].replicate()
+
+        # At this point, scripts and entities have been replicated as well;
+        # loop through our list to repopulate from the new objects, so that
+        # our referential comparisons still work on the new copy.
+        # Note that scripts/entities with invalid x/y coords will get dropped here,
+        # which means that theoretically a replicated map may not save identically
+        # to the state it was when it was loaded.  I'm not going to sweat that for
+        # now, though.
+        for entity in self.entities:
+            if (entity is None):
+                newmap.entities.append(None)
+            else:
+                newmap.entities.append(newmap.squares[entity.y][entity.x].entity)
+        scriptidxtemp = {}
         for script in self.scripts:
             if (script is None):
                 newmap.scripts.append(None)
             else:
-                newmap.scripts.append(script.replicate())
+                key = '%d%02d' % (script.y, script.x)
+                if (key in scriptidxtemp):
+                    scriptidxtemp[key] += 1
+                else:
+                    scriptidxtemp[key] = 0
+                newmap.scripts.append(newmap.squares[script.y][script.x].scripts[scriptidxtemp[key]])
 
         # Now return our duplicated object
         return newmap
@@ -156,6 +175,14 @@ class Map:
             return True
         except FirstItemLoadException, e:
             return False
+
+    def delscript(self, x, y, idx):
+        """ Deletes a mapscript, both from the associated square, and our internal list. """
+        square = self.squares[y][x]
+        script = square.scripts[idx]
+        if (script is not None):
+            self.scripts.remove(script)
+            self.squares[y][x].delscript(script)
 
     def addentity(self):
         """ Add an entity. """

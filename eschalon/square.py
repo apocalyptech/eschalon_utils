@@ -94,7 +94,13 @@ class Square:
         stored on disk.
         """
         self.scripts.append(script)
-    
+
+    def delscript(self, script):
+        """
+        Remove a script.
+        """
+        self.scripts.remove(script)
+
     def addentity(self, entity):
         """
         Add an entity to our entity list.  Just an internal construct which isn't actually
