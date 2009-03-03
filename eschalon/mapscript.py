@@ -20,6 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
+from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
 class Mapscript:
@@ -41,11 +42,7 @@ class Mapscript:
         self.unknownh1 = -1
         self.script = ''
 
-        self.block_unknown_i_1 = []
-        self.block_unknown_s_1 = []
-        self.block_unknown_i_2 = []
-        self.block_unknown_s_2 = []
-        self.block_unknown_i_3 = []
+        self.items = []
 
     def replicate(self):
         newmapscript = Mapscript()
@@ -64,30 +61,9 @@ class Mapscript:
         newmapscript.unknownh1 = self.unknownh1
         newmapscript.script = self.script
 
-        # Arrays
-        for val in self.block_unknown_s_1:
-            newmapscript.block_unknown_s_1.append(val)
-        for val in self.block_unknown_i_1:
-            newmapscript.block_unknown_i_1.append(val)
-
-        # Arrays-of-arrays
-        for val in self.block_unknown_i_2:
-            newmapscript.block_unknown_i_2.append([])
-            cur_idx = len(newmapscript.block_unknown_i_2)-1
-            for val2 in val:
-                newmapscript.block_unknown_i_2[cur_idx].append(val2)
-
-        for val in self.block_unknown_s_2:
-            newmapscript.block_unknown_s_2.append([])
-            cur_idx = len(newmapscript.block_unknown_s_2)-1
-            for val2 in val:
-                newmapscript.block_unknown_s_2[cur_idx].append(val2)
-
-        for val in self.block_unknown_i_3:
-            newmapscript.block_unknown_i_3.append([])
-            cur_idx = len(newmapscript.block_unknown_i_3)-1
-            for val2 in val:
-                newmapscript.block_unknown_i_3[cur_idx].append(val2)
+        # Items
+        for item in self.items:
+            newmapscript.items.append(item.replicate())
 
         # ... aaand return our new object
         return newmapscript
@@ -117,22 +93,13 @@ class Mapscript:
         self.unknownh1 = df.readshort()
         self.script = df.readstr()
 
-        # Blocks of information, most of which doesn't exist for global maps
+        # Items
         for num in range(8):
+            self.items.append(Item())
             if (self.savegame):
-                self.block_unknown_i_1.append(df.readint())
-            self.block_unknown_s_1.append(df.readstr())
-            if (self.savegame):
-                cur_idx = len(self.block_unknown_s_1)-1
-                self.block_unknown_i_2.append([])
-                self.block_unknown_s_2.append([])
-                self.block_unknown_i_3.append([])
-                for num2 in range(21):
-                    self.block_unknown_i_2[cur_idx].append(df.readint())
-                for num2 in range(2):
-                    self.block_unknown_s_2[cur_idx].append(df.readstr())
-                for num2 in range(2):
-                    self.block_unknown_i_3[cur_idx].append(df.readint())
+                self.items[num].read(df)
+            else:
+                self.items[num].item_name = df.readstr()
 
     def write(self, df):
         """ Write the mapscript to the file. """
@@ -150,26 +117,9 @@ class Mapscript:
 
         for num in range(8):
             if (self.savegame):
-                df.writeint(self.block_unknown_i_1[num])
-            df.writestr(self.block_unknown_s_1[num])
-            # We'll do some extra processing here, mostly in case the 'savegame'
-            # flag gets flipped, so the written file would be valid
-            if (self.savegame):
-                for num2 in range(21):
-                    if (num in self.block_unknown_i_2 and num2 in self.block_unknown_i_2[num]):
-                        self.writeint(self.block_unknown_i_2[num][num2])
-                    else:
-                        self.writeint(0)
-                for num2 in range(2):
-                    if (num in self.block_unknown_s_2 and num2 in self.block_unknown_s_2[num]):
-                        self.writestr(self.block_unknown_s_2[num][num2])
-                    else:
-                        self.writestr('')
-                for num2 in range(2):
-                    if (num in self.block_unknown_i_3 and num2 in self.block_unknown_i_3[num]):
-                        self.writeint(self.block_unknown_i_3[num][num2])
-                    else:
-                        self.writeint(0)
+                self.items[num].write(df)
+            else:
+                df.writestr(self.items[num].item_name)
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -179,6 +129,10 @@ class Mapscript:
         ret.append("\tMap ID: %s" % self.mapid)
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
         ret.append("\tScript: %s" % self.script)
+        ret.append("\tContents:")
+        for item in self.items:
+            if (item.item_name != ''):
+                ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
             ret.append("\tA Number: %s" % self.number)
             ret.append("\tUnknown Integer 2: %d" % self.unknowni2)
