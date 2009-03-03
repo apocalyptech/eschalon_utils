@@ -23,6 +23,7 @@ import os
 import sys
 import time
 import cairo
+import gobject
 from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
@@ -46,7 +47,7 @@ from eschalonb1.square import Square
 from eschalonb1.basegui import BaseGUI
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.savefile import LoadException
-from eschalonb1 import app_name, version, url, authors
+from eschalonb1 import app_name, version, url, authors, entitytable
 
 class MapGUI(BaseGUI):
 
@@ -121,7 +122,11 @@ class MapGUI(BaseGUI):
                 'map_toggle': self.map_toggle,
                 'info_toggle': self.info_toggle,
                 'infowindow_clear': self.infowindow_clear,
-                'on_singleval_square_changed': self.on_singleval_square_changed,
+                'on_entid_changed': self.on_entid_changed,
+                'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
+                'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
+                'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
+                'on_entity_toggle': self.on_entity_toggle,
                 'on_floor_changed': self.on_floor_changed,
                 'on_decal_changed': self.on_decal_changed,
                 'on_wall_changed': self.on_wall_changed,
@@ -166,6 +171,30 @@ class MapGUI(BaseGUI):
         self.mousemap = {}
         for zoom in self.zoom_levels:
             self.mousemap[zoom] = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))).get_pixels_array()
+
+        # Process our entity list, for use in the entity type dropdown
+        # This is.... Not the greatest.  Ah well.  Keeping the monsters
+        # and NPCs sorted separately seems worth it
+        monsters = {}
+        npcs = {}
+        for (key, item) in entitytable.iteritems():
+            if (key < 51):
+                table = monsters
+            else:
+                table = npcs
+            table[item] = key
+        monsterkeys = monsters.keys()
+        monsterkeys.sort()
+        npckeys = npcs.keys()
+        npckeys.sort()
+        self.entitykeys = monsterkeys
+        self.entitykeys.extend(npckeys)
+        self.entityrev = monsters
+        self.entityrev.update(npcs)
+        box = self.get_widget('entid')
+        self.useful_combobox(box)
+        for key in self.entitykeys:
+            box.append_text(key)
 
         # Now show our window
         self.window.show()
@@ -318,7 +347,30 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
-    def on_singleval_square_changed(self, widget):
+    def on_entid_changed(self, widget):
+        idx = widget.get_active()
+        name = self.entitykeys[idx]
+        entid = self.entityrev[name]
+        self.map.squares[self.sq_y][self.sq_x].entity.entid = entid
+
+    def on_dropdownplusone_ent_changed(self, widget):
+        wname = widget.get_name()
+        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent.__dict__[wname] = widget.get_active() + 1
+
+    def on_singleval_ent_changed_int(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent.__dict__[wname] = widget.get_value()
+
+    def on_singleval_ent_changed_str(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent.__dict__[wname] = widget.get_text()
+
+    def on_singleval_square_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         square = self.map.squares[self.sq_y][self.sq_x]
@@ -326,7 +378,7 @@ class MapGUI(BaseGUI):
 
     def on_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed(widget)
+        self.on_singleval_square_changed_int(widget)
         pixbuf = self.gfx.get_floor(widget.get_value(), None, True)
         if (pixbuf is None):
             self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -336,7 +388,7 @@ class MapGUI(BaseGUI):
 
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed(widget)
+        self.on_singleval_square_changed_int(widget)
         pixbuf = self.gfx.get_decal(widget.get_value(), None, True)
         if (pixbuf is None):
             self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -346,7 +398,7 @@ class MapGUI(BaseGUI):
 
     def on_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed(widget)
+        self.on_singleval_square_changed_int(widget)
         (pixbuf, height) = self.gfx.get_object(widget.get_value(), None, True)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -355,7 +407,7 @@ class MapGUI(BaseGUI):
         self.update_composite()
 
     def on_walldecal_changed(self, widget):
-        self.on_singleval_square_changed(widget)
+        self.on_singleval_square_changed_int(widget)
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_object_decal(widget.get_value(), None, True)
         if (pixbuf is None):
@@ -568,8 +620,33 @@ class MapGUI(BaseGUI):
         # Now queue up a draw
         self.maparea.queue_draw()
 
+    def set_entity_toggle_button(self, show_add):
+        if (show_add):
+            image = gtk.STOCK_ADD
+            text = 'Add Entity'
+            self.get_widget('entity_basic_box').hide()
+            self.get_widget('entity_ext_box').hide()
+        else:
+            image = gtk.STOCK_REMOVE
+            text = 'Remove Entity'
+            self.get_widget('entity_basic_box').show()
+            if (self.map.is_savegame()):
+                self.get_widget('entity_ext_box').show()
+            else:
+                self.get_widget('entity_ext_box').hide()
+        self.get_widget('entity_toggle_img').set_from_stock(image, 4)
+        self.get_widget('entity_toggle_text').set_text(text)
+
+    def on_entity_toggle(self, widget, event):
+        pass
+
     def populate_squarewindow_from_square(self, square):
         """ Populates the square editing screen from a given square. """
+
+        # Make sure we start out on the right page
+        self.get_widget('square_notebook').set_current_page(0)
+
+        # First the main items
         self.get_widget('wall').set_value(square.wall)
         self.get_widget('floorimg').set_value(square.floorimg)
         self.get_widget('decalimg').set_value(square.decalimg)
@@ -577,6 +654,35 @@ class MapGUI(BaseGUI):
         self.get_widget('walldecalimg').set_value(square.walldecalimg)
         self.get_widget('scriptid').set_value(square.scriptid)
         self.get_widget('unknown5').set_value(square.unknown5)
+
+        # Now entites, if needed
+        if (square.entity is None):
+            self.set_entity_toggle_button(True)
+        else:
+            self.set_entity_toggle_button(False)
+            if (square.entity.entid in entitytable):
+                if (entitytable[square.entity.entid] in self.entitykeys):
+                    idx = self.entitykeys.index(entitytable[square.entity.entid])
+                    self.get_widget('entid').set_active(idx)
+                else:
+                    # TODO: Warning/exit on here
+                    print "Not in keys"
+                    pass
+            else:
+                # TODO: Warning/exit on here
+                print "Not in table"
+                pass
+            self.get_widget('direction').set_active(square.entity.direction-1)
+            self.get_widget('script').set_text(square.entity.script)
+            if (self.map.is_savegame()):
+                self.get_widget('friendly').set_value(square.entity.friendly)
+                self.get_widget('health').set_value(square.entity.health)
+                self.get_widget('unknownc1').set_value(square.entity.unknownc1)
+                self.get_widget('unknownc2').set_value(square.entity.unknownc2)
+                self.get_widget('unknownc3').set_value(square.entity.unknownc3)
+                self.get_widget('unknownc4').set_value(square.entity.unknownc4)
+                self.get_widget('unknownc5').set_value(square.entity.unknownc5)
+                self.get_widget('unknownc6').set_value(square.entity.unknownc6)
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """

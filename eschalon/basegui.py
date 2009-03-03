@@ -106,3 +106,10 @@ class BaseGUI:
         (model, iter) = widget.get_selected()
         if (iter is not None):
             self.prefsnotebook.set_current_page(model.get(iter, 2)[0])
+
+    def useful_combobox(self, box):
+        ls = gtk.ListStore(gobject.TYPE_STRING)
+        box.set_model(ls)
+        cell = gtk.CellRendererText()
+        box.pack_start(cell, True)
+        box.add_attribute(cell, 'text', 0)
