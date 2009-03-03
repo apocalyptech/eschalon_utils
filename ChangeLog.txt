@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   25 Feb - ? 2008; CJ Kucera <pez@apocalyptech.com> :
+   Implementation of basic map editing
+
    24 Feb 2008; CJ Kucera <pez@apocalyptech.com> :
    Converted from GDK to Cairo for map drawing
 
