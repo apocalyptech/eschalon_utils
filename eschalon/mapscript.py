@@ -24,7 +24,13 @@ from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
 class Mapscript:
-    """ A class to hold data about a particular mapscript on a map. """
+    """
+    A class to hold data about a particular mapscript on a map.
+    Calling this a "script" is something of a misnomer, actually.  These
+    objects are typically used to describe torch sconces, containers (barrels,
+    chests, and the like), traps, and level exits (stairs, ladders, dungeon
+    exits, etc).  I'm just keeping the name rather than rename it, though.
+    """
 
     def __init__(self, savegame=True):
         """ A fresh object with no data. """
@@ -32,14 +38,16 @@ class Mapscript:
         self.savegame = savegame
         self.x = -1
         self.y = -1
-        self.mapid = ''
-        self.number = ''    # apparently the coords of where to spawn on the new map, Y before X (and no delimiter?), or user text
-        self.unknowni2 = -1
-        self.unknowni3 = -1
-        self.unknowni4 = -1
-        self.unknowni5 = -1
-        self.unknowni6 = -1
+        self.description = ''
+        self.extratext = ''
+        self.zeroi1 = -1
+        self.zeroh1 = -1
         self.unknownh1 = -1
+        self.zeroi2 = -1
+        self.zeroi3 = -1
+        self.unknownh2 = -1
+        self.flags = -1
+        self.unknownh2 = -1
         self.script = ''
 
         self.items = []
@@ -51,14 +59,16 @@ class Mapscript:
         newmapscript.savegame = self.savegame
         newmapscript.x = self.x
         newmapscript.y = self.y
-        newmapscript.mapid = self.mapid
-        newmapscript.number = self.number
-        newmapscript.unknowni2 = self.unknowni2
-        newmapscript.unknowni3 = self.unknowni3
-        newmapscript.unknowni4 = self.unknowni4
-        newmapscript.unknowni5 = self.unknowni5
-        newmapscript.unknowni6 = self.unknowni6
+        newmapscript.description = self.description
+        newmapscript.extratext = self.extratext
+        newmapscript.zeroi1 = self.zeroi1
+        newmapscript.zeroh1 = self.zeroh1
         newmapscript.unknownh1 = self.unknownh1
+        newmapscript.zeroi2 = self.zeroi2
+        newmapscript.zeroi3 = self.zeroi3
+        newmapscript.unknownh2 = self.unknownh2
+        newmapscript.flags = self.flags
+        newmapscript.unknownh3 = self.unknownh3
         newmapscript.script = self.script
 
         # Items
@@ -83,14 +93,16 @@ class Mapscript:
         self.y = int(intcoords / 100)
 
         # ... everything else
-        self.mapid = df.readstr()
-        self.number = df.readstr()
-        self.unknowni2 = df.readint()
-        self.unknowni3 = df.readint()
-        self.unknowni4 = df.readint()
-        self.unknowni5 = df.readint()
-        self.unknowni6 = df.readint()
+        self.description = df.readstr()
+        self.extratext = df.readstr()
+        self.zeroi1 = df.readint()
+        self.zeroh1 = df.readshort()
         self.unknownh1 = df.readshort()
+        self.zeroi2 = df.readint()
+        self.zeroi3 = df.readint()
+        self.unknownh2 = df.readshort()
+        self.flags = df.readshort()
+        self.unknownh3 = df.readshort()
         self.script = df.readstr()
 
         # Items
@@ -105,14 +117,16 @@ class Mapscript:
         """ Write the mapscript to the file. """
 
         df.writeint((self.y*100)+self.x)
-        df.writestr(self.mapid)
-        df.writestr(self.number)
-        df.writeint(self.unknowni2)
-        df.writeint(self.unknowni3)
-        df.writeint(self.unknowni4)
-        df.writeint(self.unknowni5)
-        df.writeint(self.unknowni6)
+        df.writestr(self.description)
+        df.writestr(self.extratext)
+        df.writeint(self.zeroi1)
+        df.writeshort(self.zeroh1)
         df.writeshort(self.unknownh1)
+        df.writeint(self.zeroi2)
+        df.writeint(self.zeroi3)
+        df.writeshort(self.unknownh2)
+        df.writeshort(self.flags)
+        df.writeshort(self.unknownh3)
         df.writestr(self.script)
 
         for num in range(8):
@@ -126,20 +140,22 @@ class Mapscript:
 
         ret = []
 
-        ret.append("\tMap ID: %s" % self.mapid)
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
+        ret.append("\tDescription / Map Link: %s" % self.description)
+        ret.append("\tExtra Text / Map Link Destination: %s" % self.extratext)
         ret.append("\tScript: %s" % self.script)
         ret.append("\tContents:")
         for item in self.items:
             if (item.item_name != ''):
                 ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
-            ret.append("\tA Number: %s" % self.number)
-            ret.append("\tUnknown Integer 2: %d" % self.unknowni2)
-            ret.append("\tUnknown Integer 3: %d" % self.unknowni3)
-            ret.append("\tUnknown Integer 4: %d" % self.unknowni4)
-            ret.append("\tUnknown Integer 5: %d" % self.unknowni5)
-            ret.append("\tUnknown Integer 6: %d" % self.unknowni6)
-            ret.append("\tUnknown Short 1: %d" % self.unknownh1)
+            ret.append("\tFlags (probably): %d 0x%04X" % (self.flags, self.flags))
+            ret.append("\tUnknown Short 1: %d 0x%04X" % (self.unknownh1, self.unknownh1))
+            ret.append("\tUnknown Short 2: %d 0x%04X" % (self.unknownh2, self.unknownh2))
+            ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
+            ret.append("\tUsually Zero 1: %d" % (self.zeroi1))
+            ret.append("\tUsually Zero 2: %d" % (self.zeroh1))
+            ret.append("\tUsually Zero 3: %d" % (self.zeroi2))
+            ret.append("\tUsually Zero 4: %d" % (self.zeroi3))
 
         return "\n".join(ret)
