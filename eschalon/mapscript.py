@@ -47,10 +47,26 @@ class Mapscript:
         self.zeroi3 = -1
         self.unknownh2 = -1
         self.flags = -1
-        self.unknownh2 = -1
+        self.unknownh3 = -1
         self.script = ''
 
         self.items = []
+
+    def tozero(self, x, y):
+        """ Zeroes out the object. """
+        self.x = x
+        self.y = y
+        self.description = ''
+        self.extratext = ''
+        self.zeroi1 = 0
+        self.zeroh1 = 0
+        self.unknownh1 = 0
+        self.zeroi2 = 0
+        self.zeroi3 = 0
+        self.unknownh2 = 0
+        self.flags = 0
+        self.unknownh3 = 0
+        self.script = ''
 
     def replicate(self):
         newmapscript = Mapscript()
@@ -153,8 +169,8 @@ class Mapscript:
             ret.append("\tUnknown Short 1: %d 0x%04X" % (self.unknownh1, self.unknownh1))
             ret.append("\tUnknown Short 2: %d 0x%04X" % (self.unknownh2, self.unknownh2))
             ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
-            ret.append("\tUsually Zero 1: %d" % (self.zeroi1))
-            ret.append("\tUsually Zero 2: %d" % (self.zeroh1))
+            ret.append("\tUsually Zero 1: %d" % (self.zeroh1))
+            ret.append("\tUsually Zero 2: %d" % (self.zeroi1))
             ret.append("\tUsually Zero 3: %d" % (self.zeroi2))
             ret.append("\tUsually Zero 4: %d" % (self.zeroi3))
 

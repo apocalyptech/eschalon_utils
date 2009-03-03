@@ -95,6 +95,7 @@ class MapGUI(BaseGUI):
         self.barrier_toggle = self.get_widget('barrier_button')
         self.script_toggle = self.get_widget('script_button')
         self.entity_toggle = self.get_widget('entity_button')
+        self.script_notebook = self.get_widget('script_notebook')
         self.info_button = self.get_widget('info_button')
         self.infotext = self.get_widget('infotext')
         self.infobuffer = gtk.TextBuffer()
@@ -129,6 +130,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
                 'on_dropdownplusone_ent_changed': self.on_dropdownplusone_ent_changed,
                 'on_entity_toggle': self.on_entity_toggle,
+                'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
                 'on_decal_changed': self.on_decal_changed,
                 'on_wall_changed': self.on_wall_changed,
@@ -349,13 +351,33 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
+    def on_script_str_changed(self, widget):
+        """ When a script string changes. """
+        wname = widget.get_name()
+        (labelname, page) = wname.rsplit('_', 1)
+        page = int(page)
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            script.__dict__[labelname] = widget.get_text()
+
+    def on_script_int_changed(self, widget):
+        """ When a script integer changes. """
+        wname = widget.get_name()
+        (labelname, page) = wname.rsplit('_', 1)
+        page = int(page)
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            script.__dict__[labelname] = widget.get_value()
+
     def on_entid_changed(self, widget):
+        """ Special case for changing the entity ID. """
         idx = widget.get_active()
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
         self.map.squares[self.sq_y][self.sq_x].entity.entid = entid
 
     def on_dropdownplusone_ent_changed(self, widget):
+        """ Used only for the Orientation dropdown currently. """
         wname = widget.get_name()
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_active() + 1
@@ -639,6 +661,131 @@ class MapGUI(BaseGUI):
         self.get_widget('entity_toggle_img').set_from_stock(image, 4)
         self.get_widget('entity_toggle_text').set_text(text)
 
+    def input_label(self, page, table, row, name, text):
+        label = gtk.Label()
+        label.show()
+        label.set_markup('%s:' % text)
+        label.set_alignment(1, 0.5)
+        label.set_padding(5, 4)
+        label.set_name('%s_%d_label' % (name, page))
+        table.attach(label, 1, 2, row, row+1, gtk.FILL, gtk.FILL)
+
+    def input_text(self, page, table, row, name, text):
+        self.input_label(page, table, row, name, text)
+        align = gtk.Alignment(0, 0.5, 0, 1)
+        align.show()
+        entry = gtk.Entry()
+        entry.show()
+        entry.set_name('%s_%d' % (name, page))
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            entry.set_text(script.__dict__[name])
+        entry.connect('changed', self.on_script_str_changed)
+        align.add(entry)
+        table.attach(align, 2, 3, row, row+1)
+
+    def input_spin(self, page, table, row, name, text, max):
+        self.input_label(page, table, row, name, text)
+        align = gtk.Alignment(0, 0.5, 0, 1)
+        align.show()
+        entry = gtk.SpinButton()
+        entry.show()
+        entry.set_name('%s_%d' % (name, page))
+        entry.set_range(0, max)
+        entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 10))
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            entry.set_value(script.__dict__[name])
+        entry.connect('value-changed', self.on_script_int_changed)
+        align.add(entry)
+        table.attach(align, 2, 3, row, row+1)
+
+    def input_short(self, page, table, row, name, text):
+        self.input_spin(page, table, row, name, text, 65535)
+
+    def input_int(self, page, table, row, name, text):
+        self.input_spin(page, table, row, name, text, 4294967295)
+
+    def append_script_notebook(self, script):
+        """
+        Given a script, adds a new tab to the script notebook, with
+        all the necessary inputs.
+        """
+        square = self.map.squares[self.sq_y][self.sq_x]
+        curpages = self.script_notebook.get_n_pages()
+
+        # Label for the notebook
+        label = gtk.Label('Script #%d' % (curpages+1))
+        label.show()
+
+        # Basic Information
+        basic_box = gtk.VBox()
+        basic_box.show()
+        basic_header = gtk.Label()
+        basic_header.show()
+        basic_header.set_markup('<b>Basic Information</b>')
+        basic_header.set_alignment(0, 0.5)
+        basic_header.set_padding(10, 7)
+        basic_box.pack_start(basic_header, False, False)
+
+        # Basic Input
+        binput = gtk.Table(11, 3)
+        binput.show()
+        spacer = gtk.Label('')
+        spacer.show()
+        spacer.set_padding(11, 0)
+        binput.attach(spacer, 0, 1, 0, 11, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        basic_box.pack_start(binput, False, False)
+
+        # Basic Inputs
+        self.input_text(curpages, binput, 0, 'description', 'Description / Map Link')
+        self.input_text(curpages, binput, 1, 'extratext', 'Extra Text / Destination')
+        self.input_text(curpages, binput, 2, 'script', 'Script')
+        self.input_short(curpages, binput, 3, 'flags', 'Flags <i>(probably)</i>')
+        self.input_short(curpages, binput, 4, 'unknownh1', '<i>Unknown 1</i>')
+        self.input_short(curpages, binput, 5, 'unknownh2', '<i>Unknown 2</i>')
+        self.input_short(curpages, binput, 6, 'unknownh3', '<i>Unknown 3</i>')
+        self.input_short(curpages, binput, 7, 'zeroh1', '<i>Usually Zero 1</i>')
+        self.input_int(curpages, binput, 8, 'zeroi1', '<i>Usually Zero 2</i>')
+        self.input_int(curpages, binput, 9, 'zeroi2', '<i>Usually Zero 3</i>')
+        self.input_int(curpages, binput, 10, 'zeroi3', '<i>Usually Zero 4</i>')
+
+        # Contents
+        contents_box = gtk.VBox()
+        contents_box.show()
+        contents_header = gtk.Label()
+        contents_header.show()
+        contents_header.set_markup('<b>Contents</b> <i>(If Container)</i>')
+        contents_header.set_alignment(0, 0.5)
+        contents_header.set_padding(10, 7)
+        contents_box.pack_start(contents_header, False, False)
+
+        # Tab Content
+        content = gtk.VBox()
+        content.show()
+        content.pack_start(basic_box, False, False)
+        content.pack_start(contents_box, False, False)
+
+        self.script_notebook.append_page(content, label)
+
+    def clear_script_notebook(self):
+        """ Clears out the script notebook. """
+        for i in range(self.script_notebook.get_n_pages()):
+            self.script_notebook.remove_page(0)
+
+    def on_script_add(self, widget):
+        """
+        Called when a new script is added.  Creates a new
+        Script object and handles adding it to the notebook.
+        """
+        square = self.map.squares[self.sq_y][self.sq_x]
+        script = Mapscript(self.map.is_savegame())
+        script.tozero(self.sq_x, self.sq_y)
+        self.map.scripts.append(script)
+        square.addscript(script)
+        self.append_script_notebook(script)
+        self.script_notebook.show()
+
     def on_entity_toggle(self, widget):
         square = self.map.squares[self.sq_y][self.sq_x]
         if (square.entity is None):
@@ -675,6 +822,15 @@ class MapGUI(BaseGUI):
         else:
             self.set_entity_toggle_button(False)
             self.populate_entity_tab(square)
+
+        # ... and scripts
+        self.clear_script_notebook()
+        if (len(square.scripts) > 0):
+            for script in square.scripts:
+                self.append_script_notebook(script)
+            self.script_notebook.show()
+        else:
+            self.script_notebook.hide()
 
     def populate_entity_tab(self, square):
         """ Populates the entity tab of the square editing screen. """
