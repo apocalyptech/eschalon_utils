@@ -162,13 +162,20 @@ class Map:
         try:
             entity = Entity(self.is_savegame())
             entity.read(self.df_ent)
-            # The same note in addscript(), above, applies here
             self.entities.append(entity)
             if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
                 self.squares[entity.y][entity.x].addentity(entity)
             return True
         except FirstItemLoadException, e:
             return False
+
+    def delentity(self, x, y):
+        """ Deletes an entity, both from the associated square, and our internal list. """
+        square = self.squares[y][x]
+        ent = square.entity
+        if (ent is not None):
+            self.entities.remove(ent)
+            square.delentity()
 
     def read(self):
         """ Read in the whole map from a file descriptor. """

@@ -47,6 +47,7 @@ from eschalonb1.square import Square
 from eschalonb1.basegui import BaseGUI
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.savefile import LoadException
+from eschalonb1.entity import Entity
 from eschalonb1 import app_name, version, url, authors, entitytable
 
 class MapGUI(BaseGUI):
@@ -126,6 +127,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
+                'on_dropdownplusone_ent_changed': self.on_dropdownplusone_ent_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_floor_changed': self.on_floor_changed,
                 'on_decal_changed': self.on_decal_changed,
@@ -637,8 +639,20 @@ class MapGUI(BaseGUI):
         self.get_widget('entity_toggle_img').set_from_stock(image, 4)
         self.get_widget('entity_toggle_text').set_text(text)
 
-    def on_entity_toggle(self, widget, event):
-        pass
+    def on_entity_toggle(self, widget):
+        square = self.map.squares[self.sq_y][self.sq_x]
+        if (square.entity is None):
+            # create a new entity and toggle
+            ent = Entity(self.map.is_savegame())
+            ent.tozero(self.sq_x, self.sq_y)
+            self.map.entities.append(ent)
+            square.addentity(ent)
+            self.populate_entity_tab(square)
+            self.set_entity_toggle_button(False)
+        else:
+            # Remove the existing entity
+            self.map.delentity(self.sq_x, self.sq_y)
+            self.set_entity_toggle_button(True)
 
     def populate_squarewindow_from_square(self, square):
         """ Populates the square editing screen from a given square. """
@@ -660,29 +674,33 @@ class MapGUI(BaseGUI):
             self.set_entity_toggle_button(True)
         else:
             self.set_entity_toggle_button(False)
-            if (square.entity.entid in entitytable):
-                if (entitytable[square.entity.entid] in self.entitykeys):
-                    idx = self.entitykeys.index(entitytable[square.entity.entid])
-                    self.get_widget('entid').set_active(idx)
-                else:
-                    # TODO: Warning/exit on here
-                    print "Not in keys"
-                    pass
+            self.populate_entity_tab(square)
+
+    def populate_entity_tab(self, square):
+        """ Populates the entity tab of the square editing screen. """
+        if (square.entity.entid in entitytable):
+            if (entitytable[square.entity.entid] in self.entitykeys):
+                idx = self.entitykeys.index(entitytable[square.entity.entid])
+                self.get_widget('entid').set_active(idx)
             else:
                 # TODO: Warning/exit on here
-                print "Not in table"
+                print "Not in keys"
                 pass
-            self.get_widget('direction').set_active(square.entity.direction-1)
-            self.get_widget('script').set_text(square.entity.script)
-            if (self.map.is_savegame()):
-                self.get_widget('friendly').set_value(square.entity.friendly)
-                self.get_widget('health').set_value(square.entity.health)
-                self.get_widget('unknownc1').set_value(square.entity.unknownc1)
-                self.get_widget('unknownc2').set_value(square.entity.unknownc2)
-                self.get_widget('unknownc3').set_value(square.entity.unknownc3)
-                self.get_widget('unknownc4').set_value(square.entity.unknownc4)
-                self.get_widget('unknownc5').set_value(square.entity.unknownc5)
-                self.get_widget('unknownc6').set_value(square.entity.unknownc6)
+        else:
+            # TODO: Warning/exit on here
+            print "Not in table"
+            pass
+        self.get_widget('direction').set_active(square.entity.direction-1)
+        self.get_widget('script').set_text(square.entity.script)
+        if (self.map.is_savegame()):
+            self.get_widget('friendly').set_value(square.entity.friendly)
+            self.get_widget('health').set_value(square.entity.health)
+            self.get_widget('unknownc1').set_value(square.entity.unknownc1)
+            self.get_widget('unknownc2').set_value(square.entity.unknownc2)
+            self.get_widget('unknownc3').set_value(square.entity.unknownc3)
+            self.get_widget('unknownc4').set_value(square.entity.unknownc4)
+            self.get_widget('unknownc5').set_value(square.entity.unknownc5)
+            self.get_widget('unknownc6').set_value(square.entity.unknownc6)
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """

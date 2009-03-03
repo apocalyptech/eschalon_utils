@@ -102,6 +102,12 @@ class Square:
         """
         self.entity = entity
 
+    def delentity(self):
+        """
+        Remove our entity.  No matter if we don't have one.
+        """
+        self.entity = None
+
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 

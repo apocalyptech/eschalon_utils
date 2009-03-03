@@ -110,6 +110,23 @@ class Entity:
             df.writeuchar(self.unknownc5)
             df.writeuchar(self.unknownc6)
 
+    def tozero(self, x, y):
+        """ Zeroes out the entity object.  Apart from x and y, which are passed in. """
+        self.x = x
+        self.y = y
+        self.entid = 1
+        self.direction = 1
+        self.script = ''
+        if (self.savegame):
+            self.friendly = 0
+            self.unknownc1 = 0
+            self.health = 0
+            self.unknownc2 = 0
+            self.unknownc3 = 0
+            self.unknownc4 = 0
+            self.unknownc5 = 0
+            self.unknownc6 = 0
+
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 
