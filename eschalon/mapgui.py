@@ -358,7 +358,12 @@ class MapGUI(BaseGUI):
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
-            script.__dict__[labelname] = widget.get_text()
+            if (labelname[:9] == 'item_name'):
+                (varname, item_num) = labelname.rsplit('_', 1)
+                item_num = int(item_num)
+                script.items[item_num].item_name = widget.get_text()
+            else:
+                script.__dict__[labelname] = widget.get_text()
 
     def on_script_int_changed(self, widget):
         """ When a script integer changes. """
@@ -679,7 +684,13 @@ class MapGUI(BaseGUI):
         entry.set_name('%s_%d' % (name, page))
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
-            entry.set_text(script.__dict__[name])
+            if (name[:9] == 'item_name'):
+                (varname, itemnum) = name.rsplit('_', 1)
+                itemnum = int(itemnum)
+                print 'Itemnum is %d, len is %d' % (itemnum, len(script.items))
+                entry.set_text(script.items[itemnum].item_name)
+            else:
+                entry.set_text(script.__dict__[name])
         entry.connect('changed', self.on_script_str_changed)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
@@ -748,7 +759,7 @@ class MapGUI(BaseGUI):
         basic_header.set_padding(10, 7)
         basic_box.pack_start(basic_header, False, False)
 
-        # Basic Input
+        # Basic Table
         binput = gtk.Table(11, 3)
         binput.show()
         spacer = gtk.Label('')
@@ -780,6 +791,22 @@ class MapGUI(BaseGUI):
         contents_header.set_padding(10, 7)
         contents_box.pack_start(contents_header, False, False)
 
+        # Contents Table
+        cinput = gtk.Table(8, 3)
+        cinput.show()
+        cspacer = gtk.Label('')
+        cspacer.show()
+        cspacer.set_padding(11, 0)
+        cinput.attach(cspacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        contents_box.pack_start(cinput, False, False)
+
+        # Contents Inputs (varies based on savefile status)
+        if (square.scripts[curpages].savegame):
+            pass
+        else:
+            for num in range(8):
+                self.input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
+
         # Tab Content
         content = gtk.VBox()
         content.show()
@@ -787,7 +814,17 @@ class MapGUI(BaseGUI):
         content.pack_start(basic_box, False, False)
         content.pack_start(contents_box, False, False)
 
-        self.script_notebook.append_page(content, label)
+        # ... aand we should slap this all into a scrolledwindow
+        sw = gtk.ScrolledWindow()
+        sw.show()
+        sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        vp = gtk.Viewport()
+        vp.show()
+        vp.set_shadow_type(gtk.SHADOW_NONE)
+        vp.add(content)
+        sw.add(vp)
+
+        self.script_notebook.append_page(sw, label)
 
     def clear_script_notebook(self):
         """ Clears out the script notebook. """

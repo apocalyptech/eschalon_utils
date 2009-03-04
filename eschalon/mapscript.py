@@ -68,6 +68,11 @@ class Mapscript:
         self.unknownh3 = 0
         self.script = ''
 
+        # Populate Items as well
+        for num in range(8):
+            self.items.append(Item())
+            self.items[num].tozero()
+
     def replicate(self):
         newmapscript = Mapscript()
 
