@@ -125,26 +125,28 @@ class Map:
         # At this point, scripts and entities have been replicated as well;
         # loop through our list to repopulate from the new objects, so that
         # our referential comparisons still work on the new copy.
-        # Note that scripts/entities with invalid x/y coords will get dropped here,
-        # which means that theoretically a replicated map may not save identically
-        # to the state it was when it was loaded.  I'm not going to sweat that for
-        # now, though.
         for entity in self.entities:
             if (entity is None):
                 newmap.entities.append(None)
             else:
-                newmap.entities.append(newmap.squares[entity.y][entity.x].entity)
+                if (entity.y < len(newmap.squares) and entity.x < len(newmap.squares[entity.y])):
+                    newmap.entities.append(newmap.squares[entity.y][entity.x].entity)
+                else:
+                    newmap.entities.append(entity.replicate())
         scriptidxtemp = {}
         for script in self.scripts:
             if (script is None):
                 newmap.scripts.append(None)
             else:
-                key = '%d%02d' % (script.y, script.x)
-                if (key in scriptidxtemp):
-                    scriptidxtemp[key] += 1
+                if (script.y < len(newmap.squares) and script.x < len(newmap.squares[script.y])):
+                    key = '%d%02d' % (script.y, script.x)
+                    if (key in scriptidxtemp):
+                        scriptidxtemp[key] += 1
+                    else:
+                        scriptidxtemp[key] = 0
+                    newmap.scripts.append(newmap.squares[script.y][script.x].scripts[scriptidxtemp[key]])
                 else:
-                    scriptidxtemp[key] = 0
-                newmap.scripts.append(newmap.squares[script.y][script.x].scripts[scriptidxtemp[key]])
+                    newmap.scripts.append(script.replicate())
 
         # Now return our duplicated object
         return newmap
