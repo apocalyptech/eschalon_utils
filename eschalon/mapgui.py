@@ -1007,11 +1007,11 @@ class MapGUI(BaseGUI):
         elif (square.entity is not None):
             entity = True
             if (square.entity.friendly == 1):
-                entity = (1, 1, 0, 0.5)
+                entity = (0, 1, 0, 0.5)
             else:
                 entity = (1, 0, 0, 0.5)
         elif (square.scriptid != 0 and len(square.scripts) > 0):
-            script = (0, 1, 0, 0.5)
+            script = (1, 1, 0, 0.5)
         elif (square.scriptid != 0 and len(square.scripts) == 0):
             script = (0, .784, .784, 0.5)
         elif (square.scriptid == 0 and len(square.scripts) > 0):
