@@ -803,14 +803,19 @@ class MapGUI(BaseGUI):
         (button_name, page) = wname.rsplit('_', 1)
         page = int(page)
         square = self.map.squares[self.sq_y][self.sq_x]
-        if (page == len(square.scripts)-1):
-            # Simplest case, just remove from the end
-            script = square.scripts[page]
-            self.map.delscript(self.sq_x, self.sq_y, page)
-            self.script_notebook.remove_page(page)
-        else:
-            # We'll have to remove and renumber
-            pass
+
+        # We'll have to remove this regardless, so do it now.
+        self.map.delscript(self.sq_x, self.sq_y, page)
+        self.script_notebook.remove_page(page)
+
+        # If we didn't just lop off the last one, redraw the whole notebook.
+        # This is in theory more lame than renumbering stuff, but to accurately
+        # renumber everything, we'd have to change the names of all the widgets
+        # in there.  Which would be even more lame.
+        if (page < len(square.scripts)):
+            self.clear_script_notebook()
+            for script in self.map.squares[self.sq_y][self.sq_x].scripts:
+                self.append_script_notebook(script)
 
     def on_script_add(self, widget):
         """
