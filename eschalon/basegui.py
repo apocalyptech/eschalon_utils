@@ -48,6 +48,7 @@ class BaseGUI:
     ITEM_EQUIP=1
     ITEM_INV=2
     ITEM_READY=3
+    ITEM_MAP=4
 
     def prefs_init(self, prefs):
 
@@ -165,6 +166,9 @@ class BaseGUI:
         elif (self.curitemtype == self.ITEM_READY):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
+        elif (self.curitemtype == self.ITEM_MAP):
+            obj = self.map.squares[self.sq_y][self.sq_x].scripts[self.curitem[1]].items[self.curitem[0]]
+            origobj = obj
         else:
             obj = self.char
             origobj = self.origchar
@@ -173,19 +177,21 @@ class BaseGUI:
     def on_singleval_changed_str(self, widget):
         """ What to do when a string value changes. """
         wname = widget.get_name()
-        (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_text()
-        self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
     def on_singleval_changed_int(self, widget):
         """ What to do when an int value changes. """
         wname = widget.get_name()
-        (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_value()
         # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
-        self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
 
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
@@ -195,22 +201,24 @@ class BaseGUI:
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
         wname = widget.get_name()
-        (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active()
-        self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
     def on_checkbox_changed(self, widget):
         """ What to do when a regular checkbox changes. """
         wname = widget.get_name()
         ischecked = widget.get_active()
-        (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         if (ischecked):
             obj.__dict__[wname] = 1
         else:
             obj.__dict__[wname] = 0
-        self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
     def on_checkbox_bit_changed(self, widget):
         """ What to do when a checkbox changes, and it's a bitfield. """
@@ -218,13 +226,14 @@ class BaseGUI:
         ischecked = widget.get_active()
         (shortname, mask) = wname.rsplit('_', 1)
         mask = int(mask, 16)
-        (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         if (ischecked):
             obj.__dict__[shortname] = obj.__dict__[shortname] | mask
         else:
             obj.__dict__[shortname] = obj.__dict__[shortname] & ~mask
-        self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[shortname] & mask), wname, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[shortname] & mask), wname, labelwidget, label)
 
     def on_modifier_changed(self, widget):
         """ What to do when our attr or skill modifier changes. """
@@ -234,14 +243,15 @@ class BaseGUI:
         modifiedtext = '%s_modified' % (which)
         modifier = self.get_widget(modifiertext).get_value()
         modified = self.get_widget(modifiedtext).get_active()
-        (labelwidget, label) = self.get_label_cache(which)
         (obj, origobj) = self.get_comp_objects()
         if (wname == modifiertext):
             obj.__dict__[modifiertext] = modifier
         elif (wname == modifiedtext):
             obj.__dict__[modifiedtext] = modified
-        self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
-            origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(which)
+            self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
+                origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
 
     def on_item_close_clicked(self, widget=None, dohide=True):
         if (self.curitemtype == self.ITEM_EQUIP):
@@ -250,11 +260,14 @@ class BaseGUI:
             self.populate_inv_button(self.curitem[0], self.curitem[1])
         elif (self.curitemtype == self.ITEM_READY):
             self.populate_ready_button(self.curitem)
-        for name in self.itemchanged.keys():
-            (labelwidget, label) = self.get_label_cache(name)
-            self.set_changed_widget(True, name, labelwidget, label, False)
-        self.itemchanged = {}
-        self.curitemtype = self.ITEM_NONE
+        elif (self.curitemtype == self.ITEM_MAP):
+            self.populate_mapitem_button(self.curitem[0], self.curitem[1])
+        if (self.curitemtype != self.ITEM_MAP):
+            for name in self.itemchanged.keys():
+                (labelwidget, label) = self.get_label_cache(name)
+                self.set_changed_widget(True, name, labelwidget, label, False)
+            self.itemchanged = {}
+            self.curitemtype = self.ITEM_NONE
         if (dohide):
             self.itemwindow.hide()
 

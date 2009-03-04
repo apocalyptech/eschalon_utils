@@ -43,6 +43,7 @@ except:
     sys.exit(1)
 
 from eschalonb1.map import Map
+from eschalonb1.item import Item
 from eschalonb1.square import Square
 from eschalonb1.basegui import BaseGUI
 from eschalonb1.mapscript import Mapscript
@@ -77,7 +78,10 @@ class MapGUI(BaseGUI):
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
+        self.itemfile = os.path.join(os.path.dirname(__file__), 'itemgui.glade')
+        self.itemwTree = gtk.glade.XML(self.itemfile)
         self.window = self.get_widget('mainwindow')
+        self.itemwindow = self.get_widget('itemwindow')
         self.infowindow = self.get_widget('infowindow')
         self.squarewindow = self.get_widget('squarewindow')
         self.maparea = self.get_widget('maparea')
@@ -98,12 +102,19 @@ class MapGUI(BaseGUI):
         self.script_notebook = self.get_widget('script_notebook')
         self.info_button = self.get_widget('info_button')
         self.infotext = self.get_widget('infotext')
+        self.itemsel = self.get_widget('itemselwindow')
         self.infobuffer = gtk.TextBuffer()
         self.infotext.set_buffer(self.infobuffer)
         self.infoscroll = self.get_widget('infoscroll')
         self.composite_area = self.get_widget('composite_area')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
+
+        # Initialize item stuff
+        self.item_init()
+        self.curitemtype = self.ITEM_MAP
+        self.curitem = ''
+        self.itemclipboard = None
 
         # Preferences window - also load in our graphics
         self.prefs_init(self.prefs)
@@ -138,7 +149,11 @@ class MapGUI(BaseGUI):
                 'on_squarewindow_close': self.on_squarewindow_close,
                 'on_prefs': self.on_prefs
                 }
+        dic.update(self.item_signals())
+        # Really we should only attach the signals that will actually be sent, but this
+        # should be fine here, anyway.
         self.wTree.signal_autoconnect(dic)
+        self.itemwTree.signal_autoconnect(dic)
 
         # Manually connect a couple more signals that Glade can't handle for us automatically
         self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
@@ -269,7 +284,10 @@ class MapGUI(BaseGUI):
     def get_widget(self, name):
         """ Returns a widget from our cache, or from wTree if it's not present in the cache. """
         if (not self.fullwidgetcache.has_key(name)):
-            self.register_widget(name, self.wTree.get_widget(name), False)
+            if (self.wTree.get_widget(name) is None):
+                self.register_widget(name, self.itemwTree.get_widget(name), False)
+            else:
+                self.register_widget(name, self.wTree.get_widget(name), False)
         return self.fullwidgetcache[name]
 
     # Use this to load in a map from a file
@@ -717,6 +735,55 @@ class MapGUI(BaseGUI):
     def input_int(self, page, table, row, name, text):
         self.input_spin(page, table, row, name, text, 4294967295)
 
+    def populate_mapitem_button(self, num, page):
+        widget = self.get_widget('item_%d_%d_text' % (num, page))
+        imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
+        item = self.map.squares[self.sq_y][self.sq_x].scripts[page].items[num]
+        self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
+
+    def on_mapitem_clicked(self, widget, doshow=True):
+        """ What to do when our item button is clicked. """
+        wname = widget.get_name()
+        (varname, num, page, button) = wname.rsplit('_', 3)
+        num = int(num)
+        page = int(page)
+        self.curitem = (num, page)
+        self.populate_itemform_from_item(self.map.squares[self.sq_y][self.sq_x].scripts[page].items[num])
+        self.get_widget('item_notebook').set_current_page(0)
+        if (doshow):
+            self.itemwindow.show()
+
+    def register_mapitem_change(self, num, page):
+        """
+        When loading in a new item, redraw the button and make sure that changes
+        are entered into the system properly.
+        """
+        self.on_mapitem_clicked(self.get_widget('item_%d_%d_button' % (num, page)), False)
+        self.on_item_close_clicked(None, False)
+
+    def on_mapitem_action_clicked(self, widget):
+        """ What to do when we cut/copy/paste/delete an item. """
+        wname = widget.get_name()
+        (varname, num, page, action) = wname.rsplit('_', 3)
+        num = int(num)
+        page = int(page)
+        items = self.map.squares[self.sq_y][self.sq_x].scripts[page].items
+        if (action == 'cut'):
+            self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_copy' % (num, page)))
+            self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_delete' % (num, page)))
+        elif (action == 'copy'):
+            self.itemclipboard = items[num]
+        elif (action == 'paste'):
+            if (self.itemclipboard != None):
+                items[num] = self.itemclipboard.replicate()
+                self.register_mapitem_change(num, page)
+        elif (action == 'delete'):
+            items[num] = Item(True)
+            items[num].tozero()
+            self.register_mapitem_change(num, page)
+        else:
+            raise Exception('invalid action')
+
     def append_script_notebook(self, script):
         """
         Given a script, adds a new tab to the script notebook, with
@@ -793,6 +860,7 @@ class MapGUI(BaseGUI):
 
         # Contents Table
         cinput = gtk.Table(8, 3)
+        self.register_widget('itemtable_%d' % (curpages), cinput, True)
         cinput.show()
         cspacer = gtk.Label('')
         cspacer.show()
@@ -802,7 +870,11 @@ class MapGUI(BaseGUI):
 
         # Contents Inputs (varies based on savefile status)
         if (square.scripts[curpages].savegame):
-            pass
+            for num in range(8):
+                self.input_label(curpages, cinput, num, 'item_%d_%d' % (num, curpages), 'Item %d' % (num+1))
+                cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
+                        2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND)
+                self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
                 self.input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))

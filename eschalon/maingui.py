@@ -558,7 +558,6 @@ class MainGUI(BaseGUI):
             if (self.itemclipboard != None):
                 self.char.inventory[row][col] = self.itemclipboard.replicate()
                 self.register_inv_change(row, col)
-            pass
         elif (action == 'delete'):
             self.char.inventory[row][col] = Item(True)
             self.register_inv_change(row, col)
