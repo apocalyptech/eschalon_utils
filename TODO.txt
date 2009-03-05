@@ -43,6 +43,7 @@ Map GUI
    (northeast 35 is a good place to see it) or on the big granite blocks
    outside Grimmhold (northwest 35)
  * Implement Entity graphics in map
+ * Status bars for functions aren't basically instantaneous
 
 Internal
 --------
@@ -51,8 +52,3 @@ Internal
  * Make sure that map-writing actually works
  * A whole lot of code-cleaning should really be done (separate ImgSize to
    class, etc)
-
-Temp
-----
- * PNG Export
-

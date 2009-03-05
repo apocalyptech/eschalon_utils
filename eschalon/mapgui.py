@@ -123,6 +123,7 @@ class MapGUI(BaseGUI):
                 'on_about': self.on_about,
                 'on_save': self.on_save,
                 'on_save_as': self.on_save_as,
+                'on_export_clicked': self.on_export_clicked,
                 'on_clicked': self.on_clicked,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
@@ -268,6 +269,40 @@ class MapGUI(BaseGUI):
             self.putstatus('Saved as %s' % (self.map.df.filename))
             self.get_widget('saveaswindow').run()
             self.get_widget('saveaswindow').hide()
+
+        # Clean up
+        dialog.destroy()
+
+    def on_export_clicked(self, widget=None):
+        """ Used to export a PNG of the current map image to disk. """
+
+        # Create the dialog
+        dialog = gtk.FileChooserDialog('Export Image...', None,
+                                       gtk.FILE_CHOOSER_ACTION_SAVE,
+                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_do_overwrite_confirmation(True)
+        infolabel = gtk.Label()
+        infolabel.set_markup('<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
+        infolabel.set_line_wrap(True)
+        dialog.set_extra_widget(infolabel)
+        if (self.map != None):
+            path = os.path.dirname(self.map.df.filename)
+            if (path != ''):
+                dialog.set_current_folder(path)
+
+        filter = gtk.FileFilter()
+        filter.set_name("PNG Files")
+        filter.add_pattern("*.png")
+        dialog.add_filter(filter)
+
+        # Run the dialog and process its return values
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            filename = dialog.get_filename()
+            self.guicache.write_to_png(filename)
+            self.putstatus('Image exported to %s' % (filename))
 
         # Clean up
         dialog.destroy()
