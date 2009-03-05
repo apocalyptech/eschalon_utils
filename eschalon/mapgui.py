@@ -101,6 +101,7 @@ class MapGUI(BaseGUI):
         self.entity_toggle = self.get_widget('entity_button')
         self.script_notebook = self.get_widget('script_notebook')
         self.itemsel = self.get_widget('itemselwindow')
+        self.floorsel = self.get_widget('floorselwindow')
         self.composite_area = self.get_widget('composite_area')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
@@ -145,7 +146,10 @@ class MapGUI(BaseGUI):
                 'on_squarewindow_close': self.on_squarewindow_close,
                 'on_prop_button_clicked': self.on_prop_button_clicked,
                 'on_propswindow_close': self.on_propswindow_close,
-                'on_prefs': self.on_prefs
+                'on_prefs': self.on_prefs,
+                'open_floorsel': self.open_floorsel,
+                'open_decalsel': self.open_decalsel,
+                'open_walldecalsel': self.open_walldecalsel
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -372,6 +376,8 @@ class MapGUI(BaseGUI):
         pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 30, 30)
         pixbuf.fill(self.map.rgb_color())
         img.set_from_pixbuf(pixbuf)
+        self.get_widget('color_rgb_label').set_markup('<i>(RGB: %d, %d, %d)</i>' %
+                (self.map.color_r, self.map.color_g, self.map.color_b))
 
     def on_prop_button_clicked(self, widget):
         """ Show the global properties window. """
@@ -1066,6 +1072,24 @@ class MapGUI(BaseGUI):
             self.get_widget('unknownc4').set_value(square.entity.unknownc4)
             self.get_widget('unknownc5').set_value(square.entity.unknownc5)
             self.get_widget('unknownc6').set_value(square.entity.unknownc6)
+
+    def open_floorsel(self, widget):
+        """ Show the floor selection window. """
+        self.imgsel_launch(self.get_widget('floorimg'),
+                52, 26, 6, 32,
+                self.gfx.get_floor, 1)
+
+    def open_decalsel(self, widget):
+        """ Show the floor selection window. """
+        self.imgsel_launch(self.get_widget('decalimg'),
+                52, 26, 6, 32,
+                self.gfx.get_decal, 1)
+
+    def open_walldecalsel(self, widget):
+        """ Show the floor selection window. """
+        self.imgsel_launch(self.get_widget('walldecalimg'),
+                52, 78, 6, 10,
+                self.gfx.get_object_decal, 1)
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """

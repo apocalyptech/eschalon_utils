@@ -118,7 +118,10 @@ class BaseGUI:
                 'open_itemsel': self.open_itemsel,
                 'itemsel_on_motion': self.itemsel_on_motion,
                 'itemsel_on_expose': self.itemsel_on_expose,
-                'itemsel_on_clicked': self.itemsel_on_clicked
+                'itemsel_on_clicked': self.itemsel_on_clicked,
+                'imgsel_on_motion': self.imgsel_on_motion,
+                'imgsel_on_expose': self.imgsel_on_expose,
+                'imgsel_on_clicked': self.imgsel_on_clicked
                 }
 
     def require_gfx(self):
@@ -516,3 +519,106 @@ class BaseGUI:
         self.itemsel_init = False
         self.get_widget('pictureid').set_value(self.itemsel_mousex+(10*self.itemsel_mousey))
         self.itemsel.hide()
+
+    def imgsel_launch(self, widget, width, height, cols, rows, getfunc, offset=0):
+        self.imgsel_init = False
+        self.imgsel_clean = []
+        self.imgsel_window = self.get_widget('imgselwindow')
+        self.imgsel_area = self.get_widget('imgsel_area')
+        self.imgsel_widget = widget
+        self.imgsel_width = width
+        self.imgsel_height = height
+        self.imgsel_cols = cols
+        self.imgsel_rows = rows
+        self.imgsel_x = width*cols
+        self.imgsel_y = height*rows
+        self.imgsel_offset = offset
+        self.imgsel_mousex = -1
+        self.imgsel_mousey = -1
+        self.imgsel_mousex_prev = -1
+        self.imgsel_mousey_prev = -1
+        self.imgsel_blank = None
+        self.imgsel_getfunc = getfunc
+        req_width = self.imgsel_x+20
+        req_height = 600
+        if (self.imgsel_y < 580):
+            req_height = self.imgsel_y + 20
+        self.imgsel_window.set_size_request(req_width, req_height)
+        self.imgsel_window.show()
+
+    def imgsel_on_motion(self, widget, event):
+        self.imgsel_mousex = int(event.x/self.imgsel_width)
+        self.imgsel_mousey = int(event.y/self.imgsel_height)
+        if (self.imgsel_mousex > self.imgsel_cols):
+            self.imgsel_mousex = self.imgsel_cols
+        if (self.imgsel_mousey > self.imgsel_rows):
+            self.imgsel_mousey = self.imgsel_rows
+        if (self.imgsel_mousex != self.imgsel_mousex_prev or
+            self.imgsel_mousey != self.imgsel_mousey_prev):
+            self.imgsel_clean.append((self.imgsel_mousex_prev, self.imgsel_mousey_prev))
+            self.imgsel_clean.append((self.imgsel_mousex, self.imgsel_mousey))
+            self.imgsel_mousex_prev = self.imgsel_mousex
+            self.imgsel_mousey_prev = self.imgsel_mousey
+        self.imgsel_area.queue_draw()
+
+    def imgsel_draw(self, x, y):
+        imgnum = (y*self.imgsel_cols)+x
+        if (imgnum < 0 or imgnum > (self.imgsel_rows * self.imgsel_cols)):
+            return
+        pixbuf = self.imgsel_getfunc(imgnum+self.imgsel_offset, None, True)
+        if (pixbuf is None):
+            return
+        self.imgsel_pixmap.draw_pixbuf(None, self.imgsel_blank, 0, 0, x*self.imgsel_width, y*self.imgsel_height)
+        self.imgsel_pixmap.draw_pixbuf(None, pixbuf, 0, 0, x*self.imgsel_width, y*self.imgsel_height)
+        if (x == self.imgsel_mousex and y == self.imgsel_mousey):
+            color = self.imgsel_gc_white
+        elif (x == self.imgsel_curx and y == self.imgsel_cury):
+            color = self.imgsel_gc_green
+        else:
+            return
+
+        # Outline points
+        x1 = x*self.imgsel_width
+        x2 = x1 + self.imgsel_width - 1
+        x3 = x2
+        x4 = x1
+        x5 = x1
+
+        y1 = y*self.imgsel_height
+        y2 = y1
+        y3 = y2 + self.imgsel_height - 1
+        y4 = y3
+        y5 = y1
+
+        self.imgsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+
+    def imgsel_on_expose(self, widget, event):
+        if (self.imgsel_init):
+            for (x, y) in self.imgsel_clean:
+                self.imgsel_draw(x, y)
+        else:
+            self.imgsel_curx = (self.imgsel_widget.get_value()-self.imgsel_offset) % self.imgsel_cols
+            self.imgsel_cury = int((self.imgsel_widget.get_value()-self.imgsel_offset) / self.imgsel_cols)
+            self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
+            self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
+            self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
+            self.imgsel_blank.fill(0x000000FF)
+            self.imgsel_gc_white = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
+            self.imgsel_gc_black = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
+            self.imgsel_gc_green = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.imgsel_pixmap.draw_rectangle(self.imgsel_gc_black, True, 0, 0, self.imgsel_x, self.imgsel_y)
+            for y in range(self.imgsel_rows):
+                for x in range(self.imgsel_cols):
+                    self.imgsel_draw(x, y)
+            self.imgsel_init = True
+        self.imgsel_clean = []
+        self.imgsel_area.window.draw_drawable(self.imgsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
+            self.imgsel_pixmap, 0, 0, 0, 0, self.imgsel_x, self.imgsel_y)
+
+    def imgsel_on_clicked(self, widget, event):
+        self.imgsel_init = False
+        self.imgsel_widget.set_value(self.imgsel_mousex+(self.imgsel_cols*self.imgsel_mousey)+self.imgsel_offset)
+        self.imgsel_window.hide()
