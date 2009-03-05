@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Mar  5 15:44:15 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Mar  5 15:50:26 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -59,6 +59,20 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="on_prefs"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkImageMenuItem" id="gtk-properties">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">Map Properties</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_prop_button_clicked"/>
+                        <child internal-child="image">
+                          <widget class="GtkImage" id="menu-item-image1">
+                            <property name="visible">True</property>
+                            <property name="stock">gtk-edit</property>
+                          </widget>
+                        </child>
                       </widget>
                     </child>
                     <child>

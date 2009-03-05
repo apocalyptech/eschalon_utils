@@ -42,6 +42,7 @@ Map GUI
    leaves some pixels here and there - notice this on the tallest tree tile
    (northeast 35 is a good place to see it) or on the big granite blocks
    outside Grimmhold (northwest 35)
+ * Implement Entity graphics in map
 
 Internal
 --------
@@ -53,7 +54,5 @@ Internal
 
 Temp
 ----
- * Entity graphics
  * PNG Export
- * Map Config via menu
 
