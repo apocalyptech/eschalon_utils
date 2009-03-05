@@ -404,12 +404,12 @@ class MainGUI(BaseGUI):
     def on_singleval_changed_int_avatar(self, widget):
         """ Special-case to handle changing the avatar picture properly. """
         self.on_singleval_changed_int(widget)
-        if (self.get_widget('picid').get_value() % 256 == 0):
-            pixbuf = self.gfx.get_avatar(widget.get_value()/256)
+        if (self.get_widget('picid').get_value_as_int() % 256 == 0):
+            pixbuf = self.gfx.get_avatar(widget.get_value_as_int()/256)
             if (pixbuf is None):
                 self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
             else:
-                self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value()/256))
+                self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value_as_int()/256))
         else:
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
@@ -428,7 +428,7 @@ class MainGUI(BaseGUI):
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
-        obj.__dict__[shortname][arrnum] = widget.get_value()
+        obj.__dict__[shortname][arrnum] = widget.get_value_as_int()
         self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
 
     def on_checkbox_arr_changed(self, widget):
@@ -451,7 +451,7 @@ class MainGUI(BaseGUI):
         (foo, slotnum) = wname.rsplit('_', 1)
         slotnum = int(slotnum)
         spell = self.get_widget('readyslots_spell_%d' % (slotnum)).get_text()
-        level = self.get_widget('readyslots_level_%d' % (slotnum)).get_value()
+        level = self.get_widget('readyslots_level_%d' % (slotnum)).get_value_as_int()
         shortname = 'readyslots_%d' % (slotnum)
         (labelwidget, label) = self.get_label_cache(shortname)
         (obj, origobj) = self.get_comp_objects()
@@ -612,10 +612,10 @@ class MainGUI(BaseGUI):
     def on_multarray_changed_fx(self, widget):
         self.on_multarray_changed(widget)
         textwidget = self.get_widget('fxblock_text')
-        fx0 = self.get_widget('fxblock_0').get_value()
-        fx1 = self.get_widget('fxblock_1').get_value()
-        fx2 = self.get_widget('fxblock_2').get_value()
-        fx3 = self.get_widget('fxblock_3').get_value()
+        fx0 = self.get_widget('fxblock_0').get_value_as_int()
+        fx1 = self.get_widget('fxblock_1').get_value_as_int()
+        fx2 = self.get_widget('fxblock_2').get_value_as_int()
+        fx3 = self.get_widget('fxblock_3').get_value_as_int()
         fxstr = '(unknown)'
         if (fx0 == 1073741824 and
             fx1 == 2111 and
@@ -915,8 +915,8 @@ class MainGUI(BaseGUI):
             for x in self.avatarsel_clean:
                 self.avatarsel_draw(x)
         else:
-            if (self.get_widget('picid').get_value() % 256 == 0):
-                self.avatarsel_curx = self.get_widget('picid').get_value() / 256
+            if (self.get_widget('picid').get_value_as_int() % 256 == 0):
+                self.avatarsel_curx = self.get_widget('picid').get_value_as_int() / 256
             else:
                 self.avatarsel_curx = -1
             self.avatarsel_area.set_size_request(self.avatarsel_x, self.avatarsel_y)

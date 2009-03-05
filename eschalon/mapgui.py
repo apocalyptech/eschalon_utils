@@ -522,7 +522,7 @@ class MapGUI(BaseGUI):
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
-            script.__dict__[labelname] = widget.get_value()
+            script.__dict__[labelname] = widget.get_value_as_int()
 
     def on_entid_changed(self, widget):
         """ Special case for changing the entity ID. """
@@ -541,7 +541,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         ent = self.map.squares[self.sq_y][self.sq_x].entity
-        ent.__dict__[wname] = widget.get_value()
+        ent.__dict__[wname] = widget.get_value_as_int()
 
     def on_singleval_ent_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
@@ -565,12 +565,12 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         square = self.map.squares[self.sq_y][self.sq_x]
-        square.__dict__[wname] = widget.get_value()
+        square.__dict__[wname] = widget.get_value_as_int()
 
     def on_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        pixbuf = self.gfx.get_floor(widget.get_value(), None, True)
+        pixbuf = self.gfx.get_floor(widget.get_value_as_int(), None, True)
         if (pixbuf is None):
             self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -580,7 +580,7 @@ class MapGUI(BaseGUI):
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        pixbuf = self.gfx.get_decal(widget.get_value(), None, True)
+        pixbuf = self.gfx.get_decal(widget.get_value_as_int(), None, True)
         if (pixbuf is None):
             self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -590,7 +590,7 @@ class MapGUI(BaseGUI):
     def on_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        (pixbuf, height) = self.gfx.get_object(widget.get_value(), None, True)
+        (pixbuf, height) = self.gfx.get_object(widget.get_value_as_int(), None, True)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -600,7 +600,7 @@ class MapGUI(BaseGUI):
     def on_walldecal_changed(self, widget):
         self.on_singleval_square_changed_int(widget)
         """ Update the appropriate image when necessary. """
-        pixbuf = self.gfx.get_object_decal(widget.get_value(), None, True)
+        pixbuf = self.gfx.get_object_decal(widget.get_value_as_int(), None, True)
         if (pixbuf is None):
             self.get_widget('walldecalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1265,7 +1265,7 @@ class MapGUI(BaseGUI):
         curpage = 3
         letters = ['d', 'c', 'b', 'a']
         for letter in letters:
-            if (self.imgsel_widget.get_value() >= self.objsel_panes[letter]['offset']):
+            if (self.imgsel_widget.get_value_as_int() >= self.objsel_panes[letter]['offset']):
                 break
             curpage -= 1
         if (curpage < 0):

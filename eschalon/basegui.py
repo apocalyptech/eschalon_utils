@@ -94,6 +94,7 @@ class BaseGUI:
                 'on_singleval_changed_str': self.on_singleval_changed_str,
                 'on_singleval_changed_int': self.on_singleval_changed_int,
                 'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
+                'on_singleval_changed_float': self.on_singleval_changed_float,
                 'on_dropdown_changed': self.on_dropdown_changed,
                 'on_checkbox_changed': self.on_checkbox_changed,
                 'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
@@ -170,6 +171,18 @@ class BaseGUI:
 
     def on_singleval_changed_int(self, widget):
         """ What to do when an int value changes. """
+        # TODO: Theoretically we shouldn't have to worry about that precision issue below, since
+        # we've split out floats into their own handler.  Test first before changing, though...
+        wname = widget.get_name()
+        (obj, origobj) = self.get_comp_objects()
+        obj.__dict__[wname] = widget.get_value_as_int()
+        # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(wname)
+            self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
+
+    def on_singleval_changed_float(self, widget):
+        """ What to do when an int value changes. """
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_value()
@@ -181,7 +194,7 @@ class BaseGUI:
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
         self.on_singleval_changed_int(widget)
-        self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value()))
+        self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
@@ -226,7 +239,7 @@ class BaseGUI:
         (which, type) = wname.rsplit('_', 1)
         modifiertext = '%s_modifier' % (which)
         modifiedtext = '%s_modified' % (which)
-        modifier = self.get_widget(modifiertext).get_value()
+        modifier = self.get_widget(modifiertext).get_value_as_int()
         modified = self.get_widget(modifiedtext).get_active()
         (obj, origobj) = self.get_comp_objects()
         if (wname == modifiertext):
@@ -547,12 +560,12 @@ class BaseGUI:
             for (x, y) in self.imgsel_clean:
                 self.imgsel_draw(x, y)
         else:
-            if (self.imgsel_widget.get_value()-self.imgsel_offset < 0):
+            if (self.imgsel_widget.get_value_as_int()-self.imgsel_offset < 0):
                 self.imgsel_curx = -1
                 self.imgsel_cury = -1
             else:
-                self.imgsel_curx = (self.imgsel_widget.get_value()-self.imgsel_offset) % self.imgsel_cols
-                self.imgsel_cury = int((self.imgsel_widget.get_value()-self.imgsel_offset) / self.imgsel_cols)
+                self.imgsel_curx = (self.imgsel_widget.get_value_as_int()-self.imgsel_offset) % self.imgsel_cols
+                self.imgsel_cury = int((self.imgsel_widget.get_value_as_int()-self.imgsel_offset) / self.imgsel_cols)
             self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
             self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
             self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
