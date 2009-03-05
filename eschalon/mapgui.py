@@ -121,6 +121,8 @@ class MapGUI(BaseGUI):
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_load': self.on_load,
                 'on_about': self.on_about,
+                'on_save': self.on_save,
+                'on_save_as': self.on_save_as,
                 'on_clicked': self.on_clicked,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
@@ -228,6 +230,48 @@ class MapGUI(BaseGUI):
         """ Pushes a message to the status bar """
         self.statusbar.push(self.sbcontext, text)
 
+    def on_save(self, widget=None):
+        """ Save map to disk. """
+        self.map.write()
+        self.putstatus('Saved ' + self.map.df.filename)
+
+    def on_save_as(self, widget=None):
+        """ Show the save-as dialog. """
+
+        # Create the dialog
+        dialog = gtk.FileChooserDialog('Save Map File...', None,
+                                       gtk.FILE_CHOOSER_ACTION_SAVE,
+                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_do_overwrite_confirmation(True)
+        if (self.map != None):
+            path = os.path.dirname(self.map.df.filename)
+            if (path != ''):
+                dialog.set_current_folder(path)
+
+        filter = gtk.FileFilter()
+        filter.set_name("Map Files")
+        filter.add_pattern("*.map")
+        dialog.add_filter(filter)
+
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        dialog.add_filter(filter)
+
+        # Run the dialog and process its return values
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            self.map.df.filename = dialog.get_filename()
+            self.on_save()
+            self.putstatus('Saved as %s' % (self.map.df.filename))
+            self.get_widget('saveaswindow').run()
+            self.get_widget('saveaswindow').hide()
+
+        # Clean up
+        dialog.destroy()
+
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
         
@@ -310,8 +354,7 @@ class MapGUI(BaseGUI):
             return False
 
         # Basic vars
-        self.origmap = map
-        self.map = map.replicate()
+        self.map = map
 
         # Update our status bar
         self.putstatus('Editing ' + self.map.df.filename)

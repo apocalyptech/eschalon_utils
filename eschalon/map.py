@@ -77,7 +77,10 @@ class Map:
         self.entities = []
 
         self.df = Savefile(filename)
-        self.df_ent = Savefile(filename[:filename.rindex('.map')] + '.ent')
+        self.set_df_ent()
+
+    def set_df_ent(self):
+        self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
 
     def is_global(self):
         return (self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0)
@@ -312,7 +315,7 @@ class Map:
 
         # Scripts
         for script in self.scripts:
-            scripts.write(self.df)
+            script.write(self.df)
 
         # Any extra data we might have
         if (len(self.extradata) > 0):
@@ -322,11 +325,14 @@ class Map:
         self.df.close()
 
         # Now write out entities, which actually happens in a different file
-        if (len(self.entities) > 0):
-            self.df_ent.open_w()
-            for entity in self.entities:
-                entity.write(self.df_ent)
-            self.df_ent.close()
+        # We open regardless of entities, because we'd have to zero out the
+        # file.
+        self.set_df_ent()
+        self.df_ent.open_w()
+        for entity in self.entities:
+            entity.write(self.df_ent)
+        self.df_ent.close()
+            
 
     def rgb_color(self):
         return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
