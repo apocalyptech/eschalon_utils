@@ -102,7 +102,8 @@ class BaseGUI:
                 'open_itemsel': self.open_itemsel,
                 'imgsel_on_motion': self.imgsel_on_motion,
                 'imgsel_on_expose': self.imgsel_on_expose,
-                'imgsel_on_clicked': self.imgsel_on_clicked
+                'imgsel_on_clicked': self.imgsel_on_clicked,
+                'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked
                 }
 
     def require_gfx(self):
@@ -430,13 +431,37 @@ class BaseGUI:
     def open_itemsel(self, widget):
         self.imgsel_launch(self.get_widget('pictureid'),
                 42, 42, 10, 24,
-                self.gfx.get_item)
+                self.gfx.get_item,
+                False)
 
-    def imgsel_launch(self, widget, width, height, cols, rows, getfunc, offset=0):
+    def imgsel_init_bgcolor(self):
+        (x, y) = self.imgsel_bgcolor_img.get_size_request()
+        pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, x, y)
+        steps = 4
+        max = 255
+        stepval = int(max/steps)
+        stepvals = []
+        for i in range(steps):
+            stepvals.insert(0, max-(stepval*i))
+        stepvals.insert(0, 0)
+        stepwidth = int(x/(steps+1))
+        temppixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, stepwidth, y)
+        for (i, val) in enumerate(stepvals):
+            color = (val<<24) + (val<<16) + (val<<8) + 255
+            temppixbuf.fill(color)
+            temppixbuf.copy_area(0, 0, stepwidth, y, pixbuf, (i*stepwidth), 0)
+        # We have to connect this in the code because there's no interface to do so in Glade
+        self.imgsel_bgcolor_event.connect('button-press-event', self.on_bgcolor_img_clicked)
+        self.imgsel_bgcolor_img.set_from_pixbuf(pixbuf)
+        self.imgsel_bgcolor_pixbuf = pixbuf
+
+    def imgsel_launch(self, widget, width, height, cols, rows, getfunc, bgcolor_select=True, offset=0):
         self.imgsel_init = False
         self.imgsel_clean = []
         self.imgsel_window = self.get_widget('imgselwindow')
         self.imgsel_area = self.get_widget('imgsel_area')
+        self.imgsel_bgcolor_img = self.get_widget('bgcolor_img')
+        self.imgsel_bgcolor_event = self.get_widget('bgcolor_event')
         self.imgsel_widget = widget
         self.imgsel_width = width
         self.imgsel_height = height
@@ -452,11 +477,17 @@ class BaseGUI:
         self.imgsel_blank = None
         self.imgsel_getfunc = getfunc
         self.imgsel_pixbuffunc = None
-        req_width = self.imgsel_x+20
+        self.imgsel_init_bgcolor()
+        req_width = self.imgsel_x+25
         req_height = 600
         if (self.imgsel_y < 580):
             req_height = self.imgsel_y + 20
         self.imgsel_window.set_size_request(req_width, req_height)
+        self.imgsel_blank_color = self.imgsel_generate_grayscale(0)
+        if (bgcolor_select):
+            self.get_widget('imgsel_bgcolor_box').show()
+        else:
+            self.get_widget('imgsel_bgcolor_box').hide()
         self.imgsel_window.show()
 
     def imgsel_on_motion(self, widget, event):
@@ -506,6 +537,9 @@ class BaseGUI:
         y5 = y1
 
         self.imgsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+    
+    def imgsel_generate_grayscale(self, color):
+        return (color<<24) + (color<<16) + (color<<8) + 255
 
     def imgsel_on_expose(self, widget, event):
         if (self.imgsel_init):
@@ -517,7 +551,7 @@ class BaseGUI:
             self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
             self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
             self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
-            self.imgsel_blank.fill(0x000000FF)
+            self.imgsel_blank.fill(self.imgsel_blank_color)
             self.imgsel_gc_white = gtk.gdk.GC(self.imgsel_area.window)
             self.imgsel_gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
             self.imgsel_gc_black = gtk.gdk.GC(self.imgsel_area.window)
@@ -537,3 +571,10 @@ class BaseGUI:
         self.imgsel_init = False
         self.imgsel_widget.set_value(self.imgsel_mousex+(self.imgsel_cols*self.imgsel_mousey)+self.imgsel_offset)
         self.imgsel_window.hide()
+
+    def on_bgcolor_img_clicked(self, widget, event):
+        pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
+        color = pixels[int(event.y)][int(event.x)][0][0]
+        self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
+        self.imgsel_init = False
+        self.imgsel_area.queue_draw()

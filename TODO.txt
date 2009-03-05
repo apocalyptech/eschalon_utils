@@ -54,7 +54,6 @@ Internal
 Temp
 ----
  * Entity graphics
- * Background color on imgselect
  * PNG Export
  * Map Config via menu
  * Initial pic image when editing script in map doesn't show up (and some

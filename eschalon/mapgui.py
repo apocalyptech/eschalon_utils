@@ -1080,19 +1080,19 @@ class MapGUI(BaseGUI):
         """ Show the floor selection window. """
         self.imgsel_launch(self.get_widget('floorimg'),
                 52, 26, 6, 32,
-                self.gfx.get_floor, 1)
+                self.gfx.get_floor, True, 1)
 
     def open_decalsel(self, widget):
         """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
                 52, 26, 6, 32,
-                self.gfx.get_decal, 1)
+                self.gfx.get_decal, True, 1)
 
     def open_walldecalsel(self, widget):
         """ Show the wall decal selection window. """
         self.imgsel_launch(self.get_widget('walldecalimg'),
                 52, 78, 6, 10,
-                self.gfx.get_object_decal, 1)
+                self.gfx.get_object_decal, True, 1)
 
     def objsel_fix_pixbuf(self, pixbuf):
         """ Function to fix the pixbuf, for object loading. """
@@ -1108,8 +1108,12 @@ class MapGUI(BaseGUI):
         self.imgsel_window = self.get_widget('objselwindow')
         self.imgsel_widget = self.get_widget('wallimg')
         self.objsel_book = self.get_widget('objsel_book')
+        self.imgsel_bgcolor_img = self.get_widget('objsel_bgcolor_img')
+        self.imgsel_bgcolor_event = self.get_widget('objsel_bgcolor_event')
         self.imgsel_getfunc = self.gfx.get_object
         self.imgsel_pixbuffunc = self.objsel_fix_pixbuf
+        self.imgsel_init_bgcolor()
+        self.imgsel_blank_color = self.imgsel_generate_grayscale(0)
         self.objsel_panes = {}
         self.objsel_panes['a'] = {
                 'init': False,
