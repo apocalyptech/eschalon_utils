@@ -82,10 +82,10 @@ class MapGUI(BaseGUI):
         self.itemwTree = gtk.glade.XML(self.itemfile)
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
-        self.infowindow = self.get_widget('infowindow')
         self.squarewindow = self.get_widget('squarewindow')
+        self.propswindow = self.get_widget('globalpropswindow')
         self.maparea = self.get_widget('maparea')
-        self.mapname_label = self.get_widget('mapname')
+        self.mapname_mainscreen_label = self.get_widget('mapname_mainscreen')
         self.coords_label = self.get_widget('coords')
         self.mainscroll = self.get_widget('mainscroll')
         self.zoom_in_button = self.get_widget('zoom_in_button')
@@ -100,12 +100,7 @@ class MapGUI(BaseGUI):
         self.script_toggle = self.get_widget('script_button')
         self.entity_toggle = self.get_widget('entity_button')
         self.script_notebook = self.get_widget('script_notebook')
-        self.info_button = self.get_widget('info_button')
-        self.infotext = self.get_widget('infotext')
         self.itemsel = self.get_widget('itemselwindow')
-        self.infobuffer = gtk.TextBuffer()
-        self.infotext.set_buffer(self.infobuffer)
-        self.infoscroll = self.get_widget('infoscroll')
         self.composite_area = self.get_widget('composite_area')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
@@ -133,12 +128,12 @@ class MapGUI(BaseGUI):
                 'expose_map': self.expose_map,
                 'realize_map': self.realize_map,
                 'map_toggle': self.map_toggle,
-                'info_toggle': self.info_toggle,
-                'infowindow_clear': self.infowindow_clear,
                 'on_entid_changed': self.on_entid_changed,
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
+                'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
+                'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
                 'on_dropdownplusone_ent_changed': self.on_dropdownplusone_ent_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
@@ -146,7 +141,10 @@ class MapGUI(BaseGUI):
                 'on_decal_changed': self.on_decal_changed,
                 'on_wall_changed': self.on_wall_changed,
                 'on_walldecal_changed': self.on_walldecal_changed,
+                'on_colorsel_clicked': self.on_colorsel_clicked,
                 'on_squarewindow_close': self.on_squarewindow_close,
+                'on_prop_button_clicked': self.on_prop_button_clicked,
+                'on_propswindow_close': self.on_propswindow_close,
                 'on_prefs': self.on_prefs
                 }
         dic.update(self.item_signals())
@@ -312,7 +310,7 @@ class MapGUI(BaseGUI):
         self.putstatus('Editing ' + self.map.df.filename)
 
         # Update the map title
-        self.mapname_label.set_text(self.map.mapname)
+        self.mapname_mainscreen_label.set_text(self.map.mapname)
 
         # Load information from the character
         #self.populate_form_from_char()
@@ -369,6 +367,53 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
+    def populate_color_selection(self):
+        img = self.get_widget('color_img')
+        pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 30, 30)
+        pixbuf.fill(self.map.rgb_color())
+        img.set_from_pixbuf(pixbuf)
+
+    def on_prop_button_clicked(self, widget):
+        """ Show the global properties window. """
+        self.get_widget('mapid').set_text(self.map.mapid)
+        if (self.map.is_savegame()):
+            self.get_widget('maptype').set_text('From Savegame')
+        else:
+            self.get_widget('maptype').set_text('Global Map File')
+        self.get_widget('mapname').set_text(self.map.mapname)
+        self.get_widget('exit_north').set_text(self.map.exit_north)
+        self.get_widget('exit_east').set_text(self.map.exit_east)
+        self.get_widget('exit_south').set_text(self.map.exit_south)
+        self.get_widget('exit_west').set_text(self.map.exit_west)
+        self.get_widget('soundfile1').set_text(self.map.soundfile1)
+        self.get_widget('soundfile2').set_text(self.map.soundfile2)
+        self.get_widget('soundfile3').set_text(self.map.soundfile3)
+        self.get_widget('skybox').set_text(self.map.skybox)
+        self.get_widget('parallax_1').set_value(self.map.parallax_1)
+        self.get_widget('parallax_2').set_value(self.map.parallax_2)
+        self.populate_color_selection()
+        self.get_widget('color_a').set_value(self.map.color_a)
+        self.get_widget('unknownh1').set_value(self.map.unknownh1)
+        self.get_widget('unknowni1').set_value(self.map.unknowni1)
+        self.get_widget('unknowni4').set_value(self.map.unknowni4)
+        self.propswindow.show()
+
+    def on_propswindow_close(self, widget):
+        self.mapname_mainscreen_label.set_text(self.map.mapname)
+        self.propswindow.hide()
+
+    def on_colorsel_clicked(self, widget):
+        dialog = gtk.ColorSelectionDialog('Select Overlay Color')
+        dialog.colorsel.set_current_color(gtk.gdk.Color(self.map.color_r*257, self.map.color_g*257, self.map.color_b*257))
+        response = dialog.run()
+        if (response == gtk.RESPONSE_OK):
+            color = dialog.colorsel.get_current_color()
+            self.map.color_r = int(color.red/257)
+            self.map.color_g = int(color.green/257)
+            self.map.color_b = int(color.blue/257)
+            self.populate_color_selection()
+        dialog.destroy()
+
     def on_script_str_changed(self, widget):
         """ When a script string changes. """
         wname = widget.get_name()
@@ -416,6 +461,18 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_text()
+
+    def on_singleval_map_changed_int(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        map = self.map
+        map.__dict__[wname] = widget.get_value()
+
+    def on_singleval_map_changed_str(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        map = self.map
+        map.__dict__[wname] = widget.get_text()
 
     def on_singleval_square_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
@@ -705,7 +762,6 @@ class MapGUI(BaseGUI):
             if (name[:9] == 'item_name'):
                 (varname, itemnum) = name.rsplit('_', 1)
                 itemnum = int(itemnum)
-                print 'Itemnum is %d, len is %d' % (itemnum, len(script.items))
                 entry.set_text(script.items[itemnum].item_name)
             else:
                 entry.set_text(script.__dict__[name])
@@ -1019,23 +1075,6 @@ class MapGUI(BaseGUI):
                 self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
                 self.get_widget('squarelabel').set_markup('<b>Map Square (%d, %d)</b>' % (self.sq_x, self.sq_y))
                 self.squarewindow.show()
-                #self.infobuffer.insert(self.infobuffer.get_end_iter(), "Square at (%d, %d):\n%s\n" % (self.sq_x, self.sq_y, self.map.squares[self.sq_y][self.sq_x].display(True)))
-                #adjust = self.infoscroll.get_vadjustment()
-                #adjust.set_value(adjust.upper)
-                #if (not self.info_button.get_active()):
-                #    self.info_button.clicked()
-                #self.infowindow.show()
-                ##print "Square at %d x %d - " % (self.sq_x, self.sq_y)
-                ##self.map.squares[self.sq_y][self.sq_x].display(True)
-
-    def info_toggle(self, widget):
-        if (self.info_button.get_active()):
-            self.infowindow.show()
-        else:
-            self.infowindow.hide()
-
-    def infowindow_clear(self, widget):
-        self.infobuffer.set_text('')
 
     def map_toggle(self, widget):
         self.mapinit = False

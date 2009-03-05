@@ -327,3 +327,7 @@ class Map:
             for entity in self.entities:
                 entity.write(self.df_ent)
             self.df_ent.close()
+
+    def rgb_color(self):
+        return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
+
