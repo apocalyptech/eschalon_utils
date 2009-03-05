@@ -85,9 +85,6 @@ class MainGUI(BaseGUI):
         # GUI additions
         self.gui_finish()
 
-        # Item Initialization
-        self.item_init()
-
         # Avatar Selection Window extras
         self.avatarsel_init = False
         self.avatarsel_clean = []

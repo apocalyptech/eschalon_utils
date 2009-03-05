@@ -88,22 +88,6 @@ class BaseGUI:
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
         #store.set(store.append(), 0, pixbuf, 1, 'Other', 2, 1)
 
-    def item_init(self):
-        """ Sets up some initial vars for handling items. """
-        self.itemsel_init = False
-        self.itemsel_clean = []
-        self.itemsel_area = self.get_widget('itemsel_area')
-        self.itemsel_x = 420
-        self.itemsel_y = 1008
-        self.itemsel_cols = 10
-        self.itemsel_rows = 24
-        self.itemsel_width = 42
-        self.itemsel_height = 42
-        self.itemsel_mousex = -1
-        self.itemsel_mousey = -1
-        self.itemsel_mousex_prev = -1
-        self.itemsel_mousey_prev = -1
-
     def item_signals(self):
         """ Returns the signals that need to be attached for items. """
         return {
@@ -116,9 +100,6 @@ class BaseGUI:
                 'on_modifier_changed': self.on_modifier_changed,
                 'on_item_close_clicked': self.on_item_close_clicked,
                 'open_itemsel': self.open_itemsel,
-                'itemsel_on_motion': self.itemsel_on_motion,
-                'itemsel_on_expose': self.itemsel_on_expose,
-                'itemsel_on_clicked': self.itemsel_on_clicked,
                 'imgsel_on_motion': self.imgsel_on_motion,
                 'imgsel_on_expose': self.imgsel_on_expose,
                 'imgsel_on_clicked': self.imgsel_on_clicked
@@ -447,78 +428,9 @@ class BaseGUI:
         return button
 
     def open_itemsel(self, widget):
-        self.itemsel.show()
-
-    def itemsel_on_motion(self, widget, event):
-        self.itemsel_mousex = int(event.x/self.itemsel_width)
-        self.itemsel_mousey = int(event.y/self.itemsel_height)
-        if (self.itemsel_mousex > self.itemsel_cols):
-            self.itemsel_mousex = self.itemsel_cols
-        if (self.itemsel_mousey > self.itemsel_rows):
-            self.itemsel_mousey = self.itemsel_rows
-        if (self.itemsel_mousex != self.itemsel_mousex_prev or
-            self.itemsel_mousey != self.itemsel_mousey_prev):
-            self.itemsel_clean.append((self.itemsel_mousex_prev, self.itemsel_mousey_prev))
-            self.itemsel_clean.append((self.itemsel_mousex, self.itemsel_mousey))
-            self.itemsel_mousex_prev = self.itemsel_mousex
-            self.itemsel_mousey_prev = self.itemsel_mousey
-        self.itemsel_area.queue_draw()
-
-    def itemsel_draw(self, x, y):
-        itemnum = (y*10)+x
-        if (itemnum < 0 or itemnum > 239):
-            return
-        self.itemsel_pixmap.draw_pixbuf(None, self.gfx.get_item(itemnum), 0, 0, x*self.itemsel_width, y*self.itemsel_height)
-        if (x == self.itemsel_mousex and y == self.itemsel_mousey):
-            color = self.gc_white
-        elif (x == self.itemsel_curx and y == self.itemsel_cury):
-            color = self.gc_green
-        else:
-            return
-
-        # Outline points
-        x1 = x*self.itemsel_width
-        x2 = x1 + self.itemsel_width - 1
-        x3 = x2
-        x4 = x1
-        x5 = x1
-
-        y1 = y*self.itemsel_height
-        y2 = y1
-        y3 = y2 + self.itemsel_height - 1
-        y4 = y3
-        y5 = y1
-
-        self.itemsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
-
-    def itemsel_on_expose(self, widget, event):
-        if (self.itemsel_init):
-            for (x, y) in self.itemsel_clean:
-                self.itemsel_draw(x, y)
-        else:
-            self.itemsel_curx = self.get_widget('pictureid').get_value() % 10
-            self.itemsel_cury = int(self.get_widget('pictureid').get_value() / 10)
-            self.itemsel_area.set_size_request(self.itemsel_x, self.itemsel_y)
-            self.itemsel_pixmap = gtk.gdk.Pixmap(self.itemsel_area.window, self.itemsel_x, self.itemsel_y)
-            self.gc_white = gtk.gdk.GC(self.itemsel_area.window)
-            self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
-            self.gc_black = gtk.gdk.GC(self.itemsel_area.window)
-            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.gc_green = gtk.gdk.GC(self.itemsel_area.window)
-            self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
-            self.itemsel_pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.itemsel_x, self.itemsel_y)
-            for y in range(self.itemsel_rows):
-                for x in range(self.itemsel_cols):
-                    self.itemsel_draw(x, y)
-            self.itemsel_init = True
-        self.itemsel_clean = []
-        self.itemsel_area.window.draw_drawable(self.itemsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
-            self.itemsel_pixmap, 0, 0, 0, 0, self.itemsel_x, self.itemsel_y)
-
-    def itemsel_on_clicked(self, widget, event):
-        self.itemsel_init = False
-        self.get_widget('pictureid').set_value(self.itemsel_mousex+(10*self.itemsel_mousey))
-        self.itemsel.hide()
+        self.imgsel_launch(self.get_widget('pictureid'),
+                42, 42, 10, 24,
+                self.gfx.get_item)
 
     def imgsel_launch(self, widget, width, height, cols, rows, getfunc, offset=0):
         self.imgsel_init = False

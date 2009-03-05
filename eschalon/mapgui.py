@@ -107,7 +107,6 @@ class MapGUI(BaseGUI):
             self.window.connect('destroy', gtk.main_quit)
 
         # Initialize item stuff
-        self.item_init()
         self.curitemtype = self.ITEM_MAP
         self.curitem = ''
         self.itemclipboard = None
