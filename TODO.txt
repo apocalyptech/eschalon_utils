@@ -44,6 +44,8 @@ Map GUI
    outside Grimmhold (northwest 35)
  * Implement Entity graphics in map
  * Status bars for functions aren't basically instantaneous
+ * Put together a table of maximum hitpoints for various entities, so adding
+   new entities on a savegame-based map is easier
 
 Internal
 --------
@@ -51,3 +53,6 @@ Internal
    Should consolidate those.
  * A whole lot of code-cleaning should really be done (separate ImgSize to
    class, etc)
+ * Enforce a strict .get_value_as_int() for changed int values - will have
+   to set up a new signal for weight on items.  I think that's our one actual
+   float value.

@@ -553,7 +553,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         map = self.map
-        map.__dict__[wname] = widget.get_value()
+        map.__dict__[wname] = widget.get_value_as_int()
 
     def on_singleval_map_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
