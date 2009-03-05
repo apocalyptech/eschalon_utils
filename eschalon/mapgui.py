@@ -1113,7 +1113,7 @@ class MapGUI(BaseGUI):
         self.imgsel_getfunc = self.gfx.get_object
         self.imgsel_pixbuffunc = self.objsel_fix_pixbuf
         self.imgsel_init_bgcolor()
-        self.imgsel_blank_color = self.imgsel_generate_grayscale(0)
+        self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
         self.objsel_panes = {}
         self.objsel_panes['a'] = {
                 'init': False,

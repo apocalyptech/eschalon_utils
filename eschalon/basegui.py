@@ -334,7 +334,7 @@ class BaseGUI:
         # controls from here, because of the compound check function
         strvals = [ 'item_name', 'script', 'emptystr' ]
         dropdownvals = [ 'type', 'subtype', 'incr' ]
-        intvals = [ 'pictureid', 'value', 'weight', 'basedamage', 'basearmor',
+        intvals = [ 'value', 'weight', 'basedamage', 'basearmor',
                 'hitpoint', 'mana', 'tohit', 'damage', 'armor',
                 'visibility', 'duration', 'quantity', 'zero1' ]
         checkboxvals = [ 'canstack' ]
@@ -352,6 +352,7 @@ class BaseGUI:
             self.on_checkbox_bit_changed(self.get_widget(val))
         for val in modifiervals:
             self.on_modifier_changed(self.get_widget(val))
+        self.on_singleval_changed_int_itempic(self.get_widget('pictureid'))
 
     def gui_item_label(self, label, name):
         """ Generate a Label for an inventory item. """
@@ -483,7 +484,7 @@ class BaseGUI:
         if (self.imgsel_y < 580):
             req_height = self.imgsel_y + 20
         self.imgsel_window.set_size_request(req_width, req_height)
-        self.imgsel_blank_color = self.imgsel_generate_grayscale(0)
+        self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
         if (bgcolor_select):
             self.get_widget('imgsel_bgcolor_box').show()
         else:
@@ -546,8 +547,12 @@ class BaseGUI:
             for (x, y) in self.imgsel_clean:
                 self.imgsel_draw(x, y)
         else:
-            self.imgsel_curx = (self.imgsel_widget.get_value()-self.imgsel_offset) % self.imgsel_cols
-            self.imgsel_cury = int((self.imgsel_widget.get_value()-self.imgsel_offset) / self.imgsel_cols)
+            if (self.imgsel_widget.get_value()-self.imgsel_offset < 0):
+                self.imgsel_curx = -1
+                self.imgsel_cury = -1
+            else:
+                self.imgsel_curx = (self.imgsel_widget.get_value()-self.imgsel_offset) % self.imgsel_cols
+                self.imgsel_cury = int((self.imgsel_widget.get_value()-self.imgsel_offset) / self.imgsel_cols)
             self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
             self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
             self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
