@@ -48,3 +48,17 @@ Internal
  * We're doubly-caching some widgets in the GUI code, which is stupid.
    Should consolidate those.
  * Make sure that map-writing actually works
+ * A whole lot of code-cleaning should really be done (separate ImgSize to
+   class, etc)
+
+Temp
+----
+ * Entity graphics
+ * Background color on imgselect
+ * PNG Export
+ * Map Config via menu
+ * Initial pic image when editing script in map doesn't show up (and some
+   other related weirdness on Object lookup - only seems to be problematic
+   when the initial value is zero (which is a value which isn't drawn
+   currently)
+

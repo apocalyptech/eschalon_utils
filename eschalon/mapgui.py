@@ -148,7 +148,11 @@ class MapGUI(BaseGUI):
                 'on_prefs': self.on_prefs,
                 'open_floorsel': self.open_floorsel,
                 'open_decalsel': self.open_decalsel,
-                'open_walldecalsel': self.open_walldecalsel
+                'open_walldecalsel': self.open_walldecalsel,
+                'open_objsel': self.open_objsel,
+                'objsel_on_motion': self.objsel_on_motion,
+                'objsel_on_expose': self.objsel_on_expose,
+                'objsel_on_clicked': self.objsel_on_clicked
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -1079,16 +1083,139 @@ class MapGUI(BaseGUI):
                 self.gfx.get_floor, 1)
 
     def open_decalsel(self, widget):
-        """ Show the floor selection window. """
+        """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
                 52, 26, 6, 32,
                 self.gfx.get_decal, 1)
 
     def open_walldecalsel(self, widget):
-        """ Show the floor selection window. """
+        """ Show the wall decal selection window. """
         self.imgsel_launch(self.get_widget('walldecalimg'),
                 52, 78, 6, 10,
                 self.gfx.get_object_decal, 1)
+
+    def objsel_fix_pixbuf(self, pixbuf):
+        """ Function to fix the pixbuf, for object loading. """
+        return pixbuf[0]
+
+    def open_objsel(self, widget):
+        """
+        Launch our object selection window.  This is effectively
+        an override of imgsel_launch() - we'll be playing some games
+        to reduce code duplication here.  This should probably be
+        in a class, somehow, instead of a dict.
+        """
+        self.imgsel_window = self.get_widget('objselwindow')
+        self.imgsel_widget = self.get_widget('wallimg')
+        self.objsel_book = self.get_widget('objsel_book')
+        self.imgsel_getfunc = self.gfx.get_object
+        self.imgsel_pixbuffunc = self.objsel_fix_pixbuf
+        self.objsel_panes = {}
+        self.objsel_panes['a'] = {
+                'init': False,
+                'clean': [],
+                'area': self.get_widget('objsel_a_area'),
+                'width': 52,
+                'height': 52,
+                'cols': 6,
+                'rows': 16,
+                'x': 52*6,
+                'y': 52*16,
+                'offset': 1,
+                'mousex': -1,
+                'mousey': -1,
+                'mousex_prev': -1,
+                'mousey_prev': -1,
+                'blank': None,
+            }
+        self.objsel_panes['b'] = {
+                'init': False,
+                'clean': [],
+                'area': self.get_widget('objsel_b_area'),
+                'width': 52,
+                'height': 78,
+                'cols': 6,
+                'rows': 10,
+                'x': 52*6,
+                'y': 78*10,
+                'offset': 101,
+                'mousex': -1,
+                'mousey': -1,
+                'mousex_prev': -1,
+                'mousey_prev': -1,
+                'blank': None,
+            }
+        self.objsel_panes['c'] = {
+                'init': False,
+                'clean': [],
+                'area': self.get_widget('objsel_c_area'),
+                'width': 52,
+                'height': 78,
+                'cols': 6,
+                'rows': 10,
+                'x': 52*6,
+                'y': 78*10,
+                'offset': 161,
+                'mousex': -1,
+                'mousey': -1,
+                'mousex_prev': -1,
+                'mousey_prev': -1,
+                'blank': None,
+            }
+        self.objsel_panes['d'] = {
+                'init': False,
+                'clean': [],
+                'area': self.get_widget('objsel_d_area'),
+                'width': 52,
+                'height': 130,
+                'cols': 5,
+                'rows': 1,
+                'x': 52*5,
+                'y': 130,
+                'offset': 251,
+                'mousex': -1,
+                'mousey': -1,
+                'mousex_prev': -1,
+                'mousey_prev': -1,
+                'blank': None,
+            }
+        # Set initial page
+        curpage = 3
+        letters = ['d', 'c', 'b', 'a']
+        for letter in letters:
+            if (self.imgsel_widget.get_value() >= self.objsel_panes[letter]['offset']):
+                break
+            curpage -= 1
+        if (curpage < 0):
+            curpage = 0
+        self.objsel_book.set_current_page(curpage)
+        self.objsel_current = ''
+        #self.load_objsel_vars(self.get_widget('objsel_%s_area' % (letters[3-curpage])))
+        self.imgsel_window.show()
+
+    def load_objsel_vars(self, widget):
+        """
+        Given a widget (should be an object selection DrawingArea),
+        populate the self.imgsel_* variables with the appropriate stuff.
+        """
+        wname = widget.get_name()
+        (foo, letter, bar) = wname.split('_', 2)
+        if (letter != self.objsel_current):
+            for (key, val) in self.objsel_panes[letter].items():
+                self.__dict__['imgsel_%s' % key] = val
+            self.objsel_current = letter
+
+    def objsel_on_clicked(self, widget, event):
+        self.load_objsel_vars(widget)
+        self.imgsel_on_clicked(widget, event)
+
+    def objsel_on_expose(self, widget, event):
+        self.load_objsel_vars(widget)
+        self.imgsel_on_expose(widget, event)
+
+    def objsel_on_motion(self, widget, event):
+        self.load_objsel_vars(widget)
+        self.imgsel_on_motion(widget, event)
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """

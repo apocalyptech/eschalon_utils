@@ -451,6 +451,7 @@ class BaseGUI:
         self.imgsel_mousey_prev = -1
         self.imgsel_blank = None
         self.imgsel_getfunc = getfunc
+        self.imgsel_pixbuffunc = None
         req_width = self.imgsel_x+20
         req_height = 600
         if (self.imgsel_y < 580):
@@ -478,6 +479,8 @@ class BaseGUI:
         if (imgnum < 0 or imgnum > (self.imgsel_rows * self.imgsel_cols)):
             return
         pixbuf = self.imgsel_getfunc(imgnum+self.imgsel_offset, None, True)
+        if (self.imgsel_pixbuffunc is not None):
+            pixbuf = self.imgsel_pixbuffunc(pixbuf)
         if (pixbuf is None):
             return
         self.imgsel_pixmap.draw_pixbuf(None, self.imgsel_blank, 0, 0, x*self.imgsel_width, y*self.imgsel_height)
