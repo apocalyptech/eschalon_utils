@@ -133,7 +133,7 @@ class Entity:
         ret = []
 
         if (self.entid in entitytable):
-            ret.append("\tEntity: %s" % (entitytable[self.entid]))
+            ret.append("\tEntity: %s" % (entitytable[self.entid].name))
         else:
             ret.append("\tEntity ID: %d" % (self.entid))
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))

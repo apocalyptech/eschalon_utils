@@ -44,8 +44,6 @@ Map GUI
    outside Grimmhold (northwest 35)
  * Implement Entity graphics in map
  * Status bars for functions aren't basically instantaneous
- * Put together a table of maximum hitpoints for various entities, so adding
-   new entities on a savegame-based map is easier
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
  * Check for luminosity...  Light in square in Blackwater, for instance

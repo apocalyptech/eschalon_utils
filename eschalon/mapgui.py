@@ -131,6 +131,7 @@ class MapGUI(BaseGUI):
                 'expose_map': self.expose_map,
                 'realize_map': self.realize_map,
                 'map_toggle': self.map_toggle,
+                'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
                 'on_entid_changed': self.on_entid_changed,
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
@@ -209,7 +210,7 @@ class MapGUI(BaseGUI):
                 table = monsters
             else:
                 table = npcs
-            table[item] = key
+            table[item.name] = key
         monsterkeys = monsters.keys()
         monsterkeys.sort()
         npckeys = npcs.keys()
@@ -530,6 +531,10 @@ class MapGUI(BaseGUI):
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
         self.map.squares[self.sq_y][self.sq_x].entity.entid = entid
+        if (entid in entitytable):
+            health = entitytable[entid].health
+            button = self.get_widget('healthmaxbutton')
+            button.set_label('Set to Max Health (%d)' % (health))
 
     def on_dropdownplusone_ent_changed(self, widget):
         """ Used only for the Orientation dropdown currently. """
@@ -1082,6 +1087,13 @@ class MapGUI(BaseGUI):
         self.append_script_notebook(script)
         self.script_notebook.show()
 
+    def on_healthmaxbutton_clicked(self, widget):
+        """ Set the entity's health to its maximum. """
+        entid = self.map.squares[self.sq_y][self.sq_x].entity.entid
+        if (entid in entitytable):
+            health = entitytable[entid].health
+            self.get_widget('health').set_value(health)
+
     def on_entity_toggle(self, widget):
         square = self.map.squares[self.sq_y][self.sq_x]
         if (square.entity is None):
@@ -1131,8 +1143,8 @@ class MapGUI(BaseGUI):
     def populate_entity_tab(self, square):
         """ Populates the entity tab of the square editing screen. """
         if (square.entity.entid in entitytable):
-            if (entitytable[square.entity.entid] in self.entitykeys):
-                idx = self.entitykeys.index(entitytable[square.entity.entid])
+            if (entitytable[square.entity.entid].name in self.entitykeys):
+                idx = self.entitykeys.index(entitytable[square.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
                 # TODO: Warning/exit on here
