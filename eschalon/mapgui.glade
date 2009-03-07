@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Mar  5 15:57:09 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Mar  6 18:50:40 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -1235,7 +1235,6 @@
                         <property name="visible">True</property>
                         <property name="xalign">0</property>
                         <property name="xpad">10</property>
-                        <property name="ypad">7</property>
                         <property name="label" translatable="yes">&lt;b&gt;Basic Information&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
@@ -1247,8 +1246,23 @@
                     <child>
                       <widget class="GtkTable" id="table1">
                         <property name="visible">True</property>
-                        <property name="n_rows">3</property>
+                        <property name="n_rows">4</property>
                         <property name="n_columns">3</property>
+                        <child>
+                          <widget class="GtkLabel" id="label32">
+                            <property name="visible">True</property>
+                            <property name="ypad">4</property>
+                            <property name="label" translatable="yes">&lt;i&gt;Note:&lt;/i&gt; NPCs marked with an asterisk are stationary, and
+may &lt;b&gt;only&lt;/b&gt; face North.  If they are added facing any other
+direction, or something in-game causes them to turn to
+another direction, Eschalon will crash.</property>
+                            <property name="use_markup">True</property>
+                          </widget>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">3</property>
+                          </packing>
+                        </child>
                         <child>
                           <widget class="GtkAlignment" id="alignment11">
                             <property name="visible">True</property>
@@ -1265,8 +1279,8 @@
                           <packing>
                             <property name="left_attach">2</property>
                             <property name="right_attach">3</property>
-                            <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
                           </packing>
                         </child>
                         <child>
@@ -1292,8 +1306,8 @@ Northwest</property>
                           <packing>
                             <property name="left_attach">2</property>
                             <property name="right_attach">3</property>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -1311,6 +1325,8 @@ Northwest</property>
                           <packing>
                             <property name="left_attach">2</property>
                             <property name="right_attach">3</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -1324,8 +1340,8 @@ Northwest</property>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
-                            <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
                             <property name="x_options">GTK_FILL</property>
                             <property name="y_options"></property>
                           </packing>
@@ -1341,8 +1357,8 @@ Northwest</property>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
                             <property name="x_options">GTK_FILL</property>
                             <property name="y_options"></property>
                           </packing>
@@ -1358,6 +1374,8 @@ Northwest</property>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
                             <property name="x_options">GTK_FILL</property>
                             <property name="y_options"></property>
                           </packing>
@@ -1368,7 +1386,7 @@ Northwest</property>
                             <property name="xpad">14</property>
                           </widget>
                           <packing>
-                            <property name="bottom_attach">3</property>
+                            <property name="bottom_attach">4</property>
                             <property name="x_options"></property>
                           </packing>
                         </child>
