@@ -186,7 +186,7 @@ class GfxEntCache(GfxCache):
             self.height = int(imgheight/8)
 
         # Some information on size scaling
-        self.size_scale = int(self.width/52)
+        self.size_scale = self.width/52.0
 
         # Lop off the data we don't need, to save on memory usage
         newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, imgheight)

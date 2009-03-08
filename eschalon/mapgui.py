@@ -1335,11 +1335,11 @@ class MapGUI(BaseGUI):
 
     # Assumes that the context is squarebuf_ctx, hence the hardcoded width/height
     # We're passing it in so we're not constantly referencing self.squarebuf_ctx
-    def composite_simple(self, context, color):
+    def composite_simple(self, context, surface, color):
         context.save()
         context.set_operator(cairo.OPERATOR_ATOP)
         context.set_source_rgba(*color)
-        context.rectangle(0, 0, self.z_width, self.z_5xheight)
+        context.rectangle(0, 0, surface.get_width(), surface.get_height())
         context.fill()
         context.restore()
 
@@ -1473,38 +1473,50 @@ class MapGUI(BaseGUI):
                 sq_ctx.paint()
 
         # Draw the entity if needed
-        # TODO: handle width thingies here
+        # We switch to using op_ctx and op_surf because we may not be drawing on sq_ctx
+        # from this point on, depending on entity width
+        op_surf = self.squarebuf
+        op_ctx = sq_ctx
+        op_xoffset = 0
         if (square.entity is not None and self.entity_toggle.get_active()):
             ent_gfxfile = entitytable[square.entity.entid].gfxfile
             ent_img = self.gfx.get_entity(ent_gfxfile, square.entity.direction, self.curzoom)
             if (ent_img is not None):
-                sq_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
-                sq_ctx.paint()
+                if (ent_img.get_width() > self.curzoom):
+                    new_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
+                    new_ctx = cairo.Context(new_surf)
+                    op_xoffset = int((ent_img.get_width()-self.curzoom)/2)
+                    new_ctx.set_source_surface(op_surf, op_xoffset, 0)
+                    new_ctx.paint()
+                    op_surf = new_surf
+                    op_ctx = new_ctx
+                op_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
+                op_ctx.paint()
 
         # Draw Barrier Highlights
         # TODO: Drawing barriers on water is pretty lame; don't do that.
         # (perhaps unless asked to)
         if (barrier and self.barrier_hi_toggle.get_active()):
-            self.composite_simple(sq_ctx, barrier)
+            self.composite_simple(op_ctx, op_surf, barrier)
 
         # Draw Script Highlights
         if (script and self.script_hi_toggle.get_active()):
-            self.composite_simple(sq_ctx, script)
+            self.composite_simple(op_ctx, op_surf, script)
 
         # Draw Entity Highlights
         if (entity and self.entity_hi_toggle.get_active()):
-            self.composite_simple(sq_ctx, entity)
+            self.composite_simple(op_ctx, op_surf, entity)
 
         # Now draw the pixbuf onto our pixmap
         if (do_main_paint):
             if (usecache):
                 # We only get here when we're the pointer
-                self.composite_simple(sq_ctx, pointer)
-                main_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
+                self.composite_simple(op_ctx, op_surf, pointer)
+                main_ctx.set_source_surface(op_surf, x1-op_xoffset, top-buftop)
                 main_ctx.paint()
             else:
                 # This is only for the initial map population
-                self.guicache_ctx.set_source_surface(self.squarebuf, x1, top-buftop)
+                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset, top-buftop)
                 self.guicache_ctx.paint()
 
     def update_composite(self):
