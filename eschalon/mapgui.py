@@ -96,9 +96,10 @@ class MapGUI(BaseGUI):
         self.wall_toggle = self.get_widget('wall_button')
         self.tree_toggle = self.get_widget('tree_button')
         self.objectdecal_toggle = self.get_widget('objectdecal_button')
-        self.barrier_toggle = self.get_widget('barrier_button')
-        self.script_toggle = self.get_widget('script_button')
         self.entity_toggle = self.get_widget('entity_button')
+        self.barrier_hi_toggle = self.get_widget('barrier_hi_button')
+        self.script_hi_toggle = self.get_widget('script_hi_button')
+        self.entity_hi_toggle = self.get_widget('entity_hi_button')
         self.script_notebook = self.get_widget('script_notebook')
         self.itemsel = self.get_widget('itemselwindow')
         self.floorsel = self.get_widget('floorselwindow')
@@ -1471,18 +1472,27 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
                 sq_ctx.paint()
 
-        # Draw Barriers
+        # Draw the entity if needed
+        # TODO: handle width thingies here
+        if (square.entity is not None and self.entity_toggle.get_active()):
+            ent_gfxfile = entitytable[square.entity.entid].gfxfile
+            ent_img = self.gfx.get_entity(ent_gfxfile, square.entity.direction, self.curzoom)
+            if (ent_img is not None):
+                sq_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
+                sq_ctx.paint()
+
+        # Draw Barrier Highlights
         # TODO: Drawing barriers on water is pretty lame; don't do that.
         # (perhaps unless asked to)
-        if (barrier and self.barrier_toggle.get_active()):
+        if (barrier and self.barrier_hi_toggle.get_active()):
             self.composite_simple(sq_ctx, barrier)
 
-        # Draw Scripts
-        if (script and self.script_toggle.get_active()):
+        # Draw Script Highlights
+        if (script and self.script_hi_toggle.get_active()):
             self.composite_simple(sq_ctx, script)
 
-        # Draw Entities
-        if (entity and self.entity_toggle.get_active()):
+        # Draw Entity Highlights
+        if (entity and self.entity_hi_toggle.get_active()):
             self.composite_simple(sq_ctx, entity)
 
         # Now draw the pixbuf onto our pixmap

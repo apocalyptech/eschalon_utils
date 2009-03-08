@@ -185,6 +185,9 @@ class GfxEntCache(GfxCache):
             self.width = int(imgwidth/15)
             self.height = int(imgheight/8)
 
+        # Some information on size scaling
+        self.size_scale = int(self.width/52)
+
         # Lop off the data we don't need, to save on memory usage
         newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, imgheight)
         newctx = cairo.Context(newsurf)
@@ -355,7 +358,7 @@ class Gfx:
             else:
                 self.entcache[entnum] = GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
-        return (cache.width, cache.height, cache.getimg(direction, size, gdk))
+        return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
         if (avatarnum < 0 or avatarnum > 7):
