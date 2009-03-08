@@ -62,7 +62,7 @@ class GfxGDKHelper:
     def getdata(self):
         return ''.join(self.datalist)
 
-class GfxCache:
+class GfxCache(object):
     """
     A class to hold graphic data, with resizing abilities and the like.
     It can return a Cairo surface (by default, via getimg()), or a GDK
@@ -162,6 +162,41 @@ class GfxCache:
                 self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(sizex, sizey, gtk.gdk.INTERP_BILINEAR)
             return self.gdkcache[number][sizex]
 
+class GfxEntCache(GfxCache):
+    """
+    A class to hold image data about entity graphics.  Mostly we're just
+    overloading the constructor here, since we'd rather not hard-code what
+    the various image sizes are.  Also, we can save some memory by lopping
+    off much of the loaded image.
+    """
+    def __init__(self, pngdata, restricted=False):
+        self.restricted = restricted
+
+        # Read in the data as usual, with junk for width and height
+        super(GfxEntCache, self).__init__(pngdata, -1, -1, 1)
+
+        # ... and now that we have the image dimensions, fix that junk
+        imgwidth = self.surface.get_width()
+        imgheight = self.surface.get_height()
+        if (restricted):
+            self.width = int(imgwidth/2)
+            self.height = imgheight
+        else:
+            self.width = int(imgwidth/15)
+            self.height = int(imgheight/8)
+
+        # Lop off the data we don't need, to save on memory usage
+        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, imgheight)
+        newctx = cairo.Context(newsurf)
+        newctx.set_source_surface(self.surface, 0, 0)
+        newctx.paint()
+        self.surface = newsurf
+
+        # (and on our pixbuf copy as well)
+        newbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
+        self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
+        self.pixbuf = newbuf
+
 class PakIndex:
     """ A class to hold information on an individual file in the pak. """
 
@@ -182,6 +217,8 @@ class Gfx:
         self.prefs = prefs
         self.pakloc = os.path.join(self.prefs.get_str('paths', 'gamedir'), 'gfx.pak')
         self.df = Savefile(self.pakloc)
+
+        self.restrict_ents = [50, 55, 58, 66, 67, 71]
 
         self.unknownh1 = -1
         self.unknownh2 = -1
@@ -220,6 +257,7 @@ class Gfx:
         self.objcache4 = None
         self.objdecalcache = None
         self.avatarcache = {}
+        self.entcache = {}
 
         # wtf @ needing this
         self.treemap = {
@@ -309,6 +347,16 @@ class Gfx:
             self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
+    def get_entity(self, entnum, direction, size=None, gdk=False):
+        if (entnum not in self.entcache):
+            filename = 'mo%d.png' % (entnum)
+            if (entnum in self.restrict_ents):
+                self.entcache[entnum] = GfxEntCache(self.readfile(filename), True)
+            else:
+                self.entcache[entnum] = GfxEntCache(self.readfile(filename))
+        cache = self.entcache[entnum]
+        return (cache.width, cache.height, cache.getimg(direction, size, gdk))
+
     def get_avatar(self, avatarnum):
         if (avatarnum < 0 or avatarnum > 7):
             return None
@@ -323,6 +371,10 @@ class Gfx:
         return self.avatarcache[avatarnum]
 
     def surface_to_pixbuf(self, surface):
+        """
+        Helper function to convert a Cairo surface to a GDK Pixbuf.  It's
+        very slow, don't use it if you need speed.
+        """
         gdkhelper = GfxGDKHelper()
         surface.write_to_png(gdkhelper)
         loader = gtk.gdk.PixbufLoader()

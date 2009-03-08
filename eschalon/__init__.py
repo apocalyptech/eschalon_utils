@@ -200,8 +200,6 @@ class EntHelper:
         self.name = name
         self.health = health
         self.gfxfile = gfxfile
-    def gfxfilename(self):
-        return 'mo%d.png' % (self.gfxfile)
 
 # Entities
 entitytable = {
