@@ -653,8 +653,6 @@ class MapGUI(BaseGUI):
         over_ctx.paint()
 
         # Grab some local vars
-        sq_buf = self.squarebuf
-        sq_ctx = self.squarebuf_ctx
         squares = self.map.squares
 
         # Loop through and composite the new image area
@@ -663,17 +661,17 @@ class MapGUI(BaseGUI):
             if (corner_y > -1 and corner_y < 200):
                 yval = self.z_halfheight+((i-5)*self.z_height)
                 if (left_x > -1 and left_x < 100):
-                    self.draw_square(left_x, corner_y, False, False)
-                    over_ctx.set_source_surface(sq_buf, -self.z_halfwidth, yval)
+                    (op_buf, offset) = self.draw_square(left_x, corner_y, False, False)
+                    over_ctx.set_source_surface(op_buf, -self.z_halfwidth-offset, yval)
                     over_ctx.paint()
                 if (rt_x > -1 and rt_x < 100):
-                    self.draw_square(rt_x, corner_y, False, False)
-                    over_ctx.set_source_surface(sq_buf, self.z_halfwidth, yval)
+                    (op_buf, offset) = self.draw_square(rt_x, corner_y, False, False)
+                    over_ctx.set_source_surface(op_buf, self.z_halfwidth-offset, yval)
                     over_ctx.paint()
             if (i < 9):
                 if (mid_y > -1 and mid_y < 200 and mid_x > -1 and mid_x < 100):
-                    self.draw_square(mid_x, mid_y, False, False)
-                    over_ctx.set_source_surface(sq_buf, 0, (i-4)*self.z_height)
+                    (op_buf, offset) = self.draw_square(mid_x, mid_y, False, False)
+                    over_ctx.set_source_surface(op_buf, 0-offset, (i-4)*self.z_height)
                     over_ctx.paint()
             corner_y = corner_y + 2
             mid_y = mid_y + 2
@@ -809,6 +807,13 @@ class MapGUI(BaseGUI):
             # doesn't clobber a freshly-drawn mouse pointer
             if (self.sq_x_prev != -1):
                 self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
+                # We should just really check for over-wide entities here, but for now we'll
+                # just do some excessive redrawing.
+                if (self.map.squares[self.sq_y_prev][self.sq_x_prev].entity is not None):
+                    if (self.sq_x_prev != 0):
+                        self.cleansquares.append((self.sq_x_prev-1, self.sq_y_prev))
+                    if (self.sq_x_prev != 99):
+                        self.cleansquares.append((self.sq_x_prev+1, self.sq_y_prev))
             self.cleansquares.append((self.sq_x, self.sq_y))
             self.sq_x_prev = self.sq_x
             self.sq_y_prev = self.sq_y
@@ -1483,13 +1488,13 @@ class MapGUI(BaseGUI):
             ent_img = self.gfx.get_entity(ent_gfxfile, square.entity.direction, self.curzoom)
             if (ent_img is not None):
                 if (ent_img.get_width() > self.curzoom):
-                    new_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
-                    new_ctx = cairo.Context(new_surf)
+                    self.ent_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
+                    self.ent_ctx = cairo.Context(self.ent_surf)
                     op_xoffset = int((ent_img.get_width()-self.curzoom)/2)
-                    new_ctx.set_source_surface(op_surf, op_xoffset, 0)
-                    new_ctx.paint()
-                    op_surf = new_surf
-                    op_ctx = new_ctx
+                    self.ent_ctx.set_source_surface(op_surf, op_xoffset, 0)
+                    self.ent_ctx.paint()
+                    op_surf = self.ent_surf
+                    op_ctx = self.ent_ctx
                 op_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
                 op_ctx.paint()
 
@@ -1518,6 +1523,8 @@ class MapGUI(BaseGUI):
                 # This is only for the initial map population
                 self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset, top-buftop)
                 self.guicache_ctx.paint()
+
+        return (op_surf, op_xoffset)
 
     def update_composite(self):
 
@@ -1571,6 +1578,9 @@ class MapGUI(BaseGUI):
             self.guicache_ctx = cairo.Context(self.guicache)
             self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
             self.guicache_ctx.paint()
+
+            self.ent_surf = None
+            self.ent_ctx = None
 
             # Set up a "blank" tile to draw everything else on top of
             self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
