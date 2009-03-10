@@ -620,7 +620,12 @@ class MapGUI(BaseGUI):
         around (should we?) this entails drawing all the squares behind the square we
         just edited, the square itself, and then four more "levels" of squares below, as
         well, because objects may be obscuring the one we just edited.  Because of the
-        isometric presentation, this means that we'll be redrawing 29 total squares.
+        isometric presentation, this means that we'd be redrawing 29 total squares,
+        assuming that everything fits exactly into our square width.
+
+        Unfortunately, now that we support entities, some of those are wider than the
+        square width, so we're going to redraw even more than that, for a total of 67
+        squares.
 
         Note that we could cut down on that number by doing some logic - ie: we really
         would only have to draw the bottom-most square if it contained the tallest tree
@@ -629,25 +634,35 @@ class MapGUI(BaseGUI):
         think it's really worth it to optimize that out.  I don't think the extra processing
         will be noticeable.
 
-        Also note that none of that is actually necessary if the user didn't actually change
+        Note that the we-don't-have-to-draw-everything angle becomes even bigger now that
+        we're widening the field to support entities.  The outermost 20 squares that we're
+        drawing only have to be drawn if there's an entity in there which is wider than
+        the ordinary square, and even then we'd *only* have to draw the entity (to say nothing
+        of the fact that very few of those larger entities actually draw to the full edge of
+        the entity graphic for all cases).  Additionally, if the square we just edited didn't
+        contain an entity at any point, we'd be able to lop off a bunch squares in the first
+        place.  Still, I'm guessing that it doesn't really matter much.  Perhaps it'll become
+        necessary to do this more intelligently once I've got some actual drawing-type
+        functionality in place.
+
+        Also note that absolutely none of this is necessary if the user didn't actually change
         anything.  Whatever.
         """
 
         # Figure out our dimensions
-        mid_x = self.sq_x
-        mid_y = self.sq_y - 8
-        corner_y = self.sq_y - 1 - 8
-        global_x = self.sq_x * self.z_width
+        tier_1_x = []
+        tier_1_y = self.sq_y - 1 - 8
+        tier_2_x = range(self.sq_x-1, self.sq_x+2)
+        tier_2_y = self.sq_y - 8
+        global_x = (self.sq_x * self.z_width) - self.z_halfwidth
         if ((self.sq_y % 2) == 0):
-            left_x = self.sq_x - 1
-            rt_x = self.sq_x
+            tier_1_x = range(self.sq_x-2, self.sq_x+2)
         else:
-            left_x = self.sq_x
-            rt_x = self.sq_x + 1
+            tier_1_x = range(self.sq_x-1, self.sq_x+3)
             global_x = global_x + self.z_halfwidth
 
         # Set up a surface to use
-        over_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        over_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width*2, self.z_5xheight)
         over_ctx = cairo.Context(over_surf)
         over_ctx.set_source_rgba(0, 0, 0, 1)
         over_ctx.paint()
@@ -657,24 +672,23 @@ class MapGUI(BaseGUI):
 
         # Loop through and composite the new image area
         for i in range(10):
-            # Draw corners first, then mid
-            if (corner_y > -1 and corner_y < 200):
-                yval = self.z_halfheight+((i-5)*self.z_height)
-                if (left_x > -1 and left_x < 100):
-                    (op_buf, offset) = self.draw_square(left_x, corner_y, False, False)
-                    over_ctx.set_source_surface(op_buf, -self.z_halfwidth-offset, yval)
-                    over_ctx.paint()
-                if (rt_x > -1 and rt_x < 100):
-                    (op_buf, offset) = self.draw_square(rt_x, corner_y, False, False)
-                    over_ctx.set_source_surface(op_buf, self.z_halfwidth-offset, yval)
-                    over_ctx.paint()
+            # Draw tier 1 squares first, then tier 2
+            if (tier_1_y > -1 and tier_1_y < 200):
+                for (tier_i, tier_x) in enumerate(tier_1_x):
+                    yval = self.z_halfheight+((i-5)*self.z_height)
+                    if (tier_x > -1 and tier_x < 100):
+                        (op_buf, offset) = self.draw_square(tier_x, tier_1_y, False, False)
+                        over_ctx.set_source_surface(op_buf, ((-3+(2*tier_i))*self.z_halfwidth)-offset+self.z_halfwidth, yval)
+                        over_ctx.paint()
             if (i < 9):
-                if (mid_y > -1 and mid_y < 200 and mid_x > -1 and mid_x < 100):
-                    (op_buf, offset) = self.draw_square(mid_x, mid_y, False, False)
-                    over_ctx.set_source_surface(op_buf, 0-offset, (i-4)*self.z_height)
-                    over_ctx.paint()
-            corner_y = corner_y + 2
-            mid_y = mid_y + 2
+                if (tier_2_y > -1 and tier_2_y < 200):
+                    for (tier_i, tier_x) in enumerate(tier_2_x):
+                        if (tier_x > -1 and tier_x < 100):
+                            (op_buf, offset) = self.draw_square(tier_x, tier_2_y, False, False)
+                            over_ctx.set_source_surface(op_buf, ((-1+tier_i)*self.z_width)-offset+self.z_halfwidth, (i-4)*self.z_height)
+                            over_ctx.paint()
+            tier_1_y = tier_1_y + 2
+            tier_2_y = tier_2_y + 2
 
         # Now superimpose that onto our main map image
         self.guicache_ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(self.sq_y-8)+1)
