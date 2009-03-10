@@ -1,9 +1,12 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
-   25 Feb - ? 2008; CJ Kucera <pez@apocalyptech.com> :
+   25 Feb - 9 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Implementation of basic map editing
 
-   24 Feb 2008; CJ Kucera <pez@apocalyptech.com> :
+   5 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
+   "Export to PNG" option in map editor
+
+   24 Feb 2009; CJ Kucera <pez@apocalyptech.com> :
    Converted from GDK to Cairo for map drawing
 
    16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
@@ -12,9 +15,11 @@
    08 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Initial support for preferences screen
 
+   04 Dec - 16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
+   Initial map GUI interface
+
    04 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
-   Display map information in GUI instead of on console,
-   make information functions return strings instead of print
+   Information functions return strings instead of printing
 
    30 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
    Character pictures in GUI; Character picture lookup page

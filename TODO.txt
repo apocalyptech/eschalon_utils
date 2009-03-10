@@ -54,6 +54,8 @@ Map GUI
  * Should the 'friendly' field just be a checkbox?
  * Dragging to move map
  * Dropdown/textbox things for map names, sound files, etc.
+ * Bigger textboxes in general on the entity edit window (and perhaps
+   elsewhere in there) 
 
 Internal
 --------
