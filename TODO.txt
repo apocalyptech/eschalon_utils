@@ -13,7 +13,8 @@ Data
  * Figure out details of the visual effects values (some of that is
    probably bit flags as well)
  * Figure out where in the world current-map and actual position information
-   is kept
+   is kept (aha!  this is in 'saveneme' I bet.  I suspect that quest status is
+   also kept in there...)
 
 Character GUI
 -------------
@@ -44,7 +45,6 @@ Map GUI
    leaves some pixels here and there - notice this on the tallest tree tile
    (northeast 35 is a good place to see it) or on the big granite blocks
    outside Grimmhold (northwest 35)
- * Implement Entity graphics in map
  * Status bars for functions aren't basically instantaneous
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
@@ -52,6 +52,8 @@ Map GUI
  * Cloud overlay stuff?  Like in Vela?
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
+ * Dragging to move map
+ * Dropdown/textbox things for map names, sound files, etc.
 
 Internal
 --------
