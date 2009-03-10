@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+   10 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
+   Merged in bugfix from 0.3.1 release
+
    25 Feb - 9 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Implementation of basic map editing
 
@@ -30,6 +33,12 @@
 
    25 Nov - 01 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Initial support for reading map data
+
+*eschalon_b1_char-0.3.1 (19 Feb 2009)
+
+   19 Feb 2009; CJ Kucera <pez@apocalyptech.com> :
+   Some versions of Eschalon omit some data from the character file, which
+   was preventing the character editor from loading the file.
 
 *eschalon_b1_char-0.3.0 (29 Oct 2008)
 

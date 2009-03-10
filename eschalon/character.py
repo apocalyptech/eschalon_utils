@@ -381,7 +381,14 @@ class Character:
 
             # For some reason, the last of the spells here.
             for i in range(4):
-                self.addspell()
+                try:
+                    self.addspell()
+                except struct.error, e:
+                    # Apparently some versions don't always write these out,
+                    # hack in some fake values if that's the case.
+                    for j in range(4-i):
+                        self.spells.append(0)
+                    break
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
