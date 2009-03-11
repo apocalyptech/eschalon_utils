@@ -121,6 +121,7 @@ class MapGUI(BaseGUI):
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_load': self.on_load,
+                'on_revert': self.on_revert,
                 'on_about': self.on_about,
                 'on_save': self.on_save,
                 'on_save_as': self.on_save_as,
@@ -247,6 +248,10 @@ class MapGUI(BaseGUI):
     def putstatus(self, text):
         """ Pushes a message to the status bar """
         self.statusbar.push(self.sbcontext, text)
+
+    def on_revert(self, widget):
+        """ What to do when we're told to revert. """
+        self.load_from_file(self.map.df.filename)
 
     def on_save(self, widget=None):
         """ Save map to disk. """
