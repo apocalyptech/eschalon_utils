@@ -39,12 +39,6 @@ Map GUI
  * We shouldn't *always* put our black tile in-place.  For instance, when the
    tile is decorative over a cliff, etc (see to.map).  So we should
    special-case that.
- * Some graphical glitches can occur when changing objects, apparently related
-   to some pixels from objects which were drawn JUST on the edge of the tile,
-   which end up getting drawn technically outside the bounds of the tile (this
-   leaves some pixels here and there - notice this on the tallest tree tile
-   (northeast 35 is a good place to see it) or on the big granite blocks
-   outside Grimmhold (northwest 35)
  * Status bars for functions aren't basically instantaneous
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
