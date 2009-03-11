@@ -141,6 +141,10 @@ class BaseGUI:
         box.pack_start(cell, True)
         box.add_attribute(cell, 'text', 0)
 
+    def useful_comboboxentry(self, box):
+        box.set_model(gtk.ListStore(gobject.TYPE_STRING))
+        box.set_text_column(0)
+
     def get_comp_objects(self):
         """ Get the objects to compare against while checking for form changes. """
         if (self.curitemtype == self.ITEM_EQUIP):
@@ -596,3 +600,29 @@ class BaseGUI:
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
         self.imgsel_init = False
         self.imgsel_area.queue_draw()
+
+    def get_gamedir_filelist(self, dir, ext, keepext=True, matchprefix=None):
+        path = os.path.join(self.prefs.get_str('paths', 'gamedir'), dir)
+        files = os.listdir(path)
+        filelist = []
+        ext = '.%s' % (ext)
+        extlen = -len(ext)
+        for file in files:
+            if (matchprefix is not None and file[:len(matchprefix)] != matchprefix):
+                continue
+            if file[extlen:] == ext:
+                if (keepext):
+                    filelist.append(file)
+                else:
+                    filelist.append(file[:extlen])
+        filelist.sort()
+        return filelist
+
+    def populate_comboboxentry(self, boxname, list, blank=True):
+        widget = self.get_widget(boxname)
+        self.useful_comboboxentry(widget)
+        if (blank):
+            widget.append_text('')
+        for item in list:
+            widget.append_text(item)
+

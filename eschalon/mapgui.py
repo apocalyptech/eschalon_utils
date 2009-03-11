@@ -225,6 +225,20 @@ class MapGUI(BaseGUI):
         for key in self.entitykeys:
             box.append_text(key)
 
+        # Grab some lists of files
+        maplist = self.get_gamedir_filelist('data', 'map', False)
+        ogglist = self.get_gamedir_filelist('music', 'ogg')
+        wavlist = self.get_gamedir_filelist('sound', 'wav', True, 'atmos_')
+
+        # Populate the dropdowns on our global properties window
+        self.populate_comboboxentry('exit_north_combo', maplist)
+        self.populate_comboboxentry('exit_east_combo', maplist)
+        self.populate_comboboxentry('exit_south_combo', maplist)
+        self.populate_comboboxentry('exit_west_combo', maplist)
+        self.populate_comboboxentry('soundfile1_combo', ogglist)
+        self.populate_comboboxentry('soundfile2_combo', ogglist)
+        self.populate_comboboxentry('soundfile3_combo', wavlist)
+    
         # Now show our window
         self.window.show()
         gtk.main()
@@ -862,13 +876,14 @@ class MapGUI(BaseGUI):
         label.set_name('%s_%d_label' % (name, page))
         table.attach(label, 1, 2, row, row+1, gtk.FILL, gtk.FILL)
 
-    def input_text(self, page, table, row, name, text):
+    def input_text(self, page, table, row, name, text, tooltip=None):
         self.input_label(page, table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.Entry()
         entry.show()
         entry.set_name('%s_%d' % (name, page))
+        entry.set_size_request(250, -1)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (name[:9] == 'item_name'):
@@ -878,6 +893,9 @@ class MapGUI(BaseGUI):
             else:
                 entry.set_text(script.__dict__[name])
         entry.connect('changed', self.on_script_str_changed)
+        if (tooltip is not None):
+            tips = gtk.Tooltips()
+            tips.set_tip(entry, tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
@@ -1004,8 +1022,13 @@ class MapGUI(BaseGUI):
         basic_box.pack_start(binput, False, False)
 
         # Basic Inputs
-        self.input_text(curpages, binput, 0, 'description', 'Description / Map Link')
-        self.input_text(curpages, binput, 1, 'extratext', 'Extra Text / Destination')
+        self.input_text(curpages, binput, 0, 'description', 'Description / Map Link',
+                'This is either a basic description of the square, or the name '
+                'of a map, which will cause this square to act as a portal.')
+        self.input_text(curpages, binput, 1, 'extratext', 'Extra Text / Map Coords',
+                'More text (as from a sign or gravestone), or the destination '
+                'coordinates within the map specified above, if this is a portal '
+                'square.  The coordinate "(56, 129)" would be written "12956"')
         self.input_text(curpages, binput, 2, 'script', 'Script')
         self.input_short(curpages, binput, 3, 'flags', 'Flags <i>(probably)</i>')
         self.input_short(curpages, binput, 4, 'unknownh1', '<i>Unknown 1</i>')
