@@ -167,7 +167,12 @@ class MainGUI(BaseGUI):
 
     def on_prefs(self, widget):
         """ Override on_prefs a bit. """
-        changed = super(MainGUI, self).on_prefs(widget)
+        (changed, alert_changed) = super(MainGUI, self).on_prefs(widget)
+        if (changed and alert_changed):
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+            dialog.set_markup('<b>Note:</b> Changes to graphics may not immediately update upon changing.  To ensure that your new settings are completely enabled, please quit and restart the application.')
+            dialog.run()
+            dialog.destroy()
         self.assert_gfx_buttons()
         if (changed and self.gamedir_set()):
             self.gfx = Gfx(self.prefs)

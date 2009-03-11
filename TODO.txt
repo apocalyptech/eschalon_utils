@@ -29,8 +29,6 @@ Character GUI
    be loaded
  * Confirmation of close when the window is destroyed (via the close button,
    for instance)
- * Figure out implications of not rigorously checking gamedir on prefs screen
-   (loading new maps, etc...)
  * Weight of lockpicks immediately sets to 'changed' - probably related to
    int/float on_changed split earlier
  * More reasonable text box sizes on item editing window

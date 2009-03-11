@@ -295,6 +295,15 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
 
+    def on_prefs(self, widget):
+        """ Override on_prefs a bit. """
+        (changed, alert_changed) = super(MapGUI, self).on_prefs(widget)
+        if (changed and alert_changed):
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+            dialog.set_markup('<b>Note:</b> You must restart the application for the preferences change to take effect.')
+            dialog.run()
+            dialog.destroy()
+
     def on_export_clicked(self, widget=None):
         """ Used to export a PNG of the current map image to disk. """
 

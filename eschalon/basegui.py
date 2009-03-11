@@ -148,12 +148,7 @@ class BaseGUI(object):
             # TODO: Should check for valid dirs here?
             if (curdir != self.prefsobj.get_str('paths', 'gamedir')):
                 changed = True
-                if (alert_changed):
-                    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
-                    dialog.set_markup('<b>Note:</b> Changes to graphics may not immediately update upon changing.  To ensure that your new settings are completely enabled, please quit and restart the application.')
-                    dialog.run()
-                    dialog.destroy()
-        return changed
+        return (changed, alert_changed)
 
     def on_prefs_changed(self, widget):
         (model, iter) = widget.get_selected()
