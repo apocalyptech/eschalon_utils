@@ -1402,7 +1402,6 @@ class MapGUI(BaseGUI):
         # TODO: Layers are pretty inefficient and slow here
         barrier = False
         script = False
-        clear = False
         pointer = False
         entity = False
 
@@ -1413,27 +1412,28 @@ class MapGUI(BaseGUI):
 
         if (do_main_paint and x == self.sq_x and y == self.sq_y):
             pointer = (1, 1, 1, 0.5)
-        elif (square.entity is not None):
+
+        if (square.entity is not None):
             entity = True
             if (square.entity.friendly == 1):
                 entity = (0, 1, 0, 0.5)
             else:
                 entity = (1, 0, 0, 0.5)
-        elif (square.scriptid != 0 and len(square.scripts) > 0):
+
+        if (square.scriptid != 0 and len(square.scripts) > 0):
             script = (1, 1, 0, 0.5)
         elif (square.scriptid != 0 and len(square.scripts) == 0):
             script = (0, .784, .784, 0.5)
         elif (square.scriptid == 0 and len(square.scripts) > 0):
             # afaik, this doesn't happen.  should use something other than red here, though
             script = (1, 0, 0, 0.5)
-        elif (square.wall == 1):
+
+        if (square.wall == 1):
             barrier = (.784, .784, .784, 0.5)
         elif (square.wall == 5):
             barrier = (.684, .684, .950, 0.5)
         elif (square.floorimg == 126):
             barrier = (0, 0, .784, 0.5)
-        else:
-            clear = True
 
         # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
         # (for instance, when initially loading the map)

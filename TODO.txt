@@ -44,9 +44,8 @@ Map GUI
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
  * Dragging to move map
- * Square rendering is getting a bit slow; should see about tightening
-   up some of the logic in there
- * Barriers which also have scripts don't get highlighted as barriers
+ * Square rendering seems to be getting a bit slow; should see if
+   there's anything to be done about that.
 
 Internal
 --------
