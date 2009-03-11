@@ -31,6 +31,10 @@ Character GUI
    for instance)
  * Figure out implications of not rigorously checking gamedir on prefs screen
    (loading new maps, etc...)
+ * Weight of lockpicks immediately sets to 'changed' - probably related to
+   int/float on_changed split earlier
+ * More reasonable text box sizes on item editing window
+ * Do a thorough check of changed status stuff before releasing...
 
 Map GUI
 -------

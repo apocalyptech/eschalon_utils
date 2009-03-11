@@ -41,7 +41,7 @@ except:
 import gobject
 from eschalonb1 import flagstable
 
-class BaseGUI:
+class BaseGUI(object):
 
     # Constants
     ITEM_NONE=0
@@ -60,6 +60,7 @@ class BaseGUI:
         self.prefswTree = gtk.glade.XML(self.prefsgladefile)
         self.prefswindow = self.prefswTree.get_widget('prefswindow')
         self.gfx_req_window = self.prefswTree.get_widget('gfx_req_window')
+        self.gfx_opt_window = self.prefswTree.get_widget('gfx_opt_window')
         self.prefsview = self.prefswTree.get_widget('prefsview')
         self.prefssel = self.prefsview.get_selection()
         self.prefsnotebook = self.prefswTree.get_widget('prefsnotebook')
@@ -107,8 +108,18 @@ class BaseGUI:
                 'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked
                 }
 
+    def gamedir_set(self):
+        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
+
+    def optional_gfx(self):
+        if (not self.gamedir_set()):
+            response = self.gfx_opt_window.run()
+            self.gfx_opt_window.hide()
+            if (response == gtk.RESPONSE_OK):
+                self.on_prefs(None)
+
     def require_gfx(self):
-        while (not os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak'))):
+        while (not self.gamedir_set()):
             response = self.gfx_req_window.run()
             self.gfx_req_window.hide()
             if (response == gtk.RESPONSE_CANCEL):
@@ -118,6 +129,12 @@ class BaseGUI:
         return True
 
     def on_prefs(self, widget):
+        changed = False
+        curdir = self.prefsobj.get_str('paths', 'gamedir')
+        if (self.gamedir_set()):
+            alert_changed = True
+        else:
+            alert_changed = False
         if (self.prefsobj.get_str('paths', 'savegames') != ''):
             self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
         if (self.prefsobj.get_str('paths', 'gamedir') != ''):
@@ -128,6 +145,15 @@ class BaseGUI:
             self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
             self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
             self.prefsobj.save()
+            # TODO: Should check for valid dirs here?
+            if (curdir != self.prefsobj.get_str('paths', 'gamedir')):
+                changed = True
+                if (alert_changed):
+                    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+                    dialog.set_markup('<b>Note:</b> Changes to graphics may not immediately update upon changing.  To ensure that your new settings are completely enabled, please quit and restart the application.')
+                    dialog.run()
+                    dialog.destroy()
+        return changed
 
     def on_prefs_changed(self, widget):
         (model, iter) = widget.get_selected()
@@ -198,7 +224,8 @@ class BaseGUI:
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
         self.on_singleval_changed_int(widget)
-        self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
+        if (self.gfx is not None):
+            self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
@@ -289,7 +316,7 @@ class BaseGUI:
             if (item.hasborder()):
                 str = '<span color="blue">' + str + '</span>'
         widget.set_markup(str)
-        if (item.item_name == ''):
+        if (item.item_name == '' or self.gfx is None):
             imgwidget.set_from_stock(gtk.STOCK_EDIT, 4)
         else:
             imgwidget.set_from_pixbuf(self.gfx.get_item(item.pictureid, 26))
@@ -447,10 +474,11 @@ class BaseGUI:
         return button
 
     def open_itemsel(self, widget):
-        self.imgsel_launch(self.get_widget('pictureid'),
-                42, 42, 10, 24,
-                self.gfx.get_item,
-                False)
+        if (self.gfx is not None):
+            self.imgsel_launch(self.get_widget('pictureid'),
+                    42, 42, 10, 24,
+                    self.gfx.get_item,
+                    False)
 
     def imgsel_init_bgcolor(self):
         (x, y) = self.imgsel_bgcolor_img.get_size_request()

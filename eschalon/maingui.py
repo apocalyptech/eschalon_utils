@@ -103,9 +103,12 @@ class MainGUI(BaseGUI):
         # Set up our graphics cache
         # TODO: IMO we shouldn't actually *require* gfx here
         self.prefs_init(self.prefs)
-        if (not self.require_gfx()):
-            return
-        self.gfx = Gfx(self.prefs)
+        self.optional_gfx()
+        if (self.gamedir_set()):
+            self.gfx = Gfx(self.prefs)
+        else:
+            self.gfx = None
+        self.assert_gfx_buttons()
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
@@ -149,6 +152,25 @@ class MainGUI(BaseGUI):
         # Start the main gtk loop
         self.window.show()
         gtk.main()
+
+    def assert_gfx_buttons(self):
+        """
+        Small routine to ensure that we're drawing the right stuff
+        depending on if we can read our graphics file or not.
+        """
+        if (self.gamedir_set()):
+            self.get_widget('picid_button').show()
+            self.get_widget('itemgui_picid_button').show()
+        else:
+            self.get_widget('picid_button').hide()
+            self.get_widget('itemgui_picid_button').hide()
+
+    def on_prefs(self, widget):
+        """ Override on_prefs a bit. """
+        changed = super(MainGUI, self).on_prefs(widget)
+        self.assert_gfx_buttons()
+        if (changed and self.gamedir_set()):
+            self.gfx = Gfx(self.prefs)
 
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
@@ -405,11 +427,14 @@ class MainGUI(BaseGUI):
         """ Special-case to handle changing the avatar picture properly. """
         self.on_singleval_changed_int(widget)
         if (self.get_widget('picid').get_value_as_int() % 256 == 0):
-            pixbuf = self.gfx.get_avatar(widget.get_value_as_int()/256)
-            if (pixbuf is None):
+            if (self.gfx is None):
                 self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
             else:
-                self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value_as_int()/256))
+                pixbuf = self.gfx.get_avatar(widget.get_value_as_int()/256)
+                if (pixbuf is None):
+                    self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+                else:
+                    self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value_as_int()/256))
         else:
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
@@ -882,7 +907,7 @@ class MainGUI(BaseGUI):
         self.avatarsel_area.queue_draw()
 
     def avatarsel_draw(self, x):
-        if (x < 0 or x >= self.avatarsel_cols):
+        if (x < 0 or x >= self.avatarsel_cols or self.gfx is None):
             return
         pixbuf = self.gfx.get_avatar(x)
         if (pixbuf is None):
