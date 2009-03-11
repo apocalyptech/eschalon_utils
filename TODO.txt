@@ -36,9 +36,6 @@ Map GUI
 -------
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
- * We shouldn't *always* put our black tile in-place.  For instance, when the
-   tile is decorative over a cliff, etc (see to.map).  So we should
-   special-case that.
  * Status bars for functions aren't basically instantaneous
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
@@ -47,6 +44,9 @@ Map GUI
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
  * Dragging to move map
+ * Square rendering is getting a bit slow; should see about tightening
+   up some of the logic in there
+ * Barriers which also have scripts don't get highlighted as barriers
 
 Internal
 --------

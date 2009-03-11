@@ -192,6 +192,7 @@ class MapGUI(BaseGUI):
         self.guicache = None
         self.squarebuf = None
         self.blanksquare = None
+        self.basicsquare = None
 
         # Blank pixbuf to use in the square editing window
         self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 52, 130)
@@ -1427,6 +1428,8 @@ class MapGUI(BaseGUI):
             script = (1, 0, 0, 0.5)
         elif (square.wall == 1):
             barrier = (.784, .784, .784, 0.5)
+        elif (square.wall == 5):
+            barrier = (.684, .684, .950, 0.5)
         elif (square.floorimg == 126):
             barrier = (0, 0, .784, 0.5)
         else:
@@ -1477,9 +1480,16 @@ class MapGUI(BaseGUI):
         # Prepare our pixbuf
         sq_ctx.save()
         sq_ctx.set_operator(cairo.OPERATOR_SOURCE)
-        sq_ctx.set_source_surface(self.blanksquare)
+        if (do_main_paint and usecache):
+            # If we're the pointer, always overlay our black square
+            sq_ctx.set_source_surface(self.basicsquare)
+        else:
+            sq_ctx.set_source_surface(self.blanksquare)
         sq_ctx.paint()
         sq_ctx.restore()
+
+        # Keep track of whether we've drawn anything or not
+        drawn = False
 
         # Draw the floor tile
         if (self.floor_toggle.get_active()):
@@ -1487,6 +1497,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
                 sq_ctx.paint()
+                drawn = True
 
         # Draw the floor decal
         if (self.decal_toggle.get_active()):
@@ -1494,6 +1505,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
                 sq_ctx.paint()
+                drawn = True
 
         # Draw the object
         wallid = square.wallimg
@@ -1502,6 +1514,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
                 sq_ctx.paint()
+                drawn = True
 
         # Draw walls
         if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
@@ -1509,6 +1522,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
                 sq_ctx.paint()
+                drawn = True
 
         # Draw trees
         if (self.tree_toggle.get_active() and wallid>250):
@@ -1516,6 +1530,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
                 sq_ctx.paint()
+                drawn = True
 
         # Draw the object decal
         if (self.objectdecal_toggle.get_active()):
@@ -1523,6 +1538,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
                 sq_ctx.paint()
+                drawn = True
 
         # Draw the entity if needed
         # We switch to using op_ctx and op_surf because we may not be drawing on sq_ctx
@@ -1543,19 +1559,33 @@ class MapGUI(BaseGUI):
                     op_ctx = self.ent_ctx
                 op_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
                 op_ctx.paint()
+                drawn = True
+
+        # Now, before we do highlights, see if we've drawn anything.  If not, 
+        # overlay our basic black square, so that highlighting shows up if it
+        # needs to.  If we *have* drawn something, just let it be.  (We do this
+        # primarily to avoid graphical glitches on cliff-face graphics, where
+        # having the black square overlay makes things look bad.)  Additionally
+        # only do it if we would have done some highlighting.
+        drawbarrier = (barrier and self.barrier_hi_toggle.get_active())
+        drawscript = (script and self.script_hi_toggle.get_active())
+        drawentity = (entity and self.entity_hi_toggle.get_active())
+        if (not drawn and (drawbarrier or drawscript or drawentity)):
+            sq_ctx.set_source_surface(self.basicsquare)
+            sq_ctx.paint()
 
         # Draw Barrier Highlights
         # TODO: Drawing barriers on water is pretty lame; don't do that.
         # (perhaps unless asked to)
-        if (barrier and self.barrier_hi_toggle.get_active()):
+        if (drawbarrier):
             self.composite_simple(op_ctx, op_surf, barrier)
 
         # Draw Script Highlights
-        if (script and self.script_hi_toggle.get_active()):
+        if (drawscript):
             self.composite_simple(op_ctx, op_surf, script)
 
         # Draw Entity Highlights
-        if (entity and self.entity_hi_toggle.get_active()):
+        if (drawentity):
             self.composite_simple(op_ctx, op_surf, entity)
 
         # Now draw the pixbuf onto our pixmap
@@ -1631,13 +1661,21 @@ class MapGUI(BaseGUI):
             # Set up a "blank" tile to draw everything else on top of
             self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
             sq_ctx = cairo.Context(self.blanksquare)
-            sq_ctx.set_source_rgba(0, 0, 0, 1)
-            sq_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
-            sq_ctx.line_to(self.z_halfwidth, self.z_4xheight)
-            sq_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
-            sq_ctx.line_to(self.z_halfwidth, self.z_5xheight)
-            sq_ctx.close_path()
-            sq_ctx.fill()
+            sq_ctx.save()
+            sq_ctx.set_operator(cairo.OPERATOR_CLEAR)
+            sq_ctx.paint()
+            sq_ctx.restore()
+
+            # Set up a default square with just a black tile, for otherwise-empty tiles
+            self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+            basic_ctx = cairo.Context(self.basicsquare)
+            basic_ctx.set_source_rgba(0, 0, 0, 1)
+            basic_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
+            basic_ctx.line_to(self.z_halfwidth, self.z_4xheight)
+            basic_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
+            basic_ctx.line_to(self.z_halfwidth, self.z_5xheight)
+            basic_ctx.close_path()
+            basic_ctx.fill()
 
             # Draw the squares
             time_c = time.time()
