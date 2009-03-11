@@ -139,7 +139,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
                 'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
                 'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
-                'on_dropdownplusone_ent_changed': self.on_dropdownplusone_ent_changed,
+                'on_direction_changed': self.on_direction_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
@@ -540,6 +540,14 @@ class MapGUI(BaseGUI):
         if (script is not None):
             script.__dict__[labelname] = widget.get_value_as_int()
 
+    def update_ent_square_img(self):
+        entity = self.map.squares[self.sq_y][self.sq_x].entity
+        entbuf = self.gfx.get_entity(entity.entid, entity.direction, None, True)
+        if (entbuf is None):
+            self.get_widget('ent_square_img').set_from_stock(gtk.STOCK_MISSING_IMAGE, 2)
+        else:
+            self.get_widget('ent_square_img').set_from_pixbuf(entbuf)
+
     def on_entid_changed(self, widget):
         """ Special case for changing the entity ID. """
         idx = widget.get_active()
@@ -550,12 +558,14 @@ class MapGUI(BaseGUI):
             health = entitytable[entid].health
             button = self.get_widget('healthmaxbutton')
             button.set_label('Set to Max Health (%d)' % (health))
+        self.update_ent_square_img()
 
-    def on_dropdownplusone_ent_changed(self, widget):
-        """ Used only for the Orientation dropdown currently. """
+    def on_direction_changed(self, widget):
+        """ Special case for changing the entity direction. """
         wname = widget.get_name()
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_active() + 1
+        self.update_ent_square_img()
 
     def on_singleval_ent_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
@@ -1521,8 +1531,7 @@ class MapGUI(BaseGUI):
         op_ctx = sq_ctx
         op_xoffset = 0
         if (square.entity is not None and self.entity_toggle.get_active()):
-            ent_gfxfile = entitytable[square.entity.entid].gfxfile
-            ent_img = self.gfx.get_entity(ent_gfxfile, square.entity.direction, self.curzoom)
+            ent_img = self.gfx.get_entity(square.entity.entid, square.entity.direction, self.curzoom)
             if (ent_img is not None):
                 if (ent_img.get_width() > self.curzoom):
                     self.ent_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)

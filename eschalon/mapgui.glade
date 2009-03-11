@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Mar 10 19:05:27 2009 -->
+<!--Generated with glade3 3.4.5 on Tue Mar 10 19:50:54 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -1222,6 +1222,50 @@
                         <property name="n_rows">4</property>
                         <property name="n_columns">3</property>
                         <child>
+                          <widget class="GtkHBox" id="hbox12">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkViewport" id="viewport8">
+                                <property name="visible">True</property>
+                                <property name="resize_mode">GTK_RESIZE_QUEUE</property>
+                                <child>
+                                  <widget class="GtkImage" id="ent_square_img">
+                                    <property name="width_request">104</property>
+                                    <property name="height_request">104</property>
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-missing-image</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkLabel" id="label32">
+                                <property name="visible">True</property>
+                                <property name="xpad">14</property>
+                                <property name="ypad">4</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Note:&lt;/i&gt; NPCs marked with an asterisk are
+stationary, and may &lt;b&gt;only&lt;/b&gt; face North.  If they
+are added facing any other direction, or
+something in-game causes them to turn to
+another direction, Eschalon will crash.</property>
+                                <property name="use_markup">True</property>
+                              </widget>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </widget>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">3</property>
+                            <property name="y_padding">7</property>
+                          </packing>
+                        </child>
+                        <child>
                           <widget class="GtkLabel" id="label19">
                             <property name="visible">True</property>
                             <property name="xpad">14</property>
@@ -1317,7 +1361,7 @@ South
 Southwest
 West
 Northwest</property>
-                                <signal name="changed" handler="on_dropdownplusone_ent_changed"/>
+                                <signal name="changed" handler="on_direction_changed"/>
                               </widget>
                             </child>
                           </widget>
@@ -1347,21 +1391,6 @@ Northwest</property>
                             <property name="right_attach">3</property>
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <widget class="GtkLabel" id="label32">
-                            <property name="visible">True</property>
-                            <property name="ypad">4</property>
-                            <property name="label" translatable="yes">&lt;i&gt;Note:&lt;/i&gt; NPCs marked with an asterisk are stationary, and
-may &lt;b&gt;only&lt;/b&gt; face North.  If they are added facing any other
-direction, or something in-game causes them to turn to
-another direction, Eschalon will crash.</property>
-                            <property name="use_markup">True</property>
-                          </widget>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">3</property>
                           </packing>
                         </child>
                       </widget>

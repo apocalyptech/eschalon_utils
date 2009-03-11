@@ -247,7 +247,7 @@ entitytable = {
         0x41: EntHelper('Darkford Guard', 120, 60),
         0x42: EntHelper('Gunther', 85, 53),
         0x43: EntHelper('Leurik', 22, 65),
-        0x44: EntHelper('Vault Master', 5, 1),
+        0x44: EntHelper('Vault Master', 5, 9),
         0x45: EntHelper('Paul', 15, 51),
         0x46: EntHelper('Krista', 70, 57),
         0x47: EntHelper('Gamfari', 20, 64),

@@ -25,6 +25,7 @@ import math
 import zlib
 import cairo
 from struct import unpack
+from eschalonb1 import entitytable
 from eschalonb1.savefile import Savefile, LoadException
 
 class GfxCairoHelper:
@@ -351,6 +352,7 @@ class Gfx:
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
+        entnum = entitytable[entnum].gfxfile
         if (entnum not in self.entcache):
             filename = 'mo%d.png' % (entnum)
             if (entnum in self.restrict_ents):
@@ -358,6 +360,9 @@ class Gfx:
             else:
                 self.entcache[entnum] = GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
+        # TODO: I don't like hardcoding "52" here...
+        if (size is None):
+            size = 52
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
