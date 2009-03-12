@@ -532,7 +532,7 @@ class MainGUI(BaseGUI):
         are entered into the system properly.
         """
         self.on_equip_clicked(self.get_widget('%s_button' % name), False)
-        self.on_item_close_clicked(None, False)
+        self.on_item_close_clicked(None, None, False)
 
     def register_inv_change(self, row, col):
         """
@@ -540,7 +540,7 @@ class MainGUI(BaseGUI):
         are entered into the system properly.
         """
         self.on_inv_clicked(self.get_widget('inv_%d_%d_button' % (row, col)), False)
-        self.on_item_close_clicked(None, False)
+        self.on_item_close_clicked(None, None, False)
 
     def register_ready_change(self, num):
         """
@@ -548,7 +548,7 @@ class MainGUI(BaseGUI):
         are entered into the system properly.
         """
         self.on_ready_clicked(self.get_widget('ready_%d_button' % (num)), False)
-        self.on_item_close_clicked(None, False)
+        self.on_item_close_clicked(None, None, False)
 
     def on_equip_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an equipped item. """

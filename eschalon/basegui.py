@@ -105,8 +105,17 @@ class BaseGUI(object):
                 'imgsel_on_motion': self.imgsel_on_motion,
                 'imgsel_on_expose': self.imgsel_on_expose,
                 'imgsel_on_clicked': self.imgsel_on_clicked,
-                'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked
+                'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
+                'bypass_delete': self.bypass_delete
                 }
+
+    def bypass_delete(self, widget, event):
+        """
+        Used to prevent a delete-event from actually deleting our object
+        (typically a Window, in our case).  Instead, just hide the object.
+        """
+        widget.hide()
+        return True
 
     def gamedir_set(self):
         return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
@@ -277,7 +286,7 @@ class BaseGUI(object):
             self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
                 origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
 
-    def on_item_close_clicked(self, widget=None, dohide=True):
+    def on_item_close_clicked(self, widget=None, event=None, dohide=True):
         if (self.curitemtype == self.ITEM_EQUIP):
             self.populate_equip_button(self.curitem)
         elif (self.curitemtype == self.ITEM_INV):
@@ -294,6 +303,7 @@ class BaseGUI(object):
             self.curitemtype = self.ITEM_NONE
         if (dohide):
             self.itemwindow.hide()
+        return True
 
     def populate_item_button(self, item, widget, imgwidget, tablewidget):
         str = ''

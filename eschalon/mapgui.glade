@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Mar 12 14:54:52 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Mar 12 15:39:18 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -668,7 +668,7 @@
     <property name="title" translatable="yes">Edit Item Details</property>
     <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
-    <property name="deletable">False</property>
+    <signal name="delete_event" handler="on_squarewindow_close"/>
     <child>
       <widget class="GtkVBox" id="vbox8">
         <property name="visible">True</property>
@@ -2007,6 +2007,7 @@ Northwest</property>
     <property name="width_request">350</property>
     <property name="height_request">650</property>
     <property name="modal">True</property>
+    <signal name="delete_event" handler="on_propswindow_close"/>
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
@@ -2898,7 +2899,7 @@ back3.png</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
     <property name="title" translatable="yes">Select An Icon</property>
     <property name="modal">True</property>
-    <property name="deletable">False</property>
+    <signal name="delete_event" handler="bypass_delete"/>
     <child>
       <widget class="GtkVBox" id="vbox3">
         <property name="visible">True</property>

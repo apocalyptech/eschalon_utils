@@ -516,9 +516,10 @@ class MapGUI(BaseGUI):
         self.get_widget('unknowni4').set_value(self.map.unknowni4)
         self.propswindow.show()
 
-    def on_propswindow_close(self, widget):
+    def on_propswindow_close(self, widget, event=None):
         self.mapname_mainscreen_label.set_text(self.map.mapname)
         self.propswindow.hide()
+        return True
 
     def on_colorsel_clicked(self, widget):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
@@ -652,7 +653,7 @@ class MapGUI(BaseGUI):
             self.get_widget('walldecalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
 
-    def on_squarewindow_close(self, widget):
+    def on_squarewindow_close(self, widget, event=None):
         """
         Closes the square-editing window.  Our primary goal here is to redraw the
         square that was just edited.  Because we don't really keep composite caches
@@ -739,6 +740,7 @@ class MapGUI(BaseGUI):
 
         # Finally, close out the window
         self.squarewindow.hide()
+        return True
 
     def set_zoom_vars(self, width):
         """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """

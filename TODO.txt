@@ -42,6 +42,10 @@ Map GUI
  * Dragging to move map
  * Square rendering seems to be getting a bit slow; should see if
    there's anything to be done about that.
+ * It turns out that technically we need to draw the map in multiple
+   passes - first ground, then objects, etc (apparently including entities
+   in with objects, not separately)  Tent graphics, for instance, get
+   partially munged using our current method.
 
 Internal
 --------

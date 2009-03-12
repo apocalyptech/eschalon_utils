@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Mar 12 14:49:54 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Mar 12 15:46:38 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">560</property>
@@ -7298,7 +7298,7 @@ to this character.  Really quit?</property>
     <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
     <property name="title" translatable="yes">Select An Avatar</property>
     <property name="modal">True</property>
-    <property name="deletable">False</property>
+    <signal name="delete_event" handler="bypass_delete"/>
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
