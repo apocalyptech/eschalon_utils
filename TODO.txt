@@ -15,7 +15,9 @@ Data
  * Figure out where in the world current-map and actual position information
    is kept (aha!  this is in 'saveneme' I bet.  I suspect that quest status is
    also kept in there...)
- * Cloud overlay stuff?  Like in Vela?
+ * A lot of values for maps remain unknown to me.  A couple things to look
+   for: Cloud overlay stuff (like in Vela), luminosity (light in square in
+   Blackwater, for instance)
 
 Character GUI
 -------------
@@ -36,21 +38,22 @@ Map GUI
  * Status bars for functions aren't basically instantaneous
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
- * Check for luminosity...  Light in square in Blackwater, for instance
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
- * Dragging to move map
- * Square rendering seems to be getting a bit slow; should see if
-   there's anything to be done about that.
+ * Click-and-drag to move map
  * It turns out that technically we need to draw the map in multiple
    passes - first ground, then objects, etc (apparently including entities
    in with objects, not separately)  Tent graphics, for instance, get
    partially munged using our current method.
+ * Square rendering seems to be getting a bit slow; should see if
+   there's anything to be done about that.
 
 Internal
 --------
  * We're doubly-caching some widgets in the character GUI code, which is
    stupid.  Should consolidate those.
+ * Speaking of, I'd actually like to move a lot of that into basegui where
+   it belongs, too, though the map GUI doesn't really need most of it.
  * A whole lot of code-cleaning should really be done, it's pretty spaghetti
    in there.
  * Classes have been moved to new-style classes but for the most part aren't
