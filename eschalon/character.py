@@ -25,7 +25,7 @@ from eschalonb1.item import Item
 from eschalonb1.unknowns import Unknowns
 from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
-class Character:
+class Character(object):
     """
     The base Character class.  Interestingly, some items which are NOT stored in
     the char file:

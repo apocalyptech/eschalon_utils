@@ -15,6 +15,7 @@ Data
  * Figure out where in the world current-map and actual position information
    is kept (aha!  this is in 'saveneme' I bet.  I suspect that quest status is
    also kept in there...)
+ * Cloud overlay stuff?  Like in Vela?
 
 Character GUI
 -------------
@@ -36,7 +37,6 @@ Map GUI
  * Confirmation on close when there's been changes
  * Warning/abort if trying to edit square with an unknown entity
  * Check for luminosity...  Light in square in Blackwater, for instance
- * Cloud overlay stuff?  Like in Vela?
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
  * Dragging to move map
@@ -49,11 +49,9 @@ Map GUI
 
 Internal
 --------
- * We're doubly-caching some widgets in the GUI code, which is stupid.
-   Should consolidate those.
- * A whole lot of code-cleaning should really be done (separate ImgSize to
-   class, etc)
- * Enforce a strict .get_value_as_int() for changed int values - will have
-   to set up a new signal for weight on items.  I think that's our one actual
-   float value.
- * Convert all objects to "new-style" objects?
+ * We're doubly-caching some widgets in the character GUI code, which is
+   stupid.  Should consolidate those.
+ * A whole lot of code-cleaning should really be done, it's pretty spaghetti
+   in there.
+ * Classes have been moved to new-style classes but for the most part aren't
+   taking advantage of the benefits of doing so.

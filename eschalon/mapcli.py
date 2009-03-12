@@ -23,7 +23,7 @@ import sys
 from eschalonb1.map import Map
 from eschalonb1.savefile import LoadException
 
-class MapCLI:
+class MapCLI(object):
 
     def __init__(self, options, prefs):
         """ A fresh object, with no data. """

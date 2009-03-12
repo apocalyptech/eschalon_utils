@@ -23,7 +23,7 @@ from eschalonb1.character import Character
 from eschalonb1.savefile import LoadException
 from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
-class MainCLI:
+class MainCLI(object):
 
     def __init__(self, options, prefs):
         """ A fresh object, with no data. """

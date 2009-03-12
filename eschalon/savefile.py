@@ -33,7 +33,7 @@ class LoadException(Exception):
 class FirstItemLoadException(LoadException):
     pass
 
-class Savefile:
+class Savefile(object):
     """ Class that wraps around a file object, to simplify things """
 
     def __init__(self, filename):

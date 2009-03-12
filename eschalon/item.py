@@ -21,7 +21,7 @@
 
 from eschalonb1 import typetable, skilltable, attrtable, itemincrtable, flagstable
 
-class Item:
+class Item(object):
     """Class to hold a single Item's information."""
 
     def __init__(self, zero=False):

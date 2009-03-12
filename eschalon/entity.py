@@ -23,7 +23,7 @@ import struct
 from eschalonb1 import dirtable, entitytable
 from eschalonb1.savefile import FirstItemLoadException
 
-class Entity:
+class Entity(object):
     """ A class to hold data about a particular entity on a map. """
 
     def __init__(self, savegame=True):

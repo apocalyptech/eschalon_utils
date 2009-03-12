@@ -26,7 +26,7 @@ from eschalonb1.square import Square
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.entity import Entity
 
-class Map:
+class Map(object):
     """ The base Map class.  """
 
     def __init__(self, filename):

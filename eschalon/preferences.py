@@ -27,7 +27,7 @@ import os.path
 # default file paths.  Mac should be quite straightforward, using plist, though
 # apparently PyGTK + Mac isn't very happy at the moment, so I'll get it... Later.
 
-class NoPrefs:
+class NoPrefs(object):
     """
     Generic container for systems we don't explicitly support.  No defaults are
     supplied, and it won't read a thing from disk, but it will at least remember
@@ -58,7 +58,7 @@ class NoPrefs:
             # TODO: I wonder if I should return '' instead
             return None
 
-class LinuxPrefs:
+class LinuxPrefs(object):
     """
     Container to hold Linux preferences.  Stores everything inside a dotfile in the
     user's homedir, using ConfigParser.
@@ -97,7 +97,7 @@ class LinuxPrefs:
     def get_str(self, cat, name):
         return self.cp.get(cat, name)
 
-class WindowsPrefs:
+class WindowsPrefs(object):
     """
     Container to hold Windows preferences.  Stores everything in the registry.  We
     keep a dictionary of the values internally, so that we only write out to the registry
@@ -164,7 +164,7 @@ class WindowsPrefs:
             # TODO: I wonder if I should return '' instead
             return None
 
-class Prefs:
+class Prefs(object):
 
     def __init__(self):
         if 'win32' in sys.platform:

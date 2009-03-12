@@ -21,7 +21,7 @@
 
 from eschalonb1.item import Item
 
-class Unknowns:
+class Unknowns(object):
     """ A class to hold some unknown data, so as not to muddy up the
         main Character class. """
 

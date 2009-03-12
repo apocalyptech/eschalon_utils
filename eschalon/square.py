@@ -19,7 +19,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-class Square:
+class Square(object):
     """ A class to hold data about a particular square on a map. """
 
     def __init__(self):

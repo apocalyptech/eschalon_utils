@@ -28,7 +28,7 @@ from struct import unpack
 from eschalonb1 import entitytable
 from eschalonb1.savefile import Savefile, LoadException
 
-class GfxCairoHelper:
+class GfxCairoHelper(object):
     """
     A file-like class to load in PNG data to a Cairo surface, since
     PyCairo apparently only exports the function to load in PNG data from a file.
@@ -48,7 +48,7 @@ class GfxCairoHelper:
         self.pos = newpos
         return data
 
-class GfxGDKHelper:
+class GfxGDKHelper(object):
     """
     A file-like class to read in PNG data from a Cairo surface, essentially
     to export a Cairo surface to a GDK Pixbuf.  Inefficient, of course, so
@@ -201,7 +201,7 @@ class GfxEntCache(GfxCache):
         self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
         self.pixbuf = newbuf
 
-class PakIndex:
+class PakIndex(object):
     """ A class to hold information on an individual file in the pak. """
 
     def __init__(self, data):
@@ -212,7 +212,7 @@ class PakIndex:
         self.filename = data[16:]
         self.filename = self.filename[:self.filename.index("\x00")]
 
-class Gfx:
+class Gfx(object):
     """ A class to hold graphics data. """
 
     def __init__(self, prefs):

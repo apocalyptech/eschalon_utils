@@ -195,7 +195,7 @@ diseasetable = {
         0x8000: 'Cursed'
     }
 
-class EntHelper:
+class EntHelper(object):
     def __init__(self, name, health, gfxfile):
         self.name = name
         self.health = health

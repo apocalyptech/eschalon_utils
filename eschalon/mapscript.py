@@ -23,7 +23,7 @@ import struct
 from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
-class Mapscript:
+class Mapscript(object):
     """
     A class to hold data about a particular mapscript on a map.
     Calling this a "script" is something of a misnomer, actually.  These
