@@ -373,9 +373,10 @@ class BaseGUI(object):
         # controls from here, because of the compound check function
         strvals = [ 'item_name', 'script', 'emptystr' ]
         dropdownvals = [ 'type', 'subtype', 'incr' ]
-        intvals = [ 'value', 'weight', 'basedamage', 'basearmor',
+        intvals = [ 'value', 'basedamage', 'basearmor',
                 'hitpoint', 'mana', 'tohit', 'damage', 'armor',
                 'visibility', 'duration', 'quantity', 'zero1' ]
+        floatvals = [ 'weight' ]
         checkboxvals = [ 'canstack' ]
         checkboxbitvals = [ 'flags_0003' ]
         modifiervals = [ 'attr_modifier', 'skill_modifier' ]
@@ -385,6 +386,8 @@ class BaseGUI(object):
             self.on_dropdown_changed(self.get_widget(val))
         for val in intvals:
             self.on_singleval_changed_int(self.get_widget(val))
+        for val in floatvals:
+            self.on_singleval_changed_float(self.get_widget(val))
         for val in checkboxvals:
             self.on_checkbox_changed(self.get_widget(val))
         for val in checkboxbitvals:
