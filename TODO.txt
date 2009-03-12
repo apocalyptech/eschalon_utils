@@ -27,8 +27,6 @@ Character GUI
    to get at them
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
- * More reasonable text box sizes on item editing window
- * Do a thorough check of changed status stuff before releasing...
 
 Map GUI
 -------
