@@ -436,7 +436,7 @@ class MapGUI(BaseGUI):
         # Return success
         return True
 
-    def gtk_main_quit(self, widget=None):
+    def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
         #if (self.has_unsaved_changes()):
         #    quitconfirm = self.get_widget('quitwindow')

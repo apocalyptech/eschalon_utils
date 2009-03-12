@@ -669,7 +669,7 @@ class MainGUI(BaseGUI):
             fxstr = 'Torch and Gravedigger\'s Flame'
         textwidget.set_markup('<span color="blue" style="italic">%s</span>' % (fxstr))
 
-    def gtk_main_quit(self, widget=None):
+    def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
         if (self.has_unsaved_changes()):
             quitconfirm = self.get_widget('quitwindow')
@@ -677,6 +677,8 @@ class MainGUI(BaseGUI):
             quitconfirm.hide()
             if (response == gtk.RESPONSE_OK):
                 gtk.main_quit()
+            else:
+                return True
         else:
             gtk.main_quit()
 

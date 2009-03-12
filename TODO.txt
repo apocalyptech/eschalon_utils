@@ -27,8 +27,6 @@ Character GUI
    to get at them
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
- * Confirmation of close when the window is destroyed (via the close button,
-   for instance)
  * Weight of lockpicks immediately sets to 'changed' - probably related to
    int/float on_changed split earlier
  * More reasonable text box sizes on item editing window
