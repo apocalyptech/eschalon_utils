@@ -37,7 +37,7 @@ Map GUI
    flips?
  * Status bars for functions aren't basically instantaneous
  * Actually track changes, for confirmation-of-close?  (also could support
-   convfirmation on new loads if we did this)
+   confirmation on new loads if we did this)
  * Warning/abort if trying to edit square with an unknown entity
  * Implement a 'question mark' or something for invalid tiles/entities
  * Should the 'friendly' field just be a checkbox?
