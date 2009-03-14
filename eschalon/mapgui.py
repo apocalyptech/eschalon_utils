@@ -438,15 +438,14 @@ class MapGUI(BaseGUI):
 
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
-        #if (self.has_unsaved_changes()):
-        #    quitconfirm = self.get_widget('quitwindow')
-        #    response = quitconfirm.run()
-        #    quitconfirm.hide()
-        #    if (response == gtk.RESPONSE_OK):
-        #        gtk.main_quit()
-        #else:
-        #    gtk.main_quit()
-        gtk.main_quit()
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL)
+        dialog.set_markup('Unsaved changes will be lost!  Continue?')
+        response = dialog.run()
+        dialog.destroy()
+        if (response == gtk.RESPONSE_OK):
+            gtk.main_quit()
+        else:
+            return True
 
     # Show the About dialog
     def on_about(self, widget):
