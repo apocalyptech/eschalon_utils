@@ -1,8 +1,7 @@
 Packaging
 ---------
- * Should do the packaging and class stuff properly; install into the
-   Python library dir, etc.
- * Windows / OSX packaging
+ * Should package this properly for all OSes.  Install into the
+   Python library dir, have actual install scripts/programs, etc...
 
 Data
 ----
@@ -12,9 +11,8 @@ Data
    isn't just an int)
  * Figure out details of the visual effects values (some of that is
    probably bit flags as well)
- * Figure out where in the world current-map and actual position information
-   is kept (aha!  this is in 'saveneme' I bet.  I suspect that quest status is
-   also kept in there...)
+ * Decode "savename" file format (this is where current-map and actual
+   position information is kept, and also quest status, I suspect)
  * A lot of values for maps remain unknown to me.  A couple things to look
    for: Cloud overlay stuff (like in Vela), luminosity (light in square in
    Blackwater, for instance)
@@ -26,8 +24,6 @@ Character GUI
    of them
  * Support old AND new Tooltip style, so this doesn't break with PyGTK 3.0
  * Mouseover notification of previous values (for changed values)
- * Figure out default save file location on Windows/Cygwin/Darwin, and how
-   to get at them
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
 
@@ -48,6 +44,8 @@ Map GUI
    partially munged using our current method.
  * Square rendering seems to be getting a bit slow; should see if
    there's anything to be done about that.
+ * Hive Queen graphic doesn't seem to load on Windows - see
+   http://bugzilla.gnome.org/show_bug.cgi?id=575583
 
 Internal
 --------
