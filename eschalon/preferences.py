@@ -33,16 +33,16 @@ class Prefs(object):
         self.cp = ConfigParser.ConfigParser()
         if 'win32' in sys.platform:
             self.platform = 'win32'
-            self.default = self.windows_default
-            self.filename = self.windows_prefsfile()
+            self.default = self.win32_default
+            self.filename = self.win32_prefsfile()
         elif 'cygwin' in sys.platform:
             self.platform = 'cygwin'
             self.default = self.no_default
             self.filename = self.no_prefsfile()
         elif 'darwin' in sys.platform:
             self.platform = 'darwin'
-            self.default = self.no_default
-            self.filename = self.no_prefsfile()
+            self.default = self.darwin_default
+            self.filename = self.darwin_prefsfile()
         else:
             # Assume linux
             self.platform = 'linux'
@@ -111,18 +111,38 @@ class Prefs(object):
                 return fulldir
         return None
 
-    def windows_prefsfile(self):
+    def darwin_prefsfile(self):
+        """ Default prefsfile on Darwin """
+        prefdir = os.path.join(os.path.expanduser('~'), 'Library', 'Preferences', app_name)
+        if (not os.path.isdir(prefdir)):
+            os.mkdir(prefdir)
+        return os.path.join(prefdir, 'config.ini')
+
+    def darwin_default(self, cat, name):
+        """ Default values on Darwin """
+        # TODO: These are completely untested - the gamedir in particular is a
+        # total guess on my part.
+        if (cat == 'paths'):
+            if (name == 'savegames'):
+                return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 1 Saved Games')
+            elif (name == 'gamedir'):
+                return '/Applications/Eschalon Book I.app'
+        return None
+
+    # Should probably review and conform to http://msdn.microsoft.com/en-us/library/ms811696.aspx
+    def win32_prefsfile(self):
         """ Default prefsfile on Windows """
-        # TODO: Or should it go into "Local Settings\Application Data\"?  Or "My Documents"?
-        appdir = os.path.join(os.path.expanduser('~'), 'Application Data')
+        appdir = os.path.join(os.path.expanduser('~'), 'Local Settings', 'Application Data')
         if (not os.path.isdir(appdir)):
-            os.mkdir(appdir)
+            appdir2 = os.path.join(os.path.expanduser('~'), 'Application Data')
+            if (os.path.isdir(appdir2)):
+                appdir = appdir2
         prefsdir = os.path.join(appdir, app_name)
         if (not os.path.isdir(prefsdir)):
             os.mkdir(prefsdir)
         return os.path.join(prefsdir, 'config.ini')
 
-    def windows_default(self, cat, name):
+    def win32_default(self, cat, name):
         """ Default values on Windows """
         # Registry keys are in: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1
         #  * specifically the key "InstallLocation" could help ("Inno Setup: App Path" is the same)
