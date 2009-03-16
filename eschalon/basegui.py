@@ -21,6 +21,7 @@
 
 import os
 import sys
+from struct import unpack
 
 # Load in our PyGTK deps
 pygtkreq = '2.0'
@@ -631,7 +632,10 @@ class BaseGUI(object):
         self.imgsel_window.hide()
 
     def on_bgcolor_img_clicked(self, widget, event):
-        pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
+        try:
+            pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
+        except RuntimeError, e:
+            pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
         color = pixels[int(event.y)][int(event.x)][0][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
         self.imgsel_init = False
@@ -661,4 +665,33 @@ class BaseGUI(object):
             widget.append_text('')
         for item in list:
             widget.append_text(item)
+
+    def stupid_pixels_array(self, buf):
+        """
+        An inefficient, stupid implementation of gtk.gdk.Pixbuf.get_pixels_array(),
+        for systems whose PyGTK wasn't compiled with Numeric Array support.  Which
+        includes the Windows PyGTK builds, otherwise I might not bother.
+
+        Note that the array returned here is NOT identical to the one returned by
+        get_pixels_array (to say nothing of being tied into the actual pixbuf, of
+        course).  It merely replicates the structure well enough for our purposes
+        that it's an acceptable substitute.
+        """
+        retarr = []
+        pixels = buf.get_pixels()
+        if (buf.get_has_alpha()):
+            channels = 4
+            packstr = 'BBBB'
+        else:
+            channels = 3
+            packstr = 'BBB'
+        idx = 0
+        for y in range(buf.get_height()):
+            retarr.append([])
+            for x in range(buf.get_width()):
+                retarr[y].append([])
+                for color in unpack(packstr, pixels[idx:idx+channels]):
+                    retarr[y][x].append((color, 0))
+                idx += channels
+        return retarr
 

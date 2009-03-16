@@ -201,7 +201,12 @@ class MapGUI(BaseGUI):
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
         for zoom in self.zoom_levels:
-            self.mousemap[zoom] = gtk.gdk.pixbuf_new_from_file(os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))).get_pixels_array()
+            mapfile = os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))
+            mapbuf = gtk.gdk.pixbuf_new_from_file(mapfile)
+            try:
+                self.mousemap[zoom] = mapbuf.get_pixels_array()
+            except RuntimeError, e:
+                self.mousemap[zoom] = self.stupid_pixels_array(mapbuf)
 
         # Process our entity list, for use in the entity type dropdown
         # This is.... Not the greatest.  Ah well.  Keeping the monsters
