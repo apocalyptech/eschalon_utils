@@ -20,74 +20,59 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import sys
+import os
 import os.path
+import ConfigParser
+from eschalonb1 import app_name
 
-# TODO: Mac/Cygwin
-# I presume that Cygwin would be identical to windows, with the exception of the
-# default file paths.  Mac should be quite straightforward, using plist, though
-# apparently PyGTK + Mac isn't very happy at the moment, so I'll get it... Later.
+# TODO: Error handling on load() and save()
 
-class NoPrefs(object):
-    """
-    Generic container for systems we don't explicitly support.  No defaults are
-    supplied, and it won't read a thing from disk, but it will at least remember
-    values that you plug into it.
-    """
+class Prefs(object):
 
     def __init__(self):
-        self.vars = {}
-
-    def default(self, cat, name):
-        return ''
-
-    def load(self):
-        pass
-
-    def save(self):
-        pass
-
-    def set_str(self, cat, name, val):
-        if (cat not in self.vars):
-            self.vars[cat] = {}
-        self.vars[cat][name] = val
-
-    def get_str(self, cat, name):
-        if (cat in self.vars and name in self.vars[cat]):
-            return self.vars[cat][name]
-        else:
-            # TODO: I wonder if I should return '' instead
-            return None
-
-class LinuxPrefs(object):
-    """
-    Container to hold Linux preferences.  Stores everything inside a dotfile in the
-    user's homedir, using ConfigParser.
-    """
-
-    def __init__(self):
-        import ConfigParser
-        self.filename = os.path.join(os.path.expanduser('~'), '.eschalon_b1_utils_rc')
         self.cp = ConfigParser.ConfigParser()
+        if 'win32' in sys.platform:
+            self.platform = 'win32'
+            self.default = self.windows_default
+            self.filename = self.windows_prefsfile()
+        elif 'cygwin' in sys.platform:
+            self.platform = 'cygwin'
+            self.default = self.no_default
+            self.filename = self.no_prefsfile()
+        elif 'darwin' in sys.platform:
+            self.platform = 'darwin'
+            self.default = self.no_default
+            self.filename = self.no_prefsfile()
+        else:
+            # Assume linux
+            self.platform = 'linux'
+            self.default = self.linux_default
+            self.filename = self.linux_prefsfile()
 
-    def default(self, cat, name):
-        if (cat == 'paths'):
-            if (name == 'savegames'):
-                path = os.path.join(os.path.expanduser('~'), '.eschalon_b1_saved_games')
-                if (not os.path.isdir(path)):
-                    path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
-                return path
-            elif (name == 'gamedir'):
-                return '/usr/local/games/eschalon_book_1'
-        return None
+        # Initialize our defaults and load, if we can
+        self.set_defaults()
+        if (not self.load()):
+            # Write out our prefs if one didn't exist
+            self.save()
+
+    def set_defaults(self):
+        # We're loading gamedir first because sometimes Windows will have its
+        # savegames stored in there, so it'd be useful to know that first
+        for vars in [('paths', 'gamedir'), ('paths', 'savegames')]:
+            self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
-        if (os.path.isfile(self.filename)):
+        if (self.filename is not None and os.path.isfile(self.filename)):
             self.cp.read(self.filename)
+            return True
+        else:
+            return False
 
     def save(self):
-        df = open(self.filename, 'w')
-        self.cp.write(df)
-        df.close()
+        if (self.filename is not None):
+            df = open(self.filename, 'w')
+            self.cp.write(df)
+            df.close()
 
     def set_str(self, cat, name, val):
         if (not self.cp.has_section(cat)):
@@ -97,101 +82,61 @@ class LinuxPrefs(object):
     def get_str(self, cat, name):
         return self.cp.get(cat, name)
 
-class WindowsPrefs(object):
-    """
-    Container to hold Windows preferences.  Stores everything in the registry.  We
-    keep a dictionary of the values internally, so that we only write out to the registry
-    when something explicitly calls a save().
-    """
-
-    # TODO: None of this has been tested
-    # TODO: Can I call, for instance, self.key.EnumKey(1) instead of winreg.EnumKey(self.key, 1) ?
-    #       (also for QueryInfoKey, etc)
-    # TODO: The EnumValue docs seem to imply I can just keep calling them?  Do I not need to get
-    #       the key/value count first?  index is optional, perhaps?
-
-    def __init__(self):
-        import _winreg as winreg
-        from eschalonb1 import app_name
-        self.vars = {}
-        self.keyname = 'Software\\Apocalyptech\\%s' % (app_name)
-        try:
-            self.key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, self.keyname)
-        except EnvironmentError, e:
-            self.key = winreg.CreateKey(winreg.HKEY_CURRENT_USER, self.keyname)
-
-    def default(self, cat, name):
-        # TODO: I just made these paths up.
-        if (cat == 'paths'):
-            if (name == 'savegames'):
-                return 'C:\Documents and Settings\Current User\Eschalon Something';
-            elif (name == 'gamedir'):
-                return 'C:\Programs and Files\Eschalon Book 1'
+    def no_prefsfile(self):
+        """ Fallback when we don't know anything about the platform. """
         return None
 
-    def load(self):
-        numkeys = winreg.QueryInfoKey(self.key)[0]
-        for i in range(numkeys):
-            # TODO: will this return the full key name, or just the "local" part?
-            # My code here assumes just the local part
-            subkey = winreg.EnumKey(self.key, i)
-            subkeyobj = winreg.OpenKey(self.keyname, subkey)
-            numvals = winreg.QueryInfoKey(subkeyobj)[1]
-            for j in range(numvals):
-                (var, val, type) = winreg.EnumValue(subkeyobj, j)
-                self.set_str(subkey, var, val)
-            subkeyobj.Close()
+    def no_default(self, cat, name):
+        """ Fallback when we don't know anything about the platform. """
+        return None
 
-    def save(self):
-        for (cat, values) in self.vars.items():
-            key = winreg.CreateKey(self.key, cat)
-            for (var, val) in values.items():
-                # TODO: This only supports strings, I guess...
-                # TODO: Do I need to specify KEY_SET_VALUE when opening the key?  Why can't I do so in Create?
-                # ... and actually, I see that stuff about handle objects now; I'm doing this wrong.
-                winreg.SetValue(key, var, winreg.REG_SZ, val)
-            key.Close()
+    def linux_prefsfile(self):
+        """ Default prefsfile on Linux """
+        return os.path.join(os.path.expanduser('~'), '.eschalon_b1_utils_rc')
 
-    def set_str(self, cat, name, val):
-        if (cat not in self.vars):
-            self.vars[cat] = {}
-        self.vars[cat][name] = val
+    def linux_default(self, cat, name):
+        """ Default values on Linux """
+        if (cat == 'paths'):
+            if (name == 'savegames'):
+                path = os.path.join(os.path.expanduser('~'), '.eschalon_b1_saved_games')
+                if (not os.path.isdir(path)):
+                    path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
+                return path
+            elif (name == 'gamedir'):
+                for dir in [ '/usr/local/games', '/usr/games', '/opt', '/opt/games', '/usr/share/games' ]:
+                    fulldir = os.path.join(dir, 'eschalon_book_1')
+                    if (os.path.isfile(os.path.join(fulldir, 'gfx.pak'))):
+                        return fulldir
+        return None
 
-    def get_str(self, cat, name):
-        if (cat in self.vars and name in self.vars[cat]):
-            return self.vars[cat][name]
-        else:
-            # TODO: I wonder if I should return '' instead
-            return None
+    def windows_prefsfile(self):
+        """ Default prefsfile on Windows """
+        # TODO: Or should it go into "Local Settings\Application Data\"?  Or "My Documents"?
+        appdir = os.path.join(os.path.expanduser('~'), 'Application Data')
+        if (not os.path.isdir(appdir)):
+            os.mkdir(appdir)
+        prefsdir = os.path.join(appdir, app_name)
+        if (not os.path.isdir(prefsdir)):
+            os.mkdir(prefsdir)
+        return os.path.join(prefsdir, 'config.ini')
 
-class Prefs(object):
-
-    def __init__(self):
-        if 'win32' in sys.platform:
-            self.platform = 'win32'
-            self.prefs = WindowsPrefs()
-        elif 'cygwin' in sys.platform:
-            self.platform = 'cygwin'
-            self.prefs = NoPrefs()
-        elif 'darwin' in sys.platform:
-            self.platform = 'darwin'
-            self.prefs = NoPrefs()
-        else:
-            # Assume linux
-            self.platform = 'linux'
-            self.prefs = LinuxPrefs()
-
-        # Passthrough functions
-        self.default = self.prefs.default
-        self.get_str = self.prefs.get_str
-        self.set_str = self.prefs.set_str
-        self.save = self.prefs.save
-        self.load = self.prefs.load
-
-        # Initialize our defaults and load, if we can
-        self.set_defaults()
-        self.load()
-
-    def set_defaults(self):
-        for vars in [('paths', 'savegames'), ('paths', 'gamedir')]:
-            self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
+    def windows_default(self, cat, name):
+        """ Default values on Windows """
+        # Registry keys are in: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1
+        #  * specifically the key "InstallLocation" could help ("Inno Setup: App Path" is the same)
+        if (cat == 'paths'):
+            if (name == 'savegames'):
+                for dir in [ self.get_str('paths', 'gamedir'), os.path.join(os.path.expanduser('~'), 'My Documents') ]:
+                    testdir = os.path.join(dir, 'Eschalon Book 1 Saved Games')
+                    if (os.path.isdir(testdir)):
+                        return testdir
+                # ... and if we get here, just return our most recent testdir, anyway
+                return testdir
+            elif (name == 'gamedir'):
+                testdir = 'C:\\Program Files\\Eschalon Book I'
+                if (os.path.isfile(os.path.join(testdir, 'gfx.pak'))):
+                    # TODO: Inspect the registry above and return that instead
+                    return testdir
+                else:
+                    return testdir
+        return None

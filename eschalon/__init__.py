@@ -19,6 +19,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+# If app_name ever changes, we should update preferences/windows_prefsfile
+# to provide an upgrade path
 app_name = 'Eschalon Book 1 Savefile Editor'
 version = '0.4.0'
 url = 'http://apocalyptech.com/eschalon/'
