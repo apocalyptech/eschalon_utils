@@ -103,10 +103,12 @@ class Prefs(object):
                     path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
                 return path
             elif (name == 'gamedir'):
-                for dir in [ '/usr/local/games', '/usr/games', '/opt', '/opt/games', '/usr/share/games' ]:
+                for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
                     fulldir = os.path.join(dir, 'eschalon_book_1')
                     if (os.path.isfile(os.path.join(fulldir, 'gfx.pak'))):
                         return fulldir
+                # If nothing found, just return our last-created fulldir
+                return fulldir
         return None
 
     def windows_prefsfile(self):
@@ -133,10 +135,11 @@ class Prefs(object):
                 # ... and if we get here, just return our most recent testdir, anyway
                 return testdir
             elif (name == 'gamedir'):
-                testdir = 'C:\\Program Files\\Eschalon Book I'
-                if (os.path.isfile(os.path.join(testdir, 'gfx.pak'))):
-                    # TODO: Inspect the registry above and return that instead
-                    return testdir
-                else:
-                    return testdir
+                for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
+                    testdir = os.path.join(dir, 'Eschalon Book I')
+                    if (os.path.isfile(os.path.join(testdir, 'gfx.pak'))):
+                        return testdir
+                # TODO: Inspect the registry above and return that instead.  For
+                # now, return our most recent testdir instead.
+                return testdir
         return None
