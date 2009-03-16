@@ -46,6 +46,7 @@ Map GUI
    there's anything to be done about that.
  * Hive Queen graphic doesn't seem to load on Windows - see
    http://bugzilla.gnome.org/show_bug.cgi?id=575583
+ * Finish doing center-on-parent for everything
 
 Internal
 --------
@@ -57,3 +58,4 @@ Internal
    in there.
  * Classes have been moved to new-style classes but for the most part aren't
    taking advantage of the benefits of doing so.
+ * Run through TODOs in code, see if anything needs fixing before release

@@ -84,6 +84,8 @@ class MapGUI(BaseGUI):
         self.itemwindow = self.get_widget('itemwindow')
         self.squarewindow = self.get_widget('squarewindow')
         self.propswindow = self.get_widget('globalpropswindow')
+        self.drawstatuswindow = self.get_widget('drawstatus_window')
+        self.drawstatusbar = self.get_widget('drawstatus_bar')
         self.maparea = self.get_widget('maparea')
         self.mapname_mainscreen_label = self.get_widget('mapname_mainscreen')
         self.coords_label = self.get_widget('coords')
@@ -1399,7 +1401,6 @@ class MapGUI(BaseGUI):
         self.draw_map()
 
     def draw_map(self):
-        #self.frame = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, 800, 800)
         if (self.maparea.get_style().black_gc is not None):
             self.expose_map(None, None)
 
@@ -1650,17 +1651,53 @@ class MapGUI(BaseGUI):
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
 
-    def expose_map(self, widget, event):
-        # TODO: Would like most of this to happen in draw_map instead (getting rid of the self.mapinit check)
-        # This may be the only way when doing startup though...  self.maparea.window isn't useful until we're in
-        # the expose event, apparently.  At least when loading the initial map.
+    def initialize_squares(self):
+        """
+        This is the routine which sets up our initial map.  This used to be
+        a part of expose_map, but this way we can throw up a progress dialog
+        so the user's not wondering what's going on.
 
-        # Now do our work
+        Note that we're drawing to the main window HERE instead of in the
+        setup areas of expose_map, so that the old map image stays onscreen
+        for as long as possible.
+        """
+
+        # Timing
+        time_a = time.time()
+
+        # Draw the squares
+        self.drawstatusbar.set_fraction(0)
+        self.drawstatuswindow.show()
+        for y in range(len(self.map.squares)):
+            for x in range(len(self.map.squares[y])):
+                self.draw_square(x, y)
+            self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
+            while gtk.events_pending():
+                gtk.main_iteration()
+        self.drawstatuswindow.hide()
+
+        # Finish drawing
+        self.ctx.set_source_surface(self.guicache, 0, 0)
+        self.ctx.paint()
+        
+        # ... and draw onto our main area (this is duplicated below)
+        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+
+        # Report timing
+        time_b = time.time()
+        print "Map rendered in %d seconds" % (int(time_b-time_a))
+
+    def expose_map(self, widget, event):
+        # TODO: I feel like my understanding of what to process in realize/expose, etc
+        # is still a bit flawed.  This code WORKS, but I'm not altogether fond of it.
+
         if (self.mapinit):
             for (x, y) in self.cleansquares:
                 self.draw_square(x, y, True)
+
+            # Render to the window (this is duplicated above)
+            self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
         else:
-            time_a = time.time()
             self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
             self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 
@@ -1697,26 +1734,12 @@ class MapGUI(BaseGUI):
             basic_ctx.close_path()
             basic_ctx.fill()
 
-            # Draw the squares
-            time_c = time.time()
-            for y in range(len(self.map.squares)):
-                for x in range(len(self.map.squares[y])):
-                    self.draw_square(x, y)
-            time_d = time.time()
-
-            # Finish drawing
-            self.ctx.set_source_surface(self.guicache, 0, 0)
-            self.ctx.paint()
+            # Now trigger the stuff that actually loads things
+            gobject.idle_add(self.initialize_squares)
 
             # ... and finish up, and report some timing information
+            # TODO: Should we wait to set this until initialize_squares()?
             self.mapinit = True
-            time_b = time.time()
-            print "Map drawn in %d seconds, squares rendered in %d seconds" % (int(time_b-time_a), int(time_d-time_c))
 
         # Make sure our to-clean list is empty
         self.cleansquares = []
-
-        # This is about all we should *actually* need in here
-        # TODO: do we need this when doing Cairo?
-        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
-
