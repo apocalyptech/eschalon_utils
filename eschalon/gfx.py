@@ -80,8 +80,8 @@ class GfxCache(object):
         # This shouldn't hurt performance really since there's only a few files
         loader = gtk.gdk.PixbufLoader()
         loader.write(pngdata)
-        self.pixbuf = loader.get_pixbuf()
         loader.close()
+        self.pixbuf = loader.get_pixbuf()
         loader = None
 
         # Now assign the rest of our attributes
