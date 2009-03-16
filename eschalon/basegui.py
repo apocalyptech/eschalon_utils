@@ -149,6 +149,7 @@ class BaseGUI(object):
             self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
         if (self.prefsobj.get_str('paths', 'gamedir') != ''):
             self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
+        self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
@@ -514,6 +515,10 @@ class BaseGUI(object):
         self.imgsel_init = False
         self.imgsel_clean = []
         self.imgsel_window = self.get_widget('imgselwindow')
+        if (self.curitemtype == self.ITEM_MAP):
+            self.imgsel_window.set_transient_for(self.squarewindow)
+        else:
+            self.imgsel_window.set_transient_for(self.itemwindow)
         self.imgsel_area = self.get_widget('imgsel_area')
         self.imgsel_bgcolor_img = self.get_widget('bgcolor_img')
         self.imgsel_bgcolor_event = self.get_widget('bgcolor_event')

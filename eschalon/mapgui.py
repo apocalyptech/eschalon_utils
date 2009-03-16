@@ -83,6 +83,7 @@ class MapGUI(BaseGUI):
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
         self.squarewindow = self.get_widget('squarewindow')
+        self.itemwindow.set_transient_for(self.squarewindow)
         self.propswindow = self.get_widget('globalpropswindow')
         self.drawstatuswindow = self.get_widget('drawstatus_window')
         self.drawstatusbar = self.get_widget('drawstatus_bar')
@@ -274,6 +275,8 @@ class MapGUI(BaseGUI):
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                         gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         if (self.map != None):
             path = os.path.dirname(self.map.df.filename)
@@ -307,6 +310,8 @@ class MapGUI(BaseGUI):
         (changed, alert_changed) = super(MapGUI, self).on_prefs(widget)
         if (changed and alert_changed):
             dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+            dialog.set_transient_for(self.window)
+            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
             dialog.set_markup('<b>Note:</b> You must restart the application for the preferences change to take effect.')
             dialog.run()
             dialog.destroy()
@@ -320,6 +325,8 @@ class MapGUI(BaseGUI):
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                         gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         infolabel = gtk.Label()
         infolabel.set_markup('<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
@@ -357,6 +364,8 @@ class MapGUI(BaseGUI):
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
         # Figure out what our initial path should be
         path = ''
@@ -446,6 +455,8 @@ class MapGUI(BaseGUI):
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_markup('Unsaved changes will be lost!  Continue?')
         response = dialog.run()
         dialog.destroy()
@@ -463,6 +474,8 @@ class MapGUI(BaseGUI):
         # If the object doesn't exist in our cache, create it
         if (about == None):
             about = gtk.AboutDialog()
+            about.set_transient_for(self.window)
+            about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
             about.set_name(app_name)
             about.set_version(version)
             about.set_website(url)
@@ -529,6 +542,8 @@ class MapGUI(BaseGUI):
 
     def on_colorsel_clicked(self, widget):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.colorsel.set_current_color(gtk.gdk.Color(self.map.color_r*257, self.map.color_g*257, self.map.color_b*257))
         response = dialog.run()
         if (response == gtk.RESPONSE_OK):

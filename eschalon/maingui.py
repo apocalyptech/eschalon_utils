@@ -74,6 +74,7 @@ class MainGUI(BaseGUI):
         self.itemwTree = gtk.glade.XML(self.itemfile)
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
+        self.itemwindow.set_transient_for(self.window)
         self.loadwindow = self.get_widget('loadwindow')
         self.aboutwindow = self.get_widget('aboutwindow')
         self.mainbook = self.get_widget('mainbook')
@@ -170,6 +171,8 @@ class MainGUI(BaseGUI):
         (changed, alert_changed) = super(MainGUI, self).on_prefs(widget)
         if (changed and alert_changed):
             dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
+            dialog.set_transient_for(self.window)
+            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
             dialog.set_markup('<b>Note:</b> Changes to graphics may not immediately update upon changing.  To ensure that your new settings are completely enabled, please quit and restart the application.')
             dialog.run()
             dialog.destroy()
@@ -189,6 +192,8 @@ class MainGUI(BaseGUI):
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
         # Figure out what our initial path should be
         path = ''
@@ -243,6 +248,8 @@ class MainGUI(BaseGUI):
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                                         gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_transient_for(self.window)
+        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         if (self.char != None):
             path = os.path.dirname(self.char.df.filename)
@@ -282,6 +289,8 @@ class MainGUI(BaseGUI):
         # If the object doesn't exist in our cache, create it
         if (about == None):
             about = gtk.AboutDialog()
+            about.set_transient_for(self.window)
+            about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
             about.set_name(app_name)
             about.set_version(version)
             about.set_website(url)
