@@ -135,18 +135,60 @@ class Prefs(object):
                 return '/Applications/Eschalon Book I.app'
         return None
 
+    def win32_prefsfile_final(self, path):
+        """ Given a path, spit out our prefsfile from that root. """
+        dir = os.path.join(path, app_name)
+        if (not os.path.isdir(dir)):
+            os.mkdir(dir)
+        return os.path.join(dir, 'config.ini')
+
     # Should probably review and conform to http://msdn.microsoft.com/en-us/library/ms811696.aspx
     def win32_prefsfile(self):
         """ Default prefsfile on Windows """
+
+        # First, where it Should be
         appdir = os.path.join(os.path.expanduser('~'), 'Local Settings', 'Application Data')
-        if (not os.path.isdir(appdir)):
-            appdir2 = os.path.join(os.path.expanduser('~'), 'Application Data')
-            if (os.path.isdir(appdir2)):
-                appdir = appdir2
-        prefsdir = os.path.join(appdir, app_name)
-        if (not os.path.isdir(prefsdir)):
-            os.mkdir(prefsdir)
-        return os.path.join(prefsdir, 'config.ini')
+        if (os.path.isdir(appdir)):
+            return win32_prefsfile_final(appdir)
+
+        # If "Local Settings" isn't available for some reason, just put it in Application Data
+        appdir = os.path.join(os.path.expanduser('~'), 'Application Data')
+        if (os.path.isdir(appdir)):
+            return self.win32_prefsfile_final(appdir)
+
+        # When logged in as Administrator on some boxes, expanduser() doesn't work
+        # properly (at least on win2k, on Python 2.5).  Check USERPROFILE and try from there.
+        if ('USERPROFILE' in os.environ):
+            if (os.path.isdir(os.environ['USERPROFILE'])):
+                appdir = os.path.join(os.environ['USERPROFILE'], 'Local Settings', 'Application Data')
+                if (os.path.isdir(appdir)):
+                    return self.win32_prefsfile_final(appdir)
+
+                appdir = os.path.join(os.environ['USERPROFILE'], 'Application Data')
+                if (os.path.isdir(appdir)):
+                    return self.win32_prefsfile_final(appdir)
+
+        # If that didn't work out, grab our username and try that,
+        if ('USERNAME' in os.environ):
+            if ('HOMEDRIVE' in os.environ):
+                drive = os.environ['HOMEDRIVE']
+            else:
+                drive = 'C:'
+            constdir = os.path.join(drive, 'Documents and Settings', os.environ['USERNAME'])
+            if (os.path.isdir(constdir)):
+                appdir = os.path.join(constdir, 'Local Settings', 'Application Data')
+                if (os.path.isdir(appdir)):
+                    return self.win32_prefsfile_final(appdir)
+
+                appdir = os.path.join(constdir, 'Application Data')
+                if (os.path.isdir(appdir)):
+                    return self.win32_prefsfile_final(appdir)
+
+        # If we didn't find anything, return None - we just won't actually
+        # store preferences.
+        # TODO: Notification of user to get ahold of me, to figure out
+        # how to do it properly on their systems.
+        return None
 
     def win32_default(self, cat, name):
         """ Default values on Windows """
