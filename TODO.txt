@@ -56,4 +56,4 @@ Internal
    in there.
  * Classes have been moved to new-style classes but for the most part aren't
    taking advantage of the benefits of doing so.
- * Run through TODOs in code, see if anything needs fixing before release
+ * Windows Registry stuff for Prefs

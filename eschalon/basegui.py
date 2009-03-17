@@ -207,15 +207,12 @@ class BaseGUI(object):
 
     def on_singleval_changed_int(self, widget):
         """ What to do when an int value changes. """
-        # TODO: Theoretically we shouldn't have to worry about that precision issue below, since
-        # we've split out floats into their own handler.  Test first before changing, though...
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_value_as_int()
-        # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
         if (self.curitemtype != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
     def on_singleval_changed_float(self, widget):
         """ What to do when an int value changes. """

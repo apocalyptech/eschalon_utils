@@ -102,7 +102,6 @@ class MainGUI(BaseGUI):
         self.avatarsel_mousey_prev = -1
 
         # Set up our graphics cache
-        # TODO: IMO we shouldn't actually *require* gfx here
         self.prefs_init(self.prefs)
         self.optional_gfx()
         if (self.gamedir_set()):

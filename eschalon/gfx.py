@@ -305,7 +305,6 @@ class Gfx(object):
             self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
         return self.itemcache.getimg(itemnum+1, size, gdk)
 
-    # TODO: I probably should just push the gdk check into getimg, and consolidate those
     def get_floor(self, floornum, size=None, gdk=False):
         if (floornum == 0):
             return None

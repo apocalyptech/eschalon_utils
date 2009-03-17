@@ -783,8 +783,6 @@ class MapGUI(BaseGUI):
         self.z_4xheight = self.z_height*4
         self.z_5xheight = self.z_height*5
 
-        # TODO: Should queue a redraw here, probably...
-
     def scroll_h_changed(self, widget):
         """ Handle what to do when our scollwindow detects a change in dimensions. """
         if (self.prev_scroll_h_cur != -1):
@@ -1430,7 +1428,7 @@ class MapGUI(BaseGUI):
     def draw_square(self, x, y, usecache=False, do_main_paint=True):
         """ Draw a single square of the map. """
 
-        # TODO: Layers are pretty inefficient and slow here
+        # TODO: Layers are pretty inefficient and slow here, IMO
         barrier = False
         script = False
         pointer = False
