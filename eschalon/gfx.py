@@ -24,6 +24,7 @@ import gtk
 import math
 import zlib
 import cairo
+import gobject
 from struct import unpack
 from eschalonb1 import entitytable
 from eschalonb1.savefile import Savefile, LoadException
@@ -78,18 +79,25 @@ class GfxCache(object):
 
         # For ease-of-use, we're also going to import it to a GDK Pixbuf
         # This shouldn't hurt performance really since there's only a few files
-        loader = gtk.gdk.PixbufLoader()
-        loader.write(pngdata)
-        loader.close()
-        self.pixbuf = loader.get_pixbuf()
-        loader = None
+        try:
+            # On Windows, the Hive Queen graphic can't be loaded this way for
+            # some reason.  See http://bugzilla.gnome.org/show_bug.cgi?id=575583
+            # We try/except here to work around it; otherwise we can't load
+            # 34_cave.map
+            loader = gtk.gdk.PixbufLoader()
+            loader.write(pngdata)
+            loader.close()
+            self.pixbuf = loader.get_pixbuf()
+            loader = None
+            self.gdkcache = {}
+        except gobject.GError, e:
+            self.gdkcache = None
 
         # Now assign the rest of our attributes
         self.width = width
         self.height = height
         self.cols = cols
         self.cache = {}
-        self.gdkcache = {}
 
     def getimg(self, number, sizex=None, gdk=False):
         """ Grab an image from the cache, as a Cairo surface. """
@@ -134,6 +142,8 @@ class GfxCache(object):
 
     def getimg_gdk(self, number, sizex=None):
         """ Grab an image from the cache, as a GDK pixbuf """
+        if (self.gdkcache is None):
+            return None
         number = number - 1
         row = math.floor(number / self.cols)
         col = number % self.cols
@@ -197,9 +207,10 @@ class GfxEntCache(GfxCache):
         self.surface = newsurf
 
         # (and on our pixbuf copy as well)
-        newbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
-        self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
-        self.pixbuf = newbuf
+        if (self.gdkcache is not None):
+            newbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
+            self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
+            self.pixbuf = newbuf
 
 class PakIndex(object):
     """ A class to hold information on an individual file in the pak. """
