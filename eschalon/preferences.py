@@ -25,6 +25,12 @@ import os.path
 import ConfigParser
 from eschalonb1 import app_name
 
+# Load windows registry, if we can
+try:
+    import _winreg
+except ImportError, e:
+    pass
+
 # TODO: Error handling on load() and save()
 
 class Prefs(object):
@@ -159,7 +165,30 @@ class Prefs(object):
                     testdir = os.path.join(dir, 'Eschalon Book I')
                     if (os.path.isfile(os.path.join(testdir, 'gfx.pak'))):
                         return testdir
-                # TODO: Inspect the registry above and return that instead.  For
-                # now, return our most recent testdir instead.
+                # If we got here, it wasn't found - check the registry.  If there
+                # are any errors, just return our most recent testdir
+                try:
+                    wr = _winreg.OpenKey(
+                        _winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1'
+                        )
+                except EnvironmentError, e:
+                    return testdir
+
+                try:
+                    (val, type) = _winreg.QueryValueEx(wr, 'Inno Setup: App Path')
+                    testdir = val
+                except EnvironmentError, e:
+                    try:
+                        (val, type) = _winreg.QueryValueEx(wr, 'InstallLocation')
+                        if (val[-1:] == '\\'):
+                            val = val[:-1]
+                        testdir = val
+                    except EnvironmentError, e:
+                        pass
+
+                # Close and return what we've got
+                wr.Close()
                 return testdir
+
         return None
