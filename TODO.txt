@@ -15,7 +15,7 @@ Data
    position information is kept, and also quest status, I suspect)
  * A lot of values for maps remain unknown to me.  A couple things to look
    for: Cloud overlay stuff (like in Vela), luminosity (light in square in
-   Blackwater, for instance)
+   Blackwater, for instance).  And, of course, traps, lock difficulties, etc.
 
 Character GUI
 -------------

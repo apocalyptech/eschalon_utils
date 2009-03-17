@@ -134,7 +134,6 @@ class MapGUI(BaseGUI):
                 'zoom_out': self.zoom_out,
                 'on_mouse_changed': self.on_mouse_changed,
                 'expose_map': self.expose_map,
-                'realize_map': self.realize_map,
                 'map_toggle': self.map_toggle,
                 'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
                 'on_entid_changed': self.on_entid_changed,
@@ -251,6 +250,12 @@ class MapGUI(BaseGUI):
     
         # Now show our window
         self.window.show()
+
+        # Now add an idle_timeout to initialize the map - this is how our
+        # initial load happens
+        gobject.idle_add(self.draw_map)
+
+        # ... and get into the main gtk loop
         gtk.main()
 
     def putstatus(self, text):
@@ -445,9 +450,8 @@ class MapGUI(BaseGUI):
         self.mapname_mainscreen_label.set_text(self.map.mapname)
 
         # Load information from the character
-        #self.populate_form_from_char()
-        self.mapinit = False
-        self.draw_map()
+        if (self.mapinit):
+            self.draw_map()
 
         # Return success
         return True
@@ -778,7 +782,6 @@ class MapGUI(BaseGUI):
         self.z_3xheight = self.z_height*3
         self.z_4xheight = self.z_height*4
         self.z_5xheight = self.z_height*5
-        self.mapinit = False
 
         # TODO: Should queue a redraw here, probably...
 
@@ -1412,15 +1415,7 @@ class MapGUI(BaseGUI):
                 self.squarewindow.show()
 
     def map_toggle(self, widget):
-        self.mapinit = False
         self.draw_map()
-
-    def draw_map(self):
-        if (self.maparea.get_style().black_gc is not None):
-            self.expose_map(None, None)
-
-    def realize_map(self, event):
-        pass
 
     # Assumes that the context is squarebuf_ctx, hence the hardcoded width/height
     # We're passing it in so we're not constantly referencing self.squarebuf_ctx
@@ -1666,7 +1661,7 @@ class MapGUI(BaseGUI):
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
 
-    def initialize_squares(self):
+    def draw_map(self):
         """
         This is the routine which sets up our initial map.  This used to be
         a part of expose_map, but this way we can throw up a progress dialog
@@ -1677,84 +1672,86 @@ class MapGUI(BaseGUI):
         for as long as possible.
         """
 
-        # Timing
+        # Timing, and statusbar
         time_a = time.time()
-
-        # Draw the squares
         self.drawstatusbar.set_fraction(0)
         self.drawstatuswindow.show()
+
+        self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
+        self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
+
+        self.ctx = self.pixmap.cairo_create()
+        self.ctx.set_source_rgba(0, 0, 0, 1)
+        self.ctx.paint()
+
+        self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        self.squarebuf_ctx = cairo.Context(self.squarebuf)
+        self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
+        self.guicache_ctx = cairo.Context(self.guicache)
+        self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
+        self.guicache_ctx.paint()
+
+        self.ent_surf = None
+        self.ent_ctx = None
+
+        # Set up a "blank" tile to draw everything else on top of
+        self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        sq_ctx = cairo.Context(self.blanksquare)
+        sq_ctx.save()
+        sq_ctx.set_operator(cairo.OPERATOR_CLEAR)
+        sq_ctx.paint()
+        sq_ctx.restore()
+
+        # Set up a default square with just a black tile, for otherwise-empty tiles
+        self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        basic_ctx = cairo.Context(self.basicsquare)
+        basic_ctx.set_source_rgba(0, 0, 0, 1)
+        basic_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_halfwidth, self.z_4xheight)
+        basic_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_halfwidth, self.z_5xheight)
+        basic_ctx.close_path()
+        basic_ctx.fill()
+
+        # Draw the squares
         for y in range(len(self.map.squares)):
             for x in range(len(self.map.squares[y])):
                 self.draw_square(x, y)
             self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
             while gtk.events_pending():
                 gtk.main_iteration()
-        self.drawstatuswindow.hide()
 
         # Finish drawing
         self.ctx.set_source_surface(self.guicache, 0, 0)
         self.ctx.paint()
         
-        # ... and draw onto our main area (this is duplicated below)
+        # ... and draw onto our main area (this is duplicated below, in expose_map)
         self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+
+        # Clean up our statusbar
+        self.drawstatuswindow.hide()
 
         # Report timing
         time_b = time.time()
         print "Map rendered in %d seconds" % (int(time_b-time_a))
 
-    def expose_map(self, widget, event):
-        # TODO: I feel like my understanding of what to process in realize/expose, etc
-        # is still a bit flawed.  This code WORKS, but I'm not altogether fond of it.
+        # From now on, our map's considered initialized
+        self.mapinit = True
 
+        # Make sure we only do this once, when called from idle_add initially
+        return False
+
+    def expose_map(self, widget, event):
+
+        # Don't bother to do anything unless we've been initialized
         if (self.mapinit):
+
+            # Redraw what squares need to be redrawn
             for (x, y) in self.cleansquares:
                 self.draw_square(x, y, True)
 
-            # Render to the window (this is duplicated above)
+            # Render to the window (this is duplicated above, in draw_map)
             self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
-        else:
-            self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
-            self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 
-            self.ctx = self.pixmap.cairo_create()
-            self.ctx.set_source_rgba(0, 0, 0, 1)
-            self.ctx.paint()
-
-            self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
-            self.squarebuf_ctx = cairo.Context(self.squarebuf)
-            self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
-            self.guicache_ctx = cairo.Context(self.guicache)
-            self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
-            self.guicache_ctx.paint()
-
-            self.ent_surf = None
-            self.ent_ctx = None
-
-            # Set up a "blank" tile to draw everything else on top of
-            self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
-            sq_ctx = cairo.Context(self.blanksquare)
-            sq_ctx.save()
-            sq_ctx.set_operator(cairo.OPERATOR_CLEAR)
-            sq_ctx.paint()
-            sq_ctx.restore()
-
-            # Set up a default square with just a black tile, for otherwise-empty tiles
-            self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
-            basic_ctx = cairo.Context(self.basicsquare)
-            basic_ctx.set_source_rgba(0, 0, 0, 1)
-            basic_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
-            basic_ctx.line_to(self.z_halfwidth, self.z_4xheight)
-            basic_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
-            basic_ctx.line_to(self.z_halfwidth, self.z_5xheight)
-            basic_ctx.close_path()
-            basic_ctx.fill()
-
-            # Now trigger the stuff that actually loads things
-            gobject.idle_add(self.initialize_squares)
-
-            # ... and finish up, and report some timing information
-            # TODO: Should we wait to set this until initialize_squares()?
-            self.mapinit = True
-
-        # Make sure our to-clean list is empty
-        self.cleansquares = []
+            # Make sure our to-clean list is empty
+            self.cleansquares = []
