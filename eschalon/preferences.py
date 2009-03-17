@@ -149,7 +149,7 @@ class Prefs(object):
         # First, where it Should be
         appdir = os.path.join(os.path.expanduser('~'), 'Local Settings', 'Application Data')
         if (os.path.isdir(appdir)):
-            return win32_prefsfile_final(appdir)
+            return self.win32_prefsfile_final(appdir)
 
         # If "Local Settings" isn't available for some reason, just put it in Application Data
         appdir = os.path.join(os.path.expanduser('~'), 'Application Data')
