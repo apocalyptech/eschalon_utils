@@ -279,7 +279,7 @@ class MapGUI(BaseGUI):
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         if (self.map != None):
-            path = os.path.dirname(self.map.df.filename)
+            path = os.path.dirname(os.path.realpath(self.map.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
 
@@ -333,7 +333,7 @@ class MapGUI(BaseGUI):
         infolabel.set_line_wrap(True)
         dialog.set_extra_widget(infolabel)
         if (self.map != None):
-            path = os.path.dirname(self.map.df.filename)
+            path = os.path.dirname(os.path.realpath(self.map.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
 

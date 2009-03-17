@@ -252,7 +252,7 @@ class MainGUI(BaseGUI):
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         if (self.char != None):
-            path = os.path.dirname(self.char.df.filename)
+            path = os.path.dirname(os.path.realpath(self.char.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
 

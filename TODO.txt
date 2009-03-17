@@ -31,7 +31,6 @@ Map GUI
 -------
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
- * Status bars for functions aren't basically instantaneous
  * Actually track changes, for confirmation-of-close?  (also could support
    confirmation on new loads if we did this)
  * Warning/abort if trying to edit square with an unknown entity
@@ -46,7 +45,6 @@ Map GUI
    there's anything to be done about that.
  * Hive Queen graphic doesn't seem to load on Windows - see
    http://bugzilla.gnome.org/show_bug.cgi?id=575583
- * Finish doing center-on-parent for everything
 
 Internal
 --------
