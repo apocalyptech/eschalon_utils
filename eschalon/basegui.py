@@ -636,7 +636,7 @@ class BaseGUI(object):
     def on_bgcolor_img_clicked(self, widget, event):
         try:
             pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
-        except RuntimeError, e:
+        except (RuntimeError, ImportError):
             pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
         color = pixels[int(event.y)][int(event.x)][0][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)

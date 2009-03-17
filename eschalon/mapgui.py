@@ -207,7 +207,7 @@ class MapGUI(BaseGUI):
             mapbuf = gtk.gdk.pixbuf_new_from_file(mapfile)
             try:
                 self.mousemap[zoom] = mapbuf.get_pixels_array()
-            except RuntimeError, e:
+            except (RuntimeError, ImportError):
                 self.mousemap[zoom] = self.stupid_pixels_array(mapbuf)
 
         # Process our entity list, for use in the entity type dropdown
