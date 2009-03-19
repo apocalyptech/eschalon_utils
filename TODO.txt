@@ -48,6 +48,7 @@ Map GUI
  * There are some Tree graphics stored in set B which don't get turned off
    with our "Trees" toggle.  This is especially noticeable in, for instance,
    41.map, where the "Trees" toggle basically does nothing.
+ * Change background color, like we do for selection in the square window
 
 Internal
 --------
