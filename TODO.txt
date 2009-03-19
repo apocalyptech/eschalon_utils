@@ -45,6 +45,7 @@ Map GUI
    there's anything to be done about that.
  * Hive Queen graphic doesn't seem to load on Windows - see
    http://bugzilla.gnome.org/show_bug.cgi?id=575583
+ * "Abort" button on progress bar
 
 Internal
 --------

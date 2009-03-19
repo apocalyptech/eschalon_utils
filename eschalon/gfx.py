@@ -303,7 +303,11 @@ class Gfx(object):
             if (filename in self.fileindex):
                 self.df.open_r()
                 self.df.seek(self.zeroindex + self.fileindex[filename].abs_index)
-                filedata = zlib.decompress(self.df.read(self.fileindex[filename].size_compressed))
+                # On Windows, we need to specify bufsize or memory gets clobbered
+                filedata = zlib.decompress(
+                    self.df.read(self.fileindex[filename].size_compressed),
+                    15,
+                    self.fileindex[filename].size_real)
                 self.df.close()
                 return filedata
             else:
