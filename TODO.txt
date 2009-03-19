@@ -43,9 +43,8 @@ Map GUI
    partially munged using our current method.
  * Square rendering seems to be getting a bit slow; should see if
    there's anything to be done about that.
- * Hive Queen graphic doesn't seem to load on Windows - see
+ * Hive Queen graphic doesn't seem to load on Windows into Pixbuf - see
    http://bugzilla.gnome.org/show_bug.cgi?id=575583
- * "Abort" button on progress bar
 
 Internal
 --------

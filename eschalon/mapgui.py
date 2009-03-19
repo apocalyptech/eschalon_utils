@@ -154,6 +154,7 @@ class MapGUI(BaseGUI):
                 'on_prop_button_clicked': self.on_prop_button_clicked,
                 'on_propswindow_close': self.on_propswindow_close,
                 'on_prefs': self.on_prefs,
+                'on_abort_render': self.on_abort_render,
                 'open_floorsel': self.open_floorsel,
                 'open_decalsel': self.open_decalsel,
                 'open_walldecalsel': self.open_walldecalsel,
@@ -455,6 +456,15 @@ class MapGUI(BaseGUI):
 
         # Return success
         return True
+
+    def on_abort_render(self, widget=None):
+        """
+        A hard quit.  Not terribly friendly, but the way we're
+        processing loading doesn't lend itself to graceful failbacks.
+        This is mostly going to just be called if something goes
+        catastrophically wrong, anyway.
+        """
+        sys.exit(0)
 
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
