@@ -13,9 +13,9 @@ Data
    probably bit flags as well)
  * Decode "savename" file format (this is where current-map and actual
    position information is kept, and also quest status, I suspect)
- * A lot of values for maps remain unknown to me.  A couple things to look
-   for: Cloud overlay stuff (like in Vela), luminosity (light in square in
-   Blackwater, for instance).  And, of course, traps, lock difficulties, etc.
+ * A lot of values for maps remain unknown to me.  Some things to look
+   for: luminosity (light in square in Blackwater, for instance),
+   traps, lock difficulties, etc.
 
 Character GUI
 -------------
@@ -45,6 +45,10 @@ Map GUI
    there's anything to be done about that.
  * Hive Queen graphic doesn't seem to load on Windows into Pixbuf - see
    http://bugzilla.gnome.org/show_bug.cgi?id=575583
+ * There are some Tree graphics stored in set B which don't get turned off
+   with our "Trees" toggle.  This is especially noticeable in, for instance,
+   41.map, where the "Trees" toggle basically does nothing.
+ * Slider bar for zoom, in addition to buttons
 
 Internal
 --------

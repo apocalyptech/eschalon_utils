@@ -64,6 +64,7 @@ class MapCLI(object):
         print "Skybox: %s" % (map.skybox)
         print "Skybox Parallax 1: %d" % (map.parallax_1)
         print "Skybox Parallax 2: %d" % (map.parallax_2)
+        print "Cloud Overlay: %d" % (map.clouds)
         print "North Exit: %s" % (map.exit_north)
         print "East Exit: %s" % (map.exit_east)
         print "South Exit: %s" % (map.exit_south)
@@ -123,7 +124,6 @@ class MapCLI(object):
         print "--------"
         print
         print "Unknown integer 1: %d" % (map.unknowni1)
-        print "Unknown integer 4: %d" % (map.unknowni4)
         print "Unknown short 1: %d" % (map.unknownh1)
         print
 

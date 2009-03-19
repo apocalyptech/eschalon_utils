@@ -546,7 +546,7 @@ class MapGUI(BaseGUI):
         self.get_widget('color_a').set_value(self.map.color_a)
         self.get_widget('unknownh1').set_value(self.map.unknownh1)
         self.get_widget('unknowni1').set_value(self.map.unknowni1)
-        self.get_widget('unknowni4').set_value(self.map.unknowni4)
+        self.get_widget('clouds').set_value(self.map.clouds)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):

@@ -57,7 +57,7 @@ class Map(object):
 
         self.parallax_1 = -1
         self.parallax_2 = -1
-        self.unknowni4 = -1
+        self.clouds = -1
         self.savegame_1 = -1
         self.savegame_2 = -1
         self.savegame_3 = -1
@@ -114,7 +114,7 @@ class Map(object):
         newmap.color_a = self.color_a
         newmap.parallax_1 = self.parallax_1
         newmap.parallax_2 = self.parallax_2
-        newmap.unknowni4 = self.unknowni4
+        newmap.clouds = self.clouds
         newmap.savegame_1 = self.savegame_1
         newmap.savegame_2 = self.savegame_2
         newmap.savegame_3 = self.savegame_3
@@ -238,7 +238,7 @@ class Map(object):
 
             self.parallax_1 = self.df.readint()
             self.parallax_2 = self.df.readint()
-            self.unknowni4 = self.df.readint()
+            self.clouds = self.df.readint()
             self.savegame_1 = self.df.readint()
             self.savegame_2 = self.df.readint()
             self.savegame_3 = self.df.readint()
@@ -302,7 +302,7 @@ class Map(object):
         self.df.writeuchar(self.color_a)
         self.df.writeint(self.parallax_1)
         self.df.writeint(self.parallax_2)
-        self.df.writeint(self.unknowni4)
+        self.df.writeint(self.clouds)
         self.df.writeint(self.savegame_1)
         self.df.writeint(self.savegame_2)
         self.df.writeint(self.savegame_3)
