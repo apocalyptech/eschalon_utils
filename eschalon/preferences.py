@@ -192,8 +192,6 @@ class Prefs(object):
 
     def win32_default(self, cat, name):
         """ Default values on Windows """
-        # Registry keys are in: HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1
-        #  * specifically the key "InstallLocation" could help ("Inno Setup: App Path" is the same)
         if (cat == 'paths'):
             if (name == 'savegames'):
                 for dir in [ self.get_str('paths', 'gamedir'), os.path.join(os.path.expanduser('~'), 'My Documents') ]:

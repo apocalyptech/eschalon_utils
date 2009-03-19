@@ -269,7 +269,6 @@ class Map(object):
             # a valid char file
             self.extradata = self.df.read()
             if (len(self.extradata)>0):
-                # TODO: We should except here, but until we get it figured out, we won't
                 raise LoadException('Extra data at end of file')
 
             # Close the file
