@@ -91,6 +91,7 @@ class MapGUI(BaseGUI):
         self.mapname_mainscreen_label = self.get_widget('mapname_mainscreen')
         self.coords_label = self.get_widget('coords')
         self.mainscroll = self.get_widget('mainscroll')
+        self.zoom_scale = self.get_widget('zoom_scale')
         self.zoom_in_button = self.get_widget('zoom_in_button')
         self.zoom_out_button = self.get_widget('zoom_out_button')
         self.floor_toggle = self.get_widget('floor_button')
@@ -132,6 +133,7 @@ class MapGUI(BaseGUI):
                 'on_clicked': self.on_clicked,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
+                'format_zoomlevel': self.format_zoomlevel,
                 'on_mouse_changed': self.on_mouse_changed,
                 'expose_map': self.expose_map,
                 'map_toggle': self.map_toggle,
@@ -190,9 +192,14 @@ class MapGUI(BaseGUI):
                 if (not self.on_load()):
                     return
 
-        # Start the main gtk loop
+        # Set up our initial zoom levels and connect our signal to
+        # the slider adjustment, so things work like we'd want.
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        self.set_zoom_vars(24)
+        self.set_zoom_vars(3)
+        self.zoom_adj = self.zoom_scale.get_adjustment()
+        self.zoom_adj.connect('value-changed', self.zoom_slider)
+
+        # Some more vars to make sure exist
         self.guicache = None
         self.squarebuf = None
         self.blanksquare = None
@@ -777,8 +784,14 @@ class MapGUI(BaseGUI):
         self.squarewindow.hide()
         return True
 
-    def set_zoom_vars(self, width):
+    def format_zoomlevel(self, widget, value):
+        """ Formats the zoom slider scale. """
+        return 'Lvl %d' % (value+1)
+
+    def set_zoom_vars(self, scalenum):
         """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """
+        width = self.zoom_levels[scalenum]
+        self.curzoomidx = scalenum
         self.curzoom = width
         self.z_width = width
         self.z_height = int(self.z_width/2)
@@ -810,37 +823,44 @@ class MapGUI(BaseGUI):
                 widget.set_value(newval)
         self.prev_scroll_v_max = widget.upper
 
-    # Helper function for zooms, should rename this or something...
-    def store_adjust(self):
+    def zoom_to(self, level):
+        """ Take care of everything that needs to be done when we change zoom levels. """
         hadjust = self.mainscroll.get_hadjustment()
         vadjust = self.mainscroll.get_vadjustment()
         # TODO: This works for zooming-in, mostly...  Less good for zooming out.
         # I should figure out exactly what's going on.
         self.prev_scroll_h_cur = (hadjust.page_size/4)+hadjust.value
         self.prev_scroll_v_cur = (vadjust.page_size/4)+vadjust.value
+        self.set_zoom_vars(level)
+        if (level == 0):
+            self.zoom_out_button.set_sensitive(False)
+        else:
+            self.zoom_out_button.set_sensitive(True)
+        if (level == len(self.zoom_levels)-1):
+            self.zoom_in_button.set_sensitive(False)
+        else:
+            self.zoom_in_button.set_sensitive(True)
+        self.draw_map()
 
-    # TODO: Really need to normalize these...
+    def zoom_slider(self, widget):
+        """ Handle a zoom from the slider. """
+        newzoom = int(widget.get_value())
+        if (newzoom < 0):
+            newzoom = 0
+        if (newzoom > len(self.zoom_levels)-1):
+            newzoom = len(self.zoom_levels)-1
+        if (newzoom != self.curzoomidx):
+            self.zoom_to(newzoom)
+
     def zoom_out(self, widget):
         """ Handle a zoom-out. """
-        curindex = self.zoom_levels.index(self.curzoom)
-        if (curindex != 0):
-            self.store_adjust()
-            self.set_zoom_vars(self.zoom_levels[curindex-1])
-            if (curindex == 1):
-                self.zoom_out_button.set_sensitive(False)
-            self.zoom_in_button.set_sensitive(True)
-            self.draw_map()
+        if (self.curzoomidx != 0):
+            self.zoom_scale.set_value(self.curzoomidx-1)
 
     def zoom_in(self, widget):
         """ Handle a zoom-in. """
-        curindex = self.zoom_levels.index(self.curzoom)
-        if (curindex != (len(self.zoom_levels)-1)):
-            self.store_adjust()
-            self.set_zoom_vars(self.zoom_levels[curindex+1])
-            if (curindex == (len(self.zoom_levels)-2)):
-                self.zoom_in_button.set_sensitive(False)
-            self.zoom_out_button.set_sensitive(True)
-            self.draw_map()
+        if (self.curzoomidx != (len(self.zoom_levels)-1)):
+            self.zoom_scale.set_value(self.curzoomidx+1)
 
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """

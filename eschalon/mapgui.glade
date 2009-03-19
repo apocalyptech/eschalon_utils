@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Mar 19 15:25:26 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Mar 19 17:05:35 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -164,28 +164,6 @@
                           <widget class="GtkHBox" id="hbox5">
                             <property name="visible">True</property>
                             <child>
-                              <widget class="GtkButton" id="zoom_in_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text">Zoom In</property>
-                                <property name="border_width">2</property>
-                                <property name="response_id">0</property>
-                                <signal name="clicked" handler="zoom_in"/>
-                                <child>
-                                  <widget class="GtkImage" id="image1">
-                                    <property name="visible">True</property>
-                                    <property name="stock">gtk-zoom-in</property>
-                                    <property name="icon_size">1</property>
-                                  </widget>
-                                </child>
-                              </widget>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                              </packing>
-                            </child>
-                            <child>
                               <widget class="GtkButton" id="zoom_out_button">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -205,7 +183,44 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkHScale" id="zoom_scale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="update_policy">GTK_UPDATE_DISCONTINUOUS</property>
+                                <property name="adjustment">3 0 6 1 1 1</property>
+                                <property name="restrict_to_fill_level">False</property>
+                                <property name="fill_level">6</property>
+                                <property name="digits">0</property>
+                                <signal name="format_value" handler="format_zoomlevel"/>
+                              </widget>
+                              <packing>
                                 <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkButton" id="zoom_in_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text">Zoom In</property>
+                                <property name="border_width">2</property>
+                                <property name="response_id">0</property>
+                                <signal name="clicked" handler="zoom_in"/>
+                                <child>
+                                  <widget class="GtkImage" id="image1">
+                                    <property name="visible">True</property>
+                                    <property name="stock">gtk-zoom-in</property>
+                                    <property name="icon_size">1</property>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </widget>
@@ -215,7 +230,8 @@
                     <child>
                       <widget class="GtkLabel" id="label3">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">&lt;i&gt;View&lt;/i&gt;</property>
+                        <property name="xpad">3</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Zoom&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
                       <packing>
@@ -362,6 +378,7 @@
                     <child>
                       <widget class="GtkLabel" id="label5">
                         <property name="visible">True</property>
+                        <property name="xpad">3</property>
                         <property name="label" translatable="yes">&lt;i&gt;Graphics&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
@@ -442,6 +459,7 @@
                     <child>
                       <widget class="GtkLabel" id="label4">
                         <property name="visible">True</property>
+                        <property name="xpad">3</property>
                         <property name="label" translatable="yes">&lt;i&gt;Highlighting&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
@@ -486,6 +504,7 @@
                     <child>
                       <widget class="GtkLabel" id="label6">
                         <property name="visible">True</property>
+                        <property name="xpad">3</property>
                         <property name="label" translatable="yes">&lt;i&gt;Other&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>

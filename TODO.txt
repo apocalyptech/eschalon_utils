@@ -48,7 +48,6 @@ Map GUI
  * There are some Tree graphics stored in set B which don't get turned off
    with our "Trees" toggle.  This is especially noticeable in, for instance,
    41.map, where the "Trees" toggle basically does nothing.
- * Slider bar for zoom, in addition to buttons
 
 Internal
 --------
