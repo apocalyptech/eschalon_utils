@@ -49,6 +49,7 @@ Map GUI
    with our "Trees" toggle.  This is especially noticeable in, for instance,
    41.map, where the "Trees" toggle basically does nothing.
  * Change background color, like we do for selection in the square window
+ * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
 
 Internal
 --------
