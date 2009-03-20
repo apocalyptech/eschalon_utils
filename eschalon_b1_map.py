@@ -26,60 +26,58 @@ from eschalonb1.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
-    progname = 'eschalon_b1_char.py'
+    progname = 'eschalon_b1_map.py'
     print
     print "To launch the GUI:"
-    print "\t%s [<charfile>]" % (progname)
+    print "\t%s [<mapfile>]" % (progname)
     print
-    print "To list character attributes on the console:"
-    print "\t%s -l [-s <all|stats|avatar|magic|equip|inv>] [-u] <charfile>" % (progname)
-    print "\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)
-    print
-    print "To manipulate character data from the console:"
-    print "\t%s [--set-gold=<num>] [--rm-disease]" % (progname)
-    print "\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]"
-    print "\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>"
+    print "To list map attributes on the console:"
+    print "\t%s -l [-s <squares|scripts|txtmap>] [-u] <mapfile>" % (progname)
+    print "\t%s --list [--show=<squares|...>] [--unknowns] <mapfile>" % (progname)
     print
     if (full):
-        print "Wherever <charfile> appears in the above, you should specify the"
-        print "location of the file named 'char' inside your savegame folder."
+        print "Wherever <mapfile> appears in the above, you should specify the"
+        print "location of the file named with a '.map' extension.  This utility"
+        print "can load both maps that are inside your savegame folder, and the"
+        print "stock maps in Eschalon Book 1's 'data' directory."
         print
         print "By default, the application will launch the GUI.  Note that"
-        print "specifying a character file is optional when you're launching"
+        print "specifying a map file is optional when you're launching"
         print "the GUI, but required when using any of the other commandline"
         print "options."
         print
-        print "For a textual representation of the charfile instead, use -l or"
-        print "--list."
+        print "For a textual representation of the map instead, use -l or"
+        print "--list.  Note that the commandline options aren't terribly useful,"
+        print "but you'll at least get some information out of them."
         print
-        print "To only show a listing of specific character information, use"
-        print "the -s or --show option, which can be specified more than once."
-        print "For instance, to show both the basic character stats and the"
-        print "character's magic information, you would use:"
+        print "By default, the --list option will only show the basic map"
+        print "information.  To get a text listing of the attributes of every"
+        print "single square on the map (you'll probabably want to redirect this"
+        print "to a file, since there are 20,000 squares in an Eschalon map,"
+        print "though the utility will skip empty squares), you would use:"
         print
-        print "\t%s -l -s stats -s magic <charfile>" % (progname)
+        print "\t%s -l -s squares <mapfile>" % (progname)
         print "\tor"
-        print "\t%s --list --show=stats --show=magic <charfile>" % (progname)
+        print "\t%s --list --show=squares <mapfile>" % (progname)
         print
-        print "Currently, the following arguments are valid for --show:"
-        print
-        print "\tall - Show all information (this is the default)"
-        print "\tstats - Base Character Statistics"
-        print "\tavatar - Avatar information"
-        print "\tmagic - Magic information"
-        print "\tequip - Equipment information (armor, weapons, etc)"
-        print "\tinv - Inventory listings (including \"ready\" slots)"
+        print "If you wanted a listing of all the scripts in the map, specify"
+        print "'scripts' instead of 'squares'."
         print
         print "When being shown the listing, specify -u or --unknowns to"
-        print "also show unknown data from the charfile."
+        print "also show unknown data from the map file."
         print
-        print "There are a few options to set your character's gold level, hitpoints,"
-        print "mana, and remove any diseases.  These should be fairly self-explanatory."
-        print "Note that equipped items on your character may increase your effective"
-        print "HP or MP, so even if this util reports that you're at your maximum HP,"
-        print "you may find that you're slightly off when you enter the game.  Using the"
-        print "--set-hp-max or --set-mana-max options will also bring your current HP or"
-        print "MP up to the new Max level."
+        print "I left in the first visual feature I implemented, which is a text"
+        print "view of the map, which'll simply draw an asterisk where there's"
+        print "a wall, and blank otherwise.  You'll need a really tiny console"
+        print "font and a largeish console window for this to make sense.  On my"
+        print "system's xterm, the 'tiny' font setting seemed about good enough."
+        print "This option's even less useful than the other console options, of"
+        print "course, but I'll leave it in regardless.  To show the text-based"
+        print "map:"
+        print
+        print "\t%s -l -s txtmap <mapfile>" % (progname)
+        print "\tor"
+        print "\t%s --list --show=txtmap <mapfile>" % (progname)
         print
         print "Additionally, you may use -h or --help to view this message"
     else:
@@ -127,9 +125,7 @@ def main(argv=None):
             options['gui'] = False
             options['list'] = True
         elif (o in ('-s', '--show')):
-            if (a == 'all' or a == ''):
-                options['listoptions']['all'] = True
-            elif (a == 'squares'):
+            if (a == 'squares'):
                 options['listoptions']['squares'] = True
             elif (a == 'scripts'):
                 options['listoptions']['scripts'] = True

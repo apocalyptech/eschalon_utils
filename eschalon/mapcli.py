@@ -109,7 +109,7 @@ class MapCLI(object):
             if (i % 2 == 0):
                 sys.stdout.write(' ')
             for square in row:
-                if square.wall:
+                if (square.wall > 0):
                     sys.stdout.write('* ')
                 else:
                     sys.stdout.write('  ')
@@ -139,9 +139,11 @@ class MapCLI(object):
             self.display_scripts(unknowns)
 
         if (listoptions['txtmap']):
-            print "Note: you need a really small font for this to make any sense."
+            print "Note: you need a really small font and a rather large console"
+            print "for this to make any sense."
             self.display_txtmap()
-            print "Note: you need a really small font for this to make any sense."
+            print "Note: you need a really small font and a rather large console"
+            print "for this to make any sense."
 
         if (unknowns):
             self.display_unknowns()
