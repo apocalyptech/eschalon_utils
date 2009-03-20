@@ -1,31 +1,19 @@
 # ChangeLog for Eschalon Book 1 Character Editor
 
+*eschalon_b1_utils-0.4.0 (20 Mar 2009)
+
+   04 Dec 2008 - 20 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
+   Implementation of map GUI interface (with a few months' break
+   in there, for good measure)
+
    10 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Merged in bugfix from 0.3.1 release
 
-   25 Feb - 9 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
-   Implementation of basic map editing
-
-   5 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
-   "Export to PNG" option in map editor
-
-   24 Feb 2009; CJ Kucera <pez@apocalyptech.com> :
-   Converted from GDK to Cairo for map drawing
-
-   16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
-   Preferences fully implemented on Linux
-
-   08 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
-   Initial support for preferences screen
-
-   04 Dec - 16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
-   Initial map GUI interface
-
-   04 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
-   Information functions return strings instead of printing
+   08 Dec - 16 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
+   Preferences screen added to app
 
    30 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
-   Character pictures in GUI; Character picture lookup page
+   Avatar graphics in GUI; Avatar graphic lookup page
 
    29 Nov 2008; CJ Kucera <pez@apocalyptech.com> :
    Items in character editor now display the in-game icons
@@ -34,7 +22,7 @@
    25 Nov - 01 Dec 2008; CJ Kucera <pez@apocalyptech.com> :
    Initial support for reading map data
 
-*eschalon_b1_char-0.3.1 (19 Feb 2009)
+*eschalon_b1_utils-0.3.1 (19 Feb 2009)
 
    19 Feb 2009; CJ Kucera <pez@apocalyptech.com> :
    Some versions of Eschalon omit some data from the character file, which
