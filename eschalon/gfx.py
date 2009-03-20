@@ -25,44 +25,10 @@ import math
 import zlib
 import cairo
 import gobject
+import StringIO
 from struct import unpack
 from eschalonb1 import entitytable
 from eschalonb1.savefile import Savefile, LoadException
-
-class GfxCairoHelper(object):
-    """
-    A file-like class to load in PNG data to a Cairo surface, since
-    PyCairo apparently only exports the function to load in PNG data from a file.
-    """
-    def __init__(self, data):
-        self.data = data
-        self.pos = 0
-
-    def read(self, sizehint=-1):
-        if (self.pos >= len(self.data)):
-            return None
-        if (sizehint < 0):
-            newpos = len(self.data)
-        else:
-            newpos = min(self.pos + sizehint, len(self.data))
-        data = self.data[self.pos:newpos]
-        self.pos = newpos
-        return data
-
-class GfxGDKHelper(object):
-    """
-    A file-like class to read in PNG data from a Cairo surface, essentially
-    to export a Cairo surface to a GDK Pixbuf.  Inefficient, of course, so
-    try not to do that much.  We're doing so in the character editor, though,
-    because using DrawingAreas and Cairo objects for that stuff would be
-    just ludicrous.
-    """
-    def __init__(self):
-        self.datalist = []
-    def write(self, data):
-        self.datalist.append(data)
-    def getdata(self):
-        return ''.join(self.datalist)
 
 class GfxCache(object):
     """
@@ -75,7 +41,7 @@ class GfxCache(object):
 
     def __init__(self, pngdata, width, height, cols):
         # First load the data as a Cairo surface
-        self.surface = cairo.ImageSurface.create_from_png(GfxCairoHelper(pngdata))
+        self.surface = cairo.ImageSurface.create_from_png(StringIO.StringIO(pngdata))
 
         # For ease-of-use, we're also going to import it to a GDK Pixbuf
         # This shouldn't hurt performance really since there's only a few files
@@ -395,11 +361,15 @@ class Gfx(object):
     def surface_to_pixbuf(self, surface):
         """
         Helper function to convert a Cairo surface to a GDK Pixbuf.  It's
-        very slow, don't use it if you need speed.
+        very slow, don't use it if you need speed.  It's probably about as
+        fast as you're going to get, though, since every other method I've
+        found would require you to loop through and fix each pixel in the
+        pixbuf afterwards.
         """
-        gdkhelper = GfxGDKHelper()
-        surface.write_to_png(gdkhelper)
+        df = StringIO.StringIO()
+        surface.write_to_png(df)
         loader = gtk.gdk.PixbufLoader()
-        loader.write(gdkhelper.getdata())
+        loader.write(df.getvalue())
         loader.close()
+        df.close()
         return loader.get_pixbuf()
