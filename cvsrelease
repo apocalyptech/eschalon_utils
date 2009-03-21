@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Just a little script to sanitize the package before releasing
+
+rm -rf resources
+rm -rf ignore
+rm -f cvsrelease
