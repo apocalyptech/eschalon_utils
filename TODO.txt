@@ -26,7 +26,6 @@ Character GUI
  * Mouseover notification of previous values (for changed values)
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
- * Sort spell dropdowns?
 
 Map GUI
 -------
