@@ -1,6 +1,6 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
-*eschalon_b1_utils-0.4.0 (20 Mar 2009)
+*eschalon_b1_utils-0.4.0 (21 Mar 2009)
 
    04 Dec 2008 - 20 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Implementation of map GUI interface (with a few months' break
