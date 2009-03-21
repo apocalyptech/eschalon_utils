@@ -102,10 +102,11 @@ gtk+ Runtime:
   http://sourceforge.net/project/showfiles.php?group_id=98754&package_id=121281
   Note that this version, from the gladewin32 Sourceforge project, is the
   main officially-blessed gtk+ runtime endorsed by PyGTK, so it's the best to
-  use.  You can get it working with other gtk+ runtime packages, but you'll
+  use.  It includes Cairo, so a separate Cairo installation is not required.
+  You can get it working with other gtk+ runtime packages, but you'll
   have to do more work for not a lot of gain.  If you DO have other gtk+
   runtimes installed, certainly be careful about installing this one
-  side-by-side.  You probably only want one installed at any given time.
+  side-by-side.  You probably only want one active at any given time.
 
 Python:
   http://python.org/download/releases/2.6.1/
