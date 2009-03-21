@@ -2,6 +2,9 @@
 #
 # Just a little script to sanitize the package before releasing
 
+echo "Cleaning package before releasing"
+find . -name .cvsignore -exec rm {} \;
 rm -rf resources
 rm -rf ignore
 rm -f cvsrelease
+echo "... done"
