@@ -56,6 +56,23 @@ One other note: Certainly let me know if you use this on other architectures
 game has a set endianness to its values or not, which could possibly weird
 some stuff out.
 
+INSTALLATION, GENERAL
+---------------------
+
+The map editor component of this package requires that an Eschalon install
+directory be present on your system.  The application will try to locate it
+on its own, but if the installation directory isn't found, you'll be
+prompted to provide the location.  The character editor can now use the
+Eschalon game directory to do image lookups of its own, but it doesn't
+actually require the directory to be present.
+
+Both the map editor and the character editor have a preferences screen (which
+write to the same config file, so the same configuration applies to both
+programs) where the game directory can be set, in addition to your savefile
+directory (which the program will also try to auto-detect).  The savefile
+directory is basically just used as the directory the "Open" dialog will
+default to.  The setting doesn't currently control anything else.
+
 INSTALLATION, LINUX
 -------------------
 
