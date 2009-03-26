@@ -131,6 +131,7 @@ class MapGUI(BaseGUI):
                 'on_save_as': self.on_save_as,
                 'on_export_clicked': self.on_export_clicked,
                 'on_clicked': self.on_clicked,
+                'on_released': self.on_released,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
                 'format_zoomlevel': self.format_zoomlevel,
@@ -178,6 +179,7 @@ class MapGUI(BaseGUI):
         self.prev_scroll_h_max = -1
         self.prev_scroll_v_cur = -1
         self.prev_scroll_v_max = -1
+        self.holding = False
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -865,6 +867,29 @@ class MapGUI(BaseGUI):
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
 
+        if (self.holding):
+            diff_x = self.hold_x - event.x_root
+            diff_y = self.hold_y - event.y_root
+            if (diff_x != 0):
+                adjust = self.mainscroll.get_hadjustment()
+                newvalue = adjust.get_value() + diff_x
+                if (newvalue < adjust.lower):
+                    newvalue = adjust.lower
+                elif (newvalue > adjust.upper-adjust.page_size):
+                    newvalue = adjust.upper-adjust.page_size
+                adjust.set_value(newvalue)
+            if (diff_y != 0):
+                adjust = self.mainscroll.get_vadjustment()
+                newvalue = adjust.get_value() + diff_y
+                if (newvalue < adjust.lower):
+                    newvalue = adjust.lower
+                elif (newvalue > adjust.upper-adjust.page_size):
+                    newvalue = adjust.upper-adjust.page_size
+                adjust.set_value(newvalue)
+            self.hold_x = event.x_root
+            self.hold_y = event.y_root
+            return
+
         # What x/y values we start with
         start_x = int(event.x/self.z_width)
         start_y = int(event.y/self.z_height)
@@ -1435,12 +1460,23 @@ class MapGUI(BaseGUI):
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
+        if (event.button == 1):
+            adjust = self.mainscroll.get_hadjustment()
+            self.holding = True
+            self.hold_x = event.x_root
+            self.hold_y = event.y_root
+            self.diff_x = 0
+            self.diff_y = 0
+        else:
+            if (self.sq_y < len(self.map.squares)):
+                if (self.sq_x < len(self.map.squares[self.sq_y])):
+                    self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
+                    self.get_widget('squarelabel').set_markup('<b>Map Square (%d, %d)</b>' % (self.sq_x, self.sq_y))
+                    self.squarewindow.show()
 
-        if (self.sq_y < len(self.map.squares)):
-            if (self.sq_x < len(self.map.squares[self.sq_y])):
-                self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
-                self.get_widget('squarelabel').set_markup('<b>Map Square (%d, %d)</b>' % (self.sq_x, self.sq_y))
-                self.squarewindow.show()
+    def on_released(self, widget, event):
+        if (event.button == 1):
+            self.holding = False
 
     def map_toggle(self, widget):
         self.draw_map()
