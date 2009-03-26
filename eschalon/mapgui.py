@@ -53,6 +53,9 @@ from eschalonb1 import app_name, version, url, authors, entitytable
 
 class MapGUI(BaseGUI):
 
+    MODE_EDIT = 0
+    MODE_MOVE = 1
+
     def __init__(self, options, prefs):
         self.options = options
         self.prefs = prefs
@@ -108,8 +111,20 @@ class MapGUI(BaseGUI):
         self.itemsel = self.get_widget('itemselwindow')
         self.floorsel = self.get_widget('floorselwindow')
         self.composite_area = self.get_widget('composite_area')
+        self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
+        self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
+
+        # The glade setting here doesn't seem to actually work
+        self.get_widget('ctl_edit_toggle').set_property('draw-indicator', False)
+        self.get_widget('ctl_move_toggle').set_property('draw-indicator', False)
+
+        # Cursors for our editing modes
+        self.edit_mode = self.MODE_EDIT
+        self.cursor_edit = None
+        self.cursor_move = gtk.gdk.Cursor(gtk.gdk.FLEUR)
+        self.cursor_move_drag = gtk.gdk.Cursor(gtk.gdk.DOT)
 
         # Initialize item stuff
         self.curitemtype = self.ITEM_MAP
@@ -132,6 +147,7 @@ class MapGUI(BaseGUI):
                 'on_export_clicked': self.on_export_clicked,
                 'on_clicked': self.on_clicked,
                 'on_released': self.on_released,
+                'on_control_toggle': self.on_control_toggle,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
                 'format_zoomlevel': self.format_zoomlevel,
@@ -867,7 +883,7 @@ class MapGUI(BaseGUI):
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
 
-        if (self.holding):
+        if (self.edit_mode == self.MODE_MOVE and self.holding):
             diff_x = self.hold_x - event.x_root
             diff_y = self.hold_y - event.y_root
             if (diff_x != 0):
@@ -1458,15 +1474,29 @@ class MapGUI(BaseGUI):
         self.load_objsel_vars(widget)
         self.imgsel_on_motion(widget, event)
 
+    def on_control_toggle(self, widget):
+        clicked = widget.get_name()
+        if (widget.get_active()):
+            if (clicked == 'ctl_edit_toggle'):
+                self.maparea.window.set_cursor(self.cursor_edit)
+                self.edit_mode = self.MODE_EDIT
+            elif (clicked == 'ctl_move_toggle'):
+                self.maparea.window.set_cursor(self.cursor_move)
+                self.edit_mode = self.MODE_MOVE
+            else:
+                # TODO: Except here or something
+                print "Unknown control toggled, should never get here"
+
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
-        if (event.button == 1):
+        if (self.edit_mode == self.MODE_MOVE and event.button == 1):
             adjust = self.mainscroll.get_hadjustment()
             self.holding = True
             self.hold_x = event.x_root
             self.hold_y = event.y_root
             self.diff_x = 0
             self.diff_y = 0
+            self.maparea.window.set_cursor(self.cursor_move_drag)
         else:
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
@@ -1475,8 +1505,9 @@ class MapGUI(BaseGUI):
                     self.squarewindow.show()
 
     def on_released(self, widget, event):
-        if (event.button == 1):
+        if (self.edit_mode == self.MODE_MOVE and event.button == 1):
             self.holding = False
+            self.maparea.window.set_cursor(self.cursor_move)
 
     def map_toggle(self, widget):
         self.draw_map()
