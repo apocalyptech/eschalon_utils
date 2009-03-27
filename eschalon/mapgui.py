@@ -148,6 +148,7 @@ class MapGUI(BaseGUI):
                 'on_clicked': self.on_clicked,
                 'on_released': self.on_released,
                 'on_control_toggle': self.on_control_toggle,
+                'key_handler': self.key_handler,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
                 'format_zoomlevel': self.format_zoomlevel,
@@ -187,6 +188,11 @@ class MapGUI(BaseGUI):
         # should be fine here, anyway.
         self.wTree.signal_autoconnect(dic)
         self.itemwTree.signal_autoconnect(dic)
+
+        # Event mask for processing hotkeys
+        # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
+        self.keymask = gtk.gdk.CONTROL_MASK|gtk.gdk.MOD1_MASK|gtk.gdk.MOD3_MASK
+        self.keymask |= gtk.gdk.MOD4_MASK|gtk.gdk.MOD5_MASK
 
         # Manually connect a couple more signals that Glade can't handle for us automatically
         self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
@@ -287,6 +293,16 @@ class MapGUI(BaseGUI):
     def putstatus(self, text):
         """ Pushes a message to the status bar """
         self.statusbar.push(self.sbcontext, text)
+
+    def key_handler(self, widget, event):
+        """ Handles keypresses, which we'll use to simplify selecting drawing stuff. """
+        # TODO: check for Bad Things if we change while dragging, etc
+        if (event.keyval < 256 and (event.state & self.keymask) == 0):
+            key = chr(event.keyval).lower()
+            if (key == 'm'):
+                self.ctl_move_toggle.set_active(True)
+            elif (key == 'e'):
+                self.ctl_edit_toggle.set_active(True)
 
     def on_revert(self, widget):
         """ What to do when we're told to revert. """
@@ -883,7 +899,7 @@ class MapGUI(BaseGUI):
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
 
-        if (self.edit_mode == self.MODE_MOVE and self.holding):
+        if (self.holding):
             diff_x = self.hold_x - event.x_root
             diff_y = self.hold_y - event.y_root
             if (diff_x != 0):
@@ -1489,7 +1505,9 @@ class MapGUI(BaseGUI):
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
-        if (self.edit_mode == self.MODE_MOVE and event.button == 1):
+        # TODO: verify button numbers on, say, non-three-button mice
+        if ((self.edit_mode == self.MODE_MOVE and event.button == 1) or
+            (self.edit_mode == self.MODE_EDIT and event.button == 3)):
             adjust = self.mainscroll.get_hadjustment()
             self.holding = True
             self.hold_x = event.x_root
@@ -1505,9 +1523,12 @@ class MapGUI(BaseGUI):
                     self.squarewindow.show()
 
     def on_released(self, widget, event):
-        if (self.edit_mode == self.MODE_MOVE and event.button == 1):
+        if (self.holding):
             self.holding = False
-            self.maparea.window.set_cursor(self.cursor_move)
+            if (self.edit_mode == self.MODE_MOVE):
+                self.maparea.window.set_cursor(self.cursor_move)
+            else:
+                self.maparea.window.set_cursor(self.cursor_edit)
 
     def map_toggle(self, widget):
         self.draw_map()
