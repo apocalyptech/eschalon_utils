@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   26 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
+   Use checkboxes instead of buttons for main rendering options
+   Remove "Map Properites" button (only accessible via File menu now)
+
    25 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Initial grab-and-drag support
 
