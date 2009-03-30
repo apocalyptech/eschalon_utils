@@ -29,7 +29,7 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
         'Square', 'Mapscript',
-        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'diseasetable', 'entitytable' ]
+        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'entitytable' ]
 
 # Lookup tables
 attrtable = {
@@ -185,6 +185,22 @@ statustable = {
         23: 'Off-Balance',
         24: 'Mana Fortified',
         25: 'Greater Protection'
+    }
+traptable = {
+        0: 'none',
+        1: 'Poison Dart',
+        2: 'Bixby\'s Noxious Cloud',
+        3: 'Powder Blast',
+        4: 'Festering Stew',
+        5: 'Naga Bite',
+        6: 'Acid Bath',
+        7: 'Hellfire',
+        8: 'Plaguebath'
+    }
+containertable = {
+        0: 'smashed',
+        1: 'closed',
+        2: 'open'
     }
 # Note that diseases are stored as bit flags
 diseasetable = {

@@ -14,8 +14,7 @@ Data
  * Decode "savename" file format (this is where current-map and actual
    position information is kept, and also quest status, I suspect)
  * A lot of values for maps remain unknown to me.  Some things to look
-   for: luminosity (light in square in Blackwater, for instance),
-   traps, lock difficulties, etc.
+   for: luminosity (light in square in Blackwater, for instance)...
 
 Character GUI
 -------------
@@ -50,6 +49,8 @@ Map GUI
    41.map, where the "Trees" toggle basically does nothing.
  * Change background color, like we do for selection in the square window
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
+ * Maybe define a "MapAction" class or something, so that we can support
+   undo/redo
 
 Internal
 --------

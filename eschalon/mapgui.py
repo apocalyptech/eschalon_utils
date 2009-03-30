@@ -24,6 +24,7 @@ import sys
 import time
 import cairo
 import gobject
+from eschalonb1 import traptable, containertable
 from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
@@ -1035,7 +1036,7 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
-    def input_spin(self, page, table, row, name, text, max):
+    def input_spin(self, page, table, row, name, text, max, tooltip=None):
         self.input_label(page, table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
@@ -1048,20 +1049,56 @@ class MapGUI(BaseGUI):
         if (script is not None):
             entry.set_value(script.__dict__[name])
         entry.connect('value-changed', self.on_script_int_changed)
+        if (tooltip is not None):
+            tips = gtk.Tooltips()
+            tips.set_tip(entry, tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
-    def input_short(self, page, table, row, name, text):
-        self.input_spin(page, table, row, name, text, 65535)
+    def input_uchar(self, page, table, row, name, text, tooltip=None):
+        self.input_spin(page, table, row, name, text, 255, tooltip)
 
-    def input_int(self, page, table, row, name, text):
-        self.input_spin(page, table, row, name, text, 4294967295)
+    def input_short(self, page, table, row, name, text, tooltip=None):
+        self.input_spin(page, table, row, name, text, 65535, tooltip)
+
+    def input_int(self, page, table, row, name, text, tooltip=None):
+        self.input_spin(page, table, row, name, text, 4294967295, tooltip)
+
+    def input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
+        self.input_label(page, table, row, name, text)
+        align = gtk.Alignment(0, 0.5, 0, 1)
+        align.show()
+        entry = gtk.combo_box_new_text()
+        entry.show()
+        entry.set_name('%s_%d' % (name, page))
+        for value in values:
+            entry.append_text(value)
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            entry.set_active(script.__dict__[name])
+        if (signal is not None):
+            entry.connect('changed', signal)
+        else:
+            entry.connect('changed', self.on_dropdown_changed)
+        if (tooltip is not None):
+            tips = gtk.Tooltips()
+            tips.set_tip(entry, tooltip)
+        align.add(entry)
+        table.attach(align, 2, 3, row, row+1)
 
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
         item = self.map.squares[self.sq_y][self.sq_x].scripts[page].items[num]
         self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
+
+    def on_script_dropdown_changed(self, widget):
+        """ Handle the trap dropdown change. """
+        wname = widget.get_name()
+        (varname, page) = wname.rsplit('_', 2)
+        page = int(page)
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script.__dict__[wname] = widget.get_active()
 
     def on_mapitem_clicked(self, widget, doshow=True):
         """ What to do when our item button is clicked. """
@@ -1106,6 +1143,17 @@ class MapGUI(BaseGUI):
         else:
             raise Exception('invalid action')
 
+    def script_group_box(self, markup):
+        box = gtk.VBox()
+        box.show()
+        header = gtk.Label()
+        header.show()
+        header.set_markup(markup)
+        header.set_alignment(0, 0.5)
+        header.set_padding(10, 7)
+        box.pack_start(header, False, False)
+        return box
+
     def append_script_notebook(self, script):
         """
         Given a script, adds a new tab to the script notebook, with
@@ -1139,22 +1187,13 @@ class MapGUI(BaseGUI):
         remove_align.add(remove_button)
 
         # Basic Information
-        basic_box = gtk.VBox()
-        basic_box.show()
-        basic_header = gtk.Label()
-        basic_header.show()
-        basic_header.set_markup('<b>Basic Information</b>')
-        basic_header.set_alignment(0, 0.5)
-        basic_header.set_padding(10, 7)
-        basic_box.pack_start(basic_header, False, False)
-
-        # Basic Table
-        binput = gtk.Table(11, 3)
+        basic_box = self.script_group_box('<b>Basic Information</b>')
+        binput = gtk.Table(8, 3)
         binput.show()
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        binput.attach(spacer, 0, 1, 0, 11, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        binput.attach(spacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL|gtk.EXPAND)
         basic_box.pack_start(binput, False, False)
 
         # Basic Inputs
@@ -1166,26 +1205,23 @@ class MapGUI(BaseGUI):
                 'coordinates within the map specified above, if this is a portal '
                 'square.  The coordinate "(56, 129)" would be written "12956"')
         self.input_text(curpages, binput, 2, 'script', 'Script')
-        self.input_short(curpages, binput, 3, 'flags', 'Flags <i>(probably)</i>')
-        self.input_short(curpages, binput, 4, 'unknownh1', '<i>Unknown 1</i>')
-        self.input_short(curpages, binput, 5, 'unknownh2', '<i>Unknown 2</i>')
-        self.input_short(curpages, binput, 6, 'unknownh3', '<i>Unknown 3</i>')
-        self.input_short(curpages, binput, 7, 'zeroh1', '<i>Usually Zero 1</i>')
-        self.input_int(curpages, binput, 8, 'zeroi1', '<i>Usually Zero 2</i>')
-        self.input_int(curpages, binput, 9, 'zeroi2', '<i>Usually Zero 3</i>')
-        self.input_int(curpages, binput, 10, 'zeroi3', '<i>Usually Zero 4</i>')
+
+        # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
+        if (square.scripts[curpages].trap in traptable.keys()):
+            self.input_dropdown(curpages, binput, 4, 'trap', 'Trap', traptable.values(), None, self.on_script_dropdown_changed)
+        else:
+            self.input_uchar(curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
+
+        # We special-case this just in case
+        if (square.scripts[curpages].state in containertable.keys()):
+            self.input_dropdown(curpages, binput, 5, 'state', 'State <i>(if container or door)</i>', containertable.values(), None, self.on_script_dropdown_changed)
+        else:
+            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 2 ordinarily.  The  current container state is undefined.')
+        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 30 is the highest in the game, and 99 denotes a slider lock')
+        self.input_uchar(curpages, binput, 7, 'other', 'Other <i>(slider combination)</i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
         # Contents
-        contents_box = gtk.VBox()
-        contents_box.show()
-        contents_header = gtk.Label()
-        contents_header.show()
-        contents_header.set_markup('<b>Contents</b> <i>(If Container)</i>')
-        contents_header.set_alignment(0, 0.5)
-        contents_header.set_padding(10, 7)
-        contents_box.pack_start(contents_header, False, False)
-
-        # Contents Table
+        contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
         cinput = gtk.Table(8, 3)
         self.register_widget('itemtable_%d' % (curpages), cinput, True)
         cinput.show()
@@ -1206,12 +1242,31 @@ class MapGUI(BaseGUI):
             for num in range(8):
                 self.input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
 
+        # Unknowns
+        unknown_box = self.script_group_box('<b>Unknowns</b>')
+        uinput = gtk.Table(6, 3)
+        uinput.show()
+        spacer = gtk.Label('')
+        spacer.show()
+        spacer.set_padding(11, 0)
+        uinput.attach(spacer, 0, 1, 0, 6, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        unknown_box.pack_start(uinput, False, False)
+
+        # Data in Unknowns block
+        self.input_short(curpages, uinput, 0, 'unknownh1', '<i>Unknown 1</i>')
+        self.input_short(curpages, uinput, 1, 'unknownh3', '<i>Unknown 3</i>')
+        self.input_short(curpages, uinput, 2, 'zeroh1', '<i>Usually Zero 1</i>')
+        self.input_int(curpages, uinput, 3, 'zeroi1', '<i>Usually Zero 2</i>')
+        self.input_int(curpages, uinput, 4, 'zeroi2', '<i>Usually Zero 3</i>')
+        self.input_int(curpages, uinput, 5, 'zeroi3', '<i>Usually Zero 4</i>')
+
         # Tab Content
         content = gtk.VBox()
         content.show()
         content.pack_start(remove_align, False, False)
         content.pack_start(basic_box, False, False)
         content.pack_start(contents_box, False, False)
+        content.pack_start(unknown_box, False, False)
 
         # ... aand we should slap this all into a scrolledwindow
         sw = gtk.ScrolledWindow()

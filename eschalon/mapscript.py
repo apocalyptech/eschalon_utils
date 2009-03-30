@@ -20,6 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
+from eschalonb1 import traptable, containertable
 from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
@@ -45,8 +46,10 @@ class Mapscript(object):
         self.unknownh1 = -1
         self.zeroi2 = -1
         self.zeroi3 = -1
-        self.unknownh2 = -1
-        self.flags = -1
+        self.lock = -1
+        self.trap = -1
+        self.state = -1
+        self.other = -1
         self.unknownh3 = -1
         self.script = ''
 
@@ -63,8 +66,10 @@ class Mapscript(object):
         self.unknownh1 = 0
         self.zeroi2 = 0
         self.zeroi3 = 0
-        self.unknownh2 = 0
-        self.flags = 0
+        self.lock = 0
+        self.trap = 0
+        self.state = 0
+        self.other = 0
         self.unknownh3 = 0
         self.script = ''
 
@@ -87,8 +92,10 @@ class Mapscript(object):
         newmapscript.unknownh1 = self.unknownh1
         newmapscript.zeroi2 = self.zeroi2
         newmapscript.zeroi3 = self.zeroi3
-        newmapscript.unknownh2 = self.unknownh2
-        newmapscript.flags = self.flags
+        newmapscript.lock = self.lock
+        newmapscript.trap = self.trap
+        newmapscript.state = self.state
+        newmapscript.other = self.other
         newmapscript.unknownh3 = self.unknownh3
         newmapscript.script = self.script
 
@@ -121,8 +128,10 @@ class Mapscript(object):
         self.unknownh1 = df.readshort()
         self.zeroi2 = df.readint()
         self.zeroi3 = df.readint()
-        self.unknownh2 = df.readshort()
-        self.flags = df.readshort()
+        self.lock = df.readuchar()
+        self.trap = df.readuchar()
+        self.other = df.readuchar()
+        self.state = df.readuchar()
         self.unknownh3 = df.readshort()
         self.script = df.readstr()
 
@@ -145,8 +154,10 @@ class Mapscript(object):
         df.writeshort(self.unknownh1)
         df.writeint(self.zeroi2)
         df.writeint(self.zeroi3)
-        df.writeshort(self.unknownh2)
-        df.writeshort(self.flags)
+        df.writeuchar(self.lock)
+        df.writeuchar(self.trap)
+        df.writeshort(self.other)
+        df.writeshort(self.state)
         df.writeshort(self.unknownh3)
         df.writestr(self.script)
 
@@ -165,14 +176,22 @@ class Mapscript(object):
         ret.append("\tDescription / Map Link: %s" % self.description)
         ret.append("\tExtra Text / Map Link Destination: %s" % self.extratext)
         ret.append("\tScript: %s" % self.script)
+        ret.append("\tLock Level: %d" % self.lock)
+        if (self.trap in traptable):
+            ret.append("\tTrapped: %s" % traptable[self.trap])
+        else:
+            ret.append("\tTrapped: %d (unknown)" % self.trap)
+        if (self.state in containertable):
+            ret.append("\tState: %s" % containertable[self.state])
+        else:
+            ret.append("\tState: %d (unknown)" % self.state)
+        ret.append("\tOther (code for slider locks): %d" % self.other)
         ret.append("\tContents:")
         for item in self.items:
             if (item.item_name != ''):
                 ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
-            ret.append("\tFlags (probably): %d 0x%04X" % (self.flags, self.flags))
             ret.append("\tUnknown Short 1: %d 0x%04X" % (self.unknownh1, self.unknownh1))
-            ret.append("\tUnknown Short 2: %d 0x%04X" % (self.unknownh2, self.unknownh2))
             ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
             ret.append("\tUsually Zero 1: %d" % (self.zeroh1))
             ret.append("\tUsually Zero 2: %d" % (self.zeroi1))

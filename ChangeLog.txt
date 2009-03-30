@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   29 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
+   Traps and locks deciphered for map scripts
+
    26 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Use checkboxes instead of buttons for main rendering options
    Remove "Map Properites" button (only accessible via File menu now)
