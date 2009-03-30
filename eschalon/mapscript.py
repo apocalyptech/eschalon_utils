@@ -156,8 +156,8 @@ class Mapscript(object):
         df.writeint(self.zeroi3)
         df.writeuchar(self.lock)
         df.writeuchar(self.trap)
-        df.writeshort(self.other)
-        df.writeshort(self.state)
+        df.writeuchar(self.other)
+        df.writeuchar(self.state)
         df.writeshort(self.unknownh3)
         df.writestr(self.script)
 
