@@ -1710,6 +1710,14 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
                 sq_ctx.paint()
                 drawn = True
+                # Check to see if we should draw a flame
+                if (square.decalimg == 52):
+                    pixbuf = self.gfx.get_flame(self.curzoom)
+                    if (pixbuf is not None):
+                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)
+                        yoffset = int(self.z_height*0.4)
+                        sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
+                        sq_ctx.paint()
 
         # Draw the object
         wallid = square.wallimg
@@ -1743,9 +1751,9 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
                 sq_ctx.paint()
                 drawn = True
-                # Check to see if we should draw a torch flame
+                # Check to see if we should draw a flame
                 if (square.walldecalimg == 17 or square.walldecalimg == 18):
-                    pixbuf = self.gfx.get_torch(self.curzoom)
+                    pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         xoffset = int(pixbuf.get_width()*0.3)
                         yoffset = int(self.z_height/4)
@@ -1833,6 +1841,10 @@ class MapGUI(BaseGUI):
             pixbuf = self.gfx.get_decal(square.decalimg, 52, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+            if (square.decalimg == 52):
+                pixbuf = self.gfx.get_flame(52, True)
+                if (pixbuf is not None):
+                    pixbuf.composite(comp_pixbuf, 17, 88, 18, 30, 17, 88, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.wallimg > 0):
             (pixbuf, pixheight) = self.gfx.get_object(square.wallimg, 52, True)
             if (pixbuf is not None):
@@ -1842,7 +1854,7 @@ class MapGUI(BaseGUI):
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 52, 52, 78, 0, 52, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if (square.walldecalimg == 17 or square.walldecalimg == 18):
-                pixbuf = self.gfx.get_torch(52, True)
+                pixbuf = self.gfx.get_flame(52, True)
                 if (pixbuf is not None):
                     if (square.walldecalimg == 17):
                         pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)

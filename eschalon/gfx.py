@@ -234,7 +234,7 @@ class Gfx(object):
         self.objdecalcache = None
         self.avatarcache = {}
         self.entcache = {}
-        self.torchcache = None
+        self.flamecache = None
 
         # wtf @ needing this
         self.treemap = {
@@ -327,16 +327,21 @@ class Gfx(object):
             self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
-    def get_torch(self, size=None, gdk=False):
-        if (self.torchcache is None):
+    def get_flame(self, size=None, gdk=False):
+        """
+        Grabs the flame graphic, so it's clear when viewing maps.  I provide my own
+        image here instead of using the game's because the file bundled with the game
+        doesn't have transparency information, and I don't feel like doing a conversion.
+        """
+        if (self.flamecache is None):
             df = open(os.path.join(os.path.dirname(__file__), 'torch_single.png'), 'rb')
-            torchdata = df.read()
+            flamedata = df.read()
             df.close()
-            self.torchcache = GfxEntCache(torchdata, 1, 1)
+            self.flamecache = GfxEntCache(flamedata, 1, 1)
         # TODO: I don't like hardcoding "52" here
         if (size is None):
             size = 52
-        return self.torchcache.getimg(1, int(size*self.torchcache.size_scale), gdk)
+        return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
         entnum = entitytable[entnum].gfxfile
