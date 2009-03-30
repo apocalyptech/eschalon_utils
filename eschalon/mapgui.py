@@ -1098,7 +1098,7 @@ class MapGUI(BaseGUI):
         (varname, page) = wname.rsplit('_', 2)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
-        script.__dict__[wname] = widget.get_active()
+        script.__dict__[varname] = widget.get_active()
 
     def on_mapitem_clicked(self, widget, doshow=True):
         """ What to do when our item button is clicked. """
@@ -1217,6 +1217,7 @@ class MapGUI(BaseGUI):
             self.input_dropdown(curpages, binput, 5, 'state', 'State <i>(if container or door)</i>', containertable.values(), None, self.on_script_dropdown_changed)
         else:
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 2 ordinarily.  The  current container state is undefined.')
+
         self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 30 is the highest in the game, and 99 denotes a slider lock')
         self.input_uchar(curpages, binput, 7, 'other', 'Other <i>(slider combination)</i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
