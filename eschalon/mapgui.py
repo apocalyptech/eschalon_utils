@@ -1214,9 +1214,9 @@ class MapGUI(BaseGUI):
 
         # We special-case this just in case
         if (square.scripts[curpages].state in containertable.keys()):
-            self.input_dropdown(curpages, binput, 5, 'state', 'State <i>(if container or door)</i>', containertable.values(), None, self.on_script_dropdown_changed)
+            self.input_dropdown(curpages, binput, 5, 'state', 'State <i><small>(if container, door, or switch)</small></i>', containertable.values(), None, self.on_script_dropdown_changed)
         else:
-            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 2 ordinarily.  The current container state is undefined.')
+            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
         self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock')
         self.input_uchar(curpages, binput, 7, 'other', 'Other <i>(slider combination)</i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
@@ -1255,7 +1255,7 @@ class MapGUI(BaseGUI):
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
-        self.input_uchar(curpages, uinput, 0, 'unknownu2', '<i>Unknown 2</i>')
+        self.input_uchar(curpages, uinput, 0, 'unknownu2', '<i>Unknown 2</i>', 'This value is almost always 64 for containers, and 0 for everything else.')
         self.input_short(curpages, uinput, 1, 'unknownh3', '<i>Unknown 3</i>')
         self.input_short(curpages, uinput, 2, 'zeroh1', '<i>Usually Zero 1</i>')
         self.input_int(curpages, uinput, 3, 'zeroi1', '<i>Usually Zero 2</i>')
@@ -1743,6 +1743,17 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
                 sq_ctx.paint()
                 drawn = True
+                # Check to see if we should draw a torch flame
+                if (square.walldecalimg == 17 or square.walldecalimg == 18):
+                    pixbuf = self.gfx.get_torch(self.curzoom)
+                    if (pixbuf is not None):
+                        xoffset = int(pixbuf.get_width()*0.3)
+                        yoffset = int(self.z_height/4)
+                        if (square.walldecalimg == 17):
+                            sq_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset, self.z_2xheight+yoffset)
+                        else:
+                            sq_ctx.set_source_surface(pixbuf, xoffset, self.z_2xheight+yoffset)
+                        sq_ctx.paint()
 
         # Draw the entity if needed
         # We switch to using op_ctx and op_surf because we may not be drawing on sq_ctx
@@ -1830,6 +1841,13 @@ class MapGUI(BaseGUI):
             pixbuf = self.gfx.get_object_decal(square.walldecalimg, 52, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 52, 52, 78, 0, 52, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+            if (square.walldecalimg == 17 or square.walldecalimg == 18):
+                pixbuf = self.gfx.get_torch(52, True)
+                if (pixbuf is not None):
+                    if (square.walldecalimg == 17):
+                        pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                    else:
+                        pixbuf.composite(comp_pixbuf, 5, 58, 18, 30, 5, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)

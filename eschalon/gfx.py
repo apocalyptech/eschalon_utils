@@ -146,8 +146,7 @@ class GfxEntCache(GfxCache):
     the various image sizes are.  Also, we can save some memory by lopping
     off much of the loaded image.
     """
-    def __init__(self, pngdata, restricted=False):
-        self.restricted = restricted
+    def __init__(self, pngdata, cols=15, rows=8):
 
         # Read in the data as usual, with junk for width and height
         super(GfxEntCache, self).__init__(pngdata, -1, -1, 1)
@@ -155,12 +154,8 @@ class GfxEntCache(GfxCache):
         # ... and now that we have the image dimensions, fix that junk
         imgwidth = self.surface.get_width()
         imgheight = self.surface.get_height()
-        if (restricted):
-            self.width = int(imgwidth/2)
-            self.height = imgheight
-        else:
-            self.width = int(imgwidth/15)
-            self.height = int(imgheight/8)
+        self.width = int(imgwidth/cols)
+        self.height = int(imgheight/rows)
 
         # Some information on size scaling
         self.size_scale = self.width/52.0
@@ -239,6 +234,7 @@ class Gfx(object):
         self.objdecalcache = None
         self.avatarcache = {}
         self.entcache = {}
+        self.torchcache = None
 
         # wtf @ needing this
         self.treemap = {
@@ -331,12 +327,23 @@ class Gfx(object):
             self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
+    def get_torch(self, size=None, gdk=False):
+        if (self.torchcache is None):
+            df = open(os.path.join(os.path.dirname(__file__), 'torch_single.png'), 'rb')
+            torchdata = df.read()
+            df.close()
+            self.torchcache = GfxEntCache(torchdata, 1, 1)
+        # TODO: I don't like hardcoding "52" here
+        if (size is None):
+            size = 52
+        return self.torchcache.getimg(1, int(size*self.torchcache.size_scale), gdk)
+
     def get_entity(self, entnum, direction, size=None, gdk=False):
         entnum = entitytable[entnum].gfxfile
         if (entnum not in self.entcache):
             filename = 'mo%d.png' % (entnum)
             if (entnum in self.restrict_ents):
-                self.entcache[entnum] = GfxEntCache(self.readfile(filename), True)
+                self.entcache[entnum] = GfxEntCache(self.readfile(filename), 2, 1)
             else:
                 self.entcache[entnum] = GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
