@@ -1188,12 +1188,12 @@ class MapGUI(BaseGUI):
 
         # Basic Information
         basic_box = self.script_group_box('<b>Basic Information</b>')
-        binput = gtk.Table(8, 3)
+        binput = gtk.Table(9, 3)
         binput.show()
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        binput.attach(spacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        binput.attach(spacer, 0, 1, 0, 9, gtk.FILL, gtk.FILL|gtk.EXPAND)
         basic_box.pack_start(binput, False, False)
 
         # Basic Inputs
@@ -1216,10 +1216,11 @@ class MapGUI(BaseGUI):
         if (square.scripts[curpages].state in containertable.keys()):
             self.input_dropdown(curpages, binput, 5, 'state', 'State <i>(if container or door)</i>', containertable.values(), None, self.on_script_dropdown_changed)
         else:
-            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 2 ordinarily.  The  current container state is undefined.')
+            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 2 ordinarily.  The current container state is undefined.')
 
         self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock')
         self.input_uchar(curpages, binput, 7, 'other', 'Other <i>(slider combination)</i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+        self.input_uchar(curpages, binput, 8, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
 
         # Contents
         contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
@@ -1245,22 +1246,21 @@ class MapGUI(BaseGUI):
 
         # Unknowns
         unknown_box = self.script_group_box('<b>Unknowns</b>')
-        uinput = gtk.Table(7, 3)
+        uinput = gtk.Table(6, 3)
         uinput.show()
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        uinput.attach(spacer, 0, 1, 0, 7, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        uinput.attach(spacer, 0, 1, 0, 6, gtk.FILL, gtk.FILL|gtk.EXPAND)
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
-        self.input_uchar(curpages, uinput, 0, 'unknownu1', '<i>Unknown 1</i>')
-        self.input_uchar(curpages, uinput, 1, 'unknownu2', '<i>Unknown 2</i>')
-        self.input_short(curpages, uinput, 2, 'unknownh3', '<i>Unknown 3</i>')
-        self.input_short(curpages, uinput, 3, 'zeroh1', '<i>Usually Zero 1</i>')
-        self.input_int(curpages, uinput, 4, 'zeroi1', '<i>Usually Zero 2</i>')
-        self.input_int(curpages, uinput, 5, 'zeroi2', '<i>Usually Zero 3</i>')
-        self.input_int(curpages, uinput, 6, 'zeroi3', '<i>Usually Zero 4</i>')
+        self.input_uchar(curpages, uinput, 0, 'unknownu2', '<i>Unknown 2</i>')
+        self.input_short(curpages, uinput, 1, 'unknownh3', '<i>Unknown 3</i>')
+        self.input_short(curpages, uinput, 2, 'zeroh1', '<i>Usually Zero 1</i>')
+        self.input_int(curpages, uinput, 3, 'zeroi1', '<i>Usually Zero 2</i>')
+        self.input_int(curpages, uinput, 4, 'zeroi2', '<i>Usually Zero 3</i>')
+        self.input_int(curpages, uinput, 5, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()

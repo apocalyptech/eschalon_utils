@@ -200,7 +200,8 @@ traptable = {
 containertable = {
         0: 'smashed',
         1: 'closed',
-        2: 'open'
+        2: 'open',
+        3: 'broken'
     }
 # Note that diseases are stored as bit flags
 diseasetable = {

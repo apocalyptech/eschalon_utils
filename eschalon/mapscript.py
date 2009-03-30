@@ -43,7 +43,7 @@ class Mapscript(object):
         self.extratext = ''
         self.zeroi1 = -1
         self.zeroh1 = -1
-        self.unknownu1 = -1
+        self.sturdiness = -1
         self.unknownu2 = -1
         self.zeroi2 = -1
         self.zeroi3 = -1
@@ -64,7 +64,7 @@ class Mapscript(object):
         self.extratext = ''
         self.zeroi1 = 0
         self.zeroh1 = 0
-        self.unknownu1 = 0
+        self.sturdiness = 0
         self.unknownu2 = 0
         self.zeroi2 = 0
         self.zeroi3 = 0
@@ -91,7 +91,7 @@ class Mapscript(object):
         newmapscript.extratext = self.extratext
         newmapscript.zeroi1 = self.zeroi1
         newmapscript.zeroh1 = self.zeroh1
-        newmapscript.unknownu1 = self.unknownu1
+        newmapscript.sturdiness = self.sturdiness
         newmapscript.unknownu2 = self.unknownu2
         newmapscript.zeroi2 = self.zeroi2
         newmapscript.zeroi3 = self.zeroi3
@@ -128,7 +128,7 @@ class Mapscript(object):
         self.extratext = df.readstr()
         self.zeroi1 = df.readint()
         self.zeroh1 = df.readshort()
-        self.unknownu1 = df.readuchar()
+        self.sturdiness = df.readuchar()
         self.unknownu2 = df.readuchar()
         self.zeroi2 = df.readint()
         self.zeroi3 = df.readint()
@@ -155,7 +155,7 @@ class Mapscript(object):
         df.writestr(self.extratext)
         df.writeint(self.zeroi1)
         df.writeshort(self.zeroh1)
-        df.writeuchar(self.unknownu1)
+        df.writeuchar(self.sturdiness)
         df.writeuchar(self.unknownu2)
         df.writeint(self.zeroi2)
         df.writeint(self.zeroi3)
@@ -190,13 +190,13 @@ class Mapscript(object):
             ret.append("\tState: %s" % containertable[self.state])
         else:
             ret.append("\tState: %d (unknown)" % self.state)
+        ret.append("\tSturdiness: %d" % self.sturdiness)
         ret.append("\tOther (code for slider locks): %d" % self.other)
         ret.append("\tContents:")
         for item in self.items:
             if (item.item_name != ''):
                 ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
-            ret.append("\tUnknown byte 1: %d 0x%02X" % (self.unknownu1, self.unknownu1))
             ret.append("\tUnknown byte 2: %d 0x%02X" % (self.unknownu2, self.unknownu2))
             ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
             ret.append("\tUsually Zero 1: %d" % (self.zeroh1))
