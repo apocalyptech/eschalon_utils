@@ -20,7 +20,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import traptable, containertable
+from eschalonb1 import traptable, containertable, scriptflags
 from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
@@ -44,7 +44,7 @@ class Mapscript(object):
         self.zeroi1 = -1
         self.zeroh1 = -1
         self.sturdiness = -1
-        self.unknownu2 = -1
+        self.flags = -1
         self.zeroi2 = -1
         self.zeroi3 = -1
         self.lock = -1
@@ -65,7 +65,7 @@ class Mapscript(object):
         self.zeroi1 = 0
         self.zeroh1 = 0
         self.sturdiness = 0
-        self.unknownu2 = 0
+        self.flags = 0
         self.zeroi2 = 0
         self.zeroi3 = 0
         self.lock = 0
@@ -92,7 +92,7 @@ class Mapscript(object):
         newmapscript.zeroi1 = self.zeroi1
         newmapscript.zeroh1 = self.zeroh1
         newmapscript.sturdiness = self.sturdiness
-        newmapscript.unknownu2 = self.unknownu2
+        newmapscript.flags = self.flags
         newmapscript.zeroi2 = self.zeroi2
         newmapscript.zeroi3 = self.zeroi3
         newmapscript.lock = self.lock
@@ -129,7 +129,7 @@ class Mapscript(object):
         self.zeroi1 = df.readint()
         self.zeroh1 = df.readshort()
         self.sturdiness = df.readuchar()
-        self.unknownu2 = df.readuchar()
+        self.flags = df.readuchar()
         self.zeroi2 = df.readint()
         self.zeroi3 = df.readint()
         self.lock = df.readuchar()
@@ -156,7 +156,7 @@ class Mapscript(object):
         df.writeint(self.zeroi1)
         df.writeshort(self.zeroh1)
         df.writeuchar(self.sturdiness)
-        df.writeuchar(self.unknownu2)
+        df.writeuchar(self.flags)
         df.writeint(self.zeroi2)
         df.writeint(self.zeroi3)
         df.writeuchar(self.lock)
@@ -192,6 +192,12 @@ class Mapscript(object):
             ret.append("\tState: %d (unknown)" % self.state)
         ret.append("\tSturdiness: %d" % self.sturdiness)
         ret.append("\tOther (code for slider locks): %d" % self.other)
+        if (self.flags != 0):
+            ret.append("\tFlags:")
+            for (flag, flagtext) in scriptflags.values():
+                if (self.flags & flag == flag):
+                    ret.append("\t\t* %s" % flagtext)
+
         ret.append("\tContents:")
         for item in self.items:
             if (item.item_name != ''):

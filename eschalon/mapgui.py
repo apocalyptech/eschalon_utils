@@ -1086,6 +1086,38 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
+    def input_flag(self, page, table, row, name, flagval, text, tooltip=None):
+        self.input_label(page, table, row, name, text)
+        align = gtk.Alignment(0, 0.5, 0, 1)
+        align.show()
+        entry = gtk.CheckButton()
+        entry.show()
+        entry.set_name('%s_%X_%d' % (name, flagval, page))
+        scriptval = self.map.squares[self.sq_y][self.sq_x].scripts[page].__dict__[name]
+        entry.set_active((scriptval & flagval == flagval))
+        entry.connect('toggled', self.on_script_flag_changed)
+        if (tooltip is not None):
+            tips = gtk.Tooltips()
+            tips.set_tip(entry, tooltip)
+        align.add(entry)
+        table.attach(align, 2, 3, row, row+1)
+
+    def on_script_flag_changed(self, widget):
+        """
+        What to do whan a bit field changes.  Currently just the
+        destructible flag.
+        """
+        wname = widget.get_name()
+        (name, flagval, page) = wname.rsplit('_', 2)
+        flagval = int(flagval, 16)
+        page = int(page)
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            if (widget.get_active()):
+                script.__dict__[name] = script.__dict__[name] | flagval
+            else:
+                script.__dict__[name] = script.__dict__[name] & ~flagval
+
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
@@ -1188,12 +1220,12 @@ class MapGUI(BaseGUI):
 
         # Basic Information
         basic_box = self.script_group_box('<b>Basic Information</b>')
-        binput = gtk.Table(9, 3)
+        binput = gtk.Table(10, 3)
         binput.show()
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        binput.attach(spacer, 0, 1, 0, 9, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        binput.attach(spacer, 0, 1, 0, 10, gtk.FILL, gtk.FILL|gtk.EXPAND)
         basic_box.pack_start(binput, False, False)
 
         # Basic Inputs
@@ -1219,8 +1251,15 @@ class MapGUI(BaseGUI):
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
         self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock')
-        self.input_uchar(curpages, binput, 7, 'other', 'Other <i>(slider combination)</i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
-        self.input_uchar(curpages, binput, 8, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+        self.input_uchar(curpages, binput, 7, 'other', 'Other <i><small>(slider combination)</small></i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+
+        # If we ever get more flags, this'll have to change
+        if (square.scripts[curpages].flags & ~0x40 == 0):
+            self.input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+        else:
+            self.input_short(curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+
+        self.input_uchar(curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
 
         # Contents
         contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
@@ -1246,21 +1285,20 @@ class MapGUI(BaseGUI):
 
         # Unknowns
         unknown_box = self.script_group_box('<b>Unknowns</b>')
-        uinput = gtk.Table(6, 3)
+        uinput = gtk.Table(5, 3)
         uinput.show()
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        uinput.attach(spacer, 0, 1, 0, 6, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        uinput.attach(spacer, 0, 1, 0, 5, gtk.FILL, gtk.FILL|gtk.EXPAND)
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
-        self.input_uchar(curpages, uinput, 0, 'unknownu2', '<i>Unknown 2</i>', 'This value is almost always 64 for containers, and 0 for everything else.')
-        self.input_short(curpages, uinput, 1, 'unknownh3', '<i>Unknown 3</i>')
-        self.input_short(curpages, uinput, 2, 'zeroh1', '<i>Usually Zero 1</i>')
-        self.input_int(curpages, uinput, 3, 'zeroi1', '<i>Usually Zero 2</i>')
-        self.input_int(curpages, uinput, 4, 'zeroi2', '<i>Usually Zero 3</i>')
-        self.input_int(curpages, uinput, 5, 'zeroi3', '<i>Usually Zero 4</i>')
+        self.input_short(curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
+        self.input_short(curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
+        self.input_int(curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
+        self.input_int(curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
+        self.input_int(curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()

@@ -205,6 +205,10 @@ containertable = {
         4: 'toggle 1',
         5: 'toggle 2'
     }
+# Right now this is the only one that appears to exist
+scriptflags = {
+        0x40: 'destructible'
+    }
 # Note that diseases are stored as bit flags
 diseasetable = {
         0x0200: 'Dungeon Fever',

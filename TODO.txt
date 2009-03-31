@@ -2,6 +2,7 @@ Packaging
 ---------
  * Should package this properly for all OSes.  Install into the
    Python library dir, have actual install scripts/programs, etc...
+ * Test out map text views since I haven't in awhile
 
 Data
 ----
