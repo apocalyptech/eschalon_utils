@@ -164,6 +164,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
                 'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
                 'on_direction_changed': self.on_direction_changed,
+                'on_map_flag_changed': self.on_map_flag_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
@@ -280,7 +281,7 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('soundfile1_combo', ogglist)
         self.populate_comboboxentry('soundfile2_combo', ogglist)
         self.populate_comboboxentry('soundfile3_combo', wavlist)
-    
+
         # Now show our window
         self.window.show()
 
@@ -1102,6 +1103,28 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
+    def on_flag_changed(self, name, flagval_str, widget, object):
+        """
+        What to do whan a bit field changes.  Currently just the
+        destructible flag.
+        """
+        flagval = int(flagval_str, 16)
+        if (object is not None):
+            if (widget.get_active()):
+                object.__dict__[name] = object.__dict__[name] | flagval
+            else:
+                object.__dict__[name] = object.__dict__[name] & ~flagval
+
+    def on_map_flag_changed(self, widget):
+        """
+        What to do whan a bit field changes.  Currently just the
+        destructible flag.
+        """
+        wname = widget.get_name()
+        (name, flagval) = wname.rsplit('_', 1)
+        square = self.map.squares[self.sq_y][self.sq_x]
+        self.on_flag_changed(name, flagval, widget, square)
+
     def on_script_flag_changed(self, widget):
         """
         What to do whan a bit field changes.  Currently just the
@@ -1109,14 +1132,9 @@ class MapGUI(BaseGUI):
         """
         wname = widget.get_name()
         (name, flagval, page) = wname.rsplit('_', 2)
-        flagval = int(flagval, 16)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
-            if (widget.get_active()):
-                script.__dict__[name] = script.__dict__[name] | flagval
-            else:
-                script.__dict__[name] = script.__dict__[name] & ~flagval
+        self.on_flag_changed(name, flagval, widget, script)
 
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
@@ -1389,8 +1407,28 @@ class MapGUI(BaseGUI):
         # Make sure we start out on the right page
         self.get_widget('square_notebook').set_current_page(0)
 
-        # First the main items
-        self.get_widget('wall').set_value(square.wall)
+        # First the main items.  Wall stuff first.
+        wallflags = ( 0x01, 0x04 )
+        flagstotal = sum(map(int, wallflags))
+        if (square.wall & ~flagstotal == 0):
+            self.get_widget('wall_label').hide()
+            self.get_widget('wall').hide()
+            for flag in wallflags:
+                self.get_widget('wall_%02X_label' % flag).show()
+                self.get_widget('wall_%02X' % flag).show()
+                if (square.wall & flag == flag):
+                    self.get_widget('wall_%02X' % flag).set_active(True)
+                else:
+                    self.get_widget('wall_%02X' % flag).set_active(False)
+        else:
+            self.get_widget('wall_label').show()
+            self.get_widget('wall').show()
+            for flag in wallflags:
+                self.get_widget('wall_%02X_label' % flag).hide()
+                self.get_widget('wall_%02X' % flag).hide()
+            self.get_widget('wall').set_value(square.wall)
+
+        # ... and now the rest
         self.get_widget('floorimg').set_value(square.floorimg)
         self.get_widget('decalimg').set_value(square.decalimg)
         self.get_widget('wallimg').set_value(square.wallimg)
