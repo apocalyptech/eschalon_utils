@@ -159,6 +159,7 @@ class MapGUI(BaseGUI):
                 'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
                 'on_setinitial_clicked': self.on_setinitial_clicked,
                 'on_entid_changed': self.on_entid_changed,
+                'on_scriptid_changed': self.on_scriptid_changed,
                 'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
@@ -1024,7 +1025,7 @@ class MapGUI(BaseGUI):
         label.set_alignment(1, 0.5)
         label.set_justify(gtk.JUSTIFY_RIGHT)
         label.set_padding(5, 4)
-        label.set_name('%s_%d_label' % (name, page))
+        self.register_widget('%s_%d_label' % (name, page), label)
         table.attach(label, 1, 2, row, row+1, gtk.FILL, gtk.FILL)
 
     def input_text(self, page, table, row, name, text, tooltip=None):
@@ -1033,7 +1034,7 @@ class MapGUI(BaseGUI):
         align.show()
         entry = gtk.Entry()
         entry.show()
-        entry.set_name('%s_%d' % (name, page))
+        self.register_widget('%s_%d' % (name, page), entry)
         entry.set_size_request(250, -1)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
@@ -1260,13 +1261,10 @@ class MapGUI(BaseGUI):
         basic_box.pack_start(binput, False, False)
 
         # Basic Inputs
-        self.input_text(curpages, binput, 0, 'description', 'Description / Map Link',
-                'This is usually a basic description of the square.  For object type '
-                '6 (map link), it will be the name of the map to move to.')
-        self.input_text(curpages, binput, 1, 'extratext', 'Extra Text / Map Coords',
-                'Usually more text (as from a sign or gravestone).  For object type '
-                '6 (map link), it will be the coordinates within the map specified '
-                'above.  The coordinate "(56, 129)" would be written "12956"')
+        self.input_text(curpages, binput, 0, 'description', '(to update)',
+                '(to update)')
+        self.input_text(curpages, binput, 1, 'extratext', '(to update)',
+                '(to update)')
         self.input_text(curpages, binput, 2, 'script', 'Script')
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
@@ -1349,6 +1347,10 @@ class MapGUI(BaseGUI):
         vp.add(content)
         sw.add(vp)
 
+        # Finally, update our text labels and tooltips appropriately
+        # for scriptid type 6
+        self.update_script_type_strings(curpages, square.scriptid)
+
         self.script_notebook.append_page(sw, label)
 
     def clear_script_notebook(self):
@@ -1421,10 +1423,43 @@ class MapGUI(BaseGUI):
             self.map.delentity(self.sq_x, self.sq_y)
             self.set_entity_toggle_button(True)
 
+    def update_script_type_strings(self, page, scriptid):
+        """
+        Update the text for scripts on a single page, given the
+        scriptid passed-in.
+        """
+        text_1 = self.get_widget('description_%d_label' % page)
+        text_2 = self.get_widget('extratext_%d_label' % page)
+        obj_1 = self.get_widget('description_%d' % page)
+        obj_2 = self.get_widget('extratext_%d' % page)
+        if (scriptid == 6):
+            text_1.set_text('Map Link')
+            text_2.set_text('Map Coordinates')
+            obj_1.set_tooltip_text('Name of the map to send the player to.')
+            obj_2.set_tooltip_text('The coordinates within the map specified above.  '
+                'The coordinate "(56, 129)" would be written "12956"')
+        else:
+            text_1.set_text('Description')
+            text_2.set_text('Extra Text')
+            obj_1.set_tooltip_text('A basic description of the square.')
+            obj_2.set_tooltip_text('More descriptive text (such as on signs or gravestones).')
+
+    def update_all_scriptid_type_strings(self, square):
+        """ Update the form text for all scripts on a square. """
+        for idx in range(self.script_notebook.get_n_pages()):
+            self.update_script_type_strings(idx, square.scriptid)
+
+    def on_scriptid_changed(self, widget):
+        """ Process changing our object/script ID. """
+        self.on_singleval_square_changed_int(widget)
+        square = self.map.squares[self.sq_y][self.sq_x]
+        self.update_all_scriptid_type_strings(square)
+
     def on_scriptid_dd_changed(self, widget):
         """ Process changing our object/script type dropdown. """
         square = self.map.squares[self.sq_y][self.sq_x]
         square.scriptid = self.object_type_list_rev[widget.get_active()]
+        self.update_all_scriptid_type_strings(square)
 
     def populate_squarewindow_from_square(self, square):
         """ Populates the square editing screen from a given square. """
