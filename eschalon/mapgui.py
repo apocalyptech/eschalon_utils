@@ -1481,8 +1481,8 @@ class MapGUI(BaseGUI):
             self.get_widget('health').set_value(square.entity.health)
             self.get_widget('unknownc1').set_value(square.entity.unknownc1)
             self.get_widget('unknownc2').set_value(square.entity.unknownc2)
-            self.get_widget('unknownc5').set_value(square.entity.unknownc5)
-            self.get_widget('unknownc6').set_value(square.entity.unknownc6)
+            self.get_widget('zero1').set_value(square.entity.zero1)
+            self.get_widget('zero2').set_value(square.entity.zero2)
             self.get_widget('initial_inside').set_value(square.entity.initial_inside)
             self.get_widget('initial_outside').set_value(square.entity.initial_outside)
 

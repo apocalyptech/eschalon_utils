@@ -42,8 +42,8 @@ class Entity(object):
         self.unknownc2 = -1
         self.initial_inside = -1
         self.initial_outside = -1
-        self.unknownc5 = -1
-        self.unknownc6 = -1
+        self.zero1 = -1
+        self.zero2 = -1
 
     def replicate(self):
         newentity = Entity()
@@ -61,8 +61,8 @@ class Entity(object):
         newentity.unknownc2 = self.unknownc2
         newentity.initial_inside = self.initial_inside
         newentity.initial_outside = self.initial_outside
-        newentity.unknownc5 = self.unknownc5
-        newentity.unknownc6 = self.unknownc6
+        newentity.zero1 = self.zero1
+        newentity.zero2 = self.zero2
 
         # ... aaand return our new object
         return newentity
@@ -89,8 +89,8 @@ class Entity(object):
             self.unknownc2 = df.readuchar()
             self.initial_inside = df.readuchar()
             self.initial_outside = df.readuchar()
-            self.unknownc5 = df.readuchar()
-            self.unknownc6 = df.readuchar()
+            self.zero1 = df.readuchar()
+            self.zero2 = df.readuchar()
 
     def write(self, df):
         """ Write the entity to the file. """
@@ -107,8 +107,8 @@ class Entity(object):
             df.writeuchar(self.unknownc2)
             df.writeuchar(self.initial_inside)
             df.writeuchar(self.initial_outside)
-            df.writeuchar(self.unknownc5)
-            df.writeuchar(self.unknownc6)
+            df.writeuchar(self.zero1)
+            df.writeuchar(self.zero2)
 
     def tozero(self, x, y):
         """ Zeroes out the entity object.  Apart from x and y, which are passed in. """
@@ -124,8 +124,8 @@ class Entity(object):
             self.unknownc2 = 0
             self.initial_inside = 0
             self.initial_outside = 0
-            self.unknownc5 = 0
-            self.unknownc6 = 0
+            self.zero1 = 0
+            self.zero2 = 0
             self.set_initial(x, y)
 
     def set_initial(self, x, y):
@@ -159,8 +159,8 @@ class Entity(object):
             if (unknowns):
                 ret.append("\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1)
                 ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc2)
-                ret.append("\tUnknown value 5 (generally zero): %d" % self.unknownc5)
-                ret.append("\tUnknown value 6 (generally zero): %d" % self.unknownc6)
+                ret.append("\tUsually Zero (1): %d" % self.zero1)
+                ret.append("\tUsually Zero (2): %d" % self.zero2)
         else:
             ret.append( "\t(No extra attributes - this is the base map definition file)")
 
