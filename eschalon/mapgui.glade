@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Apr  2 11:11:39 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Apr  2 13:21:59 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -702,7 +702,7 @@
             <property name="visible">True</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
             <property name="ypad">9</property>
-            <property name="label" translatable="yes">&lt;b&gt;Map Square&lt;/b&gt;</property>
+            <property name="label" translatable="yes">&lt;b&gt;Map Tile&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </widget>
           <packing>
@@ -1034,7 +1034,7 @@
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
-                        <property name="label" translatable="yes">Unknown:</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Unknown:&lt;/i&gt;</property>
                         <property name="use_markup">True</property>
                       </widget>
                       <packing>
@@ -2043,7 +2043,7 @@ Northwest</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">6</property>
-                        <property name="label" translatable="yes">Builtin Script ID:</property>
+                        <property name="label" translatable="yes">Builtin Object ID:</property>
                         <property name="use_markup">True</property>
                       </widget>
                       <packing>
@@ -2065,7 +2065,7 @@ Northwest</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="has_tooltip">True</property>
-                            <property name="tooltip_text">The builtin script ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated script if the Builtin Script ID is specified, but not always.  There is never, however, a script without an associated builtin ID.</property>
+                            <property name="tooltip_text">The builtin object ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the Builtin Object ID is specified, but not always.  There is never, however, an object without an associated builtin ID.</property>
                             <property name="adjustment">0 0 255 1 10 10</property>
                             <signal name="value_changed" handler="on_singleval_square_changed_int"/>
                           </widget>
@@ -2087,7 +2087,7 @@ Northwest</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
                             <property name="has_tooltip">True</property>
-                            <property name="tooltip_markup">The builtin script ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated script if the Builtin Script ID is specified, but not always.  There is never, however, a script without an associated builtin ID.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single square having more than one script, so we support having multiple scripts here (it's likely that only the first found script is actually used).  You're strongly advised to limit yourself to one.</property>
+                            <property name="tooltip_markup">The builtin object ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the Builtin Object ID is specified, but not always.  There is never, however, an object without an associated builtin ID.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
                             <property name="response_id">0</property>
                             <signal name="clicked" handler="on_script_add"/>
                             <child>
@@ -2107,7 +2107,7 @@ Northwest</property>
                                   <widget class="GtkLabel" id="label22">
                                     <property name="visible">True</property>
                                     <property name="xpad">6</property>
-                                    <property name="label" translatable="yes">Add Script</property>
+                                    <property name="label" translatable="yes">Add Object</property>
                                   </widget>
                                   <packing>
                                     <property name="expand">False</property>
@@ -2148,7 +2148,7 @@ Northwest</property>
             <child>
               <widget class="GtkLabel" id="label13">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Scripts</property>
+                <property name="label" translatable="yes">Objects</property>
               </widget>
               <packing>
                 <property name="type">tab</property>

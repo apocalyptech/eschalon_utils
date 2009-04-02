@@ -1011,6 +1011,7 @@ class MapGUI(BaseGUI):
         label.show()
         label.set_markup('%s:' % text)
         label.set_alignment(1, 0.5)
+        label.set_justify(gtk.JUSTIFY_RIGHT)
         label.set_padding(5, 4)
         label.set_name('%s_%d_label' % (name, page))
         table.attach(label, 1, 2, row, row+1, gtk.FILL, gtk.FILL)
@@ -1214,7 +1215,7 @@ class MapGUI(BaseGUI):
         curpages = self.script_notebook.get_n_pages()
 
         # Label for the notebook
-        label = gtk.Label('Script #%d' % (curpages+1))
+        label = gtk.Label('Object #%d' % (curpages+1))
         label.show()
 
         # Remove Button
@@ -1230,7 +1231,7 @@ class MapGUI(BaseGUI):
         rm_img = gtk.image_new_from_stock(gtk.STOCK_REMOVE, 4)
         rm_img.show()
         remove_button_box.add(rm_img)
-        rm_txt = gtk.Label('Remove Script')
+        rm_txt = gtk.Label('Remove Object')
         rm_txt.show()
         rm_txt.set_padding(6, 0)
         remove_button_box.add(rm_txt)
@@ -1265,7 +1266,7 @@ class MapGUI(BaseGUI):
 
         # We special-case this just in case
         if (square.scripts[curpages].state in containertable.keys()):
-            self.input_dropdown(curpages, binput, 5, 'state', 'State <i><small>(if container, door, or switch)</small></i>', containertable.values(), None, self.on_script_dropdown_changed)
+            self.input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", containertable.values(), None, self.on_script_dropdown_changed)
         else:
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
@@ -1660,7 +1661,7 @@ class MapGUI(BaseGUI):
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
                     self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
-                    self.get_widget('squarelabel').set_markup('<b>Map Square (%d, %d)</b>' % (self.sq_x, self.sq_y))
+                    self.get_widget('squarelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
                     self.squarewindow.show()
 
     def on_released(self, widget, event):
