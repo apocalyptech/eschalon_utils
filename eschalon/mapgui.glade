@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Apr  2 17:06:14 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Apr  2 17:19:02 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -1561,7 +1561,7 @@ Northwest</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <widget class="GtkSpinButton" id="zero2">
+                                  <widget class="GtkSpinButton" id="ent_zero2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -1585,7 +1585,7 @@ Northwest</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <widget class="GtkSpinButton" id="zero1">
+                                  <widget class="GtkSpinButton" id="ent_zero1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -1603,7 +1603,7 @@ Northwest</property>
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkLabel" id="zero2_label">
+                              <widget class="GtkLabel" id="ent_zero2_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">1</property>
                                 <property name="xpad">5</property>
@@ -1621,7 +1621,7 @@ Northwest</property>
                               </packing>
                             </child>
                             <child>
-                              <widget class="GtkLabel" id="zero1_label">
+                              <widget class="GtkLabel" id="ent_zero1_label">
                                 <property name="visible">True</property>
                                 <property name="xalign">1</property>
                                 <property name="xpad">5</property>
