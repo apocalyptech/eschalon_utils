@@ -40,8 +40,8 @@ class Entity(object):
         self.unknownc1 = -1
         self.health = -1
         self.unknownc2 = -1
-        self.unknownc3 = -1
-        self.unknownc4 = -1
+        self.initial_inside = -1
+        self.initial_outside = -1
         self.unknownc5 = -1
         self.unknownc6 = -1
 
@@ -59,8 +59,8 @@ class Entity(object):
         newentity.unknownc1 = self.unknownc1
         newentity.health = self.health
         newentity.unknownc2 = self.unknownc2
-        newentity.unknownc3 = self.unknownc3
-        newentity.unknownc4 = self.unknownc4
+        newentity.initial_inside = self.initial_inside
+        newentity.initial_outside = self.initial_outside
         newentity.unknownc5 = self.unknownc5
         newentity.unknownc6 = self.unknownc6
 
@@ -87,8 +87,8 @@ class Entity(object):
             self.unknownc1 = df.readuchar()
             self.health = df.readint()
             self.unknownc2 = df.readuchar()
-            self.unknownc3 = df.readuchar()
-            self.unknownc4 = df.readuchar()
+            self.initial_inside = df.readuchar()
+            self.initial_outside = df.readuchar()
             self.unknownc5 = df.readuchar()
             self.unknownc6 = df.readuchar()
 
@@ -105,8 +105,8 @@ class Entity(object):
             df.writeuchar(self.unknownc1)
             df.writeint(self.health)
             df.writeuchar(self.unknownc2)
-            df.writeuchar(self.unknownc3)
-            df.writeuchar(self.unknownc4)
+            df.writeuchar(self.initial_inside)
+            df.writeuchar(self.initial_outside)
             df.writeuchar(self.unknownc5)
             df.writeuchar(self.unknownc6)
 
@@ -122,10 +122,19 @@ class Entity(object):
             self.unknownc1 = 0
             self.health = 0
             self.unknownc2 = 0
-            self.unknownc3 = 0
-            self.unknownc4 = 0
+            self.initial_inside = 0
+            self.initial_outside = 0
             self.unknownc5 = 0
             self.unknownc6 = 0
+            self.set_initial(x, y)
+
+    def set_initial(self, x, y):
+        """
+        Set our "initial" parameters, given actual (x,y) coordinates.
+        """
+        squarenum = (y*100)+x
+        self.initial_inside = squarenum % 256
+        self.initial_outside = int(squarenum/256)
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -145,13 +154,13 @@ class Entity(object):
         if (self.savegame):
             ret.append("\tFriendly: %d" % (self.friendly))
             ret.append("\tHealth: %d" % (self.health))
+            ret.append("\tInitial Location (inside counter): %d" % self.initial_inside)
+            ret.append("\tInitial Location (outside counter): %d" % self.initial_outside)
             if (unknowns):
                 ret.append("\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1)
-                ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc1)
-                ret.append("\tUnknown value 3: %d" % self.unknownc1)
-                ret.append("\tUnknown value 4: %d" % self.unknownc1)
-                ret.append("\tUnknown value 5 (generally zero): %d" % self.unknownc1)
-                ret.append("\tUnknown value 6 (generally zero): %d" % self.unknownc1)
+                ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc2)
+                ret.append("\tUnknown value 5 (generally zero): %d" % self.unknownc5)
+                ret.append("\tUnknown value 6 (generally zero): %d" % self.unknownc6)
         else:
             ret.append( "\t(No extra attributes - this is the base map definition file)")
 

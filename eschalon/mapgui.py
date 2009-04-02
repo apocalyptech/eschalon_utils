@@ -157,6 +157,7 @@ class MapGUI(BaseGUI):
                 'expose_map': self.expose_map,
                 'map_toggle': self.map_toggle,
                 'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
+                'on_setinitial_clicked': self.on_setinitial_clicked,
                 'on_entid_changed': self.on_entid_changed,
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
@@ -993,15 +994,15 @@ class MapGUI(BaseGUI):
             image = gtk.STOCK_ADD
             text = 'Add Entity'
             self.get_widget('entity_basic_box').hide()
-            self.get_widget('entity_ext_box').hide()
+            self.get_widget('entity_extra_box').hide()
         else:
             image = gtk.STOCK_REMOVE
             text = 'Remove Entity'
             self.get_widget('entity_basic_box').show()
             if (self.map.is_savegame()):
-                self.get_widget('entity_ext_box').show()
+                self.get_widget('entity_extra_box').show()
             else:
-                self.get_widget('entity_ext_box').hide()
+                self.get_widget('entity_extra_box').hide()
         self.get_widget('entity_toggle_img').set_from_stock(image, 4)
         self.get_widget('entity_toggle_text').set_text(text)
 
@@ -1386,6 +1387,13 @@ class MapGUI(BaseGUI):
             health = entitytable[entid].health
             self.get_widget('health').set_value(health)
 
+    def on_setinitial_clicked(self, widget):
+        """ Set the entity's "initial" location to the current (x,y) """
+        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent.set_initial(self.sq_x, self.sq_y)
+        self.get_widget('initial_inside').set_value(ent.initial_inside)
+        self.get_widget('initial_outside').set_value(ent.initial_outside)
+
     def on_entity_toggle(self, widget):
         square = self.map.squares[self.sq_y][self.sq_x]
         if (square.entity is None):
@@ -1473,10 +1481,10 @@ class MapGUI(BaseGUI):
             self.get_widget('health').set_value(square.entity.health)
             self.get_widget('unknownc1').set_value(square.entity.unknownc1)
             self.get_widget('unknownc2').set_value(square.entity.unknownc2)
-            self.get_widget('unknownc3').set_value(square.entity.unknownc3)
-            self.get_widget('unknownc4').set_value(square.entity.unknownc4)
             self.get_widget('unknownc5').set_value(square.entity.unknownc5)
             self.get_widget('unknownc6').set_value(square.entity.unknownc6)
+            self.get_widget('initial_inside').set_value(square.entity.initial_inside)
+            self.get_widget('initial_outside').set_value(square.entity.initial_outside)
 
     def open_floorsel(self, widget):
         """ Show the floor selection window. """
