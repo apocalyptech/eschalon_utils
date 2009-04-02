@@ -1261,12 +1261,12 @@ class MapGUI(BaseGUI):
 
         # Basic Inputs
         self.input_text(curpages, binput, 0, 'description', 'Description / Map Link',
-                'This is either a basic description of the square, or the name '
-                'of a map, which will cause this square to act as a portal.')
+                'This is usually a basic description of the square.  For object type '
+                '6 (map link), it will be the name of the map to move to.')
         self.input_text(curpages, binput, 1, 'extratext', 'Extra Text / Map Coords',
-                'More text (as from a sign or gravestone), or the destination '
-                'coordinates within the map specified above, if this is a portal '
-                'square.  The coordinate "(56, 129)" would be written "12956"')
+                'Usually more text (as from a sign or gravestone).  For object type '
+                '6 (map link), it will be the coordinates within the map specified '
+                'above.  The coordinate "(56, 129)" would be written "12956"')
         self.input_text(curpages, binput, 2, 'script', 'Script')
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
