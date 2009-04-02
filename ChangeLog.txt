@@ -2,6 +2,7 @@
 
    02 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
    Renamed "Scripts" to "Objects" in the Map GUI
+   Object types mostly worked-out
 
    30 Mar 2009; CJ Kucera <pez@apocalyptech.com> :
    Draw torch lights where appropriate in map editor

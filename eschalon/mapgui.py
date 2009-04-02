@@ -24,7 +24,7 @@ import sys
 import time
 import cairo
 import gobject
-from eschalonb1 import traptable, containertable
+from eschalonb1 import traptable, containertable, objecttypetable
 from eschalonb1.gfx import Gfx
 
 # Load in our PyGTK deps
@@ -159,6 +159,7 @@ class MapGUI(BaseGUI):
                 'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
                 'on_setinitial_clicked': self.on_setinitial_clicked,
                 'on_entid_changed': self.on_entid_changed,
+                'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
                 'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
@@ -282,6 +283,16 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('soundfile1_combo', ogglist)
         self.populate_comboboxentry('soundfile2_combo', ogglist)
         self.populate_comboboxentry('soundfile3_combo', wavlist)
+
+        # And populate our object/script type dropdown as well
+        self.object_type_list = {}
+        self.object_type_list_rev = {}
+        typebox = self.get_widget('scriptid_dd')
+        self.useful_combobox(typebox)
+        for (typeidx, (val, text)) in enumerate(objecttypetable.items()):
+            typebox.append_text('%d - %s' % (val, text))
+            self.object_type_list[val] = typeidx
+            self.object_type_list_rev[typeidx] = val
 
         # Now show our window
         self.window.show()
@@ -1410,6 +1421,11 @@ class MapGUI(BaseGUI):
             self.map.delentity(self.sq_x, self.sq_y)
             self.set_entity_toggle_button(True)
 
+    def on_scriptid_dd_changed(self, widget):
+        """ Process changing our object/script type dropdown. """
+        square = self.map.squares[self.sq_y][self.sq_x]
+        square.scriptid = self.object_type_list_rev[widget.get_active()]
+
     def populate_squarewindow_from_square(self, square):
         """ Populates the square editing screen from a given square. """
 
@@ -1442,7 +1458,6 @@ class MapGUI(BaseGUI):
         self.get_widget('decalimg').set_value(square.decalimg)
         self.get_widget('wallimg').set_value(square.wallimg)
         self.get_widget('walldecalimg').set_value(square.walldecalimg)
-        self.get_widget('scriptid').set_value(square.scriptid)
         self.get_widget('unknown5').set_value(square.unknown5)
 
         # Now entites, if needed
@@ -1452,7 +1467,17 @@ class MapGUI(BaseGUI):
             self.set_entity_toggle_button(False)
             self.populate_entity_tab(square)
 
-        # ... and scripts
+        # ... and scripts (first the ID)
+        if (square.scriptid in objecttypetable):
+            self.get_widget('scriptid_num_align').hide()
+            self.get_widget('scriptid_dd_align').show()
+            self.get_widget('scriptid_dd').set_active(self.object_type_list[square.scriptid])
+        else:
+            self.get_widget('scriptid_num_align').show()
+            self.get_widget('scriptid_dd_align').hide()
+            self.get_widget('scriptid').set_value(square.scriptid)
+
+        # ... now the scripts themselves.
         self.clear_script_notebook()
         if (len(square.scripts) > 0):
             for script in square.scripts:

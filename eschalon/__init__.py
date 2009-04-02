@@ -29,7 +29,7 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich']
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
         'Square', 'Mapscript',
-        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'entitytable' ]
+        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'objecttypetable', 'entitytable' ]
 
 # Lookup tables
 attrtable = {
@@ -218,6 +218,33 @@ diseasetable = {
         0x2000: 'Insanity Fever',
         0x4000: 'Fleshrot',
         0x8000: 'Cursed'
+    }
+
+objecttypetable = {
+        0: '(none)',
+        1: 'Container (no open/close change - barrels, hives, sacs, coffins)',
+        2: 'Container (corpses)',
+        3: 'Container (chests, dressers, etc)',
+        4: 'Container (only one in game, avoid this one)',
+        5: 'Door',
+        6: 'Map Link',
+        7: 'Well, Lever, or other Misc Items',
+        9: 'Message (wall decals - plaques, bookcases)',
+        10: 'Message (walls - signs, gravestones)',
+        11: 'Sealed Barrel',
+        12: 'Miscellaneous Script',
+        13: 'Sconce',
+        14: 'Trap / Teleporter / Other tile-triggered actions',
+        15: 'Blackpowder Keg',
+        30: 'Unknown, no attached script',
+        31: 'Unknown, no attached script',
+        32: 'Unknown, no attached script',
+        33: 'Unknown, no attached script',
+        34: 'Unknown, no attached script',
+        35: 'Unknown, no attached script',
+        36: 'Unknown, no attached script',
+        37: 'Unknown, no attached script',
+        38: 'Unknown, no attached script'
     }
 
 class EntHelper(object):

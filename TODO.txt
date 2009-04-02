@@ -4,6 +4,7 @@ Packaging
    Python library dir, have actual install scripts/programs, etc...
  * Test out map text views since I haven't in awhile
  * Fix script textboxes
+ * Doublecheck load/save too (should be no changes)
 
 Data
 ----

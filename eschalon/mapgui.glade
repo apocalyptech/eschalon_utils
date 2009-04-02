@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Apr  2 13:21:59 2009 -->
+<!--Generated with glade3 3.4.5 on Thu Apr  2 15:48:56 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -2029,30 +2029,26 @@ Northwest</property>
                   <widget class="GtkHBox" id="hbox16">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkLabel" id="label33">
+                      <widget class="GtkAlignment" id="alignment15">
                         <property name="visible">True</property>
-                        <property name="xpad">14</property>
+                        <property name="left_padding">14</property>
+                        <child>
+                          <widget class="GtkLabel" id="scriptid_label">
+                            <property name="visible">True</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">6</property>
+                            <property name="label" translatable="yes">Object Type:</property>
+                            <property name="use_markup">True</property>
+                          </widget>
+                        </child>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkLabel" id="scriptid_label">
-                        <property name="visible">True</property>
-                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                        <property name="xalign">1</property>
-                        <property name="xpad">6</property>
-                        <property name="label" translatable="yes">Builtin Object ID:</property>
-                        <property name="use_markup">True</property>
-                      </widget>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="GtkAlignment" id="alignment105">
+                      <widget class="GtkAlignment" id="scriptid_num_align">
                         <property name="visible">True</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">0</property>
@@ -2065,7 +2061,7 @@ Northwest</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="has_tooltip">True</property>
-                            <property name="tooltip_text">The builtin object ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the Builtin Object ID is specified, but not always.  There is never, however, an object without an associated builtin ID.</property>
+                            <property name="tooltip_text">The object type specified is not one of the ones seen in the default Eschalon maps.  Behavior for this type isn't known at this time.</property>
                             <property name="adjustment">0 0 255 1 10 10</property>
                             <signal name="value_changed" handler="on_singleval_square_changed_int"/>
                           </widget>
@@ -2073,56 +2069,30 @@ Northwest</property>
                       </widget>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
-                      <widget class="GtkAlignment" id="alignment37">
+                      <widget class="GtkAlignment" id="scriptid_dd_align">
                         <property name="visible">True</property>
-                        <property name="top_padding">4</property>
-                        <property name="bottom_padding">4</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0</property>
+                        <property name="top_padding">5</property>
+                        <property name="bottom_padding">5</property>
                         <child>
-                          <widget class="GtkButton" id="button9">
+                          <widget class="GtkComboBox" id="scriptid_dd">
+                            <property name="width_request">350</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
                             <property name="has_tooltip">True</property>
-                            <property name="tooltip_markup">The builtin object ID is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the Builtin Object ID is specified, but not always.  There is never, however, an object without an associated builtin ID.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
-                            <property name="response_id">0</property>
-                            <signal name="clicked" handler="on_script_add"/>
-                            <child>
-                              <widget class="GtkHBox" id="hbox13">
-                                <property name="visible">True</property>
-                                <child>
-                                  <widget class="GtkImage" id="image2">
-                                    <property name="visible">True</property>
-                                    <property name="stock">gtk-add</property>
-                                  </widget>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <widget class="GtkLabel" id="label22">
-                                    <property name="visible">True</property>
-                                    <property name="xpad">6</property>
-                                    <property name="label" translatable="yes">Add Object</property>
-                                  </widget>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </widget>
-                            </child>
+                            <property name="tooltip_text">The object type is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the object type is specified, but not always.  There is never, however, an object without an associassociated type.</property>
+                            <signal name="changed" handler="on_scriptid_dd_changed"/>
                           </widget>
                         </child>
                       </widget>
                       <packing>
-                        <property name="fill">False</property>
-                        <property name="position">3</property>
+                        <property name="expand">False</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </widget>
@@ -2132,12 +2102,64 @@ Northwest</property>
                   </packing>
                 </child>
                 <child>
+                  <widget class="GtkAlignment" id="alignment37">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="xscale">0</property>
+                    <property name="bottom_padding">7</property>
+                    <property name="left_padding">14</property>
+                    <child>
+                      <widget class="GtkButton" id="button9">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip_markup">The object type is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the object type is specified, but not always.  There is never, however, an object without an associated type.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
+                        <property name="response_id">0</property>
+                        <signal name="clicked" handler="on_script_add"/>
+                        <child>
+                          <widget class="GtkHBox" id="hbox13">
+                            <property name="visible">True</property>
+                            <child>
+                              <widget class="GtkImage" id="image2">
+                                <property name="visible">True</property>
+                                <property name="stock">gtk-add</property>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkLabel" id="label22">
+                                <property name="visible">True</property>
+                                <property name="xpad">6</property>
+                                <property name="label" translatable="yes">Add Object</property>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </widget>
+                        </child>
+                      </widget>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkNotebook" id="script_notebook">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </widget>
                   <packing>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
               </widget>
