@@ -32,7 +32,7 @@ def usage(full=False):
     print "\t%s [<mapfile>]" % (progname)
     print
     print "To list map attributes on the console:"
-    print "\t%s -l [-s <squares|scripts|txtmap>] [-u] <mapfile>" % (progname)
+    print "\t%s -l [-s <squares|objects|txtmap>] [-u] <mapfile>" % (progname)
     print "\t%s --list [--show=<squares|...>] [--unknowns] <mapfile>" % (progname)
     print
     if (full):
@@ -60,8 +60,8 @@ def usage(full=False):
         print "\tor"
         print "\t%s --list --show=squares <mapfile>" % (progname)
         print
-        print "If you wanted a listing of all the scripts in the map, specify"
-        print "'scripts' instead of 'squares'."
+        print "If you wanted a listing of all the objects in the map, specify"
+        print "'objects' instead of 'squares'."
         print
         print "When being shown the listing, specify -u or --unknowns to"
         print "also show unknown data from the map file."
@@ -96,7 +96,7 @@ def main(argv=None):
             'listoptions' : {
                 'all': False,
                 'squares': False,
-                'scripts': False,
+                'objects': False,
                 'txtmap': False
                 },
             'unknowns': False,
@@ -127,8 +127,8 @@ def main(argv=None):
         elif (o in ('-s', '--show')):
             if (a == 'squares'):
                 options['listoptions']['squares'] = True
-            elif (a == 'scripts'):
-                options['listoptions']['scripts'] = True
+            elif (a == 'objects'):
+                options['listoptions']['objects'] = True
             elif (a == 'txtmap'):
                 options['listoptions']['txtmap'] = True
             else:

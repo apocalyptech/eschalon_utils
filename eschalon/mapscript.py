@@ -182,6 +182,10 @@ class Mapscript(object):
         ret.append("\tExtra Text / Map Link Destination: %s" % self.extratext)
         ret.append("\tScript: %s" % self.script)
         ret.append("\tLock Level: %d" % self.lock)
+        if (self.lock == 99):
+            ret.append("\tSlider Lock Code: %d" % self.other)
+        else:
+            ret.append("\tOther (typically 0-3): %d" % self.other)
         if (self.trap in traptable):
             ret.append("\tTrapped: %s" % traptable[self.trap])
         else:
@@ -191,10 +195,9 @@ class Mapscript(object):
         else:
             ret.append("\tState: %d (unknown)" % self.state)
         ret.append("\tSturdiness: %d" % self.sturdiness)
-        ret.append("\tOther (code for slider locks): %d" % self.other)
         if (self.flags != 0):
             ret.append("\tFlags:")
-            for (flag, flagtext) in scriptflags.values():
+            for (flag, flagtext) in scriptflags.items():
                 if (self.flags & flag == flag):
                     ret.append("\t\t* %s" % flagtext)
 
@@ -203,7 +206,6 @@ class Mapscript(object):
             if (item.item_name != ''):
                 ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
-            ret.append("\tUnknown byte 2: %d 0x%02X" % (self.unknownu2, self.unknownu2))
             ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
             ret.append("\tUsually Zero 1: %d" % (self.zeroh1))
             ret.append("\tUsually Zero 2: %d" % (self.zeroi1))

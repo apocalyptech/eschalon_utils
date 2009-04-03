@@ -96,7 +96,7 @@ class MapCLI(object):
         i = 0
         for script in self.map.scripts:
             i = i + 1
-            print 'Script Number %d' % i
+            print 'Object Number %d' % i
             print script.display(unknowns)
             print
 
@@ -135,7 +135,7 @@ class MapCLI(object):
         if (listoptions['squares']):
             self.display_squares(unknowns)
 
-        if (listoptions['scripts']):
+        if (listoptions['objects']):
             self.display_scripts(unknowns)
 
         if (listoptions['txtmap']):

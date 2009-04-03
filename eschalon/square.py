@@ -19,6 +19,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from eschalonb1 import objecttypetable
+
 class Square(object):
     """ A class to hold data about a particular square on a map. """
 
@@ -123,7 +125,10 @@ class Square(object):
         ret.append("    Decal Image: %d" % self.decalimg)
         ret.append("    Wall Image: %d" % self.wallimg)
         ret.append("    Wall Decal Image: %d" % self.walldecalimg)
-        ret.append("    Script ID: %d" % self.scriptid)
+        if (self.scriptid in objecttypetable):
+            ret.append("    Object Type: %s" % objecttypetable[self.scriptid])
+        else:
+            ret.append("    Object Type: %d" % self.scriptid)
         if (unknowns):
             ret.append("    Unknown 5: %d" % self.unknown5)
 
@@ -137,7 +142,7 @@ class Square(object):
         # Display any scripts we may have
         for script in self.scripts:
             ret.append('')
-            ret.append("  Associated Script:")
+            ret.append("  Associated Object:")
             ret.append(script.display(unknowns))
         ret.append('')
 
