@@ -312,14 +312,27 @@ class MapGUI(BaseGUI):
     def key_handler(self, widget, event):
         """ Handles keypresses, which we'll use to simplify selecting drawing stuff. """
         # TODO: check for Bad Things if we change while dragging, etc
-        if (event.keyval < 256 and (event.state & self.keymask) == 0):
+        if (event.state & gtk.gdk.CONTROL_MASK == gtk.gdk.CONTROL_MASK):
+            if (event.keyval < 256):
+                key = chr(event.keyval).lower()
+                if (key == 'p'):
+                    self.on_prefs()
+                elif (key == 'm'):
+                    self.on_prop_button_clicked()
+                elif (key == 'e'):
+                    self.on_export_clicked()
+                elif (key == 'r'):
+                    self.on_revert()
+                elif (key == 'a'):
+                    self.on_save_as()
+        elif (event.keyval < 256 and (event.state & self.keymask) == 0):
             key = chr(event.keyval).lower()
             if (key == 'm'):
                 self.ctl_move_toggle.set_active(True)
             elif (key == 'e'):
                 self.ctl_edit_toggle.set_active(True)
 
-    def on_revert(self, widget):
+    def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
         self.load_from_file(self.map.df.filename)
 
@@ -367,7 +380,7 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
 
-    def on_prefs(self, widget):
+    def on_prefs(self, widget=None):
         """ Override on_prefs a bit. """
         (changed, alert_changed) = super(MapGUI, self).on_prefs(widget)
         if (changed and alert_changed):
@@ -580,7 +593,7 @@ class MapGUI(BaseGUI):
         self.get_widget('color_rgb_label').set_markup('<i>(RGB: %d, %d, %d)</i>' %
                 (self.map.color_r, self.map.color_g, self.map.color_b))
 
-    def on_prop_button_clicked(self, widget):
+    def on_prop_button_clicked(self, widget=None):
         """ Show the global properties window. """
         self.get_widget('mapid').set_text(self.map.mapid)
         if (self.map.is_savegame()):

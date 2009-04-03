@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Apr  3 12:28:20 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Apr  3 13:15:10 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -75,7 +75,7 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="gtk-properties">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Map Properties</property>
+                        <property name="label" translatable="yes">_Map Properties</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_prop_button_clicked"/>
                         <child internal-child="image">
@@ -89,7 +89,7 @@
                     <child>
                       <widget class="GtkImageMenuItem" id="menuitem3">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Export Image</property>
+                        <property name="label" translatable="yes">_Export Image</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="on_export_clicked"/>
                         <child internal-child="image">
