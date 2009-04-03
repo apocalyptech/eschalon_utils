@@ -40,8 +40,7 @@ class Entity(object):
         self.unknownc1 = -1
         self.health = -1
         self.unknownc2 = -1
-        self.initial_inside = -1
-        self.initial_outside = -1
+        self.initial_loc = -1
         self.ent_zero1 = -1
         self.ent_zero2 = -1
 
@@ -59,8 +58,7 @@ class Entity(object):
         newentity.unknownc1 = self.unknownc1
         newentity.health = self.health
         newentity.unknownc2 = self.unknownc2
-        newentity.initial_inside = self.initial_inside
-        newentity.initial_outside = self.initial_outside
+        newentity.initial_loc = self.initial_loc
         newentity.ent_zero1 = self.ent_zero1
         newentity.ent_zero2 = self.ent_zero2
 
@@ -87,8 +85,7 @@ class Entity(object):
             self.unknownc1 = df.readuchar()
             self.health = df.readint()
             self.unknownc2 = df.readuchar()
-            self.initial_inside = df.readuchar()
-            self.initial_outside = df.readuchar()
+            self.initial_loc = df.readshort()
             self.ent_zero1 = df.readuchar()
             self.ent_zero2 = df.readuchar()
 
@@ -105,8 +102,7 @@ class Entity(object):
             df.writeuchar(self.unknownc1)
             df.writeint(self.health)
             df.writeuchar(self.unknownc2)
-            df.writeuchar(self.initial_inside)
-            df.writeuchar(self.initial_outside)
+            df.writeshort(self.initial_loc)
             df.writeuchar(self.ent_zero1)
             df.writeuchar(self.ent_zero2)
 
@@ -122,19 +118,16 @@ class Entity(object):
             self.unknownc1 = 0
             self.health = 0
             self.unknownc2 = 0
-            self.initial_inside = 0
-            self.initial_outside = 0
+            self.initial_loc = 0
             self.ent_zero1 = 0
             self.ent_zero2 = 0
             self.set_initial(x, y)
 
     def set_initial(self, x, y):
         """
-        Set our "initial" parameters, given actual (x,y) coordinates.
+        Set our initial_loc parameter, given actual (x,y) coordinates.
         """
-        squarenum = (y*100)+x
-        self.initial_inside = squarenum % 256
-        self.initial_outside = int(squarenum/256)
+        self.initial_loc = (y*100)+x
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -154,8 +147,7 @@ class Entity(object):
         if (self.savegame):
             ret.append("\tFriendly: %d" % (self.friendly))
             ret.append("\tHealth: %d" % (self.health))
-            ret.append("\tInitial Location (inside counter): %d" % self.initial_inside)
-            ret.append("\tInitial Location (outside counter): %d" % self.initial_outside)
+            ret.append("\tInitial Tile: %d" % self.initial_loc)
             if (unknowns):
                 ret.append("\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1)
                 ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc2)

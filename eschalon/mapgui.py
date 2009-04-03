@@ -1439,8 +1439,7 @@ class MapGUI(BaseGUI):
         """ Set the entity's "initial" location to the current (x,y) """
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.set_initial(self.sq_x, self.sq_y)
-        self.get_widget('initial_inside').set_value(ent.initial_inside)
-        self.get_widget('initial_outside').set_value(ent.initial_outside)
+        self.get_widget('initial_loc').set_value(ent.initial_loc)
 
     def on_entity_toggle(self, widget):
         square = self.map.squares[self.sq_y][self.sq_x]
@@ -1580,8 +1579,7 @@ class MapGUI(BaseGUI):
             self.get_widget('unknownc2').set_value(square.entity.unknownc2)
             self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
             self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
-            self.get_widget('initial_inside').set_value(square.entity.initial_inside)
-            self.get_widget('initial_outside').set_value(square.entity.initial_outside)
+            self.get_widget('initial_loc').set_value(square.entity.initial_loc)
 
     def update_object_note(self):
         """

@@ -1,5 +1,11 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+*eschalon_b1_utils-0.4.2 (03 Apr 2009)
+
+   03 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
+   Realized that I was way over-complicating the
+   entity "Initial Location" field
+
 *eschalon_b1_utils-0.4.1 (03 Apr 2009)
 
    02 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
