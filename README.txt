@@ -15,6 +15,10 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+Some icons in this program are Copyright Axialis Team, and released
+under a Creative Commons Attribution 2.5 Generic license.  See
+http://www.axialis.com/free/icons/ for details.
+
 ABOUT
 -----
 

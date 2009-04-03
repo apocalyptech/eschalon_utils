@@ -1,0 +1,6 @@
+Some icons in this program are Copyright Axialis Team, and released
+under a Creative Commons Attribution 2.5 Generic license.  See
+http://www.axialis.com/free/icons/ for details.
+
+Specifically, icon-hand.png and icon-pointer.png are from Axialis'
+"Light Grey Square" set.
