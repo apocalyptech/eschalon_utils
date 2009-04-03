@@ -647,6 +647,17 @@ class MapGUI(BaseGUI):
         if (script is not None):
             script.__dict__[labelname] = widget.get_value_as_int()
 
+    def on_locklevel_changed(self, widget):
+        """ When our lock level changes. """
+        self.on_script_int_changed(widget)
+        wname = widget.get_name()
+        (labelname, page) = wname.rsplit('_', 1)
+        otherlabel = self.get_widget('other_%d_label' % (int(page)))
+        if (widget.get_value_as_int() == 99):
+            otherlabel.set_text('Slider Combination:')
+        else:
+            otherlabel.set_markup('<i>Other Value (0-3):</i>')
+
     def update_ent_square_img(self):
         entity = self.map.squares[self.sq_y][self.sq_x].entity
         entbuf = self.gfx.get_entity(entity.entid, entity.direction, None, True)
@@ -1051,27 +1062,30 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
-    def input_spin(self, page, table, row, name, text, max, tooltip=None):
+    def input_spin(self, page, table, row, name, text, max, tooltip=None, signal=None):
         self.input_label(page, table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.SpinButton()
         entry.show()
-        entry.set_name('%s_%d' % (name, page))
+        self.register_widget('%s_%d' % (name, page), entry)
         entry.set_range(0, max)
         entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 10))
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             entry.set_value(script.__dict__[name])
-        entry.connect('value-changed', self.on_script_int_changed)
+        if (signal is None):
+            entry.connect('value-changed', self.on_script_int_changed)
+        else:
+            entry.connect('value-changed', signal)
         if (tooltip is not None):
             tips = gtk.Tooltips()
             tips.set_tip(entry, tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
-    def input_uchar(self, page, table, row, name, text, tooltip=None):
-        self.input_spin(page, table, row, name, text, 255, tooltip)
+    def input_uchar(self, page, table, row, name, text, tooltip=None, signal=None):
+        self.input_spin(page, table, row, name, text, 255, tooltip, signal)
 
     def input_short(self, page, table, row, name, text, tooltip=None):
         self.input_spin(page, table, row, name, text, 65535, tooltip)
@@ -1279,8 +1293,8 @@ class MapGUI(BaseGUI):
         else:
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
-        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock')
-        self.input_uchar(curpages, binput, 7, 'other', 'Other <i><small>(slider combination)</small></i>', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock', self.on_locklevel_changed)
+        self.input_uchar(curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
         # If we ever get more flags, this'll have to change
         if (square.scripts[curpages].flags & ~0x40 == 0):
@@ -1347,9 +1361,12 @@ class MapGUI(BaseGUI):
         vp.add(content)
         sw.add(vp)
 
-        # Finally, update our text labels and tooltips appropriately
+        # Update our text labels and tooltips appropriately
         # for scriptid type 6
         self.update_script_type_strings(curpages, square.scriptid)
+
+        # ... and update our "other" label
+        self.on_locklevel_changed(self.get_widget('lock_%d' % (curpages)))
 
         self.script_notebook.append_page(sw, label)
 
