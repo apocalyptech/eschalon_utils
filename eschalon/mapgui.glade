@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Apr  3 13:15:10 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Apr  3 14:39:03 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -168,14 +168,15 @@
                               <widget class="GtkRadioButton" id="ctl_edit_toggle">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="border_width">2</property>
+                                <property name="tooltip_text">Edit</property>
+                                <property name="relief">GTK_RELIEF_NONE</property>
                                 <property name="response_id">0</property>
                                 <property name="active">True</property>
                                 <signal name="toggled" handler="on_control_toggle"/>
                                 <child>
                                   <widget class="GtkImage" id="image9">
                                     <property name="visible">True</property>
-                                    <property name="stock">gtk-apply</property>
+                                    <property name="pixbuf">icon-pointer.png</property>
                                   </widget>
                                 </child>
                               </widget>
@@ -188,14 +189,15 @@
                               <widget class="GtkRadioButton" id="ctl_move_toggle">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="border_width">2</property>
+                                <property name="tooltip_text">Move</property>
+                                <property name="relief">GTK_RELIEF_NONE</property>
                                 <property name="response_id">0</property>
                                 <property name="group">ctl_edit_toggle</property>
                                 <signal name="toggled" handler="on_control_toggle"/>
                                 <child>
                                   <widget class="GtkImage" id="image10">
                                     <property name="visible">True</property>
-                                    <property name="stock">gtk-yes</property>
+                                    <property name="pixbuf">icon-hand.png</property>
                                   </widget>
                                 </child>
                               </widget>
