@@ -1381,6 +1381,9 @@ class MapGUI(BaseGUI):
             for script in self.map.squares[self.sq_y][self.sq_x].scripts:
                 self.append_script_notebook(script)
 
+        # ... and possibly clean out our note
+        self.update_object_note()
+
     def on_script_add(self, widget):
         """
         Called when a new script is added.  Creates a new
@@ -1393,6 +1396,7 @@ class MapGUI(BaseGUI):
         square.addscript(script)
         self.append_script_notebook(script)
         self.script_notebook.show()
+        self.update_object_note()
 
     def on_healthmaxbutton_clicked(self, widget):
         """ Set the entity's health to its maximum. """
@@ -1454,12 +1458,14 @@ class MapGUI(BaseGUI):
         self.on_singleval_square_changed_int(widget)
         square = self.map.squares[self.sq_y][self.sq_x]
         self.update_all_scriptid_type_strings(square)
+        self.update_object_note()
 
     def on_scriptid_dd_changed(self, widget):
         """ Process changing our object/script type dropdown. """
         square = self.map.squares[self.sq_y][self.sq_x]
         square.scriptid = self.object_type_list_rev[widget.get_active()]
         self.update_all_scriptid_type_strings(square)
+        self.update_object_note()
 
     def populate_squarewindow_from_square(self, square):
         """ Populates the square editing screen from a given square. """
@@ -1546,6 +1552,29 @@ class MapGUI(BaseGUI):
             self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
             self.get_widget('initial_inside').set_value(square.entity.initial_inside)
             self.get_widget('initial_outside').set_value(square.entity.initial_outside)
+
+    def update_object_note(self):
+        """
+        Updates our object note, to let the user know if there should
+        be an object or not.
+        """
+        square = self.map.squares[self.sq_y][self.sq_x]
+        note = self.get_widget('object_note')
+        if (len(square.scripts) > 1):
+            note.set_markup('<b>Warning:</b> There are three instances in the master map files where more than one object is defined for a tile, but doing so is discouraged.  Only one of the objects will actually be used by the game engine.')
+            note.show()
+        elif (square.scriptid > 0 and square.scriptid < 25):
+            if (len(square.scripts) > 0):
+                note.hide()
+            else:
+                note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
+                note.show()
+        else:
+            if (len(square.scripts) > 0):
+                note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
+                note.show()
+            else:
+                note.hide()
 
     def open_floorsel(self, widget):
         """ Show the floor selection window. """

@@ -236,15 +236,16 @@ objecttypetable = {
         13: 'Sconce',
         14: 'Trap / Teleporter / Other tile-triggered actions',
         15: 'Blackpowder Keg',
-        30: 'Unknown, no attached script',
-        31: 'Unknown, no attached script',
-        32: 'Unknown, no attached script',
-        33: 'Unknown, no attached script',
-        34: 'Unknown, no attached script',
-        35: 'Unknown, no attached script',
-        36: 'Unknown, no attached script',
-        37: 'Unknown, no attached script',
-        38: 'Unknown, no attached script'
+        25: 'Light Source',
+        30: 'Sound Generator (Inn)',
+        31: 'Sound Generator (Church)',
+        32: 'Sound Generator (Windy)',
+        33: 'Sound Generator (Running Water)',
+        34: 'Sound Generator (Magic Shop)',
+        35: 'Sound Generator (Blacksmith)',
+        36: 'Sound Generator (Woodland)',
+        37: 'Sound Generator (Crowd)',
+        38: 'Sound Generator (Waterfall)',
     }
 
 class EntHelper(object):

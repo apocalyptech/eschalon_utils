@@ -5,6 +5,7 @@ Packaging
  * Test out map text views since I haven't in awhile
  * Fix script textboxes
  * Doublecheck load/save too (should be no changes)
+ * Hotkeys!
 
 Data
 ----

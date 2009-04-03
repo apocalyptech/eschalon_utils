@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Thu Apr  2 17:19:02 2009 -->
+<!--Generated with glade3 3.4.5 on Fri Apr  3 12:28:20 2009 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -2085,7 +2085,7 @@ Northwest</property>
                             <property name="width_request">350</property>
                             <property name="visible">True</property>
                             <property name="has_tooltip">True</property>
-                            <property name="tooltip_text">The object type is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the object type is specified, but not always.  There is never, however, an object without an associated type.</property>
+                            <property name="tooltip_text">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.</property>
                             <signal name="changed" handler="on_scriptid_dd_changed"/>
                           </widget>
                         </child>
@@ -2112,7 +2112,7 @@ Northwest</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="has_tooltip">True</property>
-                        <property name="tooltip_markup">The object type is used to trigger certain predefined actions within the game engine.  Usually there will be an associated object if the object type is specified, but not always.  There is never, however, an object without an associated type.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
+                        <property name="tooltip_markup">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
                         <property name="response_id">0</property>
                         <signal name="clicked" handler="on_script_add"/>
                         <child>
@@ -2152,12 +2152,24 @@ Northwest</property>
                   </packing>
                 </child>
                 <child>
+                  <widget class="GtkLabel" id="object_note">
+                    <property name="visible">True</property>
+                    <property name="ypad">4</property>
+                    <property name="wrap">True</property>
+                  </widget>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <widget class="GtkNotebook" id="script_notebook">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </widget>
                   <packing>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </widget>
