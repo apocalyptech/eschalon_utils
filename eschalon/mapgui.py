@@ -56,6 +56,7 @@ class MapGUI(BaseGUI):
 
     MODE_EDIT = 0
     MODE_MOVE = 1
+    MODE_DRAW = 2
 
     def __init__(self, options, prefs):
         self.options = options
@@ -114,18 +115,21 @@ class MapGUI(BaseGUI):
         self.composite_area = self.get_widget('composite_area')
         self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
         self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
+        self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
         # The glade setting here doesn't seem to actually work
-        self.get_widget('ctl_edit_toggle').set_property('draw-indicator', False)
-        self.get_widget('ctl_move_toggle').set_property('draw-indicator', False)
+        self.ctl_edit_toggle.set_property('draw-indicator', False)
+        self.ctl_move_toggle.set_property('draw-indicator', False)
+        self.ctl_draw_toggle.set_property('draw-indicator', False)
 
         # Cursors for our editing modes
         self.edit_mode = self.MODE_EDIT
         self.cursor_edit = None
         self.cursor_move = gtk.gdk.Cursor(gtk.gdk.FLEUR)
         self.cursor_move_drag = gtk.gdk.Cursor(gtk.gdk.DOT)
+        self.cursor_draw = gtk.gdk.Cursor(gtk.gdk.PENCIL)
 
         # Initialize item stuff
         self.curitemtype = self.ITEM_MAP
@@ -331,6 +335,8 @@ class MapGUI(BaseGUI):
                 self.ctl_move_toggle.set_active(True)
             elif (key == 'e'):
                 self.ctl_edit_toggle.set_active(True)
+            elif (key == 'd'):
+                self.ctl_draw_toggle.set_active(True)
 
     def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
@@ -1758,6 +1764,9 @@ class MapGUI(BaseGUI):
             elif (clicked == 'ctl_move_toggle'):
                 self.maparea.window.set_cursor(self.cursor_move)
                 self.edit_mode = self.MODE_MOVE
+            elif (clicked == 'ctl_draw_toggle'):
+                self.maparea.window.set_cursor(self.cursor_draw)
+                self.edit_mode = self.MODE_DRAW
             else:
                 # TODO: Except here or something
                 print "Unknown control toggled, should never get here"
