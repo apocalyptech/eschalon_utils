@@ -55,9 +55,39 @@ from eschalonb1 import app_name, version, url, authors, entitytable
 
 class MapGUI(BaseGUI):
 
+    # Editing modes that we can be in
     MODE_EDIT = 0
     MODE_MOVE = 1
     MODE_DRAW = 2
+
+    # Actions that a mouse click can take
+    ACTION_NONE = -1
+    ACTION_EDIT = 0
+    ACTION_DRAG = 1
+
+    # Mouse button constants
+    MOUSE_LEFT = 1
+    MOUSE_MIDDLE = 2
+    MOUSE_RIGHT = 3
+
+    # Mouse Mappings for the various modes
+    mouse_action_maps = {
+        MODE_EDIT: {
+            MOUSE_LEFT: ACTION_EDIT,
+            MOUSE_MIDDLE: ACTION_NONE,
+            MOUSE_RIGHT: ACTION_DRAG
+            },
+        MODE_MOVE: {
+            MOUSE_LEFT: ACTION_DRAG,
+            MOUSE_MIDDLE: ACTION_NONE,
+            MOUSE_RIGHT: ACTION_EDIT
+            },
+        MODE_DRAW: {
+            MOUSE_LEFT: ACTION_EDIT,
+            MOUSE_MIDDLE: ACTION_NONE,
+            MOUSE_RIGHT: ACTION_DRAG
+            }
+        }
 
     def __init__(self, options, prefs):
         self.options = options
@@ -132,10 +162,12 @@ class MapGUI(BaseGUI):
 
         # Cursors for our editing modes
         self.edit_mode = self.MODE_EDIT
-        self.cursor_edit = None
-        self.cursor_move = gtk.gdk.Cursor(gtk.gdk.FLEUR)
         self.cursor_move_drag = gtk.gdk.Cursor(gtk.gdk.DOT)
-        self.cursor_draw = gtk.gdk.Cursor(gtk.gdk.PENCIL)
+        self.cursor_map = {
+            self.MODE_EDIT: None,
+            self.MODE_MOVE: gtk.gdk.Cursor(gtk.gdk.FLEUR),
+            self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL)
+            }
 
         # Initialize item stuff
         self.curitemtype = self.ITEM_MAP
@@ -1806,23 +1838,24 @@ class MapGUI(BaseGUI):
         clicked = widget.get_name()
         if (widget.get_active()):
             if (clicked == 'ctl_edit_toggle'):
-                self.maparea.window.set_cursor(self.cursor_edit)
                 self.edit_mode = self.MODE_EDIT
             elif (clicked == 'ctl_move_toggle'):
-                self.maparea.window.set_cursor(self.cursor_move)
                 self.edit_mode = self.MODE_MOVE
             elif (clicked == 'ctl_draw_toggle'):
-                self.maparea.window.set_cursor(self.cursor_draw)
                 self.edit_mode = self.MODE_DRAW
             else:
                 # TODO: Except here or something
                 print "Unknown control toggled, should never get here"
+            self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
         # TODO: verify button numbers on, say, non-three-button mice
-        if ((self.edit_mode == self.MODE_MOVE and event.button == 1) or
-            (self.edit_mode == self.MODE_EDIT and event.button == 3)):
+        if (event.button not in self.mouse_action_maps[self.edit_mode]):
+            return
+
+        action = self.mouse_action_maps[self.edit_mode][event.button]
+        if (action == self.ACTION_DRAG):
             adjust = self.mainscroll.get_hadjustment()
             self.holding = True
             self.hold_x = event.x_root
@@ -1830,7 +1863,7 @@ class MapGUI(BaseGUI):
             self.diff_x = 0
             self.diff_y = 0
             self.maparea.window.set_cursor(self.cursor_move_drag)
-        else:
+        elif (action == self.ACTION_EDIT):
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
                     self.undo.store(self.sq_x, self.sq_y)
@@ -1841,10 +1874,7 @@ class MapGUI(BaseGUI):
     def on_released(self, widget, event):
         if (self.holding):
             self.holding = False
-            if (self.edit_mode == self.MODE_MOVE):
-                self.maparea.window.set_cursor(self.cursor_move)
-            else:
-                self.maparea.window.set_cursor(self.cursor_edit)
+            self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
 
     def map_toggle(self, widget):
         self.draw_map()
