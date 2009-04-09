@@ -606,8 +606,7 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
-    # TODO: should rename this since we do drawing too
-    def update_undoaction(self, coords=None):
+    def process_square_change(self, coords=None):
         """
         Handle updating things if undo or redo is called.  This
         will activate/deactivate the necessary menu items, and also
@@ -626,10 +625,10 @@ class MapGUI(BaseGUI):
         #self.undo.report()
 
     def on_undo(self, widget=None):
-        self.update_undoaction(self.undo.undo())
+        self.process_square_change(self.undo.undo())
 
     def on_redo(self, widget=None):
-        self.update_undoaction(self.undo.redo())
+        self.process_square_change(self.undo.redo())
 
     def populate_color_selection(self):
         img = self.get_widget('color_img')
@@ -827,7 +826,7 @@ class MapGUI(BaseGUI):
 
         # All the "fun" stuff ends up happening in here; it's
         # this function that actually ends up calling redraw_square now
-        self.update_undoaction((self.sq_x, self.sq_y))
+        self.process_square_change((self.sq_x, self.sq_y))
 
         # Finally, close out the window
         self.squarewindow.hide()
