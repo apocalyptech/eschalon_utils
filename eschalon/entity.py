@@ -123,6 +123,26 @@ class Entity(object):
             self.ent_zero2 = 0
             self.set_initial(x, y)
 
+    def equals(self, entity):
+        """
+        Compare ourselves to another entity object.  We're just
+        checking if our values are the same, NOT if we're *actually*
+        the same object.  Returns true for equality, false for inequality.
+        """
+        return (self.x == entity.x and
+                self.y == entity.y and
+                self.entid == entity.entid and
+                self.direction == entity.direction and
+                self.script == entity.script and
+                self.savegame == entity.savegame and
+                self.friendly == entity.friendly and
+                self.unknownc1 == entity.unknownc1 and
+                self.health == entity.health and
+                self.unknownc2 == entity.unknownc2 and
+                self.initial_loc == entity.initial_loc and
+                self.ent_zero1 == entity.ent_zero1 and
+                self.ent_zero2 == entity.ent_zero2)
+
     def set_initial(self, x, y):
         """
         Set our initial_loc parameter, given actual (x,y) coordinates.

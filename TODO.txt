@@ -48,7 +48,6 @@ Map GUI
  * Change background color, like we do for selection in the square window
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
  * Really test undo/redo - have to save out, etc.
- * Hotkeys for undo/redo
 
 Internal
 --------

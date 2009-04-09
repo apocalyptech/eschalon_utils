@@ -83,6 +83,48 @@ class Square(object):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
 
+    def equals(self, square):
+        """
+        Compare ourselves to another square object.  We're just
+        checking if our values are the same, NOT if we're *actually*
+        the same object.  Returns true for equality, false for inequality.
+        """
+        # TODO: We need to check entity and script indexes here, too.
+        return (self.wall == square.wall and
+                self.floorimg == square.floorimg and
+                self.decalimg == square.decalimg and
+                self.wallimg == square.wallimg and
+                self.unknown5 == square.unknown5 and
+                self.walldecalimg == square.walldecalimg and
+                self.scriptid == square.scriptid and
+                self.entity_equals(square.entity) and
+                self.scripts_equal(square.scripts))
+
+    def entity_equals(self, entity):
+        """
+        Compare the contents of our entity to the contents of the
+        given entity.
+        """
+        if (self.entity is None):
+            return (entity is None)
+        else:
+            if (entity is None):
+                return False
+            else:
+                return self.entity.equals(entity)
+
+    def scripts_equal(self, scripts):
+        """
+        Compare the contents of our scripts to the contents of the
+        given scripts.
+        """
+        if (len(self.scripts) != len(scripts)):
+            return False
+        for (myscript, compscript) in zip(self.scripts, scripts):
+            if (not myscript.equals(compscript)):
+                return False
+        return True
+
     def hasdata(self):
         """ Do we have something other than zeroes? """
         return (self.wall != 0 or self.floorimg != 0 or

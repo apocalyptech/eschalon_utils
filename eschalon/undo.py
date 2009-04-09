@@ -34,8 +34,12 @@ class UndoHistory(object):
     def set_new(self, map):
         """ Update this record's 'new' square record """
         newsquare = map.squares[self.y][self.x]
-        self.newsquare = newsquare.replicate()
-        (self.new_entidx, self.new_scriptidx) = self.grab_idx(map, newsquare)
+        if (self.oldsquare.equals(newsquare)):
+            return False
+        else:
+            self.newsquare = newsquare.replicate()
+            (self.new_entidx, self.new_scriptidx) = self.grab_idx(map, newsquare)
+            return True
 
     def grab_idx(self, map, square):
         """
@@ -69,25 +73,51 @@ class Undo(object):
         self.maxstack = 50
         self.curidx = -1
         self.map = map
+        self.finished = True
 
     def have_undo(self):
+        """ Report whether there are any undos in the stack """
         return (self.curidx >= 0)
 
     def have_redo(self):
+        """ Report whether there are any redos in the stack """
         return (self.curidx < len(self.history)-1)
 
     def store(self, x, y):
-        self.curidx += 1
-        self.history.insert(self.curidx, UndoHistory(self.map, x, y))
-        del self.history[self.curidx+1:]
-        if (len(self.history) > self.maxstack):
-            del self.history[0]
+        """
+        Stores the current map state as the "old" square in the
+        actual History object.  This level-of-undo is not considered
+        finished until finish() is called later.
+        """
+        if (self.finished):
+            self.curidx += 1
+            self.history.insert(self.curidx, UndoHistory(self.map, x, y))
+            self.finished = False
+        else:
+            raise Exception('Previous undo must be finished before storing a new one')
 
-    def set_new(self):
+    def finish(self):
+        """
+        Finishes off the undo level by setting the "new" square in
+        the actual History object.  If the new square isn't any different
+        from the old one, back out the undo level.
+        """
         if (self.have_undo()):
-            self.history[self.curidx].set_new(self.map)
+            if (self.history[self.curidx].set_new(self.map)):
+                del self.history[self.curidx+1:]
+                if (len(self.history) > self.maxstack):
+                    del self.history[0]
+                    self.curidx -= 1
+            else:
+                del self.history[self.curidx]
+                self.curidx -= 1
+            self.finished = True
+        else:
+            raise Exception('store() must be called before finish()')
+                
 
     def undo(self):
+        """ Process an undo action """
         if (self.have_undo()):
             self.curidx -= 1
             obj = self.history[self.curidx+1]
@@ -99,6 +129,7 @@ class Undo(object):
             return None
 
     def redo(self):
+        """ Process a redo action """
         if (self.have_redo()):
             self.curidx += 1
             obj = self.history[self.curidx]

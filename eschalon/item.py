@@ -179,6 +179,39 @@ class Item(object):
         df.writeint(self.zero1)
         df.writeint(self.duration)
 
+    def equals(self, item):
+        """
+        Compare ourselves to another item object.  We're just
+        checking if our values are the same, NOT if we're *actually*
+        the same object.  Returns true for equality, false for inequality.
+        """
+        return (self.type == item.type and
+                self.subtype == item.subtype and
+                self.item_name == item.item_name and
+                self.weight == item.weight and
+                self.pictureid == item.pictureid and
+                self.value == item.value and
+                self.canstack == item.canstack and
+                self.quantity == item.quantity and
+                self.basedamage == item.basedamage and
+                self.basearmor == item.basearmor and
+                self.attr_modified == item.attr_modified and
+                self.attr_modifier == item.attr_modifier and
+                self.skill_modified == item.skill_modified and
+                self.skill_modifier == item.skill_modifier and
+                self.hitpoint == item.hitpoint and
+                self.mana == item.mana and
+                self.tohit == item.tohit and
+                self.damage == item.damage and
+                self.armor == item.armor and
+                self.incr == item.incr and
+                self.flags == item.flags and
+                self.script == item.script and
+                self.visibility == item.visibility and
+                self.duration == item.duration and
+                self.zero1 == item.zero1 and
+                self.emptystr == item.emptystr)
+
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this
             item, in the game. """

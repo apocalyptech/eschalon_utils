@@ -335,6 +335,11 @@ class MapGUI(BaseGUI):
                     self.on_revert()
                 elif (key == 'a'):
                     self.on_save_as()
+                elif (key == 'z'):
+                    if (event.state & gtk.gdk.SHIFT_MASK == gtk.gdk.SHIFT_MASK):
+                        self.on_redo()
+                    else:
+                        self.on_undo()
         elif (event.keyval < 256 and (event.state & self.keymask) == 0):
             key = chr(event.keyval).lower()
             if (key == 'm'):
@@ -620,10 +625,10 @@ class MapGUI(BaseGUI):
             self.menu_redo.set_sensitive(False)
         #self.undo.report()
 
-    def on_undo(self, widget):
+    def on_undo(self, widget=None):
         self.update_undoaction(self.undo.undo())
 
-    def on_redo(self, widget):
+    def on_redo(self, widget=None):
         self.update_undoaction(self.undo.redo())
 
     def populate_color_selection(self):
@@ -818,7 +823,7 @@ class MapGUI(BaseGUI):
         # Populate our undo object with the new square
         # TODO: Note that we should really check for changes here so we're not storing empty
         # undo histories...
-        self.undo.set_new()
+        self.undo.finish()
 
         # All the "fun" stuff ends up happening in here; it's
         # this function that actually ends up calling redraw_square now

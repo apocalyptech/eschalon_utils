@@ -172,6 +172,43 @@ class Mapscript(object):
             else:
                 df.writestr(self.items[num].item_name)
 
+    def equals(self, script):
+        """
+        Compare ourselves to another script object.  We're just
+        checking if our values are the same, NOT if we're *actually*
+        the same object.  Returns true for equality, false for inequality.
+        """
+        return (self.x == script.x and
+                self.y == script.y and
+                self.description == script.description and
+                self.extratext == script.extratext and
+                self.zeroi1 == script.zeroi1 and
+                self.zeroh1 == script.zeroh1 and
+                self.sturdiness == script.sturdiness and
+                self.flags == script.flags and
+                self.zeroi2 == script.zeroi2 and
+                self.zeroi3 == script.zeroi3 and
+                self.lock == script.lock and
+                self.trap == script.trap and
+                self.state == script.state and
+                self.other == script.other and
+                self.unknownh3 == script.unknownh3 and
+                self.script == script.script and
+                self.savegame == script.savegame and
+                self.items_equal(script.items))
+
+    def items_equal(self, items):
+        """
+        Compare the contents of our items to the contents of the
+        given items.
+        """
+        if (len(self.items) != len(items)):
+            return False
+        for (myitem, compitem) in zip(self.items, items):
+            if (not myitem.equals(compitem)):
+                return False
+        return True
+
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
 
