@@ -322,25 +322,7 @@ class MapGUI(BaseGUI):
     def key_handler(self, widget, event):
         """ Handles keypresses, which we'll use to simplify selecting drawing stuff. """
         # TODO: check for Bad Things if we change while dragging, etc
-        if (event.state & gtk.gdk.CONTROL_MASK == gtk.gdk.CONTROL_MASK):
-            if (event.keyval < 256):
-                key = chr(event.keyval).lower()
-                if (key == 'p'):
-                    self.on_prefs()
-                elif (key == 'm'):
-                    self.on_prop_button_clicked()
-                elif (key == 'e'):
-                    self.on_export_clicked()
-                elif (key == 'r'):
-                    self.on_revert()
-                elif (key == 'a'):
-                    self.on_save_as()
-                elif (key == 'z'):
-                    if (event.state & gtk.gdk.SHIFT_MASK == gtk.gdk.SHIFT_MASK):
-                        self.on_redo()
-                    else:
-                        self.on_undo()
-        elif (event.keyval < 256 and (event.state & self.keymask) == 0):
+        if (event.keyval < 256 and (event.state & self.keymask) == 0):
             key = chr(event.keyval).lower()
             if (key == 'm'):
                 self.ctl_move_toggle.set_active(True)
