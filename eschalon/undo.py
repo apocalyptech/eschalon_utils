@@ -115,13 +115,14 @@ class Undo(object):
         this is just necessary so that our entity and script links stay
         populated like they should.
         """
+
         # First update the map square itself
         self.map.squares[y][x] = tosquare.replicate()
 
         # Entity first
-        if (from_entidx and from_entidx >= 0):
+        if (from_entidx is not None and from_entidx >= 0):
             del self.map.entities[from_entidx]
-        if (to_entidx and to_entidx >= 0):
+        if (to_entidx is not None and to_entidx >= 0):
             self.map.entities.insert(to_entidx, self.map.squares[y][x].entity)
 
         # ... and now Scripts
@@ -131,3 +132,33 @@ class Undo(object):
             del self.map.scripts[idx]
         for (i, idx) in enumerate(to_scriptidx):
             self.map.scripts.insert(idx, self.map.squares[y][x].scripts[i])
+
+    # TODO: Delete this before release
+    def report(self):
+        """
+        This just prints out some text to the console, used for making sure
+        that stuff is working how it should.
+        """
+        print '%d total scripts in map' % (len(self.map.scripts))
+        scriptcounters = {}
+        for script in self.map.scripts:
+            squareval = script.y*100+script.x
+            if (squareval not in scriptcounters):
+                scriptcounters[squareval] = -1
+            scriptcounters[squareval] += 1
+            squarescript = self.map.squares[script.y][script.x].scripts[scriptcounters[squareval]]
+            if (squarescript == script):
+                matched = 'matched'
+            else:
+                matched = 'DOES NOT MATCH'
+            print ' * (%d, %d), script %d, %s' % (script.x, script.y, scriptcounters[squareval]+1, matched)
+        print
+        print '%d total entities in map' % (len(self.map.entities))
+        for entity in self.map.entities:
+            squareentity = self.map.squares[entity.y][entity.x].entity
+            if (squareentity == entity):
+                matched = 'matched'
+            else:
+                matched = 'DOES NOT MATCH'
+            print ' * (%d, %d), %s' % (entity.x, entity.y, matched)
+        print

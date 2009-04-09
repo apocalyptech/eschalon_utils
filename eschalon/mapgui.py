@@ -601,6 +601,7 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
+    # TODO: should rename this since we do drawing too
     def update_undoaction(self, coords=None):
         """
         Handle updating things if undo or redo is called.  This
@@ -617,6 +618,7 @@ class MapGUI(BaseGUI):
             self.menu_redo.set_sensitive(True)
         else:
             self.menu_redo.set_sensitive(False)
+        #self.undo.report()
 
     def on_undo(self, widget):
         self.update_undoaction(self.undo.undo())
