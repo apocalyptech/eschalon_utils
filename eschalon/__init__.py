@@ -28,7 +28,7 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich', '',
 
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
-        'Square', 'Mapscript',
+        'Square', 'Mapscript', 'Undo',
         'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'objecttypetable', 'entitytable' ]
 
 # Lookup tables

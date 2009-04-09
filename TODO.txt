@@ -47,8 +47,8 @@ Map GUI
    41.map, where the "Trees" toggle basically does nothing.
  * Change background color, like we do for selection in the square window
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
- * Maybe define a "MapAction" class or something, so that we can support
-   undo/redo
+ * Really test undo/redo - have to save out, etc.
+ * Hotkeys for undo/redo
 
 Internal
 --------

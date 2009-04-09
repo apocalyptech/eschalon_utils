@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   09 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
+   Initial Undo/Redo support
+
    08 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
    Added "draw" Icon
 

@@ -26,6 +26,7 @@ import cairo
 import gobject
 from eschalonb1 import traptable, containertable, objecttypetable
 from eschalonb1.gfx import Gfx
+from eschalonb1.undo import Undo
 
 # Load in our PyGTK deps
 pygtkreq = '2.0'
@@ -79,6 +80,7 @@ class MapGUI(BaseGUI):
         self.cleansquares = []
 
         self.mapinit = False
+        self.undo = None
 
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
@@ -116,6 +118,8 @@ class MapGUI(BaseGUI):
         self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
         self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
         self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
+        self.menu_undo = self.get_widget('menu_undo')
+        self.menu_redo = self.get_widget('menu_redo')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -150,6 +154,8 @@ class MapGUI(BaseGUI):
                 'on_save': self.on_save,
                 'on_save_as': self.on_save_as,
                 'on_export_clicked': self.on_export_clicked,
+                'on_undo': self.on_undo,
+                'on_redo': self.on_redo,
                 'on_clicked': self.on_clicked,
                 'on_released': self.on_released,
                 'on_control_toggle': self.on_control_toggle,
@@ -525,6 +531,10 @@ class MapGUI(BaseGUI):
         # Update the map title
         self.mapname_mainscreen_label.set_text(self.map.mapname)
 
+        # Instansiate our "undo" object so we can handle that
+        self.undo = Undo(self.map)
+        self.update_undoaction()
+
         # Load information from the character
         if (self.mapinit):
             self.draw_map()
@@ -590,6 +600,29 @@ class MapGUI(BaseGUI):
         about.run()
         about.hide()
         #self.mainbook.set_sensitive(True)
+
+    def update_undoaction(self, coords=None):
+        """
+        Handle updating things if undo or redo is called.  This
+        will activate/deactivate the necessary menu items, and also
+        redraw the map.
+        """
+        if (coords):
+            self.redraw_square(coords[0], coords[1])
+        if (self.undo.have_undo()):
+            self.menu_undo.set_sensitive(True)
+        else:
+            self.menu_undo.set_sensitive(False)
+        if (self.undo.have_redo()):
+            self.menu_redo.set_sensitive(True)
+        else:
+            self.menu_redo.set_sensitive(False)
+
+    def on_undo(self, widget):
+        self.update_undoaction(self.undo.undo())
+
+    def on_redo(self, widget):
+        self.update_undoaction(self.undo.redo())
 
     def populate_color_selection(self):
         img = self.get_widget('color_img')
@@ -777,7 +810,27 @@ class MapGUI(BaseGUI):
     def on_squarewindow_close(self, widget, event=None):
         """
         Closes the square-editing window.  Our primary goal here is to redraw the
-        square that was just edited.  Because we don't really keep composite caches
+        square that was just edited.  That's all out in its own function though, so
+        we're just doing some housekeeping mostly.
+        """
+        # Populate our undo object with the new square
+        # TODO: Note that we should really check for changes here so we're not storing empty
+        # undo histories...
+        self.undo.set_new()
+
+        # All the "fun" stuff ends up happening in here; it's
+        # this function that actually ends up calling redraw_square now
+        self.update_undoaction((self.sq_x, self.sq_y))
+
+        # Finally, close out the window
+        self.squarewindow.hide()
+        return True
+
+    def redraw_square(self, x, y):
+        """
+        Redraw a single square, and any dependant squares nearby as well.
+
+        Because we don't really keep composite caches
         around (should we?) this entails drawing all the squares behind the square we
         just edited, the square itself, and then four more "levels" of squares below, as
         well, because objects may be obscuring the one we just edited.  Because of the
@@ -812,14 +865,14 @@ class MapGUI(BaseGUI):
 
         # Figure out our dimensions
         tier_1_x = []
-        tier_1_y = self.sq_y - 1 - 8
-        tier_2_x = range(self.sq_x-1, self.sq_x+2)
-        tier_2_y = self.sq_y - 8
-        global_x = (self.sq_x * self.z_width) - self.z_halfwidth
-        if ((self.sq_y % 2) == 0):
-            tier_1_x = range(self.sq_x-2, self.sq_x+2)
+        tier_1_y = y - 1 - 8
+        tier_2_x = range(x-1, x+2)
+        tier_2_y = y - 8
+        global_x = (x * self.z_width) - self.z_halfwidth
+        if ((y % 2) == 0):
+            tier_1_x = range(x-2, x+2)
         else:
-            tier_1_x = range(self.sq_x-1, self.sq_x+3)
+            tier_1_x = range(x-1, x+3)
             global_x = global_x + self.z_halfwidth
 
         # Set up a surface to use
@@ -852,15 +905,13 @@ class MapGUI(BaseGUI):
             tier_2_y = tier_2_y + 2
 
         # Now superimpose that onto our main map image
-        self.guicache_ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(self.sq_y-8)+1)
+        self.guicache_ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(y-8)+1)
         self.guicache_ctx.paint()
-        self.ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(self.sq_y-8)+1)
+        self.ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(y-8)+1)
         self.ctx.paint()
-        self.cleansquares.append((self.sq_x, self.sq_y))
+        self.cleansquares.append((x, y))
         self.maparea.queue_draw()
 
-        # Finally, close out the window
-        self.squarewindow.hide()
         return True
 
     def format_zoomlevel(self, widget, value):
@@ -1786,6 +1837,7 @@ class MapGUI(BaseGUI):
         else:
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
+                    self.undo.store(self.sq_x, self.sq_y)
                     self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
                     self.get_widget('squarelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
                     self.squarewindow.show()
