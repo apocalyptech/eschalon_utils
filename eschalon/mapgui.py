@@ -538,7 +538,7 @@ class MapGUI(BaseGUI):
 
         # Instansiate our "undo" object so we can handle that
         self.undo = Undo(self.map)
-        self.update_undoaction()
+        self.process_square_change()
 
         # Load information from the character
         if (self.mapinit):
