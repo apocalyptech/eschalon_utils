@@ -119,7 +119,9 @@ class MapGUI(BaseGUI):
         self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
         self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
         self.menu_undo = self.get_widget('menu_undo')
+        self.menu_undo_label = self.menu_undo.get_children()[0]
         self.menu_redo = self.get_widget('menu_redo')
+        self.menu_redo_label = self.menu_redo.get_children()[0]
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -598,12 +600,18 @@ class MapGUI(BaseGUI):
             self.redraw_square(coords[0], coords[1])
         if (self.undo.have_undo()):
             self.menu_undo.set_sensitive(True)
+            history = self.undo.get_undo()
+            self.menu_undo_label.set_text('Undo: Edit to (%d, %d)' % (history.x, history.y))
         else:
             self.menu_undo.set_sensitive(False)
+            self.menu_undo_label.set_text('Undo')
         if (self.undo.have_redo()):
             self.menu_redo.set_sensitive(True)
+            history = self.undo.get_redo()
+            self.menu_redo_label.set_text('Redo: Edit to (%d, %d)' % (history.x, history.y))
         else:
             self.menu_redo.set_sensitive(False)
+            self.menu_redo_label.set_text('Redo')
         #self.undo.report()
 
     def on_undo(self, widget=None):

@@ -83,6 +83,20 @@ class Undo(object):
         """ Report whether there are any redos in the stack """
         return (self.curidx < len(self.history)-1)
 
+    def get_undo(self):
+        """ Gets the next "undo" action.  Used primarily for changing menu text. """
+        if (self.have_undo()):
+            return self.history[self.curidx]
+        else:
+            return None
+
+    def get_redo(self):
+        """ Gets the next "redo" action.  Used primarily for changing menu text. """
+        if (self.have_redo()):
+            return self.history[self.curidx+1]
+        else:
+            return None
+
     def store(self, x, y):
         """
         Stores the current map state as the "old" square in the
