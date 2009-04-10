@@ -49,6 +49,7 @@ Map GUI
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
  * Really test undo/redo - have to save out, etc. (in particular the maxlevel
    hasn't been tested at all)
+ * Edits to map properties need to get hooked into the undo system
 
 Internal
 --------

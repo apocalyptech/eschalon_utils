@@ -64,6 +64,7 @@ class MapGUI(BaseGUI):
     ACTION_NONE = -1
     ACTION_EDIT = 0
     ACTION_DRAG = 1
+    ACTION_DRAW = 2
 
     # Mouse button constants
     MOUSE_LEFT = 1
@@ -74,18 +75,18 @@ class MapGUI(BaseGUI):
     mouse_action_maps = {
         MODE_EDIT: {
             MOUSE_LEFT: ACTION_EDIT,
-            MOUSE_MIDDLE: ACTION_NONE,
+            MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_DRAG
             },
         MODE_MOVE: {
             MOUSE_LEFT: ACTION_DRAG,
-            MOUSE_MIDDLE: ACTION_NONE,
+            MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
             },
         MODE_DRAW: {
-            MOUSE_LEFT: ACTION_EDIT,
-            MOUSE_MIDDLE: ACTION_NONE,
-            MOUSE_RIGHT: ACTION_DRAG
+            MOUSE_LEFT: ACTION_DRAW,
+            MOUSE_MIDDLE: ACTION_DRAG,
+            MOUSE_RIGHT: ACTION_EDIT
             }
         }
 
@@ -152,6 +153,14 @@ class MapGUI(BaseGUI):
         self.menu_undo_label = self.menu_undo.get_children()[0]
         self.menu_redo = self.get_widget('menu_redo')
         self.menu_redo_label = self.menu_redo.get_children()[0]
+        self.draw_floor_checkbox = self.get_widget('draw_floor_checkbox')
+        self.draw_floor_spin = self.get_widget('draw_floor_spin')
+        self.draw_decal_checkbox = self.get_widget('draw_decal_checkbox')
+        self.draw_decal_spin = self.get_widget('draw_decal_spin')
+        self.draw_wall_checkbox = self.get_widget('draw_wall_checkbox')
+        self.draw_wall_spin = self.get_widget('draw_wall_spin')
+        self.draw_walldecal_checkbox = self.get_widget('draw_walldecal_checkbox')
+        self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -215,9 +224,13 @@ class MapGUI(BaseGUI):
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
+                'on_draw_floor_changed': self.on_draw_floor_changed,
                 'on_decal_changed': self.on_decal_changed,
+                'on_draw_decal_changed': self.on_draw_decal_changed,
                 'on_wall_changed': self.on_wall_changed,
+                'on_draw_wall_changed': self.on_draw_wall_changed,
                 'on_walldecal_changed': self.on_walldecal_changed,
+                'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
                 'on_colorsel_clicked': self.on_colorsel_clicked,
                 'on_squarewindow_close': self.on_squarewindow_close,
                 'on_prop_button_clicked': self.on_prop_button_clicked,
@@ -225,8 +238,12 @@ class MapGUI(BaseGUI):
                 'on_prefs': self.on_prefs,
                 'on_abort_render': self.on_abort_render,
                 'open_floorsel': self.open_floorsel,
+                'open_draw_floorsel': self.open_draw_floorsel,
                 'open_decalsel': self.open_decalsel,
+                'open_draw_decalsel': self.open_draw_decalsel,
                 'open_walldecalsel': self.open_walldecalsel,
+                'open_draw_walldecalsel': self.open_draw_walldecalsel,
+                'open_draw_objsel': self.open_draw_objsel,
                 'open_objsel': self.open_objsel,
                 'objsel_on_motion': self.objsel_on_motion,
                 'objsel_on_expose': self.objsel_on_expose,
@@ -250,7 +267,8 @@ class MapGUI(BaseGUI):
         self.prev_scroll_h_max = -1
         self.prev_scroll_v_cur = -1
         self.prev_scroll_v_max = -1
-        self.holding = False
+        self.dragging = False
+        self.drawing = False
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -338,6 +356,12 @@ class MapGUI(BaseGUI):
             typebox.append_text('%d - %s' % (val, text))
             self.object_type_list[val] = typeidx
             self.object_type_list_rev[typeidx] = val
+
+        # ... initialize a couple of hidden spinboxes
+        self.draw_floor_spin.set_value(1)
+        self.draw_decal_spin.set_value(1)
+        self.draw_wall_spin.set_value(1)
+        self.draw_walldecal_spin.set_value(1)
 
         # Now show our window
         self.window.show()
@@ -805,6 +829,14 @@ class MapGUI(BaseGUI):
             self.get_widget('floorimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
 
+    def on_draw_floor_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        pixbuf = self.gfx.get_floor(widget.get_value_as_int(), None, True)
+        if (pixbuf is None):
+            self.get_widget('draw_floor_img').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('draw_floor_img').set_from_pixbuf(pixbuf)
+
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
@@ -814,6 +846,14 @@ class MapGUI(BaseGUI):
         else:
             self.get_widget('decalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
+
+    def on_draw_decal_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        pixbuf = self.gfx.get_decal(widget.get_value_as_int(), None, True)
+        if (pixbuf is None):
+            self.get_widget('draw_decal_img').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('draw_decal_img').set_from_pixbuf(pixbuf)
 
     def on_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
@@ -825,6 +865,14 @@ class MapGUI(BaseGUI):
             self.get_widget('wallimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
 
+    def on_draw_wall_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        (pixbuf, height) = self.gfx.get_object(widget.get_value_as_int(), None, True)
+        if (pixbuf is None):
+            self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('draw_wall_img').set_from_pixbuf(pixbuf)
+
     def on_walldecal_changed(self, widget):
         self.on_singleval_square_changed_int(widget)
         """ Update the appropriate image when necessary. """
@@ -834,6 +882,14 @@ class MapGUI(BaseGUI):
         else:
             self.get_widget('walldecalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
+
+    def on_draw_walldecal_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        pixbuf = self.gfx.get_object_decal(widget.get_value_as_int(), None, True)
+        if (pixbuf is None):
+            self.get_widget('draw_walldecal_img').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('draw_walldecal_img').set_from_pixbuf(pixbuf)
 
     def on_squarewindow_close(self, widget, event=None):
         """
@@ -1023,7 +1079,7 @@ class MapGUI(BaseGUI):
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
 
-        if (self.holding):
+        if (self.dragging):
             diff_x = self.hold_x - event.x_root
             diff_y = self.hold_y - event.y_root
             if (diff_x != 0):
@@ -1105,6 +1161,11 @@ class MapGUI(BaseGUI):
             self.cleansquares.append((self.sq_x, self.sq_y))
             self.sq_x_prev = self.sq_x
             self.sq_y_prev = self.sq_y
+
+            # Draw if we're supposed to
+            if (self.drawing):
+                self.action_draw_square(self.sq_x, self.sq_y)
+
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.sq_x, self.sq_y))
 
         # Now queue up a draw
@@ -1695,9 +1756,21 @@ class MapGUI(BaseGUI):
                 52, 26, 6, 32,
                 self.gfx.get_floor, True, 1)
 
+    def open_draw_floorsel(self, widget):
+        """ Show the floor selection window for our drawing widget. """
+        self.imgsel_launch(self.draw_floor_spin,
+                52, 26, 6, 32,
+                self.gfx.get_floor, True, 1)
+
     def open_decalsel(self, widget):
         """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
+                52, 26, 6, 32,
+                self.gfx.get_decal, True, 1)
+
+    def open_draw_decalsel(self, widget):
+        """ Show the decal selection window for our drawing widget. """
+        self.imgsel_launch(self.draw_decal_spin,
                 52, 26, 6, 32,
                 self.gfx.get_decal, True, 1)
 
@@ -1707,11 +1780,17 @@ class MapGUI(BaseGUI):
                 52, 78, 6, 10,
                 self.gfx.get_object_decal, True, 1)
 
+    def open_draw_walldecalsel(self, widget):
+        """ Show the walldecal selection window for our drawing widget. """
+        self.imgsel_launch(self.draw_walldecal_spin,
+                52, 78, 6, 10,
+                self.gfx.get_object_decal, True, 1)
+
     def objsel_fix_pixbuf(self, pixbuf):
         """ Function to fix the pixbuf, for object loading. """
         return pixbuf[0]
 
-    def open_objsel(self, widget):
+    def open_objsel(self, widget, spinwidget=None):
         """
         Launch our object selection window.  This is effectively
         an override of imgsel_launch() - we'll be playing some games
@@ -1719,7 +1798,10 @@ class MapGUI(BaseGUI):
         in a class, somehow, instead of a dict.
         """
         self.imgsel_window = self.get_widget('objselwindow')
-        self.imgsel_widget = self.get_widget('wallimg')
+        if (spinwidget is None):
+            self.imgsel_widget = self.get_widget('wallimg')
+        else:
+            self.imgsel_widget = spinwidget
         self.objsel_book = self.get_widget('objsel_book')
         self.imgsel_bgcolor_img = self.get_widget('objsel_bgcolor_img')
         self.imgsel_bgcolor_event = self.get_widget('objsel_bgcolor_event')
@@ -1810,6 +1892,10 @@ class MapGUI(BaseGUI):
         #self.load_objsel_vars(self.get_widget('objsel_%s_area' % (letters[3-curpage])))
         self.imgsel_window.show()
 
+    def open_draw_objsel(self, widget):
+        """ Show the wall selection window for our drawing widget. """
+        self.open_objsel(widget, self.draw_wall_spin)
+
     def load_objsel_vars(self, widget):
         """
         Given a widget (should be an object selection DrawingArea),
@@ -1857,7 +1943,7 @@ class MapGUI(BaseGUI):
         action = self.mouse_action_maps[self.edit_mode][event.button]
         if (action == self.ACTION_DRAG):
             adjust = self.mainscroll.get_hadjustment()
-            self.holding = True
+            self.dragging = True
             self.hold_x = event.x_root
             self.hold_y = event.y_root
             self.diff_x = 0
@@ -1870,11 +1956,28 @@ class MapGUI(BaseGUI):
                     self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
                     self.get_widget('squarelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
                     self.squarewindow.show()
+        elif (action == self.ACTION_DRAW):
+            self.drawing = True
+            self.action_draw_square(self.sq_x, self.sq_y)
 
     def on_released(self, widget, event):
-        if (self.holding):
-            self.holding = False
+        if (self.dragging or self.drawing):
+            self.dragging = False
+            self.drawing = False
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
+
+    def action_draw_square(self, x, y):
+        self.undo.store(x, y)
+        if (self.draw_floor_checkbox.get_active()):
+            self.map.squares[y][x].floorimg = self.draw_floor_spin.get_value_as_int()
+        if (self.draw_decal_checkbox.get_active()):
+            self.map.squares[y][x].decalimg = self.draw_decal_spin.get_value_as_int()
+        if (self.draw_wall_checkbox.get_active()):
+            self.map.squares[y][x].wallimg = self.draw_wall_spin.get_value_as_int()
+        if (self.draw_walldecal_checkbox.get_active()):
+            self.map.squares[y][x].walldecalimg = self.draw_walldecal_spin.get_value_as_int()
+        if (self.undo.finish()):
+            self.process_square_change((x, y))
 
     def map_toggle(self, widget):
         self.draw_map()

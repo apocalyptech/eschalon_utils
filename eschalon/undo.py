@@ -115,6 +115,9 @@ class Undo(object):
         Finishes off the undo level by setting the "new" square in
         the actual History object.  If the new square isn't any different
         from the old one, back out the undo level.
+
+        Returns True if the relevant square has been changed (and thus the
+        undo state has been altered), or False if no changes have been made.
         """
         if (self.have_undo()):
             if (self.history[self.curidx].set_new(self.map)):
@@ -122,10 +125,13 @@ class Undo(object):
                 if (len(self.history) > self.maxstack):
                     del self.history[0]
                     self.curidx -= 1
+                retval = True
             else:
                 del self.history[self.curidx]
                 self.curidx -= 1
+                retval = False
             self.finished = True
+            return retval
         else:
             raise Exception('store() must be called before finish()')
                 
