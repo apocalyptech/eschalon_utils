@@ -24,7 +24,7 @@ import sys
 import time
 import cairo
 import gobject
-from eschalonb1 import traptable, containertable, objecttypetable
+from eschalonb1 import traptable, containertable, objecttypetable, wall_list
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
 
@@ -1967,15 +1967,39 @@ class MapGUI(BaseGUI):
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
 
     def action_draw_square(self, x, y):
+        """ What to do when we're drawing on a square on the map."""
+
+        # First store our undo state
         self.undo.store(x, y)
+        
+        # Grab our square object
+        square = self.map.squares[y][x]
+
+        # Now draw anything that the user's requesed
         if (self.draw_floor_checkbox.get_active()):
-            self.map.squares[y][x].floorimg = self.draw_floor_spin.get_value_as_int()
+            square.floorimg = self.draw_floor_spin.get_value_as_int()
         if (self.draw_decal_checkbox.get_active()):
-            self.map.squares[y][x].decalimg = self.draw_decal_spin.get_value_as_int()
+            square.decalimg = self.draw_decal_spin.get_value_as_int()
         if (self.draw_wall_checkbox.get_active()):
-            self.map.squares[y][x].wallimg = self.draw_wall_spin.get_value_as_int()
+            square.wallimg = self.draw_wall_spin.get_value_as_int()
         if (self.draw_walldecal_checkbox.get_active()):
-            self.map.squares[y][x].walldecalimg = self.draw_walldecal_spin.get_value_as_int()
+            square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
+
+        # Check to see if we should change the "wall" flag
+        if (square.floorimg in wall_list['floor_seethrough']):
+            square.wall = 5
+        elif (square.decalimg in wall_list['decal_blocked']):
+            square.wall = 1
+        elif (square.decalimg in wall_list['decal_seethrough']):
+            square.wall = 5
+        elif (square.wallimg in wall_list['wall_blocked']):
+            square.wall = 1
+        elif (square.wallimg in wall_list['wall_seethrough']):
+            square.wall = 5
+        else:
+            square.wall = 0
+
+        # And then close off our undo and redraw if needed
         if (self.undo.finish()):
             self.process_square_change((x, y))
 

@@ -29,7 +29,8 @@ authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich', '',
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
         'Square', 'Mapscript', 'Undo',
-        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'objecttypetable', 'entitytable' ]
+        'attrtable', 'skilltable', 'typetable', 'itemincrtable', 'flagstable', 'spelltable', 'dirtable', 'statustable', 'traptable', 'containertable', 'diseasetable', 'objecttypetable', 'entitytable',
+        'wall_list' ]
 
 # Lookup tables
 attrtable = {
@@ -329,3 +330,18 @@ entitytable = {
         0x5F: EntHelper('William', 60, 51),
         0x60: EntHelper('Hesham', 60, 65)
     }
+
+# Various lists to keep track of which objects should be walls
+wall_list = {}
+wall_list['floor_seethrough'] = range(83, 103) + [126]
+wall_list['decal_blocked'] = [55]
+wall_list['decal_seethrough'] = [52]
+wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
+    range(109, 112) + range(116, 121) + range(125, 144) +
+    range(145, 156) + range(161, 214) + range(251, 256) + 
+    [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
+wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
+    range(51, 56) + range(60, 68) + range(72, 79) +
+    range(85, 89) + range(112, 116) + range(121, 125) +
+    [39, 41, 42, 57, 144, 214])
+

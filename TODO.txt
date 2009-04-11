@@ -50,6 +50,8 @@ Map GUI
  * Really test undo/redo - have to save out, etc. (in particular the maxlevel
    hasn't been tested at all)
  * Edits to map properties need to get hooked into the undo system
+ * "scripts" on main screen needs to be called "objects" instead
+ * setting walls while drawing should probably be a checkbox
 
 Internal
 --------
