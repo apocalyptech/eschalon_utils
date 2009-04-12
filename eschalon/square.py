@@ -24,8 +24,11 @@ from eschalonb1 import objecttypetable
 class Square(object):
     """ A class to hold data about a particular square on a map. """
 
-    def __init__(self):
+    def __init__(self, x, y):
         """ A fresh object with no data. """
+
+        self.x = x
+        self.y = y
 
         self.wall = -1
         self.floorimg = -1
@@ -39,7 +42,7 @@ class Square(object):
         self.entity = None
 
     def replicate(self):
-        newsquare = Square()
+        newsquare = Square(self.x, self.y)
 
         # Simple Values
         newsquare.wall = self.wall
@@ -90,7 +93,9 @@ class Square(object):
         the same object.  Returns true for equality, false for inequality.
         """
         # TODO: We need to check entity and script indexes here, too.
-        return (self.wall == square.wall and
+        return (self.x == square.x and
+                self.y == square.y and
+                self.wall == square.wall and
                 self.floorimg == square.floorimg and
                 self.decalimg == square.decalimg and
                 self.wallimg == square.wallimg and

@@ -48,6 +48,7 @@ from eschalonb1.map import Map
 from eschalonb1.item import Item
 from eschalonb1.square import Square
 from eschalonb1.basegui import BaseGUI
+from eschalonb1.smartdraw import SmartDraw
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.savefile import LoadException
 from eschalonb1.entity import Entity
@@ -112,6 +113,7 @@ class MapGUI(BaseGUI):
 
         self.mapinit = False
         self.undo = None
+        self.smartdraw = SmartDraw()
 
         # Start up our GUI
         self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
@@ -161,6 +163,8 @@ class MapGUI(BaseGUI):
         self.draw_wall_spin = self.get_widget('draw_wall_spin')
         self.draw_walldecal_checkbox = self.get_widget('draw_walldecal_checkbox')
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
+        self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
+        self.draw_smart_wall = self.get_widget('draw_smart_wall')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -579,6 +583,9 @@ class MapGUI(BaseGUI):
         # Instansiate our "undo" object so we can handle that
         self.undo = Undo(self.map)
         self.process_square_change()
+
+        # Load the new map into our SmartDraw object
+        self.smartdraw.set_map(self.map)
 
         # Load information from the character
         if (self.mapinit):
@@ -1986,18 +1993,25 @@ class MapGUI(BaseGUI):
             square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
 
         # Check to see if we should change the "wall" flag
-        if (square.floorimg in wall_list['floor_seethrough']):
-            square.wall = 5
-        elif (square.decalimg in wall_list['decal_blocked']):
-            square.wall = 1
-        elif (square.decalimg in wall_list['decal_seethrough']):
-            square.wall = 5
-        elif (square.wallimg in wall_list['wall_blocked']):
-            square.wall = 1
-        elif (square.wallimg in wall_list['wall_seethrough']):
-            square.wall = 5
-        else:
-            square.wall = 0
+        if (self.draw_smart_barrier.get_active()):
+            if (square.floorimg in wall_list['floor_seethrough']):
+                square.wall = 5
+            elif (square.decalimg in wall_list['decal_blocked']):
+                square.wall = 1
+            elif (square.decalimg in wall_list['decal_seethrough']):
+                square.wall = 5
+            elif (square.wallimg in wall_list['wall_blocked']):
+                square.wall = 1
+            elif (square.wallimg in wall_list['wall_seethrough']):
+                square.wall = 5
+            else:
+                square.wall = 0
+
+        # Handle "smart" walls if requested
+        # TODO: undo/redo integration
+        if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
+            for adjsquare in self.smartdraw.draw_wall(square):
+                self.process_square_change((adjsquare.x, adjsquare.y))
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):

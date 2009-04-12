@@ -63,3 +63,6 @@ Internal
    in there.
  * Classes have been moved to new-style classes but for the most part aren't
    taking advantage of the benefits of doing so.
+ * Square class now holds (x, y) information - can probably switch some stuff
+   around to take advantage of that.  Also, that change could use some more
+   testing.

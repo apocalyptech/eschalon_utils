@@ -29,6 +29,15 @@ from eschalonb1.entity import Entity
 class Map(object):
     """ The base Map class.  """
 
+    DIR_N = 1
+    DIR_NE = 2
+    DIR_E = 3
+    DIR_SE = 4
+    DIR_S = 5
+    DIR_SW = 6
+    DIR_W = 7
+    DIR_NW = 8
+
     def __init__(self, filename):
         """ A fresh object. """
 
@@ -71,7 +80,7 @@ class Map(object):
         for i in range(200):
             self.squares.append([])
             for j in range(100):
-                self.squares[i].append(Square())
+                self.squares[i].append(Square(j, i))
 
         self.scripts = []
         self.entities = []
@@ -331,8 +340,76 @@ class Map(object):
         for entity in self.entities:
             entity.write(self.df_ent)
         self.df_ent.close()
-            
 
     def rgb_color(self):
         return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
 
+    def coords_relative(self, x, y, dir):
+        """
+        Static method to return coordinates for the square
+        relative to the given coords.  1 = N, 2 = NE, etc
+        """
+        if (dir == self.DIR_N):
+            if (y < 2):
+                return None
+            else:
+                return (x, y-2)
+        elif (dir == self.DIR_NE):
+            if ((y % 2) == 0):
+                if (y > 0):
+                    return (x, y-1)
+                else:
+                    return None
+            elif (x < 99):
+                return (x+1, y-1)
+            else:
+                return None
+        elif (dir == self.DIR_E):
+            if (x < 99):
+                return (x+1, y)
+            else:
+                return None
+        elif (dir == self.DIR_SE):
+            if ((y % 2) == 0):
+                return (x, y+1)
+            elif (x < 99 and y < 199):
+                return (x+1, y+1)
+            else:
+                return None
+        elif (dir == self.DIR_S):
+            if (y < 198):
+                return (x, y+2)
+            else:
+                return None
+        elif (dir == self.DIR_SW):
+            if ((y % 2) == 1):
+                if (y < 199):
+                    return (x, y+1)
+                else:
+                    return None
+            elif (x > 0):
+                return (x-1, y+1)
+            else:
+                return None
+        elif (dir == self.DIR_W):
+            if (x > 1):
+                return (x-1, y)
+            else:
+                return None
+        elif (dir == self.DIR_NW):
+            if ((y % 2) == 1):
+                return (x, y-1)
+            elif (y > 0 and x > 0):
+                return (x-1, y-1)
+            else:
+                return None
+        else:
+            return None
+
+    def square_relative(self, x, y, dir):
+        """ Returns a square object relative to the given coords. """
+        coords = self.coords_relative(x, y, dir)
+        if (coords):
+            return self.squares[coords[1]][coords[0]]
+        else:
+            return None
