@@ -149,11 +149,10 @@ class SmartDraw(object):
         else:
             idx = square.wallimg - group
         curflags = self.indexes[idx]
-        newflags = curflags|dir
+        newflags = dir
 
         # Now prune any connections which shouldn't be active, skipping the
         # direction that we were just told to add
-        testflags = newflags
         conncount = 0
         for (mapdir, conndir) in zip(
                 [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
@@ -164,9 +163,7 @@ class SmartDraw(object):
             testgroup = self.get_wall_group(testsquare, group)
             if (testgroup and testgroup == group):
                 conncount += 1
-                testflags = (testflags | conndir)
-            else:
-                testflags = (testflags & ~conndir)
+                newflags = (newflags | conndir)
 
         # Now clean up.  If there were no connections found, just use the
         # appropriate straight tile.  If 1, just add in our connection.
@@ -176,10 +173,6 @@ class SmartDraw(object):
                 newflags = self.CONN_NE|self.CONN_SW
             else:
                 newflags = self.CONN_NW|self.CONN_SE
-        elif (conncount == 1):
-            newflags = testflags|dir
-        else:
-            newflags = testflags
 
         # Now after all that, see if we even changed at all.  If so,
         # make the change and report back.
