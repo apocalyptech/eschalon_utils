@@ -19,6 +19,56 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+class Additional(object):
+    """
+    When keeping track of one tile for an undo action, it's possible that
+    the change for that tile triggers changes in other tiles (for smart
+    wall drawing, for instance).  This class keeps track of extra information
+    which may change for a given additional tile.
+
+    Note that it does *not* keep the whole square structure; just a few
+    attributes that we'll be modifying.
+    """
+
+    def __init__(self, square):
+        self.x = square.x
+        self.y = square.y
+        self.old_decalimg = square.decalimg
+        self.old_wallimg = square.wallimg
+        self.new_decalimg = self.old_decalimg
+        self.new_wallimg = self.old_wallimg
+        self.square = square
+
+    def set_new(self):
+        """
+        Sets our "new" variables from our given square, and
+        return True if we've changed, or False if we haven't.
+
+        Note that we invalidate our own internal 'square' object
+        so that we don't accidentally try to use it later.  Our
+        reference to that object may become invalid later on
+        due to outside undo/redo activity.
+        """
+        self.new_decalimg = self.square.decalimg
+        self.new_wallimg = self.square.wallimg
+        self.square = None
+        return (self.new_decalimg != self.old_decalimg or
+                self.new_wallimg != self.old_wallimg)
+
+    def undo(self, square):
+        """
+        Process an undo action on this one square.
+        """
+        square.decalimg = self.old_decalimg
+        square.wallimg = self.old_wallimg
+
+    def redo(self, square):
+        """
+        Process a redo action on this one square.
+        """
+        square.decalimg = self.new_decalimg
+        square.wallimg = self.new_wallimg
+
 class UndoHistory(object):
     """
     Undo data for single edit.
@@ -28,18 +78,36 @@ class UndoHistory(object):
         """ A new object, the 'old' square is required. """
         self.x = x
         self.y = y
+        self.text = 'Edit'
+        self.additional = []
+        self.mainchanged = False
         self.oldsquare = map.squares[y][x].replicate()
         (self.old_entidx, self.old_scriptidx) = self.grab_idx(map, map.squares[y][x])
 
     def set_new(self, map):
         """ Update this record's 'new' square record """
+        retval = False
+
+        # First loop through any "additional" squares, to see
+        # if they've changed.  Also prune the list of squares
+        # which didn't change.
+        newadditional = []
+        for add_obj in self.additional:
+            if (add_obj.set_new()):
+                newadditional.append(add_obj)
+                retval = True
+        self.additional = newadditional
+
+        # ... and now check our main square
         newsquare = map.squares[self.y][self.x]
-        if (self.oldsquare.equals(newsquare)):
-            return False
-        else:
+        if (not self.oldsquare.equals(newsquare)):
             self.newsquare = newsquare.replicate()
             (self.new_entidx, self.new_scriptidx) = self.grab_idx(map, newsquare)
-            return True
+            self.mainchanged = True
+            retval = True
+
+        # Return
+        return retval
 
     def grab_idx(self, map, square):
         """
@@ -62,6 +130,16 @@ class UndoHistory(object):
             else:
                 raise Exception('Script %d in square not linked in master map list' % (scriptcount))
         return (entidx, scriptidxes)
+
+    def set_text(self, text):
+        self.text = text
+
+    def add_additional(self, square):
+        """
+        Adds an additional square that was changed (possibly)
+        along with our main square.
+        """
+        self.additional.append(Additional(square))
 
 class Undo(object):
     """
@@ -135,30 +213,61 @@ class Undo(object):
         else:
             raise Exception('store() must be called before finish()')
                 
+    def set_text(self, text):
+        """
+        Sets the label of the current undo action, to provide better text in
+        the menus.
+        """
+        if (self.finished):
+            raise Exception('set_text() must be called before finish()')
+        else:
+            self.history[self.curidx].set_text(text)
+
+    def add_additional(self, square):
+        """
+        Adds an additional square to our current History. """
+        if (self.finished):
+            raise Exception('add_additional() must be called before finish()')
+        else:
+            self.history[self.curidx].add_additional(square)
 
     def undo(self):
-        """ Process an undo action """
+        """
+        Process an undo action.
+        Returns a list of coordinate pairs which need updating.
+        """
         if (self.have_undo()):
             self.curidx -= 1
             obj = self.history[self.curidx+1]
             self.process_changes(obj.x, obj.y, obj.oldsquare,
                     obj.new_entidx, obj.new_scriptidx,
                     obj.old_entidx, obj.old_scriptidx)
-            return (obj.x, obj.y)
+            retval = [(obj.x, obj.y)]
+            for add_obj in self.history[self.curidx+1].additional:
+                add_obj.undo(self.map.squares[add_obj.y][add_obj.x])
+                retval.append((add_obj.x, add_obj.y))
+            return retval
         else:
-            return None
+            return []
 
     def redo(self):
-        """ Process a redo action """
+        """
+        Process a redo action.
+        Returns a list of coordinate pairs which need updating.
+        """
         if (self.have_redo()):
             self.curidx += 1
             obj = self.history[self.curidx]
             self.process_changes(obj.x, obj.y, obj.newsquare,
                     obj.old_entidx, obj.old_scriptidx,
                     obj.new_entidx, obj.new_scriptidx)
-            return (obj.x, obj.y)
+            retval = [(obj.x, obj.y)]
+            for add_obj in self.history[self.curidx].additional:
+                add_obj.redo(self.map.squares[add_obj.y][add_obj.x])
+                retval.append((add_obj.x, add_obj.y))
+            return retval
         else:
-            return None
+            return []
 
     def process_changes(self, x, y, tosquare, from_entidx, from_scriptidx, to_entidx, to_scriptidx):
         """

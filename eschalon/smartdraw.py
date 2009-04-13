@@ -83,13 +83,14 @@ class SmartDraw(object):
         """
         Draws using the given wall.
         Will return a list of squares that have been updated by this action
-        (not including the given square, which is assumed).
+        (not including the given square, which is assumed), or None if smart
+        drawing isn't applicable in this case.
         """
         # First set up and make sure that we're even drawing a wall
         retarr = []
         wallgroup = self.get_wall_group(square)
         if (wallgroup is None):
-            return retarr
+            return None
 
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_wall_connection() where appropriate

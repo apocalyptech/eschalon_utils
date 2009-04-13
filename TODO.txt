@@ -14,6 +14,8 @@ Data
  * Decode "savename" file format (this is where current-map and actual
    position information is kept, and also quest status, I suspect)
  * A lot of values for maps remain unknown to me.
+ * Hm, haven't figured out the flag for doors/chests that are unlocked
+   by specific keys, yet.
 
 Character GUI
 -------------
@@ -51,7 +53,7 @@ Map GUI
    hasn't been tested at all)
  * Edits to map properties need to get hooked into the undo system
  * "scripts" on main screen needs to be called "objects" instead
- * setting walls while drawing should probably be a checkbox
+ * Optionally allow "smart" walls to connect between groups?
 
 Internal
 --------

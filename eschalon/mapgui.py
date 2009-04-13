@@ -582,7 +582,7 @@ class MapGUI(BaseGUI):
 
         # Instansiate our "undo" object so we can handle that
         self.undo = Undo(self.map)
-        self.process_square_change()
+        self.update_undo_gui()
 
         # Load the new map into our SmartDraw object
         self.smartdraw.set_map(self.map)
@@ -653,35 +653,36 @@ class MapGUI(BaseGUI):
         about.hide()
         #self.mainbook.set_sensitive(True)
 
-    def process_square_change(self, coords=None):
+    def update_undo_gui(self):
         """
         Handle updating things if undo or redo is called.  This
-        will activate/deactivate the necessary menu items, and also
-        redraw the map.
+        will activate/deactivate the necessary menu items, etc.
         """
-        if (coords):
-            self.redraw_square(coords[0], coords[1])
         if (self.undo.have_undo()):
             self.menu_undo.set_sensitive(True)
             history = self.undo.get_undo()
-            self.menu_undo_label.set_text('Undo: Edit to (%d, %d)' % (history.x, history.y))
+            self.menu_undo_label.set_text('Undo: %s to (%d, %d)' % (history.text, history.x, history.y))
         else:
             self.menu_undo.set_sensitive(False)
             self.menu_undo_label.set_text('Undo')
         if (self.undo.have_redo()):
             self.menu_redo.set_sensitive(True)
             history = self.undo.get_redo()
-            self.menu_redo_label.set_text('Redo: Edit to (%d, %d)' % (history.x, history.y))
+            self.menu_redo_label.set_text('Redo: %s to (%d, %d)' % (history.text, history.x, history.y))
         else:
             self.menu_redo.set_sensitive(False)
             self.menu_redo_label.set_text('Redo')
         #self.undo.report()
 
     def on_undo(self, widget=None):
-        self.process_square_change(self.undo.undo())
+        for (x, y) in self.undo.undo():
+            self.redraw_square(x, y)
+        self.update_undo_gui()
 
     def on_redo(self, widget=None):
-        self.process_square_change(self.undo.redo())
+        for (x, y) in self.undo.redo():
+            self.redraw_square(x, y)
+        self.update_undo_gui()
 
     def populate_color_selection(self):
         img = self.get_widget('color_img')
@@ -909,9 +910,11 @@ class MapGUI(BaseGUI):
         # undo histories...
         self.undo.finish()
 
-        # All the "fun" stuff ends up happening in here; it's
-        # this function that actually ends up calling redraw_square now
-        self.process_square_change((self.sq_x, self.sq_y))
+        # All the "fun" stuff ends up happening in here.
+        self.redraw_square(self.sq_x, self.sq_y)
+        
+        # ... update our GUI stuff for Undo
+        self.update_undo_gui()
 
         # Finally, close out the window
         self.squarewindow.hide()
@@ -1978,6 +1981,7 @@ class MapGUI(BaseGUI):
 
         # First store our undo state
         self.undo.store(x, y)
+        self.undo.set_text('Draw')
         
         # Grab our square object
         square = self.map.squares[y][x]
@@ -2010,12 +2014,18 @@ class MapGUI(BaseGUI):
         # Handle "smart" walls if requested
         # TODO: undo/redo integration
         if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
-            for adjsquare in self.smartdraw.draw_wall(square):
-                self.process_square_change((adjsquare.x, adjsquare.y))
+            for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
+                self.undo.add_additional(self.map.square_relative(x, y, dir))
+            affected_squares = self.smartdraw.draw_wall(square)
+            if (affected_squares is not None):
+                self.undo.set_text('Smart Wall Edit')
+                for adjsquare in affected_squares:
+                    self.redraw_square(adjsquare.x, adjsquare.y)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):
-            self.process_square_change((x, y))
+            self.redraw_square(x, y)
+            self.update_undo_gui()
 
     def map_toggle(self, widget):
         self.draw_map()
