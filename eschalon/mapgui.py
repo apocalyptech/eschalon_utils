@@ -165,6 +165,7 @@ class MapGUI(BaseGUI):
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
+        self.draw_smart_floor = self.get_widget('draw_smart_floor')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -2012,13 +2013,22 @@ class MapGUI(BaseGUI):
                 square.wall = 0
 
         # Handle "smart" walls if requested
-        # TODO: undo/redo integration
         if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
             for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
                 self.undo.add_additional(self.map.square_relative(x, y, dir))
             affected_squares = self.smartdraw.draw_wall(square)
             if (affected_squares is not None):
                 self.undo.set_text('Smart Wall Draw')
+                for adjsquare in affected_squares:
+                    self.redraw_square(adjsquare.x, adjsquare.y)
+
+        # Handle "smart" floors if needed
+        if (self.draw_floor_checkbox.get_active() and
+                not self.draw_decal_checkbox.get_active() and
+                self.draw_smart_floor.get_active()):
+            affected_squares = self.smartdraw.draw_floor(square)
+            if (affected_squares is not None):
+                self.undo.set_text('Smart Draw')
                 for adjsquare in affected_squares:
                     self.redraw_square(adjsquare.x, adjsquare.y)
 

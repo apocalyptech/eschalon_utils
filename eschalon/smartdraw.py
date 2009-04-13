@@ -19,6 +19,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+import random
 from eschalonb1.map import Map
 
 class SmartDraw(object):
@@ -28,6 +29,10 @@ class SmartDraw(object):
     CONN_SE = 0x02
     CONN_SW = 0x04
     CONN_NW = 0x08
+    CONN_N = 0x10
+    CONN_E = 0x20
+    CONN_S = 0x40
+    CONN_W = 0x80
 
     REV_CONN = {
             CONN_NE: CONN_SW,
@@ -36,18 +41,27 @@ class SmartDraw(object):
             CONN_NW: CONN_SE
         }
 
+    ADJ_CONN = {
+            CONN_NE: CONN_N|CONN_E,
+            CONN_SE: CONN_S|CONN_E,
+            CONN_SW: CONN_S|CONN_W,
+            CONN_NW: CONN_N|CONN_W
+        }
+
     IDX_WALL = 0
     IDX_FENCE = 1
+    IDX_GRASS = 2
 
     def __init__(self):
         self.wallstarts = [161, 171, 181, 191, 201]
         self.fencestart = 73
         self.special = 213
+        self.grass_tiles = [9, 10, 11, 12]
         self.map = None
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {} ]
-        self.revindexes = [ {}, {} ]
+        self.indexes = [ {}, {}, {} ]
+        self.revindexes = [ {}, {}, {} ]
 
         # Wall Indexes
         self.add_index(self.IDX_WALL, -1, self.CONN_NE|self.CONN_SE|self.CONN_SW|self.CONN_NW)
@@ -69,6 +83,39 @@ class SmartDraw(object):
         self.add_index(self.IDX_FENCE, 3, self.CONN_NW|self.CONN_SW)
         self.add_index(self.IDX_FENCE, 4, self.CONN_NE|self.CONN_NW)
         self.add_index(self.IDX_FENCE, 5, self.CONN_SE|self.CONN_NE)
+
+        # Grass Indexes
+        self.add_index(self.IDX_GRASS, 97, self.CONN_SE)
+        self.add_index(self.IDX_GRASS, 98, self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 99, self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 100, self.CONN_NE)
+        self.add_index(self.IDX_GRASS, 101, self.CONN_SE|self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 102, self.CONN_NW|self.CONN_NE)
+        self.add_index(self.IDX_GRASS, 103, self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 104, self.CONN_NE|self.CONN_SE)
+        self.add_index(self.IDX_GRASS, 105, self.CONN_SE|self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 106, self.CONN_NE|self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 107, self.CONN_N)
+        self.add_index(self.IDX_GRASS, 108, self.CONN_S)
+        self.add_index(self.IDX_GRASS, 109, self.CONN_W)
+        self.add_index(self.IDX_GRASS, 110, self.CONN_E)
+        self.add_index(self.IDX_GRASS, 126, self.CONN_N|self.CONN_S)
+        self.add_index(self.IDX_GRASS, 143, self.CONN_W|self.CONN_E)
+        self.add_index(self.IDX_GRASS, 157, self.CONN_W|self.CONN_SE)
+        self.add_index(self.IDX_GRASS, 158, self.CONN_N|self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 159, self.CONN_E|self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 160, self.CONN_W|self.CONN_NE)
+        self.add_index(self.IDX_GRASS, 161, self.CONN_E|self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 162, self.CONN_W|self.CONN_NE|self.CONN_SE)
+        self.add_index(self.IDX_GRASS, 163, self.CONN_N|self.CONN_SE)
+        self.add_index(self.IDX_GRASS, 164, self.CONN_E|self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 165, self.CONN_S|self.CONN_NW)
+        self.add_index(self.IDX_GRASS, 166, self.CONN_S|self.CONN_NE)
+        self.add_index(self.IDX_GRASS, 167, self.CONN_N|self.CONN_SE|self.CONN_SW)
+        self.add_index(self.IDX_GRASS, 168, self.CONN_S|self.CONN_NW|self.CONN_NE)
+
+        # Pool to randomly choose from if we're completely surrounded by grass
+        self.grass_fullest = [161, 162, 167, 168]
 
     def add_index(self, idxnum, index, connections):
         self.indexes[idxnum][index] = connections
@@ -312,3 +359,63 @@ class SmartDraw(object):
         else:
             square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
             return True
+
+    def draw_floor(self, square):
+        """
+        Handles drawing a floor.  This should just be decal work.
+        Returns a list of squares that have been updated by this action
+        (not including the given square, which is assumed.
+        """
+        # TODO: We probably only want to overwrite decals that we would
+        # have put in place; not other decals
+        # TODO: Single squares of water in the middle of other terrain
+        # should be not a wall
+        if (square.floorimg in self.grass_tiles):
+            # TODO: handle adjacent tiles
+            # Clear out our decal if it's redundant
+            if (square.decalimg in self.indexes[self.IDX_GRASS].keys()):
+                square.decalimg = 0
+            return []
+        else:
+            connflags = 0
+            connflags_not = 0
+            flagcount = 0
+            # First find out more-typical adjacent squares
+            for (mapdir, conndir) in zip(
+                    [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
+                    [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
+                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                if (adjsquare.floorimg in self.grass_tiles):
+                    connflags = connflags|conndir
+                    flagcount += 1
+                else:
+                    connflags_not = connflags_not|conndir
+
+            # Now refine the list
+            if (flagcount == 4):
+                # Just pick a random one from our "fullest" pool
+                square.decalimg = random.choice(self.grass_fullest)
+            elif (flagcount == 3):
+                # Pick one from the "fullest" pool which matches
+                # most closely
+                for choice in self.grass_fullest:
+                    choiceflags = self.indexes[self.IDX_GRASS][choice]
+                    if ((choiceflags & connflags_not) == 0):
+                        square.decalimg = choice
+                        break
+            else:
+                # See if there's a more-specific tile we could match on
+                for (mapdir, conndir) in zip(
+                        [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
+                        [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
+                    if ((connflags|conndir) in self.revindexes[self.IDX_GRASS]):
+                        adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                        if (adjsquare.floorimg in self.grass_tiles):
+                            connflags = connflags | conndir
+                            if (flagcount != 0):
+                                break
+                if (connflags != 0):
+                    square.decalimg = self.revindexes[self.IDX_GRASS][connflags]
+
+            # And now return
+            return []

@@ -54,6 +54,7 @@ Map GUI
  * Edits to map properties need to get hooked into the undo system
  * "scripts" on main screen needs to be called "objects" instead
  * Optionally allow "smart" walls to connect between groups?
+ * Add in "special" tile stuff to smart walls
 
 Internal
 --------

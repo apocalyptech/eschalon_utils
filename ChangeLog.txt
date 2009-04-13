@@ -1,7 +1,7 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
-   11 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
-   Initial "Smart" wall drawing implemented
+   11 - 12 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
+   "Smart" drawing implemented
 
    09 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
    Undo/Redo implemented
