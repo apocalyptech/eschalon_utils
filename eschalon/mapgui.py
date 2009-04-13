@@ -2076,7 +2076,7 @@ class MapGUI(BaseGUI):
             barrier = (.784, .784, .784, 0.5)
         elif (square.wall == 5):
             barrier = (.684, .684, .950, 0.5)
-        elif (square.floorimg == 126):
+        elif (square.floorimg == 126 and not self.floor_toggle.get_active()):
             barrier = (0, 0, .784, 0.5)
 
         # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
