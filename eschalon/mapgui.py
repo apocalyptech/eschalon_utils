@@ -2018,7 +2018,7 @@ class MapGUI(BaseGUI):
                 self.undo.add_additional(self.map.square_relative(x, y, dir))
             affected_squares = self.smartdraw.draw_wall(square)
             if (affected_squares is not None):
-                self.undo.set_text('Smart Wall Edit')
+                self.undo.set_text('Smart Wall Draw')
                 for adjsquare in affected_squares:
                     self.redraw_square(adjsquare.x, adjsquare.y)
 

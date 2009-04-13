@@ -36,27 +36,43 @@ class SmartDraw(object):
             CONN_NW: CONN_SE
         }
 
+    IDX_WALL = 0
+    IDX_FENCE = 1
+
     def __init__(self):
         self.wallstarts = [161, 171, 181, 191, 201]
+        self.fencestart = 73
         self.special = 213
         self.map = None
-        self.indexes = {}
-        self.revindexes = {}
-        self.add_index(-1, self.CONN_NE|self.CONN_SE|self.CONN_SW|self.CONN_NW)
-        self.add_index(0, self.CONN_NE|self.CONN_SW)
-        self.add_index(1, self.CONN_SE|self.CONN_NW)
-        self.add_index(2, self.CONN_SE|self.CONN_SW)
-        self.add_index(3, self.CONN_SW|self.CONN_NW)
-        self.add_index(4, self.CONN_NE|self.CONN_NW)
-        self.add_index(5, self.CONN_NE|self.CONN_SE)
-        self.add_index(6, self.CONN_SE|self.CONN_SW|self.CONN_NW)
-        self.add_index(7, self.CONN_NE|self.CONN_SW|self.CONN_NW)
-        self.add_index(8, self.CONN_NE|self.CONN_SE|self.CONN_NW)
-        self.add_index(9, self.CONN_NE|self.CONN_SE|self.CONN_SW)
 
-    def add_index(self, index, connections):
-        self.indexes[index] = connections
-        self.revindexes[connections] = index
+        # One empty dict for each IDX_*
+        self.indexes = [ {}, {} ]
+        self.revindexes = [ {}, {} ]
+
+        # Wall Indexes
+        self.add_index(self.IDX_WALL, -1, self.CONN_NE|self.CONN_SE|self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 0, self.CONN_NE|self.CONN_SW)
+        self.add_index(self.IDX_WALL, 1, self.CONN_SE|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 2, self.CONN_SE|self.CONN_SW)
+        self.add_index(self.IDX_WALL, 3, self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 4, self.CONN_NE|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 5, self.CONN_NE|self.CONN_SE)
+        self.add_index(self.IDX_WALL, 6, self.CONN_SE|self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 7, self.CONN_NE|self.CONN_SW|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 8, self.CONN_NE|self.CONN_SE|self.CONN_NW)
+        self.add_index(self.IDX_WALL, 9, self.CONN_NE|self.CONN_SE|self.CONN_SW)
+
+        # Fence Indexes
+        self.add_index(self.IDX_FENCE, 0, self.CONN_NE|self.CONN_SW)
+        self.add_index(self.IDX_FENCE, 1, self.CONN_SE|self.CONN_NW)
+        self.add_index(self.IDX_FENCE, 2, self.CONN_SW|self.CONN_SE)
+        self.add_index(self.IDX_FENCE, 3, self.CONN_NW|self.CONN_SW)
+        self.add_index(self.IDX_FENCE, 4, self.CONN_NE|self.CONN_NW)
+        self.add_index(self.IDX_FENCE, 5, self.CONN_SE|self.CONN_NE)
+
+    def add_index(self, idxnum, index, connections):
+        self.indexes[idxnum][index] = connections
+        self.revindexes[idxnum][connections] = index
 
     def set_map(self, map):
         self.map = map
@@ -77,6 +93,8 @@ class SmartDraw(object):
         for start in self.wallstarts:
             if (square.wallimg >= start and square.wallimg < start+10):
                 return start
+        if (square.wallimg >= self.fencestart and square.wallimg < self.fencestart+6):
+            return self.fencestart
         return None
 
     def draw_wall(self, square):
@@ -91,6 +109,12 @@ class SmartDraw(object):
         wallgroup = self.get_wall_group(square)
         if (wallgroup is None):
             return None
+
+        # Fences act similarly, but different enough that I think things would
+        # be problematic if I were to try to handle everything in one function
+        # here.
+        if (wallgroup == self.fencestart):
+            return self.draw_fence(square)
 
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_wall_connection() where appropriate
@@ -110,23 +134,23 @@ class SmartDraw(object):
                 retarr.append(adjsquare)
 
         # Figure out what to put down if we don't actually have a match
-        if (connflags not in self.revindexes):
+        if (connflags not in self.revindexes[self.IDX_WALL]):
             if (flagcount == 0):
-                connflags = self.indexes[0]
+                connflags = self.indexes[self.IDX_WALL][0]
             elif (flagcount == 1):
                 if ((connflags & self.CONN_NE) == self.CONN_NE or
                     (connflags & self.CONN_SW) == self.CONN_SW):
-                    connflags = self.indexes[0]
+                    connflags = self.indexes[self.IDX_WALL][0]
                 else:
-                    connflags = self.indexes[1]
+                    connflags = self.indexes[self.IDX_WALL][1]
             else:
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
         # TODO: this is duplicated in add_wall_connection...
-        if (self.revindexes[connflags] == -1):
+        if (self.revindexes[self.IDX_WALL][connflags] == -1):
             square.wallimg = self.special
         else:
-            square.wallimg = wallgroup + self.revindexes[connflags]
+            square.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
 
         # And lastly, return.
         return retarr
@@ -135,7 +159,7 @@ class SmartDraw(object):
         """
         Adds a connection to the given square.  Note that this doesn't do
         any actual bounds checking; it should really only be called from
-        connect(), above.  Returns whether or not we modified the square.
+        draw_wall(), above.  Returns whether or not we modified the square.
 
         It *does* however "clean" squares, to prune off connections which
         don't need to be there anymore.
@@ -149,7 +173,7 @@ class SmartDraw(object):
             idx = -1
         else:
             idx = square.wallimg - group
-        curflags = self.indexes[idx]
+        curflags = self.indexes[self.IDX_WALL][idx]
         newflags = dir
 
         # Now prune any connections which shouldn't be active, skipping the
@@ -180,9 +204,111 @@ class SmartDraw(object):
         if (curflags == newflags):
             return False
         else:
-            if (self.revindexes[newflags] == -1):
+            if (self.revindexes[self.IDX_WALL][newflags] == -1):
                 square.wallimg = self.special
             else:
-                square.wallimg = group + self.revindexes[newflags]
+                square.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
             return True
 
+    def draw_fence(self, square):
+        """
+        Draws a fence.  If we've got here, we KNOW that we're a fence already.
+        Note that there's a lot of duplicate code from draw_wall(), above, but
+        there's enough differences that I'd rather not combine the two.
+
+        Will return a list of squares that have been updated by this action
+        (not including the given square, which is assumed).
+        """
+
+        retarr = []
+
+        # Now loop through our directions and see where we should link to.
+        # We'll additionally call out to add_fence_connection() where appropriate
+        # to update adjacent walls.  We're hampered a bit since each fence square
+        # can only support two connections.
+        connflags = 0
+        flagcount = 0
+        for (mapdir, conndir) in zip(
+                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
+                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
+            adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+            adjgroup = self.get_wall_group(adjsquare)
+            if (adjgroup is None or adjgroup != self.fencestart):
+                continue
+            connflags = connflags|conndir
+            flagcount += 1
+            if (self.add_fence_connection(adjsquare, self.REV_CONN[conndir])):
+                retarr.append(adjsquare)
+            if (flagcount == 2):
+                break
+
+        # Figure out what to put down if we don't actually have a match
+        if (connflags not in self.revindexes[self.IDX_FENCE]):
+            if (flagcount == 0):
+                connflags = self.indexes[self.IDX_FENCE][0]
+            elif (flagcount == 1):
+                if ((connflags & self.CONN_NE) == self.CONN_NE or
+                    (connflags & self.CONN_SW) == self.CONN_SW):
+                    connflags = self.indexes[self.IDX_FENCE][0]
+                else:
+                    connflags = self.indexes[self.IDX_FENCE][1]
+            else:
+                raise Exception("flagcount isn't 1 or 0 - should figure out why")
+
+        square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][connflags]
+
+        # And lastly, return.
+        return retarr
+
+    def add_fence_connection(self, square, dir):
+        """
+        Adds a connection to the given square.  Note that this doesn't do
+        any actual bounds checking; it should really only be called from
+        draw_fence(), above.  Returns whether or not we modified the square.
+
+        It *does* however "clean" squares, to prune off connections which
+        don't need to be there anymore.
+
+        There's some duplicated code in here from draw_fence(), but it's
+        different enough that I don't think it makes sense to combine the two.
+
+        Again, the disclaimer from draw_fence() about duplication applies.
+        """
+
+        # First grab our current status and add in the requested connection
+        idx = square.wallimg - self.fencestart
+        curflags = self.indexes[self.IDX_FENCE][idx]
+        newflags = dir
+
+        # Now prune any connections which shouldn't be active, skipping the
+        # direction that we were just told to add.  Note that we're stopping
+        # after the first one we find.
+        conncount = 0
+        for (mapdir, conndir) in zip(
+                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
+                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
+            if (conndir == dir):
+                continue
+            testsquare = self.map.square_relative(square.x, square.y, mapdir)
+            testgroup = self.get_wall_group(testsquare)
+            if (testgroup and testgroup == self.fencestart):
+                conncount += 1
+                newflags = (newflags | conndir)
+                break
+
+        # Now clean up.  If there were no connections found, just use the
+        # appropriate straight tile.  If 1, just add in our connection.
+        # Otherwise, accept the pruning.
+        if (conncount == 0):
+            if (dir == self.CONN_NE or dir == self.CONN_SW):
+                newflags = self.CONN_NE|self.CONN_SW
+            else:
+                newflags = self.CONN_NW|self.CONN_SE
+
+        # Now after all that, see if we even changed at all.  If so,
+        # make the change and report back.
+        if (curflags == newflags):
+            return False
+        else:
+            square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
+            return True

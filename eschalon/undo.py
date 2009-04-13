@@ -239,10 +239,12 @@ class Undo(object):
         if (self.have_undo()):
             self.curidx -= 1
             obj = self.history[self.curidx+1]
-            self.process_changes(obj.x, obj.y, obj.oldsquare,
-                    obj.new_entidx, obj.new_scriptidx,
-                    obj.old_entidx, obj.old_scriptidx)
-            retval = [(obj.x, obj.y)]
+            retval = []
+            if (obj.mainchanged):
+                self.process_changes(obj.x, obj.y, obj.oldsquare,
+                        obj.new_entidx, obj.new_scriptidx,
+                        obj.old_entidx, obj.old_scriptidx)
+                retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx+1].additional:
                 add_obj.undo(self.map.squares[add_obj.y][add_obj.x])
                 retval.append((add_obj.x, add_obj.y))
@@ -258,10 +260,12 @@ class Undo(object):
         if (self.have_redo()):
             self.curidx += 1
             obj = self.history[self.curidx]
-            self.process_changes(obj.x, obj.y, obj.newsquare,
-                    obj.old_entidx, obj.old_scriptidx,
-                    obj.new_entidx, obj.new_scriptidx)
-            retval = [(obj.x, obj.y)]
+            retval = []
+            if (obj.mainchanged):
+                self.process_changes(obj.x, obj.y, obj.newsquare,
+                        obj.old_entidx, obj.old_scriptidx,
+                        obj.new_entidx, obj.new_scriptidx)
+                retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx].additional:
                 add_obj.redo(self.map.squares[add_obj.y][add_obj.x])
                 retval.append((add_obj.x, add_obj.y))
