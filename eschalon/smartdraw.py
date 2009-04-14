@@ -38,14 +38,22 @@ class SmartDraw(object):
             CONN_NE: CONN_SW,
             CONN_SE: CONN_NW,
             CONN_SW: CONN_NE,
-            CONN_NW: CONN_SE
+            CONN_NW: CONN_SE,
+            CONN_N: CONN_S,
+            CONN_E: CONN_W,
+            CONN_S: CONN_N,
+            CONN_W: CONN_E
         }
 
     ADJ_CONN = {
             CONN_NE: CONN_N|CONN_E,
             CONN_SE: CONN_S|CONN_E,
             CONN_SW: CONN_S|CONN_W,
-            CONN_NW: CONN_N|CONN_W
+            CONN_NW: CONN_N|CONN_W,
+            CONN_N: CONN_NE|CONN_NW,
+            CONN_E: CONN_NE|CONN_SE,
+            CONN_S: CONN_SE|CONN_SW,
+            CONN_W: CONN_NW|CONN_SW
         }
 
     IDX_WALL = 0
@@ -377,21 +385,69 @@ class SmartDraw(object):
                 square.decalimg = 0
             return []
         else:
-            connflags = 0
-            connflags_not = 0
-            flagcount = 0
-            # First find out more-typical adjacent squares
-            for (mapdir, conndir) in zip(
-                    [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                    [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
-                if (adjsquare.floorimg in self.grass_tiles):
-                    connflags = connflags|conndir
-                    flagcount += 1
-                else:
-                    connflags_not = connflags_not|conndir
+            return self.process_grass_decals(square)
 
-            # Now refine the list
+    def process_grass_decals(self, square, recurse=True, known={}):
+        """
+        Given a square, figure out what kind of grass decals it should have,
+        if any.  Will actually set the decal image, as well.  If 'recurse'
+        is True, we'll make recursive calls to do the same with adjacent
+        squares.  Using 'known' you can pass in any squares which may have
+        already been loaded (which can help avoid unnecessary calls to
+        Map.square_relative().
+        
+        Returns a list of modified squares if we're recursing, or just
+        true/false otherwise.
+        """
+        connflags = 0
+        connflags_not = 0
+        flagcount = 0
+        affected = []
+        curdecal = square.decalimg
+
+        # First find out more-typical adjacent squares
+        for (mapdir, conndir) in zip(
+                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
+                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
+            if (conndir in known):
+                connflags_not = connflags_not|conndir
+                continue
+            else:
+                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                if (not adjsquare):
+                    continue
+            if (adjsquare.floorimg in self.grass_tiles):
+                connflags = connflags|conndir
+                flagcount += 1
+            else:
+                connflags_not = connflags_not|conndir
+
+            # Process adjacent squares if we're supposed to
+            if (recurse):
+                if (adjsquare.floorimg not in self.grass_tiles):
+                    if (self.process_grass_decals(adjsquare, False, { self.REV_CONN[conndir]: square })):
+                        affected.append(adjsquare)
+
+        # If we're recursing, we'll need to check the cardinal directions as
+        # well, to clear out errant corner-connection decals
+        # TODO: We should really just grab all these at the beginning and
+        # cache them.
+        if (recurse):
+            for (mapdir, conndir) in zip(
+                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
+                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
+                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                if (not adjsquare):
+                    continue
+                if (adjsquare.floorimg not in self.grass_tiles):
+                    if (self.process_grass_decals(adjsquare, False, { self.REV_CONN[conndir]: square })):
+                        affected.append(adjsquare)
+
+        # Now refine the list
+        if (flagcount > 2):
+
+            # If we're this full, just pull from our "fullest" list
+            # instead
             if (flagcount == 4):
                 # Just pick a random one from our "fullest" pool
                 square.decalimg = random.choice(self.grass_fullest)
@@ -403,19 +459,42 @@ class SmartDraw(object):
                     if ((choiceflags & connflags_not) == 0):
                         square.decalimg = choice
                         break
-            else:
-                # See if there's a more-specific tile we could match on
-                for (mapdir, conndir) in zip(
-                        [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
-                        [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
-                    if ((connflags|conndir) in self.revindexes[self.IDX_GRASS]):
-                        adjsquare = self.map.square_relative(square.x, square.y, mapdir)
-                        if (adjsquare.floorimg in self.grass_tiles):
-                            connflags = connflags | conndir
-                            if (flagcount != 0):
-                                break
-                if (connflags != 0):
-                    square.decalimg = self.revindexes[self.IDX_GRASS][connflags]
 
-            # And now return
-            return []
+            # Prune, in case there are adjacent tiles
+            curflags = self.indexes[self.IDX_GRASS][square.decalimg]
+            for (mapdir, conndir) in zip(
+                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
+                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
+                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                if (not adjsquare):
+                    continue
+                if (adjsquare.floorimg not in self.grass_tiles):
+                    curflags = (curflags & ~conndir)
+            if (curflags in self.revindexes[self.IDX_GRASS]):
+                square.decalimg = self.revindexes[self.IDX_GRASS][curflags]
+        else:
+            # See if there's a more-specific tile we could match on
+            for (mapdir, conndir) in zip(
+                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
+                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
+                if (connflags & self.ADJ_CONN[conndir] == 0):
+                    continue
+                if ((connflags|conndir) in self.revindexes[self.IDX_GRASS]):
+                    adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                    if (not adjsquare):
+                        continue
+                    if (adjsquare.floorimg in self.grass_tiles):
+                        connflags = connflags | conndir
+                        if (flagcount != 0):
+                            break
+            if (connflags == 0):
+                if (square.decalimg in self.indexes[self.IDX_GRASS]):
+                    square.decalimg = 0
+            else:
+                square.decalimg = self.revindexes[self.IDX_GRASS][connflags]
+
+        # And now return
+        if (recurse):
+            return affected
+        else:
+            return (curdecal != square.decalimg)
