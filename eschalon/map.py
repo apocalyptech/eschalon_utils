@@ -29,14 +29,14 @@ from eschalonb1.entity import Entity
 class Map(object):
     """ The base Map class.  """
 
-    DIR_N = 1
-    DIR_NE = 2
-    DIR_E = 3
-    DIR_SE = 4
-    DIR_S = 5
-    DIR_SW = 6
-    DIR_W = 7
-    DIR_NW = 8
+    DIR_N = 0x01
+    DIR_NE = 0x02
+    DIR_E = 0x04
+    DIR_SE = 0x08
+    DIR_S = 0x10
+    DIR_SW = 0x20
+    DIR_W = 0x40
+    DIR_NW = 0x80
 
     def __init__(self, filename):
         """ A fresh object. """

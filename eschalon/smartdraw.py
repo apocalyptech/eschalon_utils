@@ -25,35 +25,35 @@ from eschalonb1.map import Map
 class SmartDraw(object):
     """ A class to deal with "smart" drawing functions. """
 
-    CONN_NE = 0x01
-    CONN_SE = 0x02
-    CONN_SW = 0x04
-    CONN_NW = 0x08
-    CONN_N = 0x10
-    CONN_E = 0x20
-    CONN_S = 0x40
-    CONN_W = 0x80
+    DIR_N = Map.DIR_N
+    DIR_NE = Map.DIR_NE
+    DIR_E = Map.DIR_E
+    DIR_SE = Map.DIR_SE
+    DIR_S = Map.DIR_S
+    DIR_SW = Map.DIR_SW
+    DIR_W = Map.DIR_W
+    DIR_NW = Map.DIR_NW
 
-    REV_CONN = {
-            CONN_NE: CONN_SW,
-            CONN_SE: CONN_NW,
-            CONN_SW: CONN_NE,
-            CONN_NW: CONN_SE,
-            CONN_N: CONN_S,
-            CONN_E: CONN_W,
-            CONN_S: CONN_N,
-            CONN_W: CONN_E
+    REV_DIR = {
+            DIR_NE: DIR_SW,
+            DIR_SE: DIR_NW,
+            DIR_SW: DIR_NE,
+            DIR_NW: DIR_SE,
+            DIR_N: DIR_S,
+            DIR_E: DIR_W,
+            DIR_S: DIR_N,
+            DIR_W: DIR_E
         }
 
-    ADJ_CONN = {
-            CONN_NE: CONN_N|CONN_E,
-            CONN_SE: CONN_S|CONN_E,
-            CONN_SW: CONN_S|CONN_W,
-            CONN_NW: CONN_N|CONN_W,
-            CONN_N: CONN_NE|CONN_NW,
-            CONN_E: CONN_NE|CONN_SE,
-            CONN_S: CONN_SE|CONN_SW,
-            CONN_W: CONN_NW|CONN_SW
+    ADJ_DIR = {
+            DIR_NE: DIR_N|DIR_E,
+            DIR_SE: DIR_S|DIR_E,
+            DIR_SW: DIR_S|DIR_W,
+            DIR_NW: DIR_N|DIR_W,
+            DIR_N: DIR_NE|DIR_NW,
+            DIR_E: DIR_NE|DIR_SE,
+            DIR_S: DIR_SE|DIR_SW,
+            DIR_W: DIR_NW|DIR_SW
         }
 
     IDX_WALL = 0
@@ -72,55 +72,55 @@ class SmartDraw(object):
         self.revindexes = [ {}, {}, {} ]
 
         # Wall Indexes
-        self.add_index(self.IDX_WALL, -1, self.CONN_NE|self.CONN_SE|self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 0, self.CONN_NE|self.CONN_SW)
-        self.add_index(self.IDX_WALL, 1, self.CONN_SE|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 2, self.CONN_SE|self.CONN_SW)
-        self.add_index(self.IDX_WALL, 3, self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 4, self.CONN_NE|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 5, self.CONN_NE|self.CONN_SE)
-        self.add_index(self.IDX_WALL, 6, self.CONN_SE|self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 7, self.CONN_NE|self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 8, self.CONN_NE|self.CONN_SE|self.CONN_NW)
-        self.add_index(self.IDX_WALL, 9, self.CONN_NE|self.CONN_SE|self.CONN_SW)
+        self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 0, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, 1, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 2, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, 3, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 4, self.DIR_NE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 5, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_WALL, 6, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 7, self.DIR_NE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 8, self.DIR_NE|self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 9, self.DIR_NE|self.DIR_SE|self.DIR_SW)
 
         # Fence Indexes
-        self.add_index(self.IDX_FENCE, 0, self.CONN_NE|self.CONN_SW)
-        self.add_index(self.IDX_FENCE, 1, self.CONN_SE|self.CONN_NW)
-        self.add_index(self.IDX_FENCE, 2, self.CONN_SW|self.CONN_SE)
-        self.add_index(self.IDX_FENCE, 3, self.CONN_NW|self.CONN_SW)
-        self.add_index(self.IDX_FENCE, 4, self.CONN_NE|self.CONN_NW)
-        self.add_index(self.IDX_FENCE, 5, self.CONN_SE|self.CONN_NE)
+        self.add_index(self.IDX_FENCE, 0, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 1, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 2, self.DIR_SW|self.DIR_SE)
+        self.add_index(self.IDX_FENCE, 3, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 4, self.DIR_NE|self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 5, self.DIR_SE|self.DIR_NE)
 
         # Grass Indexes
-        self.add_index(self.IDX_GRASS, 97, self.CONN_SE)
-        self.add_index(self.IDX_GRASS, 98, self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 99, self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 100, self.CONN_NE)
-        self.add_index(self.IDX_GRASS, 101, self.CONN_SE|self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 102, self.CONN_NW|self.CONN_NE)
-        self.add_index(self.IDX_GRASS, 103, self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 104, self.CONN_NE|self.CONN_SE)
-        self.add_index(self.IDX_GRASS, 105, self.CONN_SE|self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 106, self.CONN_NE|self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 107, self.CONN_N)
-        self.add_index(self.IDX_GRASS, 108, self.CONN_S)
-        self.add_index(self.IDX_GRASS, 109, self.CONN_W)
-        self.add_index(self.IDX_GRASS, 110, self.CONN_E)
-        self.add_index(self.IDX_GRASS, 126, self.CONN_N|self.CONN_S)
-        self.add_index(self.IDX_GRASS, 143, self.CONN_W|self.CONN_E)
-        self.add_index(self.IDX_GRASS, 157, self.CONN_W|self.CONN_SE)
-        self.add_index(self.IDX_GRASS, 158, self.CONN_N|self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 159, self.CONN_E|self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 160, self.CONN_W|self.CONN_NE)
-        self.add_index(self.IDX_GRASS, 161, self.CONN_E|self.CONN_SW|self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 162, self.CONN_W|self.CONN_NE|self.CONN_SE)
-        self.add_index(self.IDX_GRASS, 163, self.CONN_N|self.CONN_SE)
-        self.add_index(self.IDX_GRASS, 164, self.CONN_E|self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 165, self.CONN_S|self.CONN_NW)
-        self.add_index(self.IDX_GRASS, 166, self.CONN_S|self.CONN_NE)
-        self.add_index(self.IDX_GRASS, 167, self.CONN_N|self.CONN_SE|self.CONN_SW)
-        self.add_index(self.IDX_GRASS, 168, self.CONN_S|self.CONN_NW|self.CONN_NE)
+        self.add_index(self.IDX_GRASS, 97, self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 98, self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 99, self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 100, self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 101, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 102, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 103, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 104, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 105, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 106, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 107, self.DIR_N)
+        self.add_index(self.IDX_GRASS, 108, self.DIR_S)
+        self.add_index(self.IDX_GRASS, 109, self.DIR_W)
+        self.add_index(self.IDX_GRASS, 110, self.DIR_E)
+        self.add_index(self.IDX_GRASS, 126, self.DIR_N|self.DIR_S)
+        self.add_index(self.IDX_GRASS, 143, self.DIR_W|self.DIR_E)
+        self.add_index(self.IDX_GRASS, 157, self.DIR_W|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 158, self.DIR_N|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 159, self.DIR_E|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 160, self.DIR_W|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 161, self.DIR_E|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 162, self.DIR_W|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 163, self.DIR_N|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 164, self.DIR_E|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 165, self.DIR_S|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 166, self.DIR_S|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 167, self.DIR_N|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 168, self.DIR_S|self.DIR_NW|self.DIR_NE)
 
         # Pool to randomly choose from if we're completely surrounded by grass
         self.grass_fullest = [161, 162, 167, 168]
@@ -176,16 +176,14 @@ class SmartDraw(object):
         # to update adjacent walls.
         connflags = 0
         flagcount = 0
-        for (mapdir, conndir) in zip(
-                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-            adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+        for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            adjsquare = self.map.square_relative(square.x, square.y, testdir)
             adjgroup = self.get_wall_group(adjsquare, wallgroup)
             if (adjgroup is None or adjgroup != wallgroup):
                 continue
-            connflags = connflags|conndir
+            connflags = connflags|testdir
             flagcount += 1
-            if (self.add_wall_connection(wallgroup, adjsquare, self.REV_CONN[conndir])):
+            if (self.add_wall_connection(wallgroup, adjsquare, self.REV_DIR[testdir])):
                 retarr.append(adjsquare)
 
         # Figure out what to put down if we don't actually have a match
@@ -193,8 +191,8 @@ class SmartDraw(object):
             if (flagcount == 0):
                 connflags = self.indexes[self.IDX_WALL][0]
             elif (flagcount == 1):
-                if ((connflags & self.CONN_NE) == self.CONN_NE or
-                    (connflags & self.CONN_SW) == self.CONN_SW):
+                if ((connflags & self.DIR_NE) == self.DIR_NE or
+                    (connflags & self.DIR_SW) == self.DIR_SW):
                     connflags = self.indexes[self.IDX_WALL][0]
                 else:
                     connflags = self.indexes[self.IDX_WALL][1]
@@ -234,25 +232,23 @@ class SmartDraw(object):
         # Now prune any connections which shouldn't be active, skipping the
         # direction that we were just told to add
         conncount = 0
-        for (mapdir, conndir) in zip(
-                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-            if (conndir == dir):
+        for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            if (testdir == dir):
                 continue
-            testsquare = self.map.square_relative(square.x, square.y, mapdir)
+            testsquare = self.map.square_relative(square.x, square.y, testdir)
             testgroup = self.get_wall_group(testsquare, group)
             if (testgroup and testgroup == group):
                 conncount += 1
-                newflags = (newflags | conndir)
+                newflags = (newflags | testdir)
 
         # Now clean up.  If there were no connections found, just use the
         # appropriate straight tile.  If 1, just add in our connection.
         # Otherwise, accept the pruning.
         if (conncount == 0):
-            if (dir == self.CONN_NE or dir == self.CONN_SW):
-                newflags = self.CONN_NE|self.CONN_SW
+            if (dir == self.DIR_NE or dir == self.DIR_SW):
+                newflags = self.DIR_NE|self.DIR_SW
             else:
-                newflags = self.CONN_NW|self.CONN_SE
+                newflags = self.DIR_NW|self.DIR_SE
 
         # Now after all that, see if we even changed at all.  If so,
         # make the change and report back.
@@ -283,16 +279,14 @@ class SmartDraw(object):
         # can only support two connections.
         connflags = 0
         flagcount = 0
-        for (mapdir, conndir) in zip(
-                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-            adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+        for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            adjsquare = self.map.square_relative(square.x, square.y, testdir)
             adjgroup = self.get_wall_group(adjsquare)
             if (adjgroup is None or adjgroup != self.fencestart):
                 continue
-            connflags = connflags|conndir
+            connflags = connflags|testdir
             flagcount += 1
-            if (self.add_fence_connection(adjsquare, self.REV_CONN[conndir])):
+            if (self.add_fence_connection(adjsquare, self.REV_DIR[testdir])):
                 retarr.append(adjsquare)
             if (flagcount == 2):
                 break
@@ -302,8 +296,8 @@ class SmartDraw(object):
             if (flagcount == 0):
                 connflags = self.indexes[self.IDX_FENCE][0]
             elif (flagcount == 1):
-                if ((connflags & self.CONN_NE) == self.CONN_NE or
-                    (connflags & self.CONN_SW) == self.CONN_SW):
+                if ((connflags & self.DIR_NE) == self.DIR_NE or
+                    (connflags & self.DIR_SW) == self.DIR_SW):
                     connflags = self.indexes[self.IDX_FENCE][0]
                 else:
                     connflags = self.indexes[self.IDX_FENCE][1]
@@ -339,26 +333,24 @@ class SmartDraw(object):
         # direction that we were just told to add.  Note that we're stopping
         # after the first one we find.
         conncount = 0
-        for (mapdir, conndir) in zip(
-                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-            if (conndir == dir):
+        for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            if (testdir == dir):
                 continue
-            testsquare = self.map.square_relative(square.x, square.y, mapdir)
+            testsquare = self.map.square_relative(square.x, square.y, testdir)
             testgroup = self.get_wall_group(testsquare)
             if (testgroup and testgroup == self.fencestart):
                 conncount += 1
-                newflags = (newflags | conndir)
+                newflags = (newflags | testdir)
                 break
 
         # Now clean up.  If there were no connections found, just use the
         # appropriate straight tile.  If 1, just add in our connection.
         # Otherwise, accept the pruning.
         if (conncount == 0):
-            if (dir == self.CONN_NE or dir == self.CONN_SW):
-                newflags = self.CONN_NE|self.CONN_SW
+            if (dir == self.DIR_NE or dir == self.DIR_SW):
+                newflags = self.DIR_NE|self.DIR_SW
             else:
-                newflags = self.CONN_NW|self.CONN_SE
+                newflags = self.DIR_NW|self.DIR_SE
 
         # Now after all that, see if we even changed at all.  If so,
         # make the change and report back.
@@ -406,26 +398,24 @@ class SmartDraw(object):
         curdecal = square.decalimg
 
         # First find out more-typical adjacent squares
-        for (mapdir, conndir) in zip(
-                [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW],
-                [self.CONN_NE, self.CONN_SE, self.CONN_SW, self.CONN_NW]):
-            if (conndir in known):
-                connflags_not = connflags_not|conndir
+        for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            if (testdir in known):
+                connflags_not = connflags_not|testdir
                 continue
             else:
-                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                adjsquare = self.map.square_relative(square.x, square.y, testdir)
                 if (not adjsquare):
                     continue
             if (adjsquare.floorimg in self.grass_tiles):
-                connflags = connflags|conndir
+                connflags = connflags|testdir
                 flagcount += 1
             else:
-                connflags_not = connflags_not|conndir
+                connflags_not = connflags_not|testdir
 
             # Process adjacent squares if we're supposed to
             if (recurse):
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, False, { self.REV_CONN[conndir]: square })):
+                    if (self.process_grass_decals(adjsquare, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         # If we're recursing, we'll need to check the cardinal directions as
@@ -433,14 +423,12 @@ class SmartDraw(object):
         # TODO: We should really just grab all these at the beginning and
         # cache them.
         if (recurse):
-            for (mapdir, conndir) in zip(
-                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
-                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
-                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+            for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                adjsquare = self.map.square_relative(square.x, square.y, testdir)
                 if (not adjsquare):
                     continue
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, False, { self.REV_CONN[conndir]: square })):
+                    if (self.process_grass_decals(adjsquare, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         # Now refine the list
@@ -462,29 +450,25 @@ class SmartDraw(object):
 
             # Prune, in case there are adjacent tiles
             curflags = self.indexes[self.IDX_GRASS][square.decalimg]
-            for (mapdir, conndir) in zip(
-                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
-                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
-                adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+            for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                adjsquare = self.map.square_relative(square.x, square.y, testdir)
                 if (not adjsquare):
                     continue
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    curflags = (curflags & ~conndir)
+                    curflags = (curflags & ~testdir)
             if (curflags in self.revindexes[self.IDX_GRASS]):
                 square.decalimg = self.revindexes[self.IDX_GRASS][curflags]
         else:
             # See if there's a more-specific tile we could match on
-            for (mapdir, conndir) in zip(
-                    [Map.DIR_N, Map.DIR_E, Map.DIR_S, Map.DIR_W],
-                    [self.CONN_N, self.CONN_E, self.CONN_S, self.CONN_W]):
-                if (connflags & self.ADJ_CONN[conndir] == 0):
+            for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                if (connflags & self.ADJ_DIR[testdir] == 0):
                     continue
-                if ((connflags|conndir) in self.revindexes[self.IDX_GRASS]):
-                    adjsquare = self.map.square_relative(square.x, square.y, mapdir)
+                if ((connflags|testdir) in self.revindexes[self.IDX_GRASS]):
+                    adjsquare = self.map.square_relative(square.x, square.y, testdir)
                     if (not adjsquare):
                         continue
                     if (adjsquare.floorimg in self.grass_tiles):
-                        connflags = connflags | conndir
+                        connflags = connflags | testdir
                         if (flagcount != 0):
                             break
             if (connflags == 0):
