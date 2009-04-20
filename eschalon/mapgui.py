@@ -2032,6 +2032,8 @@ class MapGUI(BaseGUI):
         if (self.draw_floor_checkbox.get_active() and
                 not self.draw_decal_checkbox.get_active() and
                 self.draw_smart_floor.get_active()):
+            for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
+                self.undo.add_additional(self.map.square_relative(x, y, dir))
             affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
             if (affected_squares is not None):
                 self.undo.set_text('Smart Draw')
