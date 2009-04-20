@@ -56,20 +56,43 @@ class SmartDraw(object):
             DIR_W: DIR_NW|DIR_SW
         }
 
+    # List of adjacent directions if we're just
+    # looking at cardinal directions
+    CARD_ADJ_DIRS ={
+            DIR_N: [DIR_W, DIR_E],
+            DIR_S: [DIR_W, DIR_E],
+            DIR_W: [DIR_N, DIR_S],
+            DIR_E: [DIR_N, DIR_S]
+        }
+
+    COMP_DIR = {
+            DIR_N|DIR_W: DIR_NW,
+            DIR_N|DIR_E: DIR_NE,
+            DIR_S|DIR_E: DIR_SE,
+            DIR_S|DIR_W: DIR_SW
+        }
+
     IDX_WALL = 0
     IDX_FENCE = 1
     IDX_GRASS = 2
 
     def __init__(self):
+
+        # Construct some vars which'll be helpful later
+
+
+        # Hardcoded Graphics info
         self.wallstarts = [161, 171, 181, 191, 201]
         self.fencestart = 73
         self.special = 213
         self.grass_tiles = [9, 10, 11, 12]
-        self.map = None
 
         # One empty dict for each IDX_*
         self.indexes = [ {}, {}, {} ]
         self.revindexes = [ {}, {}, {} ]
+
+        # Other vars we'll need to keep track of
+        self.map = None
 
         # Wall Indexes
         self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
@@ -462,7 +485,23 @@ class SmartDraw(object):
             # See if there's a more-specific tile we could match on
             for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                 if (connflags & self.ADJ_DIR[testdir] == 0):
-                    continue
+                    found_adj_grass = False
+                    for adjdir in self.CARD_ADJ_DIRS[testdir]:
+                        adjsquare = self.map.square_relative(square.x, square.y, self.COMP_DIR[testdir|adjdir])
+                        if (not adjsquare):
+                            continue
+                        if (adjsquare.floorimg in self.grass_tiles):
+                            # TODO: should hceck for non-grass decals here (sand, etc)
+                            found_adj_grass = True
+                            break
+                        elif (adjsquare.decalimg in self.indexes[self.IDX_GRASS]):
+                            adjflags = self.indexes[self.IDX_GRASS][adjsquare.decalimg]
+                            testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
+                            if (adjflags == testflag):
+                                found_adj_grass = True
+                                break
+                    if (not found_adj_grass):
+                        continue
                 if ((connflags|testdir) in self.revindexes[self.IDX_GRASS]):
                     adjsquare = self.map.square_relative(square.x, square.y, testdir)
                     if (not adjsquare):
