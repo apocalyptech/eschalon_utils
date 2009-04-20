@@ -383,7 +383,7 @@ class SmartDraw(object):
             square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
             return True
 
-    def draw_floor(self, square):
+    def draw_floor(self, square, straight_path=True):
         """
         Handles drawing a floor.  This should just be decal work.
         Returns a list of squares that have been updated by this action
@@ -400,9 +400,9 @@ class SmartDraw(object):
                 square.decalimg = 0
             return []
         else:
-            return self.process_grass_decals(square)
+            return self.process_grass_decals(square, straight_path)
 
-    def process_grass_decals(self, square, recurse=True, known={}):
+    def process_grass_decals(self, square, straight_path=True, recurse=True, known={}):
         """
         Given a square, figure out what kind of grass decals it should have,
         if any.  Will actually set the decal image, as well.  If 'recurse'
@@ -438,7 +438,7 @@ class SmartDraw(object):
             # Process adjacent squares if we're supposed to
             if (recurse):
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, False, { self.REV_DIR[testdir]: square })):
+                    if (self.process_grass_decals(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         # If we're recursing, we'll need to check the cardinal directions as
@@ -451,7 +451,7 @@ class SmartDraw(object):
                 if (not adjsquare):
                     continue
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, False, { self.REV_DIR[testdir]: square })):
+                    if (self.process_grass_decals(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         # Now refine the list
@@ -485,23 +485,24 @@ class SmartDraw(object):
             # See if there's a more-specific tile we could match on
             for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                 if (connflags & self.ADJ_DIR[testdir] == 0):
-                    found_adj_grass = False
-                    for adjdir in self.CARD_ADJ_DIRS[testdir]:
-                        adjsquare = self.map.square_relative(square.x, square.y, self.COMP_DIR[testdir|adjdir])
-                        if (not adjsquare):
-                            continue
-                        if (adjsquare.floorimg in self.grass_tiles):
-                            # TODO: should hceck for non-grass decals here (sand, etc)
-                            found_adj_grass = True
-                            break
-                        elif (adjsquare.decalimg in self.indexes[self.IDX_GRASS]):
-                            adjflags = self.indexes[self.IDX_GRASS][adjsquare.decalimg]
-                            testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
-                            if (adjflags == testflag):
+                    if (straight_path):
+                        found_adj_grass = False
+                        for adjdir in self.CARD_ADJ_DIRS[testdir]:
+                            adjsquare = self.map.square_relative(square.x, square.y, self.COMP_DIR[testdir|adjdir])
+                            if (not adjsquare):
+                                continue
+                            if (adjsquare.floorimg in self.grass_tiles):
+                                # TODO: should hceck for non-grass decals here (sand, etc)
                                 found_adj_grass = True
                                 break
-                    if (not found_adj_grass):
-                        continue
+                            elif (adjsquare.decalimg in self.indexes[self.IDX_GRASS]):
+                                adjflags = self.indexes[self.IDX_GRASS][adjsquare.decalimg]
+                                testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
+                                if (adjflags == testflag):
+                                    found_adj_grass = True
+                                    break
+                        if (not found_adj_grass):
+                            continue
                 if ((connflags|testdir) in self.revindexes[self.IDX_GRASS]):
                     adjsquare = self.map.square_relative(square.x, square.y, testdir)
                     if (not adjsquare):

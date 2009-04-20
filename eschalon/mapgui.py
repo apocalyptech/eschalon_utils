@@ -166,6 +166,7 @@ class MapGUI(BaseGUI):
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
+        self.draw_straight_paths = self.get_widget('draw_straight_paths')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -250,6 +251,7 @@ class MapGUI(BaseGUI):
                 'open_draw_walldecalsel': self.open_draw_walldecalsel,
                 'open_draw_objsel': self.open_draw_objsel,
                 'open_objsel': self.open_objsel,
+                'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
                 'objsel_on_motion': self.objsel_on_motion,
                 'objsel_on_expose': self.objsel_on_expose,
                 'objsel_on_clicked': self.objsel_on_clicked
@@ -653,6 +655,10 @@ class MapGUI(BaseGUI):
         about.run()
         about.hide()
         #self.mainbook.set_sensitive(True)
+
+    def on_draw_smart_floor_toggled(self, widget):
+        """ Handle the smart-floor toggling. """
+        self.draw_straight_paths.set_sensitive(widget.get_active())
 
     def update_undo_gui(self):
         """
@@ -2026,7 +2032,7 @@ class MapGUI(BaseGUI):
         if (self.draw_floor_checkbox.get_active() and
                 not self.draw_decal_checkbox.get_active() and
                 self.draw_smart_floor.get_active()):
-            affected_squares = self.smartdraw.draw_floor(square)
+            affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
             if (affected_squares is not None):
                 self.undo.set_text('Smart Draw')
                 for adjsquare in affected_squares:
