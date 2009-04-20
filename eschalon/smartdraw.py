@@ -75,6 +75,7 @@ class SmartDraw(object):
     IDX_WALL = 0
     IDX_FENCE = 1
     IDX_GRASS = 2
+    IDX_SAND = 3
 
     def __init__(self):
 
@@ -86,10 +87,11 @@ class SmartDraw(object):
         self.fencestart = 73
         self.special = 213
         self.grass_tiles = [9, 10, 11, 12]
+        self.sand_tiles = [124, 125]
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {}, {} ]
-        self.revindexes = [ {}, {}, {} ]
+        self.indexes = [ {}, {}, {}, {} ]
+        self.revindexes = [ {}, {}, {}, {} ]
 
         # Other vars we'll need to keep track of
         self.map = None
@@ -147,6 +149,18 @@ class SmartDraw(object):
 
         # Pool to randomly choose from if we're completely surrounded by grass
         self.grass_fullest = [161, 162, 167, 168]
+
+        # Sand Indexes
+        self.add_index(self.IDX_SAND, 138, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_SAND, 144, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 145, self.DIR_NW)
+        self.add_index(self.IDX_SAND, 145, self.DIR_NE)
+        self.add_index(self.IDX_SAND, 146, self.DIR_SE)
+        self.add_index(self.IDX_SAND, 147, self.DIR_SW)
+        self.add_index(self.IDX_SAND, 149, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_SAND, 150, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_SAND, 155, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 156, self.DIR_NW|self.DIR_NE)
 
     def add_index(self, idxnum, index, connections):
         self.indexes[idxnum][index] = connections
@@ -383,19 +397,17 @@ class SmartDraw(object):
             square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
             return True
 
-    def draw_floor(self, square, straight_path=True):
+    def get_rel(self, square, known, dir):
         """
-        Handles drawing a floor.  This should just be decal work.
-        Returns a list of squares that have been updated by this action
-        (not including the given square, which is assumed.
+        Given a square, a "known" array, and a direction, return the square in
+        that direction.  This will update "known" appropriately when a square
+        isn't found.
         """
-        # TODO: We probably only want to overwrite decals that we would
-        # have put in place; not other decals
-        # TODO: Single squares of water in the middle of other terrain
-        # should be not a wall
-        return self.process_grass_decals(square, straight_path)
+        if (dir not in known):
+            known[dir] = self.map.square_relative(square.x, square.y, dir)
+        return known[dir]
 
-    def process_grass_decals(self, square, straight_path=True, recurse=True, known={}):
+    def draw_floor(self, square, straight_path=True, recurse=True, known={}):
         """
         Given a square, figure out what kind of grass decals it should have,
         if any.  Will actually set the decal image, as well.  If 'recurse'
@@ -405,22 +417,33 @@ class SmartDraw(object):
         Map.square_relative().
         
         Returns a list of modified squares if we're recursing, or just
-        true/false otherwise.
+        true/false otherwise.  (Note that the list does not include the
+        original square, which is just assumed.)
         """
+
+        # TODO: We probably only want to overwrite decals that we would
+        # have put in place; not other decals
+        # TODO: Single squares of water in the middle of other terrain
+        # should be not a wall
+
         connflags = 0
         connflags_not = 0
         flagcount = 0
         affected = []
         curdecal = square.decalimg
 
+        # If recursing, load in all the squares we'll need, first
+        # TODO: should just provide a function to get this, in Map
+        if (recurse):
+            for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
+                    self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
+                known[dir] = self.map.square_relative(square.x, square.y, dir)
+
         # First find out more-typical adjacent squares
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            if (testdir in known):
-                adjsquare = known[testdir]
-            else:
-                adjsquare = self.map.square_relative(square.x, square.y, testdir)
-                if (not adjsquare):
-                    continue
+            adjsquare = self.get_rel(square, known, testdir)
+            if (not adjsquare):
+                continue
             if (adjsquare.floorimg in self.grass_tiles):
                 connflags = connflags|testdir
                 flagcount += 1
@@ -430,7 +453,7 @@ class SmartDraw(object):
             # Process adjacent squares if we're supposed to
             if (recurse):
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
+                    if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         # If we're recursing, we'll need to check the cardinal directions as
@@ -439,14 +462,11 @@ class SmartDraw(object):
         # cache them.
         if (recurse):
             for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                if (testdir in known):
-                    adjsquare = known[testdir]
-                else:
-                    adjsquare = self.map.square_relative(square.x, square.y, testdir)
-                    if (not adjsquare):
-                        continue
+                adjsquare = self.get_rel(square, known, testdir)
+                if (not adjsquare):
+                    continue
                 if (adjsquare.floorimg not in self.grass_tiles):
-                    if (self.process_grass_decals(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
+                    if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
         if (square.floorimg in self.grass_tiles):
@@ -479,7 +499,7 @@ class SmartDraw(object):
                 # Prune, in case there are adjacent tiles
                 curflags = self.indexes[self.IDX_GRASS][square.decalimg]
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                    adjsquare = self.map.square_relative(square.x, square.y, testdir)
+                    adjsquare = self.get_rel(square, known, testdir)
                     if (not adjsquare):
                         continue
                     if (adjsquare.floorimg not in self.grass_tiles):
@@ -493,7 +513,7 @@ class SmartDraw(object):
                         if (straight_path):
                             found_adj_grass = False
                             for adjdir in self.CARD_ADJ_DIRS[testdir]:
-                                adjsquare = self.map.square_relative(square.x, square.y, self.COMP_DIR[testdir|adjdir])
+                                adjsquare = self.get_rel(square, known, self.COMP_DIR[testdir|adjdir])
                                 if (not adjsquare):
                                     continue
                                 if (adjsquare.floorimg in self.grass_tiles):
@@ -509,7 +529,7 @@ class SmartDraw(object):
                             if (not found_adj_grass):
                                 continue
                     if ((connflags|testdir) in self.revindexes[self.IDX_GRASS]):
-                        adjsquare = self.map.square_relative(square.x, square.y, testdir)
+                        adjsquare = self.get_rel(square, known, testdir)
                         if (not adjsquare):
                             continue
                         if (adjsquare.floorimg in self.grass_tiles):
