@@ -103,7 +103,7 @@ be able to just run it from wherever you unzipped it.  The various pieces of
 software you'll need to run the program are:
 
 gtk+ Runtime:
-  http://sourceforge.net/project/showfiles.php?group_id=98754&package_id=121281
+  http://sourceforge.net/projects/gladewin32/files/gtk%2B-win32-runtime/2.12.9/
   Note that this version, from the gladewin32 Sourceforge project, is the
   main officially-blessed gtk+ runtime endorsed by PyGTK, so it's the best to
   use.  It includes Cairo, so a separate Cairo installation is not required.
