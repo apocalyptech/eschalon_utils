@@ -21,7 +21,6 @@
 
 import os
 import sys
-import cairo
 
 # Load in our PyGTK deps
 pygtkreq = '2.0'
@@ -30,6 +29,8 @@ try:
     pygtk.require(pygtkreq)
 except:
     print 'PyGTK version %s or higher is required' % pygtkreq
+    print 'Hit enter to exit...'
+    sys.stdin.readline()
     sys.exit(1)
 
 try:
@@ -37,6 +38,18 @@ try:
     import gtk.glade
 except:
     print 'Python GTK Modules not found'
+    print 'Hit enter to exit...'
+    sys.stdin.readline()
+    sys.exit(1)
+
+# Load in our Cairo dep
+try:
+    import cairo
+except Exception, e:
+    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+    dialog.set_markup('PyCairo could not be loaded: %s' % (str(e)))
+    dialog.run()
+    dialog.destroy()
     sys.exit(1)
 
 # Lookup tables we'll need

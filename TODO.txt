@@ -56,6 +56,7 @@ Map GUI
  * Optionally allow "smart" walls to connect between groups?
  * Add in "special" tile stuff to smart walls
  * Randomized tiles (grass, dirt, etc)
+ * Giant fence smart-drawing, too
 
 Internal
 --------

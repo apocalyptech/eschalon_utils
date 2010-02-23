@@ -22,8 +22,6 @@
 import os
 import sys
 import time
-import cairo
-import gobject
 from eschalonb1 import traptable, containertable, objecttypetable, wall_list
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
@@ -35,13 +33,27 @@ try:
     pygtk.require(pygtkreq)
 except:
     print 'PyGTK version %s or higher is required' % pygtkreq
+    print 'Hit enter to exit...'
+    sys.stdin.readline()
     sys.exit(1)
 
 try:
     import gtk
     import gtk.glade
+    import gobject
 except:
     print 'Python GTK Modules not found'
+    print 'Hit enter to exit...'
+    sys.stdin.readline()
+    sys.exit(1)
+
+try:
+    import cairo
+except Exception, e:
+    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+    dialog.set_markup('PyCairo could not be loaded: %s' % (str(e)))
+    dialog.run()
+    dialog.destroy()
     sys.exit(1)
 
 from eschalonb1.map import Map

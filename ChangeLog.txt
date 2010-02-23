@@ -1,5 +1,10 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   23 Feb 2010; CJ Kucera <pez@apocalyptech.com> :
+   Enhanced error reporting when PyGTK/PyCairo dependencies
+   are not installed (especially useful for debugging dep
+   problems on Windows)
+
    11 - 12 Apr 2009; CJ Kucera <pez@apocalyptech.com> :
    "Smart" drawing implemented
 
