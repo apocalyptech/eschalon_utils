@@ -86,8 +86,10 @@ class SmartDraw(object):
         self.wallstarts = [161, 171, 181, 191, 201]
         self.fencestart = 73
         self.special = 213
-        self.grass_tiles = [9, 10, 11, 12]
-        self.sand_tiles = [124, 125]
+        self.tilesets = {
+                self.IDX_GRASS: [9, 10, 11, 12],
+                self.IDX_SAND: [124, 125]
+            }
 
         # One empty dict for each IDX_*
         self.indexes = [ {}, {}, {}, {} ]
@@ -147,20 +149,23 @@ class SmartDraw(object):
         self.add_index(self.IDX_GRASS, 167, self.DIR_N|self.DIR_SE|self.DIR_SW)
         self.add_index(self.IDX_GRASS, 168, self.DIR_S|self.DIR_NW|self.DIR_NE)
 
-        # Pool to randomly choose from if we're completely surrounded by grass
-        self.grass_fullest = [161, 162, 167, 168]
-
         # Sand Indexes
         self.add_index(self.IDX_SAND, 138, self.DIR_SE|self.DIR_NW)
         self.add_index(self.IDX_SAND, 144, self.DIR_NE|self.DIR_SW)
         self.add_index(self.IDX_SAND, 145, self.DIR_NW)
-        self.add_index(self.IDX_SAND, 145, self.DIR_NE)
-        self.add_index(self.IDX_SAND, 146, self.DIR_SE)
-        self.add_index(self.IDX_SAND, 147, self.DIR_SW)
+        self.add_index(self.IDX_SAND, 146, self.DIR_NE)
+        self.add_index(self.IDX_SAND, 147, self.DIR_SE)
+        self.add_index(self.IDX_SAND, 148, self.DIR_SW)
         self.add_index(self.IDX_SAND, 149, self.DIR_SW|self.DIR_NW)
         self.add_index(self.IDX_SAND, 150, self.DIR_NE|self.DIR_SE)
         self.add_index(self.IDX_SAND, 155, self.DIR_SE|self.DIR_SW)
         self.add_index(self.IDX_SAND, 156, self.DIR_NW|self.DIR_NE)
+
+        # Pool to randomly choose from if we're completely surrounded
+        self.tile_fullest = {
+                self.IDX_GRASS: [161, 162, 167, 168],
+                self.IDX_SAND: [138, 144]
+            }
 
     def add_index(self, idxnum, index, connections):
         self.indexes[idxnum][index] = connections
@@ -439,12 +444,33 @@ class SmartDraw(object):
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
                 known[dir] = self.map.square_relative(square.x, square.y, dir)
 
+        # Figure out whether to try and fit grass decals or sand decals
+        is_grass_tile = False
+        is_sand_tile = False
+        if (square.floorimg in self.tilesets[self.IDX_GRASS]):
+            is_grass_tile = True
+        elif (square.floorimg in self.tilesets[self.IDX_SAND]):
+            is_sand_tile = True
+        grass_count = 0
+        sand_count = 0
+        for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            dirsquare = self.get_rel(square, known, dir)
+            if dirsquare:
+                if (not is_grass_tile and dirsquare.floorimg in self.tilesets[self.IDX_GRASS]):
+                    grass_count += 1
+                elif (not is_sand_tile and dirsquare.floorimg in self.tilesets[self.IDX_SAND]):
+                    sand_count += 1
+        if (sand_count > grass_count):
+            idxtype = self.IDX_SAND
+        else:
+            idxtype = self.IDX_GRASS
+
         # First find out more-typical adjacent squares
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             adjsquare = self.get_rel(square, known, testdir)
             if (not adjsquare):
                 continue
-            if (adjsquare.floorimg in self.grass_tiles):
+            if (adjsquare.floorimg in self.tilesets[idxtype]):
                 connflags = connflags|testdir
                 flagcount += 1
             else:
@@ -452,7 +478,7 @@ class SmartDraw(object):
 
             # Process adjacent squares if we're supposed to
             if (recurse):
-                if (adjsquare.floorimg not in self.grass_tiles):
+                if (adjsquare.floorimg not in self.tilesets[idxtype]):
                     if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
@@ -465,17 +491,18 @@ class SmartDraw(object):
                 adjsquare = self.get_rel(square, known, testdir)
                 if (not adjsquare):
                     continue
-                if (adjsquare.floorimg not in self.grass_tiles):
+                if (adjsquare.floorimg not in self.tilesets[idxtype]):
                     if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                         affected.append(adjsquare)
 
-        if (square.floorimg in self.grass_tiles):
+        if (square.floorimg in self.tilesets[idxtype]):
 
             # Now let's just get out of here if we're a grass square ourselves.
             # We could have exited earlier, but this way we can recurse around ourselves
             # without duplicating much code.
-            if (square.decalimg in self.indexes[self.IDX_GRASS].keys()):
-                square.decalimg = 0
+            for idx in [self.IDX_GRASS, self.IDX_SAND]:
+                if (square.decalimg in self.indexes[idx].keys()):
+                    square.decalimg = 0
 
         else:
 
@@ -486,61 +513,62 @@ class SmartDraw(object):
                 # instead
                 if (flagcount == 4):
                     # Just pick a random one from our "fullest" pool
-                    square.decalimg = random.choice(self.grass_fullest)
+                    square.decalimg = random.choice(self.tile_fullest[idxtype])
                 elif (flagcount == 3):
                     # Pick one from the "fullest" pool which matches
                     # most closely
-                    for choice in self.grass_fullest:
-                        choiceflags = self.indexes[self.IDX_GRASS][choice]
+                    for choice in self.tile_fullest[idxtype]:
+                        choiceflags = self.indexes[idxtype][choice]
                         if ((choiceflags & connflags_not) == 0):
                             square.decalimg = choice
                             break
 
                 # Prune, in case there are adjacent tiles
-                curflags = self.indexes[self.IDX_GRASS][square.decalimg]
+                curflags = self.indexes[idxtype][square.decalimg]
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                     adjsquare = self.get_rel(square, known, testdir)
                     if (not adjsquare):
                         continue
-                    if (adjsquare.floorimg not in self.grass_tiles):
+                    if (adjsquare.floorimg not in self.tilesets[idxtype]):
                         curflags = (curflags & ~testdir)
-                if (curflags in self.revindexes[self.IDX_GRASS]):
-                    square.decalimg = self.revindexes[self.IDX_GRASS][curflags]
+                if (curflags in self.revindexes[idxtype]):
+                    square.decalimg = self.revindexes[idxtype][curflags]
             else:
                 # See if there's a more-specific tile we could match on
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                     if (connflags & self.ADJ_DIR[testdir] == 0):
                         if (straight_path):
-                            found_adj_grass = False
+                            found_adj_same = False
                             for adjdir in self.CARD_ADJ_DIRS[testdir]:
                                 adjsquare = self.get_rel(square, known, self.COMP_DIR[testdir|adjdir])
                                 if (not adjsquare):
                                     continue
-                                if (adjsquare.floorimg in self.grass_tiles):
+                                if (adjsquare.floorimg in self.tilesets[idxtype]):
                                     # TODO: should check for non-grass decals here (sand, etc)
-                                    found_adj_grass = True
+                                    found_adj_same = True
                                     break
-                                elif (adjsquare.decalimg in self.indexes[self.IDX_GRASS]):
-                                    adjflags = self.indexes[self.IDX_GRASS][adjsquare.decalimg]
+                                elif (adjsquare.decalimg in self.indexes[idxtype]):
+                                    adjflags = self.indexes[idxtype][adjsquare.decalimg]
                                     testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
                                     if (adjflags == testflag):
-                                        found_adj_grass = True
+                                        found_adj_same = True
                                         break
-                            if (not found_adj_grass):
+                            if (not found_adj_same):
                                 continue
-                    if ((connflags|testdir) in self.revindexes[self.IDX_GRASS]):
+                    if ((connflags|testdir) in self.revindexes[idxtype]):
                         adjsquare = self.get_rel(square, known, testdir)
                         if (not adjsquare):
                             continue
-                        if (adjsquare.floorimg in self.grass_tiles):
+                        if (adjsquare.floorimg in self.tilesets[idxtype]):
                             connflags = connflags | testdir
                             if (flagcount != 0):
                                 break
                 if (connflags == 0):
-                    if (square.decalimg in self.indexes[self.IDX_GRASS]):
-                        square.decalimg = 0
+                    for idx in [self.IDX_GRASS, self.IDX_SAND]:
+                        if (square.decalimg in self.indexes[idx]):
+                            square.decalimg = 0
                 else:
-                    square.decalimg = self.revindexes[self.IDX_GRASS][connflags]
+                    square.decalimg = self.revindexes[idxtype][connflags]
 
         # And now return
         if (recurse):
