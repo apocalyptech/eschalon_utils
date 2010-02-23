@@ -139,7 +139,8 @@ class UndoHistory(object):
         Adds an additional square that was changed (possibly)
         along with our main square.
         """
-        self.additional.append(Additional(square))
+        if (square):
+            self.additional.append(Additional(square))
 
 class Undo(object):
     """
