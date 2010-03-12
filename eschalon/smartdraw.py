@@ -97,7 +97,10 @@ class SmartDraw(object):
                 self.IDX_SAND: [124, 125]
             }
         self.random_terrain = [
+                [3, 4],          # Red ground of some sort
                 [9, 10, 11, 12], # Regular Grass
+                [34, 35],        # Stone Ground
+                [40, 41],        # Cobbles
                 [79, 80, 81, 82] # "Dry" Grass
             ]
         self.random_obj = [
