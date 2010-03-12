@@ -179,6 +179,8 @@ class MapGUI(BaseGUI):
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
         self.draw_straight_paths = self.get_widget('draw_straight_paths')
+        self.draw_smart_walldecal = self.get_widget('draw_smart_walldecal')
+        self.smart_randomize = self.get_widget('smart_randomize')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -2052,6 +2054,10 @@ class MapGUI(BaseGUI):
                 self.undo.set_text('Smart Draw')
                 for adjsquare in affected_squares:
                     self.redraw_square(adjsquare.x, adjsquare.y)
+
+        # Handles "smart" decals if needed
+        if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
+            self.smartdraw.draw_walldecal(square)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):

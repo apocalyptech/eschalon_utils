@@ -90,6 +90,25 @@ class SmartDraw(object):
                 self.IDX_GRASS: [9, 10, 11, 12],
                 self.IDX_SAND: [124, 125]
             }
+        self.random_terrain = [
+                [9, 10, 11, 12], # Regular Grass
+                [79, 80, 81, 82] # "Dry" Grass
+            ]
+        self.random_obj = [
+                [91, 92, 93],         # Shrubs
+                [95, 96],             # Marshy Shrubs
+                [127, 128],           # Blossoming Trees
+                [129, 130, 131, 142], # Whithered Trees
+                [219, 220],           # Tall Rocks
+                [251, 252],           # Tall Trees
+                [253, 254]            # Tall Pines
+            ]
+        self.random_walldecal = [
+                [9, 10],    # Wall shadows/smudges (SW->NE)
+                [11, 12],   # Wall shadows/smudges (NW->SE)
+                [27, 28],   # Cracks (NW->SE)
+                [29, 30]    # Cracks (SW->NE)
+            ]
 
         # One empty dict for each IDX_*
         self.indexes = [ {}, {}, {}, {} ]
@@ -209,6 +228,13 @@ class SmartDraw(object):
         retarr = []
         wallgroup = self.get_wall_group(square)
         if (wallgroup is None):
+            # If we're not drawing a wall, see if we should be randomizing
+            # anything
+            if (self.gui.smart_randomize.get_active()):
+                for tileset in self.random_obj:
+                    if square.wallimg in tileset:
+                        square.wallimg = random.choice(tileset)
+                        break
             return None
 
         # Fences act similarly, but different enough that I think things would
@@ -445,6 +471,7 @@ class SmartDraw(object):
         flagcount = 0
         affected = []
         curdecal = square.decalimg
+        curfloor = square.floorimg
 
         # If recursing, load in all the squares we'll need, first
         # TODO: should just provide a function to get this, in Map
@@ -452,6 +479,14 @@ class SmartDraw(object):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
                 known[dir] = self.map.square_relative(square.x, square.y, dir)
+
+            # Also randomize the floor tile if we're supposed to (we only do
+            # this to the tile actually being drawn, not any adjacent tiles)
+            if (self.gui.smart_randomize.get_active()):
+                for tileset in self.random_terrain:
+                    if curfloor in tileset:
+                        square.floorimg = random.choice(tileset)
+                        break
 
         # Figure out whether to try and fit grass decals or sand decals,
         # and which decal type to strip out
@@ -464,7 +499,6 @@ class SmartDraw(object):
         else:
             # TODO: We should probably raise an exception or something here,
             # instead...
-            print 'um, returning...'
             return
 
         # First find out more-typical adjacent squares
@@ -577,11 +611,8 @@ class SmartDraw(object):
                     square.decalimg = self.revindexes[idxtype][connflags]
 
         # Check our blacklist, after all that, and filter it out if we've been bad
-        print 'Checking blacklist versus decal %d' % (square.decalimg)
         for item in blacklist:
-            print ' * Blacklist item %d' % (item)
             if square.decalimg in self.indexes[item].keys():
-                print '    -> Match, filtering!'
                 square.decalimg = 0
                 break
 
@@ -589,4 +620,18 @@ class SmartDraw(object):
         if (recurse):
             return affected
         else:
-            return (curdecal != square.decalimg)
+            return (curdecal != square.decalimg or curfloor != square.floorimg)
+
+    def draw_walldecal(self, square):
+        """
+        Draws using the given wall decal.  Right now this just processes randomization
+        if we're asked to
+        """
+        # First set up and make sure that we're even drawing a wall
+        retarr = []
+        if (self.gui.smart_randomize.get_active()):
+            for tileset in self.random_walldecal:
+                if square.walldecalimg in tileset:
+                    square.walldecalimg = random.choice(tileset)
+                    break
+        return None
