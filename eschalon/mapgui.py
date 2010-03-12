@@ -2099,6 +2099,10 @@ class MapGUI(BaseGUI):
     def action_erase_square(self, x, y):
         """ What to do when we're erasing on a square on the map."""
 
+        # TODO: Figure out if we really should do any of the smartdraw
+        # stuff here.  I'm not so sure.  And anyway, I suspect that
+        # it may be not processing that stuff anyway right now.
+
         # First store our undo state
         self.undo.store(x, y)
         self.undo.set_text('Erase')
