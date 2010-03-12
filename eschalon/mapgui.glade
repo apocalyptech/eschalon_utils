@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Mar 12 16:32:23 2010 -->
+<!--Generated with glade3 3.4.5 on Fri Mar 12 16:58:44 2010 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -432,18 +432,22 @@
                             <child>
                               <widget class="GtkTable" id="table6">
                                 <property name="visible">True</property>
-                                <property name="n_rows">13</property>
+                                <property name="n_rows">14</property>
                                 <property name="n_columns">3</property>
                                 <child>
-                                  <widget class="GtkCheckButton" id="draw_smart_walldecal">
+                                  <widget class="GtkAlignment" id="alignment49">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="has_tooltip">True</property>
-                                    <property name="tooltip_text">This will attempt to link up matching walls intelligently.  You probably want this on.</property>
-                                    <property name="label" translatable="yes">"Smart" Wall Decals</property>
-                                    <property name="response_id">0</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
+                                    <property name="left_padding">14</property>
+                                    <child>
+                                      <widget class="GtkRadioButton" id="decalpref_beach">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="label" translatable="yes">Beach</property>
+                                        <property name="response_id">0</property>
+                                        <property name="draw_indicator">True</property>
+                                        <property name="group">decalpref_grass</property>
+                                      </widget>
+                                    </child>
                                   </widget>
                                   <packing>
                                     <property name="right_attach">3</property>
@@ -458,6 +462,23 @@
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text">This will attempt to link up matching walls intelligently.  You probably want this on.</property>
                                     <property name="label" translatable="yes">Randomize</property>
+                                    <property name="response_id">0</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">13</property>
+                                    <property name="bottom_attach">14</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <widget class="GtkCheckButton" id="draw_smart_walldecal">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text">This will attempt to link up matching walls intelligently.  You probably want this on.</property>
+                                    <property name="label" translatable="yes">"Smart" Wall Decals</property>
                                     <property name="response_id">0</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>

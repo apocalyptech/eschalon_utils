@@ -122,6 +122,8 @@ class SmartDraw(object):
         # One empty dict for each IDX_*
         self.indexes = [ {}, {}, {}, {} ]
         self.revindexes = [ {}, {}, {}, {} ]
+        self.beach_index = {}
+        self.beach_revindex = {}
 
         # Other vars we'll need to keep track of
         self.map = None
@@ -196,9 +198,29 @@ class SmartDraw(object):
                 self.IDX_SAND: [138, 144]
             }
 
+        # Beach indexes (these are floor tiles, not decals - the directions
+        # specified here are the direction that the SAND is in, not the
+        # water.
+        self.add_beach_index(127, self.DIR_NW)
+        self.add_beach_index(128, self.DIR_SW)
+        self.add_beach_index(129, self.DIR_E)
+        self.add_beach_index(130, self.DIR_S)
+        self.add_beach_index(131, self.DIR_NW|self.DIR_SW)
+        self.add_beach_index(132, self.DIR_NW|self.DIR_NE)
+        self.add_beach_index(133, self.DIR_SE)
+        self.add_beach_index(134, self.DIR_NE)
+        self.add_beach_index(135, self.DIR_W)
+        self.add_beach_index(136, self.DIR_N)
+        self.add_beach_index(137, self.DIR_NE|self.DIR_SE)
+        self.add_beach_index(138, self.DIR_SW|self.DIR_SE)
+
     def add_index(self, idxnum, index, connections):
         self.indexes[idxnum][index] = connections
         self.revindexes[idxnum][connections] = index
+
+    def add_beach_index(self, index, connections):
+        self.beach_index[index] = connections
+        self.beach_revindex[connections] = index
 
     def set_map(self, map):
         self.map = map
