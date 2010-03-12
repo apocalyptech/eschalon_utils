@@ -23,7 +23,13 @@ import random
 from eschalonb1.map import Map
 
 class SmartDraw(object):
-    """ A class to deal with "smart" drawing functions. """
+    """
+    A class to deal with "smart" drawing functions.
+
+    An awful lot of this is really hacky and ugly.  Sorry about that.
+    I pretty much didn't do any prior planning before coding any of
+    this.
+    """
 
     DIR_N = Map.DIR_N
     DIR_NE = Map.DIR_NE
