@@ -3,6 +3,7 @@
    12 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    Edge preferences via the GUI when smart drawing
    Randomize during smart drawing when appropriate and asked-for
+   Added "default zoom level" preference for map editor
 
    23 Feb 2010; CJ Kucera <pez@apocalyptech.com> :
    Enhanced error reporting when PyGTK/PyCairo dependencies

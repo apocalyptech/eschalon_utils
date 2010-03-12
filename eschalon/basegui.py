@@ -69,6 +69,7 @@ class BaseGUI(object):
         # Prefs fields
         self.prefs_savegame = self.prefswTree.get_widget('savegame_chooser')
         self.prefs_gamedir = self.prefswTree.get_widget('gamedata_chooser')
+        self.prefs_default_zoom = self.prefswTree.get_widget('prefs_default_zoom')
 
         # Connect handler
         self.prefssel.connect('changed', self.on_prefs_changed)
@@ -88,6 +89,8 @@ class BaseGUI(object):
         # Set up prefs rows
         pixbuf = self.prefswindow.render_icon(gtk.STOCK_OPEN, gtk.ICON_SIZE_DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
+        pixbuf2 = self.prefswindow.render_icon(gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
+        store.set(store.append(), 0, pixbuf2, 1, 'Map Editor', 2, 1)
         #store.set(store.append(), 0, pixbuf, 1, 'Other', 2, 1)
 
     def item_signals(self):
@@ -149,12 +152,16 @@ class BaseGUI(object):
             self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
         if (self.prefsobj.get_str('paths', 'gamedir') != ''):
             self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
+        if (self.prefsobj.get_int('mapgui', 'default_zoom')):
+            self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
+        #self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
             self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
             self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
+            self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
             self.prefsobj.save()
             # TODO: Should check for valid dirs here?
             if (curdir != self.prefsobj.get_str('paths', 'gamedir')):
@@ -696,4 +703,3 @@ class BaseGUI(object):
                     retarr[y][x].append((color, 0))
                 idx += channels
         return retarr
-

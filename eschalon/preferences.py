@@ -66,6 +66,8 @@ class Prefs(object):
         # savegames stored in there, so it'd be useful to know that first
         for vars in [('paths', 'gamedir'), ('paths', 'savegames')]:
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
+        for vars in [('mapgui', 'default_zoom')]:
+            self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
         if (self.filename is not None and os.path.isfile(self.filename)):
@@ -87,6 +89,21 @@ class Prefs(object):
 
     def get_str(self, cat, name):
         return self.cp.get(cat, name)
+
+    def set_int(self, cat, name, val):
+        if (not self.cp.has_section(cat)):
+            self.cp.add_section(cat)
+        return self.cp.set(cat, name, str(val))
+
+    def get_int(self, cat, name):
+        return self.cp.getint(cat, name)
+
+    def global_default(self, cat, name):
+        """ Defaults which are global, regardless of platform. """
+        if (cat == 'mapgui'):
+            if (name == 'default_zoom'):
+                return 4
+        return None
 
     def no_prefsfile(self):
         """ Fallback when we don't know anything about the platform. """
@@ -115,7 +132,7 @@ class Prefs(object):
                         return fulldir
                 # If nothing found, just return our last-created fulldir
                 return fulldir
-        return None
+        return self.global_default(cat, name)
 
     def darwin_prefsfile(self):
         """ Default prefsfile on Darwin """
@@ -133,7 +150,7 @@ class Prefs(object):
                 return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 1 Saved Games')
             elif (name == 'gamedir'):
                 return '/Applications/Eschalon Book I.app'
-        return None
+        return self.global_default(cat, name)
 
     def win32_prefsfile_final(self, path):
         """ Given a path, spit out our prefsfile from that root. """
@@ -231,4 +248,4 @@ class Prefs(object):
                 wr.Close()
                 return testdir
 
-        return None
+        return self.global_default(cat, name)

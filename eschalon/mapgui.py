@@ -307,8 +307,14 @@ class MapGUI(BaseGUI):
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        self.set_zoom_vars(3)
+        default_zoom = self.prefs.get_int('mapgui', 'default_zoom')-1
+        if (default_zoom >= len(self.zoom_levels)):
+            default_zoom = len(self.zoom_levels)-1
+        elif (default_zoom < 0):
+            default_zoom = 0
+        self.set_zoom_vars(default_zoom)
         self.zoom_adj = self.zoom_scale.get_adjustment()
+        self.zoom_adj.set_value(default_zoom)
         self.zoom_adj.connect('value-changed', self.zoom_slider)
 
         # Some more vars to make sure exist
@@ -1035,7 +1041,10 @@ class MapGUI(BaseGUI):
         return 'Lvl %d' % (value+1)
 
     def set_zoom_vars(self, scalenum):
-        """ Set a bunch of parameters we use to draw, based on how wide our squares should be. """
+        """
+        Set a bunch of parameters we use to draw, based on how wide our squares should be.
+        This also incidentally sets the sensitivity flag on our zoom buttons.
+        """
         width = self.zoom_levels[scalenum]
         self.curzoomidx = scalenum
         self.curzoom = width
@@ -1051,6 +1060,16 @@ class MapGUI(BaseGUI):
         self.z_3xheight = self.z_height*3
         self.z_4xheight = self.z_height*4
         self.z_5xheight = self.z_height*5
+
+        # Clean up our zoom icons
+        if (scalenum == 0):
+            self.zoom_out_button.set_sensitive(False)
+        else:
+            self.zoom_out_button.set_sensitive(True)
+        if (scalenum == len(self.zoom_levels)-1):
+            self.zoom_in_button.set_sensitive(False)
+        else:
+            self.zoom_in_button.set_sensitive(True)
 
     def scroll_h_changed(self, widget):
         """ Handle what to do when our scollwindow detects a change in dimensions. """
@@ -1078,14 +1097,6 @@ class MapGUI(BaseGUI):
         self.prev_scroll_h_cur = (hadjust.page_size/4)+hadjust.value
         self.prev_scroll_v_cur = (vadjust.page_size/4)+vadjust.value
         self.set_zoom_vars(level)
-        if (level == 0):
-            self.zoom_out_button.set_sensitive(False)
-        else:
-            self.zoom_out_button.set_sensitive(True)
-        if (level == len(self.zoom_levels)-1):
-            self.zoom_in_button.set_sensitive(False)
-        else:
-            self.zoom_in_button.set_sensitive(True)
         self.draw_map()
 
     def zoom_slider(self, widget):
