@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   12 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
+   Edge preferences via the GUI when smart drawing
+
    23 Feb 2010; CJ Kucera <pez@apocalyptech.com> :
    Enhanced error reporting when PyGTK/PyCairo dependencies
    are not installed (especially useful for debugging dep

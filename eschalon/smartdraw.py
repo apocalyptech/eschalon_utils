@@ -97,6 +97,7 @@ class SmartDraw(object):
 
         # Other vars we'll need to keep track of
         self.map = None
+        self.gui = None
 
         # Wall Indexes
         self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
@@ -173,6 +174,9 @@ class SmartDraw(object):
 
     def set_map(self, map):
         self.map = map
+
+    def set_gui(self, gui):
+        self.gui = gui
 
     def set_special(self, wallid):
         self.special = wallid
@@ -424,6 +428,11 @@ class SmartDraw(object):
         Returns a list of modified squares if we're recursing, or just
         true/false otherwise.  (Note that the list does not include the
         original square, which is just assumed.)
+
+        It should be noted that I stumbled across the "straight_path" stuff
+        purely by accident; that wasn't actually my goal when I first
+        started out.  Most of Eschalon uses what these functions would call
+        non-straight paths.
         """
 
         # TODO: We probably only want to overwrite decals that we would
@@ -444,26 +453,19 @@ class SmartDraw(object):
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
                 known[dir] = self.map.square_relative(square.x, square.y, dir)
 
-        # Figure out whether to try and fit grass decals or sand decals
-        is_grass_tile = False
-        is_sand_tile = False
-        if (square.floorimg in self.tilesets[self.IDX_GRASS]):
-            is_grass_tile = True
-        elif (square.floorimg in self.tilesets[self.IDX_SAND]):
-            is_sand_tile = True
-        grass_count = 0
-        sand_count = 0
-        for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            dirsquare = self.get_rel(square, known, dir)
-            if dirsquare:
-                if (not is_grass_tile and dirsquare.floorimg in self.tilesets[self.IDX_GRASS]):
-                    grass_count += 1
-                elif (not is_sand_tile and dirsquare.floorimg in self.tilesets[self.IDX_SAND]):
-                    sand_count += 1
-        if (sand_count > grass_count):
-            idxtype = self.IDX_SAND
-        else:
+        # Figure out whether to try and fit grass decals or sand decals,
+        # and which decal type to strip out
+        if (self.gui.get_widget('decalpref_grass').get_active()):
             idxtype = self.IDX_GRASS
+            blacklist = [self.IDX_SAND]
+        elif (self.gui.get_widget('decalpref_sand').get_active()):
+            idxtype = self.IDX_SAND
+            blacklist = [self.IDX_GRASS]
+        else:
+            # TODO: We should probably raise an exception or something here,
+            # instead...
+            print 'um, returning...'
+            return
 
         # First find out more-typical adjacent squares
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
@@ -478,9 +480,13 @@ class SmartDraw(object):
 
             # Process adjacent squares if we're supposed to
             if (recurse):
-                if (adjsquare.floorimg not in self.tilesets[idxtype]):
-                    if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
-                        affected.append(adjsquare)
+                # TODO: commented this out when I switched over to controlling idxtype
+                # via the GUI; leaving it here for now in case I notice weird behavior.
+                # Anyway, take this note out once it's been in-place for awhile.  Ditto
+                # for the block below...
+                #if (adjsquare.floorimg not in self.tilesets[idxtype]):
+                if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
+                    affected.append(adjsquare)
 
         # If we're recursing, we'll need to check the cardinal directions as
         # well, to clear out errant corner-connection decals
@@ -491,9 +497,9 @@ class SmartDraw(object):
                 adjsquare = self.get_rel(square, known, testdir)
                 if (not adjsquare):
                     continue
-                if (adjsquare.floorimg not in self.tilesets[idxtype]):
-                    if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
-                        affected.append(adjsquare)
+                #if (adjsquare.floorimg not in self.tilesets[idxtype]):
+                if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
+                    affected.append(adjsquare)
 
         if (square.floorimg in self.tilesets[idxtype]):
 
@@ -569,6 +575,15 @@ class SmartDraw(object):
                             square.decalimg = 0
                 else:
                     square.decalimg = self.revindexes[idxtype][connflags]
+
+        # Check our blacklist, after all that, and filter it out if we've been bad
+        print 'Checking blacklist versus decal %d' % (square.decalimg)
+        for item in blacklist:
+            print ' * Blacklist item %d' % (item)
+            if square.decalimg in self.indexes[item].keys():
+                print '    -> Match, filtering!'
+                square.decalimg = 0
+                break
 
         # And now return
         if (recurse):

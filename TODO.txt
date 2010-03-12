@@ -29,6 +29,7 @@ Character GUI
 
 Map GUI
 -------
+ * Add a preference for default zoom level
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
  * Actually track changes, for confirmation-of-close?  (also could support

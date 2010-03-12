@@ -601,6 +601,7 @@ class MapGUI(BaseGUI):
 
         # Load the new map into our SmartDraw object
         self.smartdraw.set_map(self.map)
+        self.smartdraw.set_gui(self)
 
         # Load information from the character
         if (self.mapinit):
