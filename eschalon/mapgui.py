@@ -72,12 +72,14 @@ class MapGUI(BaseGUI):
     MODE_EDIT = 0
     MODE_MOVE = 1
     MODE_DRAW = 2
+    MODE_ERASE = 3
 
     # Actions that a mouse click can take
     ACTION_NONE = -1
     ACTION_EDIT = 0
     ACTION_DRAG = 1
     ACTION_DRAW = 2
+    ACTION_ERASE = 4
 
     # Mouse button constants
     MOUSE_LEFT = 1
@@ -98,6 +100,11 @@ class MapGUI(BaseGUI):
             },
         MODE_DRAW: {
             MOUSE_LEFT: ACTION_DRAW,
+            MOUSE_MIDDLE: ACTION_DRAG,
+            MOUSE_RIGHT: ACTION_EDIT
+            },
+        MODE_ERASE: {
+            MOUSE_LEFT: ACTION_ERASE,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
             }
@@ -163,6 +170,7 @@ class MapGUI(BaseGUI):
         self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
         self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
         self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
+        self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.menu_undo = self.get_widget('menu_undo')
         self.menu_undo_label = self.menu_undo.get_children()[0]
         self.menu_redo = self.get_widget('menu_redo')
@@ -188,6 +196,7 @@ class MapGUI(BaseGUI):
         self.ctl_edit_toggle.set_property('draw-indicator', False)
         self.ctl_move_toggle.set_property('draw-indicator', False)
         self.ctl_draw_toggle.set_property('draw-indicator', False)
+        self.ctl_erase_toggle.set_property('draw-indicator', False)
 
         # Cursors for our editing modes
         self.edit_mode = self.MODE_EDIT
@@ -195,7 +204,8 @@ class MapGUI(BaseGUI):
         self.cursor_map = {
             self.MODE_EDIT: None,
             self.MODE_MOVE: gtk.gdk.Cursor(gtk.gdk.FLEUR),
-            self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL)
+            self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL),
+            self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE)
             }
 
         # Initialize item stuff
@@ -290,6 +300,7 @@ class MapGUI(BaseGUI):
         self.prev_scroll_v_max = -1
         self.dragging = False
         self.drawing = False
+        self.erasing = False
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -415,6 +426,8 @@ class MapGUI(BaseGUI):
                 self.ctl_edit_toggle.set_active(True)
             elif (key == 'd'):
                 self.ctl_draw_toggle.set_active(True)
+            elif (key == 'r'):
+                self.ctl_erase_toggle.set_active(True)
 
     def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
@@ -1208,6 +1221,8 @@ class MapGUI(BaseGUI):
             # Draw if we're supposed to
             if (self.drawing):
                 self.action_draw_square(self.sq_x, self.sq_y)
+            elif (self.erasing):
+                self.action_erase_square(self.sq_x, self.sq_y)
 
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.sq_x, self.sq_y))
 
@@ -1972,6 +1987,8 @@ class MapGUI(BaseGUI):
                 self.edit_mode = self.MODE_MOVE
             elif (clicked == 'ctl_draw_toggle'):
                 self.edit_mode = self.MODE_DRAW
+            elif (clicked == 'ctl_erase_toggle'):
+                self.edit_mode = self.MODE_ERASE
             else:
                 # TODO: Except here or something
                 print "Unknown control toggled, should never get here"
@@ -2002,11 +2019,15 @@ class MapGUI(BaseGUI):
         elif (action == self.ACTION_DRAW):
             self.drawing = True
             self.action_draw_square(self.sq_x, self.sq_y)
+        elif (action == self.ACTION_ERASE):
+            self.erasing = True
+            self.action_erase_square(self.sq_x, self.sq_y)
 
     def on_released(self, widget, event):
-        if (self.dragging or self.drawing):
+        if (self.dragging or self.drawing or self.erasing):
             self.dragging = False
             self.drawing = False
+            self.erasing = False
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
 
     def action_draw_square(self, x, y):
@@ -2069,6 +2090,67 @@ class MapGUI(BaseGUI):
         # Handles "smart" decals if needed
         if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
             self.smartdraw.draw_walldecal(square)
+
+        # And then close off our undo and redraw if needed
+        if (self.undo.finish()):
+            self.redraw_square(x, y)
+            self.update_undo_gui()
+
+    def action_erase_square(self, x, y):
+        """ What to do when we're erasing on a square on the map."""
+
+        # First store our undo state
+        self.undo.store(x, y)
+        self.undo.set_text('Erase')
+        
+        # Grab our square object
+        square = self.map.squares[y][x]
+
+        # Now draw anything that the user's requesed
+        if (self.draw_floor_checkbox.get_active()):
+            if (self.draw_smart_barrier.get_active()):
+                if (square.floorimg in wall_list['floor_seethrough']):
+                    square.wall = 0
+            square.floorimg = 0
+        if (self.draw_decal_checkbox.get_active()):
+            if (self.draw_smart_barrier.get_active()):
+                if (square.decalimg in wall_list['decal_blocked']+wall_list['decal_seethrough']):
+                    square.wall = 0
+            square.decalimg = 0
+        if (self.draw_wall_checkbox.get_active()):
+            if (self.draw_smart_barrier.get_active()):
+                if (square.wallimg in wall_list['wall_blocked']+wall_list['wall_seethrough']):
+                    square.wall = 0
+            square.wallimg = 0
+        if (self.draw_walldecal_checkbox.get_active()):
+            square.walldecalimg = 0
+
+        # Handle "smart" walls if requested
+        if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
+            for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
+                self.undo.add_additional(self.map.square_relative(x, y, dir))
+            affected_squares = self.smartdraw.draw_wall(square)
+            if (affected_squares is not None):
+                self.undo.set_text('Smart Wall Erase')
+                for adjsquare in affected_squares:
+                    self.redraw_square(adjsquare.x, adjsquare.y)
+
+        # Handle "smart" floors if needed
+        if (self.draw_floor_checkbox.get_active() and
+                not self.draw_decal_checkbox.get_active() and
+                self.draw_smart_floor.get_active()):
+            for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
+                self.undo.add_additional(self.map.square_relative(x, y, dir))
+            affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
+            if (affected_squares is not None):
+                self.undo.set_text('Smart Erase')
+                for adjsquare in affected_squares:
+                    self.redraw_square(adjsquare.x, adjsquare.y)
+
+        # Handles "smart" decals if needed
+        # This just randomizes, so don't bother here.
+        #if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
+        #    self.smartdraw.draw_walldecal(square)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):
