@@ -732,8 +732,9 @@ class SmartDraw(object):
                 adjsquare = self.get_rel(square, known, testdir)
                 if (not adjsquare):
                     continue
-                if (adjsquare.floorimg in self.beach_index.keys() and
-                    (self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir]):
+                if ((adjsquare.floorimg in self.beach_index.keys() and
+                    (self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
+                    or (adjsquare.floorimg not in self.beach_index.keys() and adjsquare.floorimg not in self.water)):
                     connflags = connflags|testdir
                     flagcount += 1
                 else:
