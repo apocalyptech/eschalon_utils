@@ -29,6 +29,8 @@ Character GUI
 
 Map GUI
 -------
+ * "Barrier" drawing type (which should force barrier highlighting on) so
+   that people can easily turn barriers on/off
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
  * Actually track changes, for confirmation-of-close?  (also could support

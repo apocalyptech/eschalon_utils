@@ -118,6 +118,7 @@ class SmartDraw(object):
                 [27, 28],   # Cracks (NW->SE)
                 [29, 30]    # Cracks (SW->NE)
             ]
+        self.water = [ 126 ]
 
         # One empty dict for each IDX_*
         self.indexes = [ {}, {}, {}, {} ]
@@ -197,10 +198,14 @@ class SmartDraw(object):
                 self.IDX_GRASS: [161, 162, 167, 168],
                 self.IDX_SAND: [138, 144]
             }
+        self.beach_fullest = [131, 132, 137, 138]
 
         # Beach indexes (these are floor tiles, not decals - the directions
         # specified here are the direction that the SAND is in, not the
-        # water.
+        # water.  Or to put it another way, these tiles are considered
+        # water which happen to bleed into sand a bit.
+        self.add_beach_index(124, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_beach_index(125, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
         self.add_beach_index(127, self.DIR_NW)
         self.add_beach_index(128, self.DIR_SW)
         self.add_beach_index(129, self.DIR_E)
@@ -497,6 +502,10 @@ class SmartDraw(object):
         # TODO: Single squares of water in the middle of other terrain
         # should be not a wall
 
+        # Go elsewhere if we're drawing beach stuffs
+        if (self.gui.get_widget('decalpref_beach').get_active()):
+            return self.draw_beach(square)
+
         connflags = 0
         connflags_not = 0
         flagcount = 0
@@ -666,3 +675,153 @@ class SmartDraw(object):
                     square.walldecalimg = random.choice(tileset)
                     break
         return None
+
+    def draw_beach(self, square, recurse=True, known={}):
+        """
+        Drawing beach tiles is handled differently from the usual decal
+        stuff.  The overall flow is similar, but we're touching different
+        vars, etc...
+        """
+
+        # TODO would be kind of nice to consider ANYTHING non-water to
+        # be a sand "connection"
+
+        connflags = 0
+        connflags_not = 0
+        flagcount = 0
+        affected = []
+        curdecal = square.decalimg
+        curfloor = square.floorimg
+        blacklist = []
+        for idx in [self.IDX_GRASS, self.IDX_SAND]:
+            blacklist.extend(self.indexes[self.IDX_GRASS].keys())
+
+        if recurse:
+            prefix = 'Original:'
+        else:
+            prefix = '  recur %02X:' % (self.REV_DIR[known.keys()[0]])
+
+        # If recursing, load in all the squares we'll need, first
+        # TODO: should just provide a function to get this, in Map
+        if (recurse):
+            for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
+                    self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
+                known[dir] = self.map.square_relative(square.x, square.y, dir)
+
+            # Additionally, set our tile to full-sand so that the recursion
+            # stuff can link in properly
+            if square.floorimg in self.beach_index.keys():
+                square.floorimg = self.tilesets[self.IDX_SAND][0]
+
+        # Process adjacent squares if we're supposed to
+        if (recurse):
+            for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW,
+                self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                adjsquare = self.get_rel(square, known, testdir)
+                if (adjsquare):
+                    if (self.draw_beach(adjsquare, False, { self.REV_DIR[testdir]: square })):
+                        affected.append(adjsquare)
+
+        # First find out more-typical adjacent squares
+        #if (square.floorimg in self.beach_index.keys() + self.tilesets[self.IDX_SAND] + self.water):
+        if (square.floorimg in self.beach_index.keys() + self.water):
+            # Let's put down a full-sand tile in place of whatever we actually put in...
+            if recurse and square.floorimg not in self.water:
+                square.floorimg = self.tilesets[self.IDX_SAND][0]
+            for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+                adjsquare = self.get_rel(square, known, testdir)
+                if (not adjsquare):
+                    continue
+                if (adjsquare.floorimg in self.beach_index.keys() and
+                    (self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir]):
+                    connflags = connflags|testdir
+                    flagcount += 1
+                else:
+                    connflags_not = connflags_not|testdir
+            print "%s After testing cardinals, %d flags, connflags is %02X" % (prefix, flagcount, connflags)
+            if connflags != 0 and connflags not in self.beach_revindex:
+                # If we're here, find the adjacent pair and nix one of 'em
+                for (dir1, dir2) in [(self.DIR_NE, self.DIR_SW), (self.DIR_NW, self.DIR_SE)]:
+                    if ((connflags & dir1) == dir1 and (connflags & dir2) == dir2):
+                        whichdir = random.choice([dir1, dir2])
+                        connflags = (connflags & ~whichdir)
+                        connflags_not = connflags_not|whichdir
+                        flagcount -= 1
+                        break
+                print "%s Fixed due to nonexistance, %d flags, connflags is %02X" % (prefix, flagcount, connflags)
+
+            # Now refine the list
+            if (flagcount == 4):
+                # If we got here we're completely surrounded by sand, so just
+                # become the full sand tile
+                print "%s Flagcount of 4, setting to sand." % (prefix)
+                square.floorimg = self.tilesets[self.IDX_SAND][0]
+            elif (flagcount == 3):
+                print "%s Flagcount of 3, filling to fullest" % (prefix)
+                for choice in self.beach_fullest:
+                    choiceflags = self.beach_index[choice]
+                    if ((choiceflags & connflags_not) == 0):
+                        square.floorimg = choice
+                        break
+            #elif (flagcount == 0):
+            #    print "%s Flagcount of 0, turning into sand" % (prefix)
+            #    square.floorimg = self.tilesets[self.IDX_SAND][0]
+            #    print "%s (sand is: %d)" % (prefix, square.floorimg)
+            else:
+                print "%s Flagcount of 0, 1 or 2 - twiddling around." % (prefix)
+                # See if there's a more-specific tile we could match on
+                for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                    #if (connflags & self.ADJ_DIR[testdir] == 0):
+                    #    if (straight_path):
+                    #        found_adj_same = False
+                    #        for adjdir in self.CARD_ADJ_DIRS[testdir]:
+                    #            adjsquare = self.get_rel(square, known, self.COMP_DIR[testdir|adjdir])
+                    #            if (not adjsquare):
+                    #                continue
+                    #            if (adjsquare.floorimg in self.tilesets[idxtype]):
+                    #                # TODO: should check for non-grass decals here (sand, etc)
+                    #                found_adj_same = True
+                    #                break
+                    #            elif (adjsquare.decalimg in self.indexes[idxtype]):
+                    #                adjflags = self.indexes[idxtype][adjsquare.decalimg]
+                    #                testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
+                    #                if (adjflags == testflag):
+                    #                    found_adj_same = True
+                    #                    break
+                    #        if (not found_adj_same):
+                    #            continue
+                    if ((connflags|testdir) in self.beach_revindex):
+                        adjsquare = self.get_rel(square, known, testdir)
+                        if (not adjsquare):
+                            continue
+                        # TODO: not sure about the "and" here...
+                        # ... seriously.
+                        if (adjsquare.floorimg in self.beach_index.keys() and
+                            ((self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir] or
+                             (self.beach_index[adjsquare.floorimg] & self.ADJ_DIR[self.REV_DIR[testdir]]) == self.ADJ_DIR[self.REV_DIR[testdir]])):
+                            if ((connflags | testdir) in self.beach_revindex):
+                                connflags = connflags | testdir
+                                if (flagcount != 0):
+                                    break
+                if (connflags == 0):
+                    # If we're here, there's no sand surrounding us at all.
+                    # We will bite the bullet and become fully-sanded.
+                    print "%s No adjacent sand, converting to sand" % (prefix)
+                    square.floorimg = self.tilesets[self.IDX_SAND][0]
+                else:
+                    print "%s ... calculating from revindex, connflags = %02X" % (prefix, connflags)
+                    square.floorimg = self.beach_revindex[connflags]
+        else:
+            print '%s Not processing, floor image is %d' % (prefix, square.floorimg)
+            print self.beach_index.keys() + self.tilesets[self.IDX_SAND] + self.water
+
+        # Check our decal blacklist, after all that, and filter it out if there's
+        # something here which shouldn't be.
+        if square.decalimg in blacklist:
+            square.decalimg = 0
+
+        # And now return
+        if (recurse):
+            return affected
+        else:
+            return (curdecal != square.decalimg or curfloor != square.floorimg)
