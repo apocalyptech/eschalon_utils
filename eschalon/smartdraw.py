@@ -685,6 +685,8 @@ class SmartDraw(object):
         # TODO would be kind of nice to consider ANYTHING non-water to
         # be a sand "connection"
 
+        # TODO: Gets touchy around the edge of the map
+
         connflags = 0
         connflags_not = 0
         flagcount = 0
@@ -694,6 +696,10 @@ class SmartDraw(object):
         blacklist = []
         for idx in [self.IDX_GRASS, self.IDX_SAND]:
             blacklist.extend(self.indexes[self.IDX_GRASS].keys())
+
+        #drawing_water = False
+        #if (recurse and square.floorimg in self.water):
+        #    drawing_water = True
 
         if recurse:
             prefix = 'Original:'
@@ -749,29 +755,41 @@ class SmartDraw(object):
                     connflags_not = connflags_not|testdir
             print "%s After testing cardinals, %d flags, connflags is %02X" % (prefix, flagcount, connflags)
 
-            # It's possible that we'll end up with some connflags here which don't actually
-            # exist in our tilesets (any connflags with three directions set, in fact, will be
-            # wrong).  We can fix this by finding an adjacent pair of directions and clearing
-            # out one of them.  We do this basically at random.
-            if connflags != 0 and connflags not in self.beach_revindex:
-                for (dir1, dir2) in [(self.DIR_NE, self.DIR_SW), (self.DIR_NW, self.DIR_SE)]:
-                    if ((connflags & dir1) == dir1 and (connflags & dir2) == dir2):
-                        whichdir = random.choice([dir1, dir2])
-                        connflags = (connflags & ~whichdir)
-                        connflags_not = connflags_not|whichdir
-                        flagcount -= 1
-                        break
-                print "%s Fixed due to nonexistance, %d flags, connflags is %02X" % (prefix, flagcount, connflags)
-
             # Now we're ready to see if we have anything closer which might match
-            if (flagcount == 4):
-                # If we got here we're completely surrounded by sand, so just
-                # become the full sand tile
+            if (flagcount == 4 or (connflags != 0 and connflags not in self.beach_revindex)):
+                # If we're here, we've gotten here for one of two reasons:
+                #    1) We're completely surrounded by sand.
+                #  -or-
+                #    2) We found some connections, but we don't have any tiles which match
+                # Number 2 basically only comes about when we have either THREE connections, or
+                # if we've got two but they happen to be directly adjacent to each other.
                 if (recurse and square.floorimg in self.water):
                     print "%s Keeping our water tile regardless of us being surrounded by sand"
                 else:
                     print "%s Flagcount of 4, setting to sand." % (prefix)
                     square.floorimg = self.tilesets[self.IDX_SAND][0]
+            # TODO: with the commented block below, I had it going pretty well so that carving
+            # water through a sandy patch worked out pretty well.  I've upset the balance a bit
+            # though by moving things around, so it currently just messes things up.  I would like
+            # to let water carve through a little more easily than it does without this block,
+            # so figure that out...
+            #
+            #if ((drawing_water or parentwater) and connflags != 0 and connflags not in self.beach_revindex):
+            #    # The only case of being in here would be if we have two connections which
+            #    # happen to be adjacent from each other.  For now, just pick one to delete
+            #    # at random.
+            #    #
+            #    # Also we're only processing this when we're carving water in an existing
+            #    # sand area.  Otherwise, I like the chunky build method for when we have a
+            #    # flagcount of 3 or 4.
+            #    #
+            #    # TODO: it would be nice to check the relevant cardinal directions to see if
+            #    # there's one that matches better than the other.
+            #    for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+            #        if ((connflags & dir) == dir):
+            #            connflags = connflags & ~dir
+            #            square.floorimg = self.beach_revindex[connflags]
+            #            break
             else:
                 # See if there's a more-specific tile we could match on
                 print "%s Flagcount of 0, 1 or 2 - twiddling around." % (prefix)
