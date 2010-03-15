@@ -1,5 +1,10 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   13 - 14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
+   Beach Smart Drawing Implemented
+   "Barrier" Drawing
+   Fixed some exceptions while using gtk+ 2.16
+
    12 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    Edge preferences via the GUI when smart drawing
    Randomize during smart drawing when appropriate and asked-for

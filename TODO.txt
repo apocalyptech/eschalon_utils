@@ -29,8 +29,6 @@ Character GUI
 
 Map GUI
 -------
- * "Barrier" drawing type (which should force barrier highlighting on) so
-   that people can easily turn barriers on/off
  * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
    flips?
  * Actually track changes, for confirmation-of-close?  (also could support
@@ -57,7 +55,6 @@ Map GUI
  * "scripts" on main screen needs to be called "objects" instead
  * Optionally allow "smart" walls to connect between groups?
  * Add in "special" tile stuff to smart walls
- * Randomized tiles (grass, dirt, etc)
  * Giant fence smart-drawing, too
 
 Internal
