@@ -1,9 +1,13 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
-   13 - 14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
-   Beach Smart Drawing Implemented
+   14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    "Barrier" Drawing
    Fixed some exceptions while using gtk+ 2.16
+   Smart Drawing for the big Giant fences
+   Various "view" toggles moved to a View menu
+
+   13 - 14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
+   Beach Smart Drawing Implemented
 
    12 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    Edge preferences via the GUI when smart drawing

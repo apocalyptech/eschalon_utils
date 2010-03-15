@@ -82,6 +82,7 @@ class SmartDraw(object):
     IDX_FENCE = 1
     IDX_GRASS = 2
     IDX_SAND = 3
+    IDX_BIGFENCE = 4
 
     def __init__(self):
 
@@ -91,6 +92,7 @@ class SmartDraw(object):
         # Hardcoded Graphics info
         self.wallstarts = [161, 171, 181, 191, 201]
         self.fencestart = 73
+        self.bigfencestart = 140
         self.special = 213
         self.tilesets = {
                 self.IDX_GRASS: [9, 10, 11, 12],
@@ -121,8 +123,8 @@ class SmartDraw(object):
         self.water = [ 126 ]
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {}, {}, {} ]
-        self.revindexes = [ {}, {}, {}, {} ]
+        self.indexes = [ {}, {}, {}, {}, {} ]
+        self.revindexes = [ {}, {}, {}, {}, {} ]
         self.beach_index = {}
         self.beach_revindex = {}
 
@@ -150,6 +152,10 @@ class SmartDraw(object):
         self.add_index(self.IDX_FENCE, 3, self.DIR_NW|self.DIR_SW)
         self.add_index(self.IDX_FENCE, 4, self.DIR_NE|self.DIR_NW)
         self.add_index(self.IDX_FENCE, 5, self.DIR_SE|self.DIR_NE)
+
+        # "Big" fence Indexes
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
 
         # Grass Indexes
         self.add_index(self.IDX_GRASS, 97, self.DIR_SE)
@@ -250,6 +256,8 @@ class SmartDraw(object):
                 return start
         if (square.wallimg >= self.fencestart and square.wallimg < self.fencestart+6):
             return self.fencestart
+        if (square.wallimg >= self.bigfencestart and square.wallimg < self.bigfencestart+2):
+            return self.bigfencestart
         return None
 
     def draw_wall(self, square):
@@ -275,8 +283,11 @@ class SmartDraw(object):
         # Fences act similarly, but different enough that I think things would
         # be problematic if I were to try to handle everything in one function
         # here.
-        if (wallgroup == self.fencestart):
-            return self.draw_fence(square)
+        #if (wallgroup == self.fencestart):
+        if (wallgroup in [self.fencestart, self.bigfencestart]):
+            return self.draw_fence(square, wallgroup)
+        #elif (wallgroup == self.bigfencestart):
+        #    return self.draw_fence(square)
 
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_wall_connection() where appropriate
@@ -368,7 +379,7 @@ class SmartDraw(object):
                 square.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
             return True
 
-    def draw_fence(self, square):
+    def draw_fence(self, square, fencestart):
         """
         Draws a fence.  If we've got here, we KNOW that we're a fence already.
         Note that there's a lot of duplicate code from draw_wall(), above, but
@@ -380,6 +391,12 @@ class SmartDraw(object):
 
         retarr = []
 
+        # Figure out what kind of fence we are
+        if (fencestart == self.fencestart):
+            idx = self.IDX_FENCE
+        else:
+            idx = self.IDX_BIGFENCE
+
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_fence_connection() where appropriate
         # to update adjacent walls.  We're hampered a bit since each fence square
@@ -389,29 +406,37 @@ class SmartDraw(object):
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             adjsquare = self.map.square_relative(square.x, square.y, testdir)
             adjgroup = self.get_wall_group(adjsquare)
-            if (adjgroup is None or adjgroup != self.fencestart):
+            if (adjgroup is None or adjgroup != fencestart):
                 continue
             connflags = connflags|testdir
             flagcount += 1
-            if (self.add_fence_connection(adjsquare, self.REV_DIR[testdir])):
-                retarr.append(adjsquare)
+            if (fencestart == self.bigfencestart):
+                # Our selection for the "big" fence is highly limited
+                connflags = connflags|self.REV_DIR[testdir]
+                flagcount += 1
+                if (self.add_big_fence_connection(adjsquare, self.REV_DIR[testdir])):
+                    retarr.append(adjsquare)
+                break
+            else:
+                if (self.add_fence_connection(adjsquare, self.REV_DIR[testdir])):
+                    retarr.append(adjsquare)
             if (flagcount == 2):
                 break
 
         # Figure out what to put down if we don't actually have a match
-        if (connflags not in self.revindexes[self.IDX_FENCE]):
+        if (connflags not in self.revindexes[idx]):
             if (flagcount == 0):
-                connflags = self.indexes[self.IDX_FENCE][0]
+                connflags = self.indexes[idx][0]
             elif (flagcount == 1):
                 if ((connflags & self.DIR_NE) == self.DIR_NE or
                     (connflags & self.DIR_SW) == self.DIR_SW):
-                    connflags = self.indexes[self.IDX_FENCE][0]
+                    connflags = self.indexes[idx][0]
                 else:
-                    connflags = self.indexes[self.IDX_FENCE][1]
+                    connflags = self.indexes[idx][1]
             else:
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
-        square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][connflags]
+        square.wallimg = fencestart + self.revindexes[idx][connflags]
 
         # And lastly, return.
         return retarr
@@ -466,6 +491,22 @@ class SmartDraw(object):
         else:
             square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
             return True
+
+    def add_big_fence_connection(self, square, dir):
+        """
+        Adds a connection to the "big" fence.  This is actually far simpler than
+        add_fence_connection because we only have two possible "big" fence tiles,
+        and since we know the direction, we already know which tile to use,
+        basically.
+        """
+        connflags = dir
+        connflags = connflags|self.REV_DIR[dir]
+        newimg = self.bigfencestart + self.revindexes[self.IDX_BIGFENCE][connflags]
+        if (newimg != square.wallimg):
+            square.wallimg = newimg
+            return True
+        else:
+            return False
 
     def get_rel(self, square, known, dir):
         """
