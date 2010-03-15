@@ -2120,6 +2120,16 @@ class MapGUI(BaseGUI):
                 self.update_undo_gui()
 
         except Exception:
+
+            # Report our Exception to the user (let it go to stderr as well)
+            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
+            traceback.print_exception(exceptionType, exceptionValue, exceptionTraceback, file=sys.stderr)
+            exceptionStr = ''.join(traceback.format_exception(exceptionType, exceptionValue, exceptionTraceback))
+            buf = self.map_exception_view.get_buffer()
+            buf.set_text(exceptionStr)
+            buf.place_cursor(buf.get_start_iter())
+            self.map_exception_window.run()
+            self.map_exception_window.hide()
             
             # Cancel out of the Undo so that the app isn't locked up
             # TODO: *should* we try to finish the undo instead, so it may be able
@@ -2133,16 +2143,6 @@ class MapGUI(BaseGUI):
             # Reset our state vars (this generally won't happen automatically, because
             # we arrested the mouse with the new window)
             self.on_released()
-
-            # ... and now report our Exception to the user (let it go to stderr as well)
-            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-            traceback.print_exception(exceptionType, exceptionValue, exceptionTraceback, file=sys.stderr)
-            exceptionStr = ''.join(traceback.format_exception(exceptionType, exceptionValue, exceptionTraceback))
-            buf = self.map_exception_view.get_buffer()
-            buf.set_text(exceptionStr)
-            buf.place_cursor(buf.get_start_iter())
-            self.map_exception_window.run()
-            self.map_exception_window.hide()
 
     def action_erase_square(self, x, y):
         """ What to do when we're erasing on a square on the map."""
