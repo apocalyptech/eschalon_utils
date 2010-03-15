@@ -55,6 +55,12 @@ Map GUI
  * "scripts" on main screen needs to be called "objects" instead
  * Optionally allow "smart" walls to connect between groups?
  * Add in "special" tile stuff to smart walls
+ * Smart Barrier drawing is making lots of things see-through (Giant fences,
+   Ossuary skull walls, etc)
+ * Smart-drawing a wall (tried using actual walls) off the side of the map
+   results in Exceptions
+ * Exceptions should be caught during drawing so that the app doesn't sieze up
+   in re: undo data
 
 Internal
 --------
