@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Sun Mar 14 20:34:02 2010 -->
+<!--Generated with glade3 3.4.5 on Sun Mar 14 20:43:50 2010 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -154,6 +154,45 @@
                             <property name="stock">gtk-edit</property>
                           </widget>
                         </child>
+                      </widget>
+                    </child>
+                  </widget>
+                </child>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkMenuItem" id="View">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_View</property>
+                <property name="use_underline">True</property>
+                <child>
+                  <widget class="GtkMenu" id="menu4">
+                    <property name="visible">True</property>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="barrier_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
+                        <property name="label" translatable="yes">Barrier Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="script_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When active, scripts will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Script Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="entity_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When active, entities will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Entity Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
                       </widget>
                     </child>
                   </widget>
@@ -426,8 +465,50 @@
                         <child>
                           <widget class="GtkTable" id="table6">
                             <property name="visible">True</property>
-                            <property name="n_rows">4</property>
+                            <property name="n_rows">6</property>
                             <property name="n_columns">3</property>
+                            <child>
+                              <widget class="GtkAlignment" id="alignment44">
+                                <property name="visible">True</property>
+                                <property name="left_padding">14</property>
+                                <child>
+                                  <widget class="GtkCheckButton" id="draw_barrier_seethrough">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="tooltip_text">If selected, barriers you draw will also be see-through</property>
+                                    <property name="response_id">0</property>
+                                    <property name="draw_indicator">True</property>
+                                    <child>
+                                      <widget class="GtkLabel" id="label33">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes">&lt;i&gt;(see-through)&lt;/i&gt;</property>
+                                        <property name="use_markup">True</property>
+                                      </widget>
+                                    </child>
+                                  </widget>
+                                </child>
+                              </widget>
+                              <packing>
+                                <property name="right_attach">3</property>
+                                <property name="top_attach">5</property>
+                                <property name="bottom_attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <widget class="GtkCheckButton" id="draw_barrier">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="tooltip_text">When selected, every tile you draw on will be marked as a barrier.  You must have barriers highlighted for this to be active.</property>
+                                <property name="label" translatable="yes">Barrier</property>
+                                <property name="response_id">0</property>
+                                <property name="draw_indicator">True</property>
+                              </widget>
+                              <packing>
+                                <property name="right_attach">3</property>
+                                <property name="top_attach">4</property>
+                                <property name="bottom_attach">5</property>
+                              </packing>
+                            </child>
                             <child>
                               <widget class="GtkSpinButton" id="draw_walldecal_spin">
                                 <property name="can_focus">True</property>
@@ -965,77 +1046,6 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="position">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="GtkFrame" id="prop_frame">
-                    <property name="visible">True</property>
-                    <property name="label_xalign">0</property>
-                    <property name="shadow_type">GTK_SHADOW_ETCHED_OUT</property>
-                    <child>
-                      <widget class="GtkAlignment" id="alignment2">
-                        <property name="visible">True</property>
-                        <property name="left_padding">12</property>
-                        <child>
-                          <widget class="GtkVBox" id="vbox5">
-                            <property name="visible">True</property>
-                            <child>
-                              <widget class="GtkCheckButton" id="barrier_hi_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">Barriers</property>
-                                <property name="response_id">0</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="toggled" handler="map_toggle"/>
-                              </widget>
-                            </child>
-                            <child>
-                              <widget class="GtkCheckButton" id="script_hi_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">Scripts</property>
-                                <property name="response_id">0</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="toggled" handler="map_toggle"/>
-                              </widget>
-                              <packing>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <widget class="GtkCheckButton" id="entity_hi_button">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">Entities</property>
-                                <property name="response_id">0</property>
-                                <property name="draw_indicator">True</property>
-                                <signal name="toggled" handler="map_toggle"/>
-                              </widget>
-                              <packing>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                          </widget>
-                        </child>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkLabel" id="label4">
-                        <property name="visible">True</property>
-                        <property name="xpad">3</property>
-                        <property name="label" translatable="yes">&lt;i&gt;Highlighting&lt;/i&gt;</property>
-                        <property name="use_markup">True</property>
-                      </widget>
-                      <packing>
-                        <property name="type">label_item</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="padding">3</property>
-                    <property name="position">5</property>
                   </packing>
                 </child>
               </widget>

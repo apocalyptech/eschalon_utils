@@ -183,6 +183,8 @@ class MapGUI(BaseGUI):
         self.draw_wall_spin = self.get_widget('draw_wall_spin')
         self.draw_walldecal_checkbox = self.get_widget('draw_walldecal_checkbox')
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
+        self.draw_barrier = self.get_widget('draw_barrier')
+        self.draw_barrier_seethrough = self.get_widget('draw_barrier_seethrough')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
@@ -2051,19 +2053,26 @@ class MapGUI(BaseGUI):
             square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
 
         # Check to see if we should change the "wall" flag
-        if (self.draw_smart_barrier.get_active()):
-            if (square.floorimg in wall_list['floor_seethrough']):
-                square.wall = 5
-            elif (square.decalimg in wall_list['decal_blocked']):
-                square.wall = 1
-            elif (square.decalimg in wall_list['decal_seethrough']):
-                square.wall = 5
-            elif (square.wallimg in wall_list['wall_blocked']):
-                square.wall = 1
-            elif (square.wallimg in wall_list['wall_seethrough']):
+        if (self.draw_barrier.get_active()):
+            if (self.draw_barrier_seethrough.get_active()):
                 square.wall = 5
             else:
-                square.wall = 0
+                square.wall = 1
+        elif (self.draw_smart_barrier.get_active()):
+            if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
+                    self.draw_decal_checkbox.get_active()):
+                if (square.floorimg in wall_list['floor_seethrough']):
+                    square.wall = 5
+                elif (square.decalimg in wall_list['decal_blocked']):
+                    square.wall = 1
+                elif (square.decalimg in wall_list['decal_seethrough']):
+                    square.wall = 5
+                elif (square.wallimg in wall_list['wall_blocked']):
+                    square.wall = 1
+                elif (square.wallimg in wall_list['wall_seethrough']):
+                    square.wall = 5
+                else:
+                    square.wall = 0
 
         # Handle "smart" walls if requested
         if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
@@ -2111,6 +2120,8 @@ class MapGUI(BaseGUI):
         square = self.map.squares[y][x]
 
         # Now draw anything that the user's requesed
+        if (self.draw_barrier.get_active()):
+            square.wall = 0
         if (self.draw_floor_checkbox.get_active()):
             if (self.draw_smart_barrier.get_active()):
                 if (square.floorimg in wall_list['floor_seethrough']):
@@ -2470,6 +2481,17 @@ class MapGUI(BaseGUI):
 
         self.ent_surf = None
         self.ent_ctx = None
+
+        # Activate (or deactivate) our "draw barrier" checkboxes depending on if we're highlighting
+        # barriers or not
+        if (self.barrier_hi_toggle.get_active()):
+            self.draw_barrier.set_sensitive(True)
+            self.draw_barrier_seethrough.set_sensitive(True)
+        else:
+            self.draw_barrier.set_sensitive(False)
+            self.draw_barrier.set_active(False)
+            self.draw_barrier_seethrough.set_sensitive(False)
+            self.draw_barrier_seethrough.set_active(False)
 
         # Set up a "blank" tile to draw everything else on top of
         self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
