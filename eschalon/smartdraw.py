@@ -811,8 +811,6 @@ class SmartDraw(object):
                     square.floorimg = self.water[0]
                 else:
                     square.floorimg = self.beach_revindex[connflags]
-        else:
-            print self.beach_index.keys() + self.tilesets[self.IDX_SAND] + self.water
 
         # Check our decal blacklist, after all that, and filter it out if there's
         # something here which shouldn't be.
