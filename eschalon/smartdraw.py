@@ -296,6 +296,8 @@ class SmartDraw(object):
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             adjsquare = self.map.square_relative(square.x, square.y, testdir)
+            if adjsquare is None:
+                continue
             adjgroup = self.get_wall_group(adjsquare, wallgroup)
             if (adjgroup is None or adjgroup != wallgroup):
                 continue
@@ -354,6 +356,8 @@ class SmartDraw(object):
             if (testdir == dir):
                 continue
             testsquare = self.map.square_relative(square.x, square.y, testdir)
+            if testsquare is None:
+                continue
             testgroup = self.get_wall_group(testsquare, group)
             if (testgroup and testgroup == group):
                 conncount += 1
@@ -405,6 +409,8 @@ class SmartDraw(object):
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             adjsquare = self.map.square_relative(square.x, square.y, testdir)
+            if adjsquare is None:
+                continue
             adjgroup = self.get_wall_group(adjsquare)
             if (adjgroup is None or adjgroup != fencestart):
                 continue
@@ -469,6 +475,8 @@ class SmartDraw(object):
             if (testdir == dir):
                 continue
             testsquare = self.map.square_relative(square.x, square.y, testdir)
+            if testsquare is None:
+                continue
             testgroup = self.get_wall_group(testsquare)
             if (testgroup and testgroup == self.fencestart):
                 conncount += 1

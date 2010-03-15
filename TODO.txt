@@ -57,11 +57,10 @@ Map GUI
  * Add in "special" tile stuff to smart walls
  * Smart Barrier drawing is making lots of things see-through (Giant fences,
    Ossuary skull walls, etc)
- * Smart-drawing a wall (tried using actual walls) off the side of the map
-   results in Exceptions
  * Exception handling when we're drawing the map (shouldn't really happen, but
    we should handle it if it does, regardless)
  * "Select All / Deselect All" buttons in the View menu would be nice
+ * Erasing should re-smart-draw stuff around it
 
 Internal
 --------

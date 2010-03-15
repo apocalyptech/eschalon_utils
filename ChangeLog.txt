@@ -7,7 +7,7 @@
    Various "view" toggles moved to a View menu
 
    13 - 14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
-   Beach Smart Drawing Implemented
+   Beach Smart Drawing implemented
 
    12 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    Edge preferences via the GUI when smart drawing
