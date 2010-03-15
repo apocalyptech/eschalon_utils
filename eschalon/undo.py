@@ -213,6 +213,26 @@ class Undo(object):
             return retval
         else:
             raise Exception('store() must be called before finish()')
+
+    def cancel(self):
+        """
+        Cancels out of an Undo record.  This will basically be triggered when
+        a drawing function triggers an Exception.  If cancel() is called, further
+        editing actions can be made to the map.  Otherwise, the app would be
+        forever stuck in a non-editable state.  (Which may not be a bad idea
+        honestly, but what the hell, right?)
+
+        Note that it's possible (even likely) that the map will have been
+        changed during the drawing action, so cancelling an Undo will NOT
+        revert the map to how it was when we started.
+        """
+        if (self.have_undo()):
+            del self.history[self.curidx]
+            self.curidx -= 1
+            self.finished = True
+            return True
+        else:
+            raise Exception('There is no unfinished Undo action to cancel')
                 
     def set_text(self, text):
         """

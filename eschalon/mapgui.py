@@ -22,6 +22,7 @@
 import os
 import sys
 import time
+import traceback
 from eschalonb1 import traptable, containertable, objecttypetable, wall_list
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
@@ -197,6 +198,8 @@ class MapGUI(BaseGUI):
         self.draw_straight_paths = self.get_widget('draw_straight_paths')
         self.draw_smart_walldecal = self.get_widget('draw_smart_walldecal')
         self.smart_randomize = self.get_widget('smart_randomize')
+        self.map_exception_window = self.get_widget('map_exception_window')
+        self.map_exception_view = self.get_widget('map_exception_view')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -2035,7 +2038,7 @@ class MapGUI(BaseGUI):
             self.erasing = True
             self.action_erase_square(self.sq_x, self.sq_y)
 
-    def on_released(self, widget, event):
+    def on_released(self, widget=None, event=None):
         if (self.dragging or self.drawing or self.erasing):
             self.dragging = False
             self.drawing = False
@@ -2049,71 +2052,97 @@ class MapGUI(BaseGUI):
         self.undo.store(x, y)
         self.undo.set_text('Draw')
         
-        # Grab our square object
-        square = self.map.squares[y][x]
+        try:
+            # Grab our square object
+            square = self.map.squares[y][x]
 
-        # Now draw anything that the user's requesed
-        if (self.draw_floor_checkbox.get_active()):
-            square.floorimg = self.draw_floor_spin.get_value_as_int()
-        if (self.draw_decal_checkbox.get_active()):
-            square.decalimg = self.draw_decal_spin.get_value_as_int()
-        if (self.draw_wall_checkbox.get_active()):
-            square.wallimg = self.draw_wall_spin.get_value_as_int()
-        if (self.draw_walldecal_checkbox.get_active()):
-            square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
+            # Now draw anything that the user's requesed
+            if (self.draw_floor_checkbox.get_active()):
+                square.floorimg = self.draw_floor_spin.get_value_as_int()
+            if (self.draw_decal_checkbox.get_active()):
+                square.decalimg = self.draw_decal_spin.get_value_as_int()
+            if (self.draw_wall_checkbox.get_active()):
+                square.wallimg = self.draw_wall_spin.get_value_as_int()
+            if (self.draw_walldecal_checkbox.get_active()):
+                square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
 
-        # Check to see if we should change the "wall" flag
-        if (self.draw_barrier.get_active()):
-            if (self.draw_barrier_seethrough.get_active()):
-                square.wall = 5
-            else:
-                square.wall = 1
-        elif (self.draw_smart_barrier.get_active()):
-            if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
-                    self.draw_decal_checkbox.get_active()):
-                if (square.floorimg in wall_list['floor_seethrough']):
-                    square.wall = 5
-                elif (square.decalimg in wall_list['decal_blocked']):
-                    square.wall = 1
-                elif (square.decalimg in wall_list['decal_seethrough']):
-                    square.wall = 5
-                elif (square.wallimg in wall_list['wall_blocked']):
-                    square.wall = 1
-                elif (square.wallimg in wall_list['wall_seethrough']):
+            # Check to see if we should change the "wall" flag
+            if (self.draw_barrier.get_active()):
+                if (self.draw_barrier_seethrough.get_active()):
                     square.wall = 5
                 else:
-                    square.wall = 0
+                    square.wall = 1
+            elif (self.draw_smart_barrier.get_active()):
+                if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
+                        self.draw_decal_checkbox.get_active()):
+                    if (square.floorimg in wall_list['floor_seethrough']):
+                        square.wall = 5
+                    elif (square.decalimg in wall_list['decal_blocked']):
+                        square.wall = 1
+                    elif (square.decalimg in wall_list['decal_seethrough']):
+                        square.wall = 5
+                    elif (square.wallimg in wall_list['wall_blocked']):
+                        square.wall = 1
+                    elif (square.wallimg in wall_list['wall_seethrough']):
+                        square.wall = 5
+                    else:
+                        square.wall = 0
 
-        # Handle "smart" walls if requested
-        if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
-            for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                self.undo.add_additional(self.map.square_relative(x, y, dir))
-            affected_squares = self.smartdraw.draw_wall(square)
-            if (affected_squares is not None):
-                self.undo.set_text('Smart Wall Draw')
-                for adjsquare in affected_squares:
-                    self.redraw_square(adjsquare.x, adjsquare.y)
+            # Handle "smart" walls if requested
+            if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
+                for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
+                    self.undo.add_additional(self.map.square_relative(x, y, dir))
+                affected_squares = self.smartdraw.draw_wall(square)
+                if (affected_squares is not None):
+                    self.undo.set_text('Smart Wall Draw')
+                    for adjsquare in affected_squares:
+                        self.redraw_square(adjsquare.x, adjsquare.y)
 
-        # Handle "smart" floors if needed
-        if (self.draw_floor_checkbox.get_active() and
-                not self.draw_decal_checkbox.get_active() and
-                self.draw_smart_floor.get_active()):
-            for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                self.undo.add_additional(self.map.square_relative(x, y, dir))
-            affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
-            if (affected_squares is not None):
-                self.undo.set_text('Smart Draw')
-                for adjsquare in affected_squares:
-                    self.redraw_square(adjsquare.x, adjsquare.y)
+            # Handle "smart" floors if needed
+            if (self.draw_floor_checkbox.get_active() and
+                    not self.draw_decal_checkbox.get_active() and
+                    self.draw_smart_floor.get_active()):
+                for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
+                    self.undo.add_additional(self.map.square_relative(x, y, dir))
+                affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
+                if (affected_squares is not None):
+                    self.undo.set_text('Smart Draw')
+                    for adjsquare in affected_squares:
+                        self.redraw_square(adjsquare.x, adjsquare.y)
 
-        # Handles "smart" decals if needed
-        if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
-            self.smartdraw.draw_walldecal(square)
+            # Handles "smart" decals if needed
+            if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
+                self.smartdraw.draw_walldecal(square)
 
-        # And then close off our undo and redraw if needed
-        if (self.undo.finish()):
+            # And then close off our undo and redraw if needed
+            if (self.undo.finish()):
+                self.redraw_square(x, y)
+                self.update_undo_gui()
+
+        except Exception:
+            
+            # Cancel out of the Undo so that the app isn't locked up
+            # TODO: *should* we try to finish the undo instead, so it may be able
+            # to back out *some* data at least?
+            self.undo.cancel()
+
+            # Redraw our square anyway, just in case changes have taken place
+            # anyway
             self.redraw_square(x, y)
-            self.update_undo_gui()
+
+            # Reset our state vars (this generally won't happen automatically, because
+            # we arrested the mouse with the new window)
+            self.on_released()
+
+            # ... and now report our Exception to the user (let it go to stderr as well)
+            exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
+            traceback.print_exception(exceptionType, exceptionValue, exceptionTraceback, file=sys.stderr)
+            exceptionStr = ''.join(traceback.format_exception(exceptionType, exceptionValue, exceptionTraceback))
+            buf = self.map_exception_view.get_buffer()
+            buf.set_text(exceptionStr)
+            buf.place_cursor(buf.get_start_iter())
+            self.map_exception_window.run()
+            self.map_exception_window.hide()
 
     def action_erase_square(self, x, y):
         """ What to do when we're erasing on a square on the map."""
