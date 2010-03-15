@@ -61,6 +61,9 @@ Map GUI
    results in Exceptions
  * Exceptions should be caught during drawing so that the app doesn't sieze up
    in re: undo data
+ * Exception handling when we're drawing the map (shouldn't really happen, but
+   we should handle it if it does, regardless)
+ * "Select All / Deselect All" buttons in the View menu would be nice
 
 Internal
 --------
