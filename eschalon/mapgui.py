@@ -192,9 +192,12 @@ class MapGUI(BaseGUI):
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
         self.draw_barrier = self.get_widget('draw_barrier')
         self.draw_barrier_seethrough = self.get_widget('draw_barrier_seethrough')
+        self.smartdraw_check = self.get_widget('smartdraw_check')
+        self.smartdraw_container = self.get_widget('smartdraw_container')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
+        self.smartdraw_floor_container = self.get_widget('smartdraw_floor_container')
         self.draw_straight_paths = self.get_widget('draw_straight_paths')
         self.draw_smart_walldecal = self.get_widget('draw_smart_walldecal')
         self.smart_randomize = self.get_widget('smart_randomize')
@@ -289,7 +292,8 @@ class MapGUI(BaseGUI):
                 'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
                 'objsel_on_motion': self.objsel_on_motion,
                 'objsel_on_expose': self.objsel_on_expose,
-                'objsel_on_clicked': self.objsel_on_clicked
+                'objsel_on_clicked': self.objsel_on_clicked,
+                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -703,7 +707,13 @@ class MapGUI(BaseGUI):
 
     def on_draw_smart_floor_toggled(self, widget):
         """ Handle the smart-floor toggling. """
-        self.draw_straight_paths.set_sensitive(widget.get_active())
+        self.smartdraw_floor_container.set_sensitive(widget.get_active())
+
+    def on_smartdraw_check_toggled(self, widget):
+        """
+        Deactivate/Activate smart draw functions
+        """
+        self.smartdraw_container.set_sensitive(widget.get_active())
 
     def update_undo_gui(self):
         """
@@ -2072,7 +2082,7 @@ class MapGUI(BaseGUI):
                     square.wall = 5
                 else:
                     square.wall = 1
-            elif (self.draw_smart_barrier.get_active()):
+            elif (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                         self.draw_decal_checkbox.get_active()):
                     if (square.floorimg in wall_list['floor_seethrough']):
@@ -2089,7 +2099,7 @@ class MapGUI(BaseGUI):
                         square.wall = 0
 
             # Handle "smart" walls if requested
-            if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
+            if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
                     self.undo.add_additional(self.map.square_relative(x, y, dir))
                 affected_squares = self.smartdraw.draw_wall(square)
@@ -2101,6 +2111,7 @@ class MapGUI(BaseGUI):
             # Handle "smart" floors if needed
             if (self.draw_floor_checkbox.get_active() and
                     not self.draw_decal_checkbox.get_active() and
+                    self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
                     self.undo.add_additional(self.map.square_relative(x, y, dir))
@@ -2111,7 +2122,7 @@ class MapGUI(BaseGUI):
                         self.redraw_square(adjsquare.x, adjsquare.y)
 
             # Handles "smart" decals if needed
-            if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
+            if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
                 self.smartdraw.draw_walldecal(square)
 
             # And then close off our undo and redraw if needed
@@ -2158,21 +2169,21 @@ class MapGUI(BaseGUI):
         # Grab our square object
         square = self.map.squares[y][x]
 
-        # Now draw anything that the user's requesed
+        # Now erase anything that the user's requesed
         if (self.draw_barrier.get_active()):
             square.wall = 0
         if (self.draw_floor_checkbox.get_active()):
-            if (self.draw_smart_barrier.get_active()):
+            if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.floorimg in wall_list['floor_seethrough']):
                     square.wall = 0
             square.floorimg = 0
         if (self.draw_decal_checkbox.get_active()):
-            if (self.draw_smart_barrier.get_active()):
+            if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.decalimg in wall_list['decal_blocked']+wall_list['decal_seethrough']):
                     square.wall = 0
             square.decalimg = 0
         if (self.draw_wall_checkbox.get_active()):
-            if (self.draw_smart_barrier.get_active()):
+            if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.wallimg in wall_list['wall_blocked']+wall_list['wall_seethrough']):
                     square.wall = 0
             square.wallimg = 0
@@ -2180,7 +2191,7 @@ class MapGUI(BaseGUI):
             square.walldecalimg = 0
 
         # Handle "smart" walls if requested
-        if (self.draw_wall_checkbox.get_active() and self.draw_smart_wall.get_active()):
+        if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
             for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
                 self.undo.add_additional(self.map.square_relative(x, y, dir))
             affected_squares = self.smartdraw.draw_wall(square)
@@ -2192,6 +2203,7 @@ class MapGUI(BaseGUI):
         # Handle "smart" floors if needed
         if (self.draw_floor_checkbox.get_active() and
                 not self.draw_decal_checkbox.get_active() and
+                self.smartdraw_check.get_active() and
                 self.draw_smart_floor.get_active()):
             for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
                 self.undo.add_additional(self.map.square_relative(x, y, dir))
@@ -2203,7 +2215,7 @@ class MapGUI(BaseGUI):
 
         # Handles "smart" decals if needed
         # This just randomizes, so don't bother here.
-        #if (self.draw_walldecal_checkbox.get_active() and self.draw_smart_walldecal.get_active()):
+        #if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
         #    self.smartdraw.draw_walldecal(square)
 
         # And then close off our undo and redraw if needed

@@ -61,6 +61,8 @@ Map GUI
    we should handle it if it does, regardless)
  * "Select All / Deselect All" buttons in the View menu would be nice
  * Erasing should re-smart-draw stuff around it
+ * use gtk.Builder() instead of libglade to load in UI (also move to Glade 3.6
+   or whatever, since I'm a bit behind)
 
 Internal
 --------
