@@ -335,7 +335,7 @@ entitytable = {
 wall_list = {}
 wall_list['floor_seethrough'] = range(83, 103) + [126]
 wall_list['decal_blocked'] = [55]
-wall_list['decal_seethrough'] = [52]
+wall_list['decal_seethrough'] = [52, 71, 83, 84, 96, 170]
 wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
     range(109, 112) + range(116, 121) + range(125, 144) +
     range(145, 156) + range(161, 214) + range(251, 256) + 

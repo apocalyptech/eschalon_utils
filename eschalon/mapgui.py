@@ -2085,15 +2085,15 @@ class MapGUI(BaseGUI):
             elif (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                         self.draw_decal_checkbox.get_active()):
-                    if (square.floorimg in wall_list['floor_seethrough']):
+                    if (square.wallimg in wall_list['wall_blocked']):
+                        square.wall = 1
+                    elif (square.wallimg in wall_list['wall_seethrough']):
                         square.wall = 5
                     elif (square.decalimg in wall_list['decal_blocked']):
                         square.wall = 1
                     elif (square.decalimg in wall_list['decal_seethrough']):
                         square.wall = 5
-                    elif (square.wallimg in wall_list['wall_blocked']):
-                        square.wall = 1
-                    elif (square.wallimg in wall_list['wall_seethrough']):
+                    elif (square.floorimg in wall_list['floor_seethrough']):
                         square.wall = 5
                     else:
                         square.wall = 0

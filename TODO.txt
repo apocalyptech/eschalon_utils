@@ -55,8 +55,6 @@ Map GUI
  * "scripts" on main screen needs to be called "objects" instead
  * Optionally allow "smart" walls to connect between groups?
  * Add in "special" tile stuff to smart walls
- * Smart Barrier drawing is making lots of things see-through (Giant fences,
-   Ossuary skull walls, etc)
  * Exception handling when we're drawing the map (shouldn't really happen, but
    we should handle it if it does, regardless)
  * "Select All / Deselect All" buttons in the View menu would be nice
