@@ -11,7 +11,6 @@
     <child>
       <widget class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkMenuBar" id="menubar1">
             <property name="visible">True</property>
@@ -197,7 +196,7 @@
                       </widget>
                     </child>
                     <child>
-                      <widget class="GtkSeparatorMenuItem" id="separatormenuitem4">
+                      <widget class="GtkSeparatorMenuItem" id="">
                         <property name="visible">True</property>
                       </widget>
                     </child>
@@ -302,7 +301,6 @@
               <widget class="GtkVBox" id="vbox4">
                 <property name="width_request">150</property>
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkFrame" id="view_frame1">
                     <property name="visible">True</property>
@@ -816,7 +814,6 @@
                         <child>
                           <widget class="GtkVBox" id="vbox7">
                             <property name="visible">True</property>
-                            <property name="orientation">vertical</property>
                             <child>
                               <widget class="GtkCheckButton" id="draw_smart_barrier">
                                 <property name="visible">True</property>
@@ -847,7 +844,6 @@
                             <child>
                               <widget class="GtkVBox" id="vbox15">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
                                 <child>
                                   <widget class="GtkCheckButton" id="draw_smart_floor">
                                     <property name="visible">True</property>
@@ -868,7 +864,6 @@
                                     <child>
                                       <widget class="GtkVBox" id="vbox16">
                                         <property name="visible">True</property>
-                                        <property name="orientation">vertical</property>
                                         <child>
                                           <widget class="GtkCheckButton" id="draw_straight_paths">
                                             <property name="visible">True</property>
@@ -1001,7 +996,6 @@
             <child>
               <widget class="GtkVBox" id="vbox2">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkHBox" id="hbox1">
                     <property name="visible">True</property>
@@ -1092,7 +1086,6 @@
       <widget class="GtkVBox" id="dialog-vbox5">
         <property name="visible">True</property>
         <property name="spacing">2</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox22">
             <property name="visible">True</property>
@@ -1169,7 +1162,6 @@
     <child>
       <widget class="GtkVBox" id="vbox8">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkLabel" id="squarelabel">
             <property name="visible">True</property>
@@ -1190,7 +1182,6 @@
               <widget class="GtkVBox" id="vbox9">
                 <property name="visible">True</property>
                 <property name="border_width">12</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkAlignment" id="alignment5">
                     <property name="visible">True</property>
@@ -1735,7 +1726,6 @@
             <child>
               <widget class="GtkVBox" id="vbox10">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkHBox" id="hbox9">
                     <property name="visible">True</property>
@@ -1801,7 +1791,6 @@
                 <child>
                   <widget class="GtkVBox" id="entity_basic_box">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <widget class="GtkLabel" id="label15">
                         <property name="visible">True</property>
@@ -2008,7 +1997,6 @@ Northwest</property>
                 <child>
                   <widget class="GtkVBox" id="entity_extra_box">
                     <property name="visible">True</property>
-                    <property name="orientation">vertical</property>
                     <child>
                       <widget class="GtkLabel" id="label18">
                         <property name="visible">True</property>
@@ -2414,7 +2402,6 @@ Northwest</property>
             <child>
               <widget class="GtkVBox" id="vbox11">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkHBox" id="hbox16">
                     <property name="visible">True</property>
@@ -2627,7 +2614,6 @@ Northwest</property>
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkLabel" id="label23">
             <property name="visible">True</property>
@@ -2643,7 +2629,6 @@ Northwest</property>
         <child>
           <widget class="GtkVBox" id="vbox13">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <widget class="GtkLabel" id="label25">
                 <property name="visible">True</property>
@@ -3524,7 +3509,6 @@ back3.png</property>
     <child>
       <widget class="GtkVBox" id="vbox3">
         <property name="visible">True</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkLabel" id="label78">
             <property name="visible">True</property>
@@ -3692,7 +3676,6 @@ back3.png</property>
         <child>
           <widget class="GtkVBox" id="objsel_bgcolor_box">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <widget class="GtkLabel" id="label31">
                 <property name="visible">True</property>
@@ -3756,7 +3739,6 @@ back3.png</property>
       <widget class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="spacing">2</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox20">
             <property name="visible">True</property>
@@ -3844,7 +3826,6 @@ filename</property>
         <child>
           <widget class="GtkVBox" id="vbox14">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
             <child>
               <widget class="GtkLabel" id="label14">
                 <property name="visible">True</property>
@@ -3960,7 +3941,6 @@ filename</property>
       <widget class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="spacing">2</property>
-        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox24">
             <property name="visible">True</property>
@@ -3978,7 +3958,6 @@ filename</property>
             <child>
               <widget class="GtkVBox" id="vbox5">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
                 <child>
                   <widget class="GtkLabel" id="label5">
                     <property name="visible">True</property>
