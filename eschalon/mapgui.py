@@ -2083,20 +2083,26 @@ class MapGUI(BaseGUI):
                 else:
                     square.wall = 1
             elif (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
-                        self.draw_decal_checkbox.get_active()):
-                    if (square.wallimg in wall_list['wall_blocked']):
-                        square.wall = 1
-                    elif (square.wallimg in wall_list['wall_seethrough']):
-                        square.wall = 5
-                    elif (square.decalimg in wall_list['decal_blocked']):
-                        square.wall = 1
-                    elif (square.decalimg in wall_list['decal_seethrough']):
-                        square.wall = 5
-                    elif (square.floorimg in wall_list['floor_seethrough']):
-                        square.wall = 5
-                    else:
-                        square.wall = 0
+                # TODO: it would be nice to check to see if we really should be updating
+                # barriers here...  as it is, if you leave all the "drawing" checkboxes off
+                # but draw around, this function will update barrier information as it goes.
+                # Ah well.  For now I'm just going to let it do that.
+                #if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
+                #        self.draw_decal_checkbox.get_active()):
+                if (square.walldecalimg in wall_list['walldecal_seethrough']):
+                    square.wall = 5
+                elif (square.wallimg in wall_list['wall_blocked']):
+                    square.wall = 1
+                elif (square.wallimg in wall_list['wall_seethrough']):
+                    square.wall = 5
+                elif (square.decalimg in wall_list['decal_blocked']):
+                    square.wall = 1
+                elif (square.decalimg in wall_list['decal_seethrough']):
+                    square.wall = 5
+                elif (square.floorimg in wall_list['floor_seethrough']):
+                    square.wall = 5
+                else:
+                    square.wall = 0
 
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):

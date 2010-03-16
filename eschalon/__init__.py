@@ -344,4 +344,5 @@ wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
     range(51, 56) + range(60, 68) + range(72, 79) +
     range(85, 89) + range(112, 116) + range(121, 125) +
     [39, 41, 42, 57, 144, 214])
+wall_list['walldecal_seethrough'] = [19, 20]
 
