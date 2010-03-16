@@ -15,6 +15,7 @@
         <child>
           <widget class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
             <child>
               <widget class="GtkMenuBar" id="menubar1">
@@ -154,6 +155,7 @@
                         <child>
                           <widget class="GtkVBox" id="vbox2">
                             <property name="visible">True</property>
+                            <property name="orientation">vertical</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="border_width">12</property>
                             <child>
@@ -2322,6 +2324,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                         <child>
                           <widget class="GtkVBox" id="vbox3">
                             <property name="visible">True</property>
+                            <property name="orientation">vertical</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="border_width">12</property>
                             <child>
@@ -3973,6 +3976,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                 <child>
                                   <widget class="GtkVBox" id="vbox4">
                                     <property name="visible">True</property>
+                                    <property name="orientation">vertical</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <child>
                                       <widget class="GtkLabel" id="label38">
@@ -4116,6 +4120,7 @@ Torch and Gravedigger's Flame</property>
                           <widget class="GtkVBox" id="vbox5">
                             <property name="visible">True</property>
                             <property name="border_width">12</property>
+                            <property name="orientation">vertical</property>
                             <child>
                               <widget class="GtkLabel" id="label12">
                                 <property name="visible">True</property>
@@ -6802,6 +6807,7 @@ Turn Undead</property>
                       <widget class="GtkVBox" id="vbox10">
                         <property name="visible">True</property>
                         <property name="border_width">12</property>
+                        <property name="orientation">vertical</property>
                         <child>
                           <widget class="GtkLabel" id="label21">
                             <property name="visible">True</property>
@@ -7069,6 +7075,7 @@ Turn Undead</property>
       <widget class="GtkVBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="spacing">2</property>
+        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox20">
             <property name="visible">True</property>
@@ -7150,6 +7157,7 @@ filename</property>
       <widget class="GtkVBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="spacing">2</property>
+        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox21">
             <property name="visible">True</property>
@@ -7231,6 +7239,7 @@ to this character.  Really quit?</property>
       <widget class="GtkVBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="spacing">2</property>
+        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkHBox" id="hbox22">
             <property name="visible">True</property>
@@ -7307,6 +7316,7 @@ to this character.  Really quit?</property>
     <child>
       <widget class="GtkVBox" id="vbox12">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkLabel" id="label79">
             <property name="visible">True</property>
