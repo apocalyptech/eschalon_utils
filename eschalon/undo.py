@@ -35,8 +35,10 @@ class Additional(object):
         self.y = square.y
         self.old_decalimg = square.decalimg
         self.old_wallimg = square.wallimg
+        self.old_floorimg = square.floorimg
         self.new_decalimg = self.old_decalimg
         self.new_wallimg = self.old_wallimg
+        self.new_floorimg = self.old_floorimg
         self.square = square
 
     def set_new(self):
@@ -51,9 +53,11 @@ class Additional(object):
         """
         self.new_decalimg = self.square.decalimg
         self.new_wallimg = self.square.wallimg
+        self.new_floorimg = self.square.floorimg
         self.square = None
         return (self.new_decalimg != self.old_decalimg or
-                self.new_wallimg != self.old_wallimg)
+                self.new_wallimg != self.old_wallimg or
+                self.new_floorimg != self.old_floorimg)
 
     def undo(self, square):
         """
@@ -61,6 +65,7 @@ class Additional(object):
         """
         square.decalimg = self.old_decalimg
         square.wallimg = self.old_wallimg
+        square.floorimg = self.old_floorimg
 
     def redo(self, square):
         """
@@ -68,6 +73,7 @@ class Additional(object):
         """
         square.decalimg = self.new_decalimg
         square.wallimg = self.new_wallimg
+        square.floorimg = self.new_floorimg
 
 class UndoHistory(object):
     """

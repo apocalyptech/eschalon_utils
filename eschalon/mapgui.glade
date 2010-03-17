@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Mar 16 10:07:30 2010 -->
+<!--Generated with glade3 3.4.5 on Tue Mar 16 18:08:17 2010 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -193,6 +193,13 @@
                         <property name="label" translatable="yes">Entity Highlighting</property>
                         <property name="use_underline">True</property>
                         <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="menuitem2">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Check All&lt;/i&gt;</property>
+                        <property name="use_underline">True</property>
                       </widget>
                     </child>
                     <child>
@@ -988,6 +995,21 @@
                                   </widget>
                                   <packing>
                                     <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <widget class="GtkCheckButton" id="smart_complex_objects">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text">Some objects (tents, wagons, etc) take up more than one tile to fully draw.  With this option enabled, smartdraw will fill in all necessary tiles.</property>
+                                    <property name="label" translatable="yes">Complex Objects</property>
+                                    <property name="response_id">0</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
+                                  </widget>
+                                  <packing>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                               </widget>

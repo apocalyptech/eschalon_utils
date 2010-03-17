@@ -1,8 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
    16 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
-   Smartdrawing can be turned off with a single option
-   now.
+   Smartdrawing can be turned off with a single option now.
+   "Complex" object smart-drawing.
 
    14 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    "Barrier" Drawing

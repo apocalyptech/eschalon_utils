@@ -22,6 +22,65 @@
 import random
 from eschalonb1.map import Map
 
+class ComplexObjStep(object):
+    """
+    A single step in a "complex" object.
+    """
+    def __init__(self, tile, dir=None, revdir=None):
+        self.tile = tile
+        self.dir = dir
+        self.revdir = revdir
+
+class ComplexObj(object):
+    """
+    An object to hold information about a "complex" object, meaning
+    something which, in its atomic form, would take up more than one
+    tile (examples being tents, beds, wagons, a carpet, and cliffs)
+    """
+    
+    def __init__(self, name, starttile):
+        self.name = name
+        self.steps = [ComplexObjStep(starttile)]
+        self.revdir = None
+    def add(self, dir, tile):
+        step = ComplexObjStep(tile)
+        step.dir = dir
+        self.steps[-1].revdir = self.revdir[dir]
+        self.steps.append(step)
+    def matches(self, matchtile):
+        for step in self.steps:
+            if step.tile == matchtile:
+                return True
+        return False
+    def get_steps(self, tile):
+        fwd = []
+        rev = []
+        for (i, step) in enumerate(self.steps):
+            if step.tile == tile:
+                for step in self.steps[i+1:]:
+                    fwd.append((step.dir, step.tile))
+                for step in reversed(self.steps[0:i]):
+                    rev.append((step.revdir, step.tile))
+                break
+        return (fwd, rev)
+
+class ComplexObjCollection(object):
+    """
+    Holds a bunch of ComplexObjs for you.
+    """
+    def __init__(self, revdir, var):
+        self.objects = []
+        self.revdir = revdir
+        self.var = var
+    def add(self, object):
+        object.revdir = self.revdir
+        self.objects.append(object)
+    def get(self, id):
+        for object in self.objects:
+            if object.matches(id):
+                return object
+        return None
+
 class SmartDraw(object):
     """
     A class to deal with "smart" drawing functions.
@@ -223,6 +282,69 @@ class SmartDraw(object):
         self.add_beach_index(136, self.DIR_N)
         self.add_beach_index(137, self.DIR_NE|self.DIR_SE)
         self.add_beach_index(138, self.DIR_SW|self.DIR_SE)
+
+        # Now smart Complex Objects
+        self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
+
+        carpet = ComplexObj('Carpet', 73)
+        self.complex_obj_floor.add(carpet)
+        carpet.add(self.DIR_NE, 74)
+        carpet.add(self.DIR_NE, 75)
+        carpet.add(self.DIR_SE, 76)
+        carpet.add(self.DIR_SW, 77)
+        carpet.add(self.DIR_SW, 78)
+
+        chasm_1 = ComplexObj('Chasm (1)', 85)
+        self.complex_obj_floor.add(chasm_1)
+        chasm_1.add(self.DIR_S, 91)
+        chasm_1.add(self.DIR_S, 97)
+
+        chasm_2 = ComplexObj('Chasm (2)', 86)
+        self.complex_obj_floor.add(chasm_2)
+        chasm_2.add(self.DIR_S, 92)
+        chasm_2.add(self.DIR_S, 98)
+
+        chasm_3 = ComplexObj('Chasm (3)', 87)
+        self.complex_obj_floor.add(chasm_3)
+        chasm_3.add(self.DIR_S, 93)
+        chasm_3.add(self.DIR_S, 99)
+
+        chasm_4 = ComplexObj('Chasm (4)', 88)
+        self.complex_obj_floor.add(chasm_4)
+        chasm_4.add(self.DIR_S, 94)
+        chasm_4.add(self.DIR_S, 100)
+
+        chasm_5 = ComplexObj('Chasm (5)', 89)
+        self.complex_obj_floor.add(chasm_5)
+        chasm_5.add(self.DIR_S, 95)
+        chasm_5.add(self.DIR_S, 101)
+
+        chasm_6 = ComplexObj('Chasm (6)', 90)
+        self.complex_obj_floor.add(chasm_6)
+        chasm_6.add(self.DIR_S, 96)
+        chasm_6.add(self.DIR_S, 102)
+
+        self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
+        
+        bed_ne = ComplexObj('Bed (NE/SW)', 23)
+        self.complex_obj_wall.add(bed_ne)
+        bed_ne.add(self.DIR_NE, 24)
+
+        bed_nw = ComplexObj('Bed (NW/SE)', 29)
+        self.complex_obj_wall.add(bed_nw)
+        bed_nw.add(self.DIR_SE, 30)
+
+        tent_nw = ComplexObj('Tent (NW/SE)', 79)
+        self.complex_obj_wall.add(tent_nw)
+        tent_nw.add(self.DIR_E, 80)
+
+        tent_ne = ComplexObj('Tent (NE/SW)', 81)
+        self.complex_obj_wall.add(tent_ne)
+        tent_ne.add(self.DIR_E, 82)
+
+        wagon = ComplexObj('Wagon', 83)
+        self.complex_obj_wall.add(wagon)
+        wagon.add(self.DIR_NE, 84)
 
     def add_index(self, idxnum, index, connections):
         self.indexes[idxnum][index] = connections
@@ -871,3 +993,34 @@ class SmartDraw(object):
             return affected
         else:
             return (curdecal != square.decalimg or curfloor != square.floorimg)
+
+    def draw_smart_complex_obj(self, collection, square, undo):
+        """
+        Sees if we can draw a complex wall object.
+        """
+        affected = []
+        text = None
+        obj = collection.get(square.__dict__[collection.var])
+        if obj is not None:
+            text = obj.name
+            (fwd, rev) = obj.get_steps(square.__dict__[collection.var])
+            for series in (fwd, rev):
+                (curx, cury) = (square.x, square.y)
+                for (dir, id) in series:
+                    newsquare = self.map.square_relative(curx, cury, dir)
+                    if newsquare:
+                        if (newsquare.__dict__[collection.var] != id):
+                            undo.add_additional(newsquare)
+                            affected.append(newsquare)
+                            newsquare.__dict__[collection.var] = id
+                            (curx, cury) = (newsquare.x, newsquare.y)
+                    else:
+                        break
+        return (text, affected)
+
+    def draw_smart_complex_wall(self, square, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_wall, square, undo)
+
+    def draw_smart_complex_floor(self, square, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_floor, square, undo)
+

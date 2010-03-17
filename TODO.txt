@@ -58,9 +58,12 @@ Map GUI
  * Exception handling when we're drawing the map (shouldn't really happen, but
    we should handle it if it does, regardless)
  * "Select All / Deselect All" buttons in the View menu would be nice
- * Erasing should re-smart-draw stuff around it
+ * Erasing should re-smart-draw stuff around it, perhaps?
+ * Erasing should also re-do barriers if wanted, perhaps?
  * use gtk.Builder() instead of libglade to load in UI (also move to Glade 3.6
    or whatever, since I'm a bit behind)
+ * Smartdrawing should be a little less destructive when doing stuff.
+   (overwriting non-grass/sand decals, etc)
 
 Internal
 --------

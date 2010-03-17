@@ -201,6 +201,7 @@ class MapGUI(BaseGUI):
         self.draw_straight_paths = self.get_widget('draw_straight_paths')
         self.draw_smart_walldecal = self.get_widget('draw_smart_walldecal')
         self.smart_randomize = self.get_widget('smart_randomize')
+        self.smart_complex_objects = self.get_widget('smart_complex_objects')
         self.map_exception_window = self.get_widget('map_exception_window')
         self.map_exception_view = self.get_widget('map_exception_view')
         if (self.window):
@@ -2113,6 +2114,12 @@ class MapGUI(BaseGUI):
                     self.undo.set_text('Smart Wall Draw')
                     for adjsquare in affected_squares:
                         self.redraw_square(adjsquare.x, adjsquare.y)
+            if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
+                (text, affected_squares) = self.smartdraw.draw_smart_complex_wall(square, self.undo)
+                if (text is not None):
+                    self.undo.set_text('Smart Wall Draw (%s)' % (text))
+                    for adjsquare in affected_squares:
+                        self.redraw_square(adjsquare.x, adjsquare.y)
 
             # Handle "smart" floors if needed
             if (self.draw_floor_checkbox.get_active() and
@@ -2124,6 +2131,12 @@ class MapGUI(BaseGUI):
                 affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
                 if (affected_squares is not None):
                     self.undo.set_text('Smart Draw')
+                    for adjsquare in affected_squares:
+                        self.redraw_square(adjsquare.x, adjsquare.y)
+            if (self.draw_floor_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
+                (text, affected_squares) = self.smartdraw.draw_smart_complex_floor(square, self.undo)
+                if (text is not None):
+                    self.undo.set_text('Smart Draw (%s)' % (text))
                     for adjsquare in affected_squares:
                         self.redraw_square(adjsquare.x, adjsquare.y)
 
@@ -2219,7 +2232,7 @@ class MapGUI(BaseGUI):
                 for adjsquare in affected_squares:
                     self.redraw_square(adjsquare.x, adjsquare.y)
 
-        # Handles "smart" decals if needed
+        # Handles "smart" wall decals if needed
         # This just randomizes, so don't bother here.
         #if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
         #    self.smartdraw.draw_walldecal(square)
