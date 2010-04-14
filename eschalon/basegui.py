@@ -51,6 +51,16 @@ class BaseGUI(object):
     ITEM_READY=3
     ITEM_MAP=4
 
+    def base_init(self):
+        """
+        Performs any options we'll need for a GUI
+        """
+        # Some behavior depends on our gtk+ version
+        if (gtk.check_version(2, 16, 0) is None):
+            self.have_gtk_2_16 = True
+        else:
+            self.have_gtk_2_16 = False
+
     def prefs_init(self, prefs):
 
         # Prefs data object
@@ -603,7 +613,7 @@ class BaseGUI(object):
         self.imgsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
     
     def imgsel_generate_grayscale(self, color):
-        return (color<<24) + (color<<16) + (color<<8) + 255
+        return int((color<<24) + (color<<16) + (color<<8) + 255)
 
     def imgsel_on_expose(self, widget, event):
         if (self.imgsel_init):
@@ -645,7 +655,10 @@ class BaseGUI(object):
             pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
         except (RuntimeError, ImportError):
             pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
-        color = pixels[int(event.y)][int(event.x)][0][0]
+        if self.have_gtk_2_16:
+            color = pixels[int(event.y)][int(event.x)][0]
+        else:
+            color = pixels[int(event.y)][int(event.x)][0][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
         self.imgsel_init = False
         self.imgsel_area.queue_draw()

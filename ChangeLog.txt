@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   13 Apr 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a bug related to more recent gtk+ versions and
+   background color selection for map elements.
+
    16 Mar 2010; CJ Kucera <pez@apocalyptech.com> :
    Smartdrawing can be turned off with a single option now.
    "Complex" object smart-drawing.

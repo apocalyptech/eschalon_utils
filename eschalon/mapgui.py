@@ -115,11 +115,8 @@ class MapGUI(BaseGUI):
         self.options = options
         self.prefs = prefs
 
-        # Some behavior depends on our gtk+ version
-        if (gtk.check_version(2, 16, 0) is None):
-            self.have_gtk_2_16 = True
-        else:
-            self.have_gtk_2_16 = False
+        # Call out to the base initialization
+        self.base_init()
 
     def run(self):
 
