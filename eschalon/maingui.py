@@ -27,7 +27,8 @@ pygtkreq = '2.0'
 try:
     import pygtk
     pygtk.require(pygtkreq)
-except:
+except Exception, e:
+    print 'Error: %s' % (str(e))
     print 'PyGTK version %s or higher is required' % pygtkreq
     print 'Hit enter to exit...'
     sys.stdin.readline()
@@ -36,8 +37,8 @@ except:
 try:
     import gtk
     import gtk.glade
-except:
-    print 'Python GTK Modules not found'
+except Exception, e:
+    print 'Python GTK Modules not found: %s' % (str(e))
     print 'Hit enter to exit...'
     sys.stdin.readline()
     sys.exit(1)
