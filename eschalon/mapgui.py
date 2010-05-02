@@ -190,6 +190,11 @@ class MapGUI(BaseGUI):
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
         self.draw_barrier = self.get_widget('draw_barrier')
         self.draw_barrier_seethrough = self.get_widget('draw_barrier_seethrough')
+        self.erase_floor_checkbox = self.get_widget('erase_floor_checkbox')
+        self.erase_decal_checkbox = self.get_widget('erase_decal_checkbox')
+        self.erase_wall_checkbox = self.get_widget('erase_wall_checkbox')
+        self.erase_walldecal_checkbox = self.get_widget('erase_walldecal_checkbox')
+        self.erase_barrier = self.get_widget('erase_barrier')
         self.smartdraw_check = self.get_widget('smartdraw_check')
         self.smartdraw_container = self.get_widget('smartdraw_container')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
@@ -202,6 +207,8 @@ class MapGUI(BaseGUI):
         self.smart_complex_objects = self.get_widget('smart_complex_objects')
         self.map_exception_window = self.get_widget('map_exception_window')
         self.map_exception_view = self.get_widget('map_exception_view')
+        self.activity_label = self.get_widget('activity_label')
+        self.draw_frame = self.get_widget('draw_frame')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
@@ -296,7 +303,8 @@ class MapGUI(BaseGUI):
                 'draw_check_all': self.draw_check_all,
                 'draw_uncheck_all': self.draw_uncheck_all,
                 'highlight_check_all': self.highlight_check_all,
-                'highlight_uncheck_all': self.highlight_uncheck_all
+                'highlight_uncheck_all': self.highlight_uncheck_all,
+                'update_activity_label': self.update_activity_label
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -419,6 +427,9 @@ class MapGUI(BaseGUI):
         self.draw_decal_spin.set_value(1)
         self.draw_wall_spin.set_value(1)
         self.draw_walldecal_spin.set_value(1)
+
+        # Update our activity label
+        self.update_activity_label()
 
         # Now show our window
         self.window.show()
@@ -2007,6 +2018,58 @@ class MapGUI(BaseGUI):
         self.load_objsel_vars(widget)
         self.imgsel_on_motion(widget, event)
 
+    def draw_erase_toggle(self, to_draw=True):
+        if to_draw:
+            self.get_widget('draw_frame').show()
+            self.get_widget('erase_frame').hide()
+        else:
+            self.get_widget('draw_frame').hide()
+            self.get_widget('erase_frame').show()
+
+    def update_activity_label(self, widget=None):
+        newlabel = ''
+        if self.ctl_edit_toggle.get_active():
+            newlabel = 'Editing Single Tiles'
+        elif self.ctl_move_toggle.get_active():
+            newlabel = 'Scrolling Map'
+        elif self.ctl_draw_toggle.get_active():
+            self.draw_erase_toggle(True)
+            elems = []
+            if (self.draw_floor_checkbox.get_active()):
+                elems.append('Floors')
+            if (self.draw_decal_checkbox.get_active()):
+                elems.append('Decals')
+            if (self.draw_wall_checkbox.get_active()):
+                elems.append('Walls')
+            if (self.draw_walldecal_checkbox.get_active()):
+                elems.append('Wall Decals')
+            if (self.draw_barrier.get_active()):
+                elems.append('Barriers')
+            if (len(elems) > 0):
+                newlabel = 'Drawing %s' % (', '.join(elems))
+            else:
+                newlabel = 'Drawing (no elements selected)'
+        elif self.ctl_erase_toggle.get_active():
+            self.draw_erase_toggle(False)
+            elems = []
+            if (self.erase_floor_checkbox.get_active()):
+                elems.append('Floors')
+            if (self.erase_decal_checkbox.get_active()):
+                elems.append('Decals')
+            if (self.erase_wall_checkbox.get_active()):
+                elems.append('Walls')
+            if (self.erase_walldecal_checkbox.get_active()):
+                elems.append('Wall Decals')
+            if (self.erase_barrier.get_active()):
+                elems.append('Barriers')
+            if (len(elems) > 0):
+                newlabel = 'Erasing %s' % (', '.join(elems))
+            else:
+                newlabel = 'Erasing (no elements selected)'
+        else:
+            newlabel = '<i>Unknown</i>'
+        self.activity_label.set_markup('Activity: %s' % (newlabel))
+
     def on_control_toggle(self, widget):
         clicked = widget.get_name()
         if (widget.get_active()):
@@ -2022,6 +2085,7 @@ class MapGUI(BaseGUI):
                 # TODO: Except here or something
                 print "Unknown control toggled, should never get here"
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
+            self.update_activity_label()
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
@@ -2192,24 +2256,24 @@ class MapGUI(BaseGUI):
         square = self.map.squares[y][x]
 
         # Now erase anything that the user's requesed
-        if (self.draw_barrier.get_active()):
+        if (self.erase_barrier.get_active()):
             square.wall = 0
-        if (self.draw_floor_checkbox.get_active()):
+        if (self.erase_floor_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.floorimg in wall_list['floor_seethrough']):
                     square.wall = 0
             square.floorimg = 0
-        if (self.draw_decal_checkbox.get_active()):
+        if (self.erase_decal_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.decalimg in wall_list['decal_blocked']+wall_list['decal_seethrough']):
                     square.wall = 0
             square.decalimg = 0
-        if (self.draw_wall_checkbox.get_active()):
+        if (self.erase_wall_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 if (square.wallimg in wall_list['wall_blocked']+wall_list['wall_seethrough']):
                     square.wall = 0
             square.wallimg = 0
-        if (self.draw_walldecal_checkbox.get_active()):
+        if (self.erase_walldecal_checkbox.get_active()):
             square.walldecalimg = 0
 
         # Handle "smart" walls if requested
@@ -2223,8 +2287,8 @@ class MapGUI(BaseGUI):
                     self.redraw_square(adjsquare.x, adjsquare.y)
 
         # Handle "smart" floors if needed
-        if (self.draw_floor_checkbox.get_active() and
-                not self.draw_decal_checkbox.get_active() and
+        if (self.erase_floor_checkbox.get_active() and
+                not self.erase_decal_checkbox.get_active() and
                 self.smartdraw_check.get_active() and
                 self.draw_smart_floor.get_active()):
             for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
@@ -2237,7 +2301,7 @@ class MapGUI(BaseGUI):
 
         # Handles "smart" wall decals if needed
         # This just randomizes, so don't bother here.
-        #if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
+        #if (self.erase_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
         #    self.smartdraw.draw_walldecal(square)
 
         # And then close off our undo and redraw if needed
@@ -2591,11 +2655,13 @@ class MapGUI(BaseGUI):
         if (self.barrier_hi_toggle.get_active()):
             self.draw_barrier.set_sensitive(True)
             self.draw_barrier_seethrough.set_sensitive(True)
+            self.erase_barrier.set_sensitive(True)
         else:
             self.draw_barrier.set_sensitive(False)
             self.draw_barrier.set_active(False)
             self.draw_barrier_seethrough.set_sensitive(False)
             self.draw_barrier_seethrough.set_active(False)
+            self.erase_barrier.set_sensitive(False)
 
         # Set up a "blank" tile to draw everything else on top of
         self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)

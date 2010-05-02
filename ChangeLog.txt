@@ -2,6 +2,7 @@
 
    02 May 2010; CJ Kucera <pez@apocalyptech.com> :
    Reorganize "View" menu item
+   Better user feedback about what actions are active
 
    13 Apr 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug related to more recent gtk+ versions and
