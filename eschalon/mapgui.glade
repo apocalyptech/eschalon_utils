@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Tue Mar 16 18:08:17 2010 -->
+<!--Generated with glade3 3.4.5 on Sun May  2 11:45:59 2010 -->
 <glade-interface>
   <widget class="GtkWindow" id="mainwindow">
     <property name="width_request">800</property>
@@ -163,50 +163,11 @@
             <child>
               <widget class="GtkMenuItem" id="View">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">_View</property>
+                <property name="label" translatable="yes">_Draw</property>
                 <property name="use_underline">True</property>
                 <child>
                   <widget class="GtkMenu" id="menu4">
                     <property name="visible">True</property>
-                    <child>
-                      <widget class="GtkCheckMenuItem" id="barrier_hi_button">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
-                        <property name="label" translatable="yes">Barrier Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle"/>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkCheckMenuItem" id="script_hi_button">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">When active, scripts will be highlighted on the map</property>
-                        <property name="label" translatable="yes">Script Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle"/>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkCheckMenuItem" id="entity_hi_button">
-                        <property name="visible">True</property>
-                        <property name="tooltip" translatable="yes">When active, entities will be highlighted on the map</property>
-                        <property name="label" translatable="yes">Entity Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle"/>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkMenuItem" id="menuitem2">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">&lt;i&gt;Check All&lt;/i&gt;</property>
-                        <property name="use_underline">True</property>
-                      </widget>
-                    </child>
-                    <child>
-                      <widget class="GtkSeparatorMenuItem" id="">
-                        <property name="visible">True</property>
-                      </widget>
-                    </child>
                     <child>
                       <widget class="GtkCheckMenuItem" id="floor_button">
                         <property name="visible">True</property>
@@ -268,6 +229,87 @@
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
                         <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="menuitem3">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="object_check_all">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">(Check All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="draw_check_all"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="object_uncheck_all">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">(Uncheck All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="draw_uncheck_all"/>
+                      </widget>
+                    </child>
+                  </widget>
+                </child>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkMenuItem" id="menuitem2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">_Highlighting</property>
+                <property name="use_underline">True</property>
+                <child>
+                  <widget class="GtkMenu" id="menu5">
+                    <property name="visible">True</property>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="barrier_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
+                        <property name="label" translatable="yes">Barrier Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="script_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When active, scripts will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Script Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkCheckMenuItem" id="entity_hi_button">
+                        <property name="visible">True</property>
+                        <property name="tooltip" translatable="yes">When active, entities will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Entity Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkSeparatorMenuItem" id="">
+                        <property name="visible">True</property>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="highlight_check_all">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">(Check All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="highlight_check_all"/>
+                      </widget>
+                    </child>
+                    <child>
+                      <widget class="GtkMenuItem" id="highlight_uncheck_all">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">(Uncheck All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="highlight_uncheck_all"/>
                       </widget>
                     </child>
                   </widget>

@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   02 May 2010; CJ Kucera <pez@apocalyptech.com> :
+   Reorganize "View" menu item
+
    13 Apr 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug related to more recent gtk+ versions and
    background color selection for map elements.

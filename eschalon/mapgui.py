@@ -292,7 +292,11 @@ class MapGUI(BaseGUI):
                 'objsel_on_motion': self.objsel_on_motion,
                 'objsel_on_expose': self.objsel_on_expose,
                 'objsel_on_clicked': self.objsel_on_clicked,
-                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled
+                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
+                'draw_check_all': self.draw_check_all,
+                'draw_uncheck_all': self.draw_uncheck_all,
+                'highlight_check_all': self.highlight_check_all,
+                'highlight_uncheck_all': self.highlight_uncheck_all
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -347,6 +351,7 @@ class MapGUI(BaseGUI):
         self.squarebuf = None
         self.blanksquare = None
         self.basicsquare = None
+        self.updating_map_checkboxes = False
 
         # Blank pixbuf to use in the square editing window
         self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 52, 130)
@@ -2241,7 +2246,38 @@ class MapGUI(BaseGUI):
             self.update_undo_gui()
 
     def map_toggle(self, widget):
-        self.draw_map()
+        if not self.updating_map_checkboxes:
+            self.draw_map()
+
+    def mass_update_checkboxes(self, status, checkboxes):
+        self.updating_map_checkboxes = True
+        changed = False
+        for elem in checkboxes:
+            if (elem.get_active() != status):
+                changed = True
+                elem.set_active(status)
+        self.updating_map_checkboxes = False
+        if changed:
+            self.draw_map()
+
+    def draw_check_set_to(self, status):
+        return self.mass_update_checkboxes(status, [self.floor_toggle, self.decal_toggle, self.object_toggle,
+            self.wall_toggle, self.tree_toggle, self.objectdecal_toggle, self.entity_toggle])
+
+    def draw_check_all(self, widget):
+        self.draw_check_set_to(True)
+
+    def draw_uncheck_all(self, widget):
+        self.draw_check_set_to(False)
+
+    def highlight_check_set_to(self, status):
+        return self.mass_update_checkboxes(status, [self.barrier_hi_toggle, self.script_hi_toggle, self.entity_hi_toggle])
+
+    def highlight_check_all(self, widget):
+        self.highlight_check_set_to(True)
+
+    def highlight_uncheck_all(self, widget):
+        self.highlight_check_set_to(False)
 
     # Assumes that the context is squarebuf_ctx, hence the hardcoded width/height
     # We're passing it in so we're not constantly referencing self.squarebuf_ctx
