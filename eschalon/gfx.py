@@ -334,7 +334,7 @@ class Gfx(object):
         doesn't have transparency information, and I don't feel like doing a conversion.
         """
         if (self.flamecache is None):
-            df = open(os.path.join(os.path.dirname(__file__), 'torch_single.png'), 'rb')
+            df = open(os.path.join(os.path.dirname(__file__), '..', 'data', 'torch_single.png'), 'rb')
             flamedata = df.read()
             df.close()
             self.flamecache = GfxEntCache(flamedata, 1, 1)

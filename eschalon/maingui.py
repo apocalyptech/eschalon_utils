@@ -82,9 +82,9 @@ class MainGUI(BaseGUI):
         self.char = None
 
         # Start up our GUI
-        self.gladefile = os.path.join(os.path.dirname(__file__), 'maingui.glade')
+        self.gladefile = self.datafile('maingui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
-        self.itemfile = os.path.join(os.path.dirname(__file__), 'itemgui.glade')
+        self.itemfile = self.datafile('itemgui.glade')
         self.itemwTree = gtk.glade.XML(self.itemfile)
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
@@ -316,7 +316,7 @@ class MainGUI(BaseGUI):
                     df.close()
                 except:
                     pass
-            iconpath = os.path.join(os.path.dirname(__file__), 'eb1_icon_64.png')
+            iconpath = self.datafile('eb1_icon_64.png')
             if (os.path.isfile(iconpath)):
                 try:
                     about.set_logo(gtk.gdk.pixbuf_new_from_file(iconpath))

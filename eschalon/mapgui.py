@@ -140,9 +140,9 @@ class MapGUI(BaseGUI):
         self.smartdraw = SmartDraw()
 
         # Start up our GUI
-        self.gladefile = os.path.join(os.path.dirname(__file__), 'mapgui.glade')
+        self.gladefile = self.datafile('mapgui.glade')
         self.wTree = gtk.glade.XML(self.gladefile)
-        self.itemfile = os.path.join(os.path.dirname(__file__), 'itemgui.glade')
+        self.itemfile = self.datafile('itemgui.glade')
         self.itemwTree = gtk.glade.XML(self.itemfile)
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
@@ -367,7 +367,7 @@ class MapGUI(BaseGUI):
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
         for zoom in self.zoom_levels:
-            mapfile = os.path.join(os.path.dirname(__file__), 'iso_mousemap_%d.png' % (zoom))
+            mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
             mapbuf = gtk.gdk.pixbuf_new_from_file(mapfile)
             try:
                 self.mousemap[zoom] = mapbuf.get_pixels_array()
@@ -706,7 +706,7 @@ class MapGUI(BaseGUI):
                     df.close()
                 except:
                     pass
-            iconpath = os.path.join(os.path.dirname(__file__), 'eb1_icon_64.png')
+            iconpath = self.datafile('eb1_icon_64.png')
             if (os.path.isfile(iconpath)):
                 try:
                     about.set_logo(gtk.gdk.pixbuf_new_from_file(iconpath))

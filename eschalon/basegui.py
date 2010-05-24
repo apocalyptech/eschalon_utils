@@ -61,13 +61,16 @@ class BaseGUI(object):
         else:
             self.have_gtk_2_16 = False
 
+    def datafile(self, file):
+        return os.path.join(os.path.dirname(__file__), '..', 'data', file)
+
     def prefs_init(self, prefs):
 
         # Prefs data object
         self.prefsobj = prefs
 
         # Preferences window
-        self.prefsgladefile = os.path.join(os.path.dirname(__file__), 'preferences.glade')
+        self.prefsgladefile = self.datafile('preferences.glade')
         self.prefswTree = gtk.glade.XML(self.prefsgladefile)
         self.prefswindow = self.prefswTree.get_widget('prefswindow')
         self.gfx_req_window = self.prefswTree.get_widget('gfx_req_window')
