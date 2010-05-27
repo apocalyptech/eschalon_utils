@@ -237,6 +237,13 @@ class MapGUI(BaseGUI):
             return
         self.gfx = Gfx(self.prefs)
 
+        # Register ComboBoxEntry child objects since the new Glade doesn't
+        comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
+                'soundfile1', 'soundfile2', 'soundfile3', 'skybox']
+        for var in comboboxentries:
+            self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
+            self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_load': self.on_load,
