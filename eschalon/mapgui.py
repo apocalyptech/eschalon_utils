@@ -114,6 +114,7 @@ class MapGUI(BaseGUI):
     def __init__(self, options, prefs):
         self.options = options
         self.prefs = prefs
+        self.path_init()
 
         # Call out to the base initialization
         self.base_init()
@@ -235,7 +236,7 @@ class MapGUI(BaseGUI):
         self.prefs_init(self.prefs)
         if (not self.require_gfx()):
             return
-        self.gfx = Gfx(self.prefs)
+        self.gfx = Gfx(self.prefs, self.datadir)
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',

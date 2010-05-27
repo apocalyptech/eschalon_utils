@@ -187,10 +187,11 @@ class PakIndex(object):
 class Gfx(object):
     """ A class to hold graphics data. """
 
-    def __init__(self, prefs):
+    def __init__(self, prefs, datadir):
         """ A fresh object with no data. """
 
         self.prefs = prefs
+        self.datadir = datadir
         self.pakloc = os.path.join(self.prefs.get_str('paths', 'gamedir'), 'gfx.pak')
         self.df = Savefile(self.pakloc)
 
@@ -334,7 +335,7 @@ class Gfx(object):
         doesn't have transparency information, and I don't feel like doing a conversion.
         """
         if (self.flamecache is None):
-            df = open(os.path.join(os.path.dirname(__file__), '..', 'data', 'torch_single.png'), 'rb')
+            df = open(os.path.join(self.datadir, 'torch_single.png'), 'rb')
             flamedata = df.read()
             df.close()
             self.flamecache = GfxEntCache(flamedata, 1, 1)

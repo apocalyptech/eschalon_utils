@@ -61,7 +61,17 @@ class BaseGUI(object):
             self.have_gtk_2_16 = False
 
     def datafile(self, file):
-        return os.path.join(os.path.dirname(__file__), '..', 'data', file)
+        return os.path.join(self.datadir, file)
+
+    def path_init(self):
+        # Figure out if we're running inside library.zip (which would mean that we've
+        # been packaged on Windows, and need to modify where we look for data files
+        # slightly.)  It would probably make more sense to check some other environment
+        # var here, really, but we'll just do this for now.
+        if (os.path.dirname(__file__).find('library.zip') == -1):
+            self.datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
+        else:
+            self.datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
 
     def prefs_init(self, prefs):
 

@@ -66,6 +66,7 @@ class MainGUI(BaseGUI):
     def __init__(self, options, prefs):
         self.options = options
         self.prefs = prefs
+        self.path_init()
 
     def run(self):
 
@@ -129,7 +130,7 @@ class MainGUI(BaseGUI):
         self.prefs_init(self.prefs)
         self.optional_gfx()
         if (self.gamedir_set()):
-            self.gfx = Gfx(self.prefs)
+            self.gfx = Gfx(self.prefs, self.datadir)
         else:
             self.gfx = None
         self.assert_gfx_buttons()
