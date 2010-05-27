@@ -54,11 +54,19 @@ class BaseGUI(object):
         """
         Performs any options we'll need for a GUI
         """
+        # We're not actually doing *anything* in here anymore.  Let's
+        # try to lock this down once and for all.
+
         # Some behavior depends on our gtk+ version
-        if (gtk.check_version(2, 16, 0) is None):
-            self.have_gtk_2_16 = True
-        else:
-            self.have_gtk_2_16 = False
+        # ... actually, we're gonna try to just deal with Numeric for now
+        #if (gtk.check_version(2, 16, 0) is None):
+        #    self.have_gtk_2_16 = True
+        #else:
+        #    self.have_gtk_2_16 = False
+
+        # Assume, for now, that we have get_pixels_array()
+        # (ie: that PyGTK was compiled with Numeric)
+        #self.have_get_pixels_array = True
 
     def datafile(self, file):
         return os.path.join(self.datadir, file)
@@ -667,10 +675,7 @@ class BaseGUI(object):
             pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
         except (RuntimeError, ImportError):
             pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
-        if self.have_gtk_2_16:
-            color = pixels[int(event.y)][int(event.x)][0]
-        else:
-            color = pixels[int(event.y)][int(event.x)][0][0]
+        color = pixels[int(event.y)][int(event.x)][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
         self.imgsel_init = False
         self.imgsel_area.queue_draw()
@@ -725,6 +730,8 @@ class BaseGUI(object):
             for x in range(buf.get_width()):
                 retarr[y].append([])
                 for color in unpack(packstr, pixels[idx:idx+channels]):
-                    retarr[y][x].append((color, 0))
+                    retarr[y][x].append(color)
+                    # Old-style, which was more compatible at one point with get_pixels_array()
+                    #retarr[y][x].append((color, 0))
                 idx += channels
         return retarr
