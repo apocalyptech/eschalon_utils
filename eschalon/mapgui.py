@@ -39,6 +39,7 @@ except Exception, e:
     sys.stdin.readline()
     sys.exit(1)
 
+# Load our GTK modules
 try:
     import gtk
     import gobject
@@ -48,6 +49,7 @@ except Exception, e:
     sys.stdin.readline()
     sys.exit(1)
 
+# Load in Cairo
 try:
     import cairo
 except Exception, e:
@@ -56,6 +58,13 @@ except Exception, e:
     dialog.run()
     dialog.destroy()
     sys.exit(1)
+
+# Check for minimum GTK+ version
+if (gtk.check_version(2, 18, 0) is not None):
+    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK)
+    dialog.set_markup('<b>Note:</b> The minimum required version of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some older versions.  You\'re welcome to continue, but know that you may encounter weird behavior.')
+    dialog.run()
+    dialog.destroy()
 
 from eschalonb1.map import Map
 from eschalonb1.item import Item
