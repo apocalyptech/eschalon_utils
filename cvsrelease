@@ -7,4 +7,6 @@ find . -name .cvsignore -exec rm {} \;
 rm -rf resources
 rm -rf ignore
 rm -f cvsrelease
+rm -f win-inno.iss
+rm -f win-setup.py
 echo "... done"
