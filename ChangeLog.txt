@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   27 May 2010; CJ Kucera <pez@apocalyptech.com> :
+   Conversion from Glade to GTKBuilder for UI
+
    24 May 2010; CJ Kucera <pez@apocalyptech.com> :
    Move datafiles to their own "data" directory
 

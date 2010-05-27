@@ -36,7 +36,6 @@ except Exception, e:
 
 try:
     import gtk
-    import gtk.glade
 except Exception, e:
     print 'Python GTK Modules not found: %s' % (str(e))
     print 'Hit enter to exit...'
@@ -82,10 +81,9 @@ class MainGUI(BaseGUI):
         self.char = None
 
         # Start up our GUI
-        self.gladefile = self.datafile('maingui.glade')
-        self.wTree = gtk.glade.XML(self.gladefile)
-        self.itemfile = self.datafile('itemgui.glade')
-        self.itemwTree = gtk.glade.XML(self.itemfile)
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(self.datafile('maingui.ui'))
+        self.builder.add_from_file(self.datafile('itemgui.ui'))
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
         self.itemwindow.set_transient_for(self.window)
@@ -96,6 +94,18 @@ class MainGUI(BaseGUI):
         self.avatarsel = self.get_widget('avatarselwindow')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
+
+        # Register ComboBoxEntry child objects since the new Glade doesn't
+        comboboxentries = ['origin', 'axiom', 'classname']
+        spellboxentries = []
+        for i in range(10):
+            spellboxentries.append('readyslots_spell_%d' % (i))
+        for var in comboboxentries + spellboxentries:
+            self.register_widget(var, self.get_widget('%s_box' % (var)).child)
+        for var in comboboxentries:
+            self.get_widget(var).connect('changed', self.on_singleval_changed_str)
+        for var in spellboxentries:
+            self.get_widget(var).connect('changed', self.on_readyslots_changed)
 
         # GUI additions
         self.gui_finish()
@@ -147,8 +157,7 @@ class MainGUI(BaseGUI):
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
         # should be fine here, anyway.
-        self.wTree.signal_autoconnect(dic)
-        self.itemwTree.signal_autoconnect(dic)
+        self.builder.connect_signals(dic)
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -390,12 +399,9 @@ class MainGUI(BaseGUI):
         self.fullwidgetcache[name] = widget
 
     def get_widget(self, name):
-        """ Returns a widget from our cache, or from wTree if it's not present in the cache. """
+        """ Returns a widget from our cache, or from builder obj if it's not present in the cache. """
         if (not self.fullwidgetcache.has_key(name)):
-            if (self.wTree.get_widget(name) is None):
-                self.register_widget(name, self.itemwTree.get_widget(name), False)
-            else:
-                self.register_widget(name, self.wTree.get_widget(name), False)
+            self.register_widget(name, self.builder.get_object(name), False)
         return self.fullwidgetcache[name]
 
     def check_item_changed(self):

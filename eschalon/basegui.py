@@ -34,7 +34,6 @@ except:
 
 try:
     import gtk
-    import gtk.glade
 except:
     print 'Python GTK Modules not found'
     sys.exit(1)
@@ -70,19 +69,19 @@ class BaseGUI(object):
         self.prefsobj = prefs
 
         # Preferences window
-        self.prefsgladefile = self.datafile('preferences.glade')
-        self.prefswTree = gtk.glade.XML(self.prefsgladefile)
-        self.prefswindow = self.prefswTree.get_widget('prefswindow')
-        self.gfx_req_window = self.prefswTree.get_widget('gfx_req_window')
-        self.gfx_opt_window = self.prefswTree.get_widget('gfx_opt_window')
-        self.prefsview = self.prefswTree.get_widget('prefsview')
+        self.prefsbuilder = gtk.Builder()
+        self.prefsbuilder.add_from_file(self.datafile('preferences.ui'))
+        self.prefswindow = self.prefsbuilder.get_object('prefswindow')
+        self.gfx_req_window = self.prefsbuilder.get_object('gfx_req_window')
+        self.gfx_opt_window = self.prefsbuilder.get_object('gfx_opt_window')
+        self.prefsview = self.prefsbuilder.get_object('prefsview')
         self.prefssel = self.prefsview.get_selection()
-        self.prefsnotebook = self.prefswTree.get_widget('prefsnotebook')
+        self.prefsnotebook = self.prefsbuilder.get_object('prefsnotebook')
 
         # Prefs fields
-        self.prefs_savegame = self.prefswTree.get_widget('savegame_chooser')
-        self.prefs_gamedir = self.prefswTree.get_widget('gamedata_chooser')
-        self.prefs_default_zoom = self.prefswTree.get_widget('prefs_default_zoom')
+        self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
+        self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
+        self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
 
         # Connect handler
         self.prefssel.connect('changed', self.on_prefs_changed)

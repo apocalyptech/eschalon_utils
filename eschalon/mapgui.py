@@ -41,7 +41,6 @@ except Exception, e:
 
 try:
     import gtk
-    import gtk.glade
     import gobject
 except Exception, e:
     print 'Python GTK Modules not found: %s' % (str(e))
@@ -140,10 +139,9 @@ class MapGUI(BaseGUI):
         self.smartdraw = SmartDraw()
 
         # Start up our GUI
-        self.gladefile = self.datafile('mapgui.glade')
-        self.wTree = gtk.glade.XML(self.gladefile)
-        self.itemfile = self.datafile('itemgui.glade')
-        self.itemwTree = gtk.glade.XML(self.itemfile)
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(self.datafile('mapgui.ui'))
+        self.builder.add_from_file(self.datafile('itemgui.ui'))
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
         self.squarewindow = self.get_widget('squarewindow')
@@ -309,8 +307,7 @@ class MapGUI(BaseGUI):
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
         # should be fine here, anyway.
-        self.wTree.signal_autoconnect(dic)
-        self.itemwTree.signal_autoconnect(dic)
+        self.builder.connect_signals(dic)
 
         # Event mask for processing hotkeys
         # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
@@ -615,12 +612,9 @@ class MapGUI(BaseGUI):
         self.fullwidgetcache[name] = widget
 
     def get_widget(self, name):
-        """ Returns a widget from our cache, or from wTree if it's not present in the cache. """
+        """ Returns a widget from our cache, or from builder obj if it's not present in the cache. """
         if (not self.fullwidgetcache.has_key(name)):
-            if (self.wTree.get_widget(name) is None):
-                self.register_widget(name, self.itemwTree.get_widget(name), False)
-            else:
-                self.register_widget(name, self.wTree.get_widget(name), False)
+            self.register_widget(name, self.builder.get_object(name), False)
         return self.fullwidgetcache[name]
 
     # Use this to load in a map from a file
