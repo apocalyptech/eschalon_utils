@@ -25,7 +25,7 @@ ABOUT
 This package contains two little applications for editing savegames in
 the game Eschalon Book I, by Basilisk Games.
 
-   http://basiliskgames.com/book1.html
+   http://basiliskgames.com/eschalon-book-i
 
 The first is eschalon_b1_char.py, which can edit saved character
 information, and the other is eschalon_b1_map.py, which can be used to
