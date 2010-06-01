@@ -100,6 +100,7 @@ class BaseGUI(object):
         self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
         self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
         self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
+        self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
 
         # Connect handler
         self.prefssel.connect('changed', self.on_prefs_changed)
@@ -184,6 +185,7 @@ class BaseGUI(object):
             self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
         if (self.prefsobj.get_int('mapgui', 'default_zoom')):
             self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
+        self.prefs_warn_global.set_active(self.prefsobj.get_bool('mapgui', 'warn_global_map'))
         #self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
@@ -192,6 +194,7 @@ class BaseGUI(object):
             self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
             self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
             self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
+            self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
             self.prefsobj.save()
             # TODO: Should check for valid dirs here?
             if (curdir != self.prefsobj.get_str('paths', 'gamedir')):

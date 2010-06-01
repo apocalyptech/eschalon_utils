@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   31 May 2010; CJ Kucera <pez@apocalyptech.com> :
+   Warning when editing a "global" map file
+
    27 May 2010; CJ Kucera <pez@apocalyptech.com> :
    Conversion from Glade to GTKBuilder for UI
    Initial Packaging for Windows

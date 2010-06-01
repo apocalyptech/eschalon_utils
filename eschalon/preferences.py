@@ -68,6 +68,8 @@ class Prefs(object):
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
+        for vars in [('mapgui', 'warn_global_map')]:
+            self.set_bool(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
         if (self.filename is not None and os.path.isfile(self.filename)):
@@ -98,11 +100,25 @@ class Prefs(object):
     def get_int(self, cat, name):
         return self.cp.getint(cat, name)
 
+    def set_bool(self, cat, name, val):
+        if (not self.cp.has_section(cat)):
+            self.cp.add_section(cat)
+        if val:
+            val = 'True'
+        else:
+            val = 'False'
+        return self.cp.set(cat, name, val)
+
+    def get_bool(self, cat, name):
+        return self.cp.getboolean(cat, name)
+
     def global_default(self, cat, name):
         """ Defaults which are global, regardless of platform. """
         if (cat == 'mapgui'):
             if (name == 'default_zoom'):
                 return 4
+            elif (name == 'warn_global_map'):
+                return 'True'
         return None
 
     def no_prefsfile(self):
