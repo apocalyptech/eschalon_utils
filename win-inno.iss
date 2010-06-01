@@ -17,7 +17,7 @@ DefaultGroupName=Eschalon Book I Utilities
 AllowNoIcons=yes
 LicenseFile=C:\InstPrograms\eschalon\COPYING.txt
 InfoBeforeFile=C:\InstPrograms\eschalon\README.txt
-OutputBaseFilename=eschalon_b1_utils_setup
+OutputBaseFilename=eschalon_b1_utils_0_5_0_setup
 Compression=lzma
 SolidCompression=yes
 

@@ -1,5 +1,5 @@
 Eschalon Book 1 Savefile Editor
-Copyright (C) 2008, 2009 CJ Kucera
+Copyright (C) 2008-2010 CJ Kucera
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ This package contains two little applications for editing savegames in
 the game Eschalon Book I, by Basilisk Games.
 
    http://basiliskgames.com/book1.html
-   http://www.playgreenhouse.com/game/BASLX-000001-01/
 
 The first is eschalon_b1_char.py, which can edit saved character
 information, and the other is eschalon_b1_map.py, which can be used to
@@ -47,13 +46,13 @@ files (which end in .map) also have an associated file with a ".ent"
 extension.  As you make backups of the maps you're editing, be sure to back up
 that file as well.
 
-This was developed on Linux, and it uses Python, GTK+, and PyGTK/Glade to do
+This was developed on Linux, and it uses Python, GTK+, and PyGTK to do
 its stuff.  The application also runs perfectly fine on Windows (see the
-Windows section, below).  I know that the required Python/GTK+/PyGTK packages
-are available on OSX, but I don't have easy access to that platform, so I'm
-not sure what needs to be done to package it up and get it running.  If
-you're familiar with those kinds of things, let me know and I'll get going
-on it.
+Windows section, below).  I know that the required Python/GTK+ packages
+are supposed to be available on OSX, but I don't have easy access to that
+platform, so I'm not sure what needs to be done to package it up and get it
+running.  If you're familiar with those kinds of things, let me know and
+I'll get going on it.
 
 One other note: Certainly let me know if you use this on other architectures
 (I'm just on x86) and see funky values through the GUI.  I'm not sure if the
@@ -94,42 +93,28 @@ command prompt, for instance.  Setting up shortcuts through your window
 manager of choice should work fine, as well.  Failing that, just run them
 from the directory you untarred them into.
 
+As of 0.5.0, the minimum gtk+ required MIGHT be 2.18.0, though you may have
+success with earlier versions.  If there are problems with older versions,
+please let me know so I can take a look and possibly get a workaround
+in place.  The app will show a warning if your gtk+ doesn't meet this
+requirement, but allow you to continue regardless.
+
 INSTALLATION, WINDOWS
 ---------------------
 
-As with the Linux version, there's no actual installation script or anything
-like that.  If you have gtk+, Python, and PyGTK installed, though, you should
-be able to just run it from wherever you unzipped it.  The various pieces of
-software you'll need to run the program are:
+The recommended way to install these utilities on Windows is through the install
+EXE which is provided as of version 0.5.0.  Theoretically, you should be able
+to just double-click on the installer, go through the usual installer screens,
+and you'll have both the map editor and the charater editor in a folder in
+your start menu.  Please be sure to let me know if there are problems with
+that process, as I hardly spend any time in Windows, and the Windows side is
+far less tested than the Linux side.
 
-gtk+ Runtime:
-  http://sourceforge.net/projects/gladewin32/files/gtk%2B-win32-runtime/2.12.9/
-  Note that this version, from the gladewin32 Sourceforge project, is the
-  main officially-blessed gtk+ runtime endorsed by PyGTK, so it's the best to
-  use.  It includes Cairo, so a separate Cairo installation is not required.
-  You can get it working with other gtk+ runtime packages, but you'll
-  have to do more work for not a lot of gain.  If you DO have other gtk+
-  runtimes installed, certainly be careful about installing this one
-  side-by-side.  You probably only want one active at any given time.
-
-Python:
-  http://python.org/download/releases/2.6.1/
-  I've tested the app on both Python 2.5 and 2.6.  It doesn't really matter
-  which one you use, though you may as well use 2.6, which is the latest.
-  (Don't use the 3.x releases, though.)
-
-PyGTK:
-  http://www.pygtk.org/downloads.html
-  Be sure to install all three of PyCairo, PyGObject, and PyGTK.  You *need*
-  all three, otherwise it won't work.  Note that the files you download will
-  be labeled with either "py2.5" or "py2.6."  Be sure to download the
-  appropriate package for the version of Python that you installed.
-
-Once you've got those components installed, you should be able to just
-double-click on either eschalon_b1_char.py or eschalon_b1_map.py, and
-it'll give you an "Open" dialog to choose the file.
-
-I'll look into distributing the required packages as one bundle, eventually.
+You're welcome to run the Python scripts directly (as the Linux folks do), if
+you want, in which case you will need a gtk+ runtime (I recommend a recent one
+directly from gtk.org), Python (2.6), and all three PyGTK components installed
+(PyCairo, PyGObject, and PyGTK).  Some direct links can be found on the
+website.
 
 INSTALLATION, OSX
 -----------------
@@ -148,15 +133,8 @@ instance, to get help with the character editor.  A few of the character
 editor commandline options may be useful.  The options available on the map
 editor are far less useful.
 
-Note that the map editor currently isn't really useful for doing larger tasks
-like building a new map from scratch, or even doing "mass" editing on existing
-maps (such as possibly adding new rooms, or clearing new paths through the
-forest, etc).  The editor currently operates on a square-by-square basis, so
-you click on one square and edit its properties, then click on the next, etc.
-This is fine for introspection or doing simple things (like adding/removing
-enemies, changing chest contents, etc), but there's no real "drawing" type
-features yet.  I expect that I'll probably be implementing those sooner or
-later, but they're not present in the utility yet.
+The drawing features on the map editor are fairly new still, and I expect that
+bugs will eventually be found.  Let me know!
 
 Some more documentation on various aspects of the Eschalon map that I've
 discovered, see http://apocalyptech.com/eschalon/
@@ -166,5 +144,4 @@ CONTACT
 
 Feel free to email me at pez@apocalyptech.com if you've got questions /
 concerns.  I'm also logged in to irc.freenode.net as the user "sekhmet" if
-you'd prefer that.  Note that Freenode requires that you register a nick
-before it'll send privmsgs to other users.
+you'd prefer that.
