@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Book 1 Savefile Editor
 
+   01 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a couple of minor typos
+
 *eschalon_b1_utils-0.5.0 (31 May 2010)
 
    31 May 2010; CJ Kucera <pez@apocalyptech.com> :
