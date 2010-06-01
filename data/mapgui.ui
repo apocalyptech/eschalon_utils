@@ -279,8 +279,8 @@
                     <child>
                       <object class="GtkCheckMenuItem" id="script_hi_button">
                         <property name="visible">True</property>
-                        <property name="tooltip_text" translatable="yes">When active, scripts will be highlighted on the map</property>
-                        <property name="label" translatable="yes">Script Highlighting</property>
+                        <property name="tooltip_text" translatable="yes">When active, objects will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Object Highlighting</property>
                         <property name="use_underline">True</property>
                         <signal name="toggled" handler="map_toggle"/>
                       </object>
