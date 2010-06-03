@@ -22,18 +22,7 @@
 import os
 import sys
 
-# Load in our PyGTK deps
-pygtkreq = '2.0'
-try:
-    import pygtk
-    pygtk.require(pygtkreq)
-except Exception, e:
-    print 'Error: %s' % (str(e))
-    print 'PyGTK version %s or higher is required' % pygtkreq
-    print 'Hit enter to exit...'
-    sys.stdin.readline()
-    sys.exit(1)
-
+# Load GTK Deps
 try:
     import gtk
 except Exception, e:

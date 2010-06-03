@@ -27,18 +27,6 @@ from eschalonb1 import traptable, containertable, objecttypetable, wall_list
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
 
-# Load in our PyGTK deps
-pygtkreq = '2.0'
-try:
-    import pygtk
-    pygtk.require(pygtkreq)
-except Exception, e:
-    print 'Error: %s' % (str(e))
-    print 'PyGTK version %s or higher is required' % pygtkreq
-    print 'Hit enter to exit...'
-    sys.stdin.readline()
-    sys.exit(1)
-
 # Load our GTK modules
 try:
     import gtk

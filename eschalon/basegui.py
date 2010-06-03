@@ -23,15 +23,6 @@ import os
 import sys
 from struct import unpack
 
-# Load in our PyGTK deps
-pygtkreq = '2.0'
-try:
-    import pygtk
-    pygtk.require(pygtkreq)
-except:
-    print 'PyGTK version %s or higher is required' % pygtkreq
-    sys.exit(1)
-
 try:
     import gtk
 except:
