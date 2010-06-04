@@ -19,9 +19,10 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from eschalonb1 import constants as c
 from eschalonb1.character import Character
 from eschalonb1.savefile import LoadException
-from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
+#from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class MainCLI(object):
 
@@ -94,8 +95,6 @@ class MainCLI(object):
     def display_stats(self):
         """ Print out a textual representation of the character's stats."""
 
-        global skilltable, dirtable, diseasetable
-
         char = self.char
 
         if (char.picid % 256 == 0):
@@ -114,21 +113,21 @@ class MainCLI(object):
         print
         for i in range(len(char.statuses)):
             if (char.statuses[i] > 0):
-                if (statustable.has_key(i)):
-                    print "\t* %s (Turns left: %d)" % (statustable[i], char.statuses[i])
+                if (c.statustable.has_key(i)):
+                    print "\t* %s (Turns left: %d)" % (c.statustable[i], char.statuses[i])
                 else:
                     print "\t* Status %d (unknown) (Turns left: %d)" % (i, char.statuses[i])
-        for key in diseasetable.keys():
+        for key in c.diseasetable.keys():
             if (char.disease & key == key):
-                print "\t* Diseased: %s" % (diseasetable[key])
+                print "\t* Diseased: %s" % (c.diseasetable[key])
         print
 
         print "SKILLS"
         print "------"
         print
-        for key in skilltable.keys():
+        for key in c.skilltable.keys():
             if char.skills.has_key(key) and char.skills[key] != 0:
-                print "\t%s: %d" % (skilltable[key], char.skills[key])
+                print "\t%s: %d" % (c.skilltable[key], char.skills[key])
         print
 
     def display_avatar_info(self):
@@ -168,8 +167,8 @@ class MainCLI(object):
         print "-----------"
         print
         print "X: %d  Y: %d" % (char.xpos, char.ypos)
-        if (dirtable.has_key(char.orientation)):
-            print "Facing: %s" % dirtable[char.orientation]
+        if (c.dirtable.has_key(char.orientation)):
+            print "Facing: %s" % c.dirtable[char.orientation]
         else:
             print "Facing: 0x%08X" % char.orientation
         print
@@ -183,7 +182,7 @@ class MainCLI(object):
         print
         for i in range(len(char.spells)):
             if (char.spells[i] == 1):
-                print "\t* %s - %s" % (char.spelltype(i), spelltable[i])
+                print "\t* %s - %s" % (char.spelltype(i), c.spelltable[i])
         print
 
         print "READIED SPELLS"

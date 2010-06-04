@@ -20,7 +20,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import traptable, containertable, scriptflags
+from eschalonb1 import constants as c
+#from eschalonb1 import traptable, containertable, scriptflags
 from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
@@ -223,18 +224,18 @@ class Mapscript(object):
             ret.append("\tSlider Lock Code: %d" % self.other)
         else:
             ret.append("\tOther (typically 0-3): %d" % self.other)
-        if (self.trap in traptable):
-            ret.append("\tTrapped: %s" % traptable[self.trap])
+        if (self.trap in c.traptable):
+            ret.append("\tTrapped: %s" % c.traptable[self.trap])
         else:
             ret.append("\tTrapped: %d (unknown)" % self.trap)
-        if (self.state in containertable):
-            ret.append("\tState: %s" % containertable[self.state])
+        if (self.state in c.containertable):
+            ret.append("\tState: %s" % c.containertable[self.state])
         else:
             ret.append("\tState: %d (unknown)" % self.state)
         ret.append("\tSturdiness: %d" % self.sturdiness)
         if (self.flags != 0):
             ret.append("\tFlags:")
-            for (flag, flagtext) in scriptflags.items():
+            for (flag, flagtext) in c.scriptflags.items():
                 if (self.flags & flag == flag):
                     ret.append("\t\t* %s" % flagtext)
 

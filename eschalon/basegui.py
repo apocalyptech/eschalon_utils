@@ -30,7 +30,8 @@ except:
     sys.exit(1)
 
 import gobject
-from eschalonb1 import flagstable
+from eschalonb1 import constants as c
+#from eschalonb1 import flagstable
 
 class BaseGUI(object):
 
@@ -372,7 +373,7 @@ class BaseGUI(object):
         self.get_widget('basedamage').set_value(item.basedamage)
         self.get_widget('basearmor').set_value(item.basearmor)
 
-        for key in flagstable.keys():
+        for key in c.flagstable.keys():
             if (item.flags & key == key):
                 self.get_widget('flags_%04X' % (key)).set_active(True)
             else:

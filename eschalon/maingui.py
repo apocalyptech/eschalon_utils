@@ -54,7 +54,8 @@ from eschalonb1.basegui import BaseGUI
 from eschalonb1.character import Character
 from eschalonb1.item import Item
 from eschalonb1.savefile import LoadException
-from eschalonb1 import diseasetable, flagstable
+from eschalonb1 import constants as c
+#from eschalonb1 import diseasetable, flagstable
 from eschalonb1 import app_name, version, url, authors
 
 class MainGUI(BaseGUI):
@@ -787,7 +788,7 @@ class MainGUI(BaseGUI):
         for num in range(4):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
-        for key in diseasetable.keys():
+        for key in c.diseasetable.keys():
             if (char.disease & key == key):
                 self.get_widget('disease_%04X' % (key)).set_active(True)
 

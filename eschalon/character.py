@@ -20,10 +20,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
+from eschalonb1 import constants as c
 from eschalonb1.savefile import Savefile, LoadException
 from eschalonb1.item import Item
 from eschalonb1.unknowns import Unknowns
-from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
+#from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class Character(object):
     """
@@ -232,7 +233,6 @@ class Character(object):
 
     def read(self):
         """ Read in the whole save file from a file descriptor. """
-        global skilltable
 
         try:
 
@@ -259,7 +259,7 @@ class Character(object):
             self.concentration = self.df.readint()
 
             # Skills
-            for key in skilltable.keys():
+            for key in c.skilltable.keys():
                 self.addskill(key, self.df.readint())
 
             # More stats

@@ -20,7 +20,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import dirtable, entitytable
+from eschalonb1 import constants as c
+#from eschalonb1 import dirtable, entitytable
 from eschalonb1.savefile import FirstItemLoadException
 
 class Entity(object):
@@ -154,13 +155,13 @@ class Entity(object):
 
         ret = []
 
-        if (self.entid in entitytable):
-            ret.append("\tEntity: %s" % (entitytable[self.entid].name))
+        if (self.entid in c.entitytable):
+            ret.append("\tEntity: %s" % (c.entitytable[self.entid].name))
         else:
             ret.append("\tEntity ID: %d" % (self.entid))
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
-        if (self.direction in dirtable):
-            ret.append("\tFacing %s" % (dirtable[self.direction]))
+        if (self.direction in c.dirtable):
+            ret.append("\tFacing %s" % (c.dirtable[self.direction]))
         else:
             ret.append("\tDirection ID: %d" % (self.direction))
         ret.append("\tScript: %s" % self.script)

@@ -27,7 +27,8 @@ import cairo
 import gobject
 import StringIO
 from struct import unpack
-from eschalonb1 import entitytable
+from eschalonb1 import constants as c
+#from eschalonb1 import entitytable
 from eschalonb1.savefile import Savefile, LoadException
 
 class GfxCache(object):
@@ -345,7 +346,7 @@ class Gfx(object):
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
-        entnum = entitytable[entnum].gfxfile
+        entnum = c.entitytable[entnum].gfxfile
         if (entnum not in self.entcache):
             filename = 'mo%d.png' % (entnum)
             if (entnum in self.restrict_ents):

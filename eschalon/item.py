@@ -19,7 +19,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from eschalonb1 import typetable, skilltable, attrtable, itemincrtable, flagstable
+from eschalonb1 import constants as c
+#from eschalonb1 import typetable, skilltable, attrtable, itemincrtable, flagstable
 
 class Item(object):
     """Class to hold a single Item's information."""
@@ -229,21 +230,19 @@ class Item(object):
     def display(self, unknowns=False):
         """ Display a text representation of the item, indented. """
 
-        global attrtable, skilltable, typetable, itemincrtable, flagstable
-
         ret = []
 
         if (self.type == 0):
             ret.append("\t(none)")
         else:
             ret.append("\t%s" % self.item_name)
-            if (typetable.has_key(self.type)):
-                ret.append("\tCategory: %s" % (typetable[self.type]))
+            if (c.typetable.has_key(self.type)):
+                ret.append("\tCategory: %s" % (c.typetable[self.type]))
             else:
                 ret.append("\tCategory: 0x%08X" % (self.type))
             if (self.subtype != 0):
-                if (skilltable.has_key(self.subtype)):
-                    ret.append("\tSubcategory: %s" % (skilltable[self.subtype]))
+                if (c.skilltable.has_key(self.subtype)):
+                    ret.append("\tSubcategory: %s" % (c.skilltable[self.subtype]))
                 else:
                     ret.append("\tSubcategory: 0x%08X" % (self.subtype))
             if (self.visibility == 3):
@@ -257,9 +256,9 @@ class Item(object):
             if (self.basearmor > 0):
                 ret.append("\tBase Armor: %d" % self.basearmor)
             if (self.attr_modified > 0):
-                ret.append("\tAttribute Modifier: +%d %s" % (self.attr_modifier, attrtable[self.attr_modified]))
+                ret.append("\tAttribute Modifier: +%d %s" % (self.attr_modifier, c.attrtable[self.attr_modified]))
             if (self.skill_modified > 0):
-                ret.append("\tSkill Modifier: +%d %s" % (self.skill_modifier, skilltable[self.skill_modified]))
+                ret.append("\tSkill Modifier: +%d %s" % (self.skill_modifier, c.skilltable[self.skill_modified]))
             if (self.hitpoint > 0):
                 ret.append("\tSpecial: +%d Hit Points" % self.hitpoint)
             if (self.mana > 0):
@@ -271,13 +270,13 @@ class Item(object):
             if (self.armor > 0):
                 ret.append("\tSpecial: +%d Armor" % self.armor)
             if (self.incr > 0):
-                if (itemincrtable.has_key(self.incr)):
-                    ret.append("\tSpecial: %s +20%%" % itemincrtable[self.incr])
+                if (c.itemincrtable.has_key(self.incr)):
+                    ret.append("\tSpecial: %s +20%%" % c.itemincrtable[self.incr])
                 else:
                     ret.append("\tSpecial: 0x%08X" % self.incr)
             if (self.flags > 0):
-                if (flagstable.has_key(self.flags)):
-                    ret.append("\tSpecial: %s" % flagstable[self.flags])
+                if (c.flagstable.has_key(self.flags)):
+                    ret.append("\tSpecial: %s" % c.flagstable[self.flags])
                 else:
                     ret.append("\tSpecial: 0x%08X" % self.flags)
             ret.append("\tWeight: %0.1f lbs" % self.weight)

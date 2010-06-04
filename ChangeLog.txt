@@ -1,4 +1,7 @@
-# ChangeLog for Eschalon Book 1 Savefile Editor
+# ChangeLog for Eschalon Savefile Editor
+
+   04 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Initial Book II integration work
 
    01 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a couple of minor typos

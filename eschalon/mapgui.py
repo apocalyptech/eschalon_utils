@@ -23,7 +23,8 @@ import os
 import sys
 import time
 import traceback
-from eschalonb1 import traptable, containertable, objecttypetable, wall_list
+from eschalonb1 import constants as c
+#from eschalonb1 import traptable, containertable, objecttypetable, wall_list, entitytable
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
 
@@ -62,7 +63,7 @@ from eschalonb1.smartdraw import SmartDraw
 from eschalonb1.mapscript import Mapscript
 from eschalonb1.savefile import LoadException
 from eschalonb1.entity import Entity
-from eschalonb1 import app_name, version, url, authors, entitytable
+from eschalonb1 import app_name, version, url, authors
 
 class MapGUI(BaseGUI):
 
@@ -383,7 +384,7 @@ class MapGUI(BaseGUI):
         # and NPCs sorted separately seems worth it
         monsters = {}
         npcs = {}
-        for (key, item) in entitytable.iteritems():
+        for (key, item) in c.entitytable.iteritems():
             if (key < 51):
                 table = monsters
             else:
@@ -421,7 +422,7 @@ class MapGUI(BaseGUI):
         self.object_type_list_rev = {}
         typebox = self.get_widget('scriptid_dd')
         self.useful_combobox(typebox)
-        for (typeidx, (val, text)) in enumerate(objecttypetable.items()):
+        for (typeidx, (val, text)) in enumerate(c.objecttypetable.items()):
             typebox.append_text('%d - %s' % (val, text))
             self.object_type_list[val] = typeidx
             self.object_type_list_rev[typeidx] = val
@@ -873,8 +874,8 @@ class MapGUI(BaseGUI):
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
         self.map.squares[self.sq_y][self.sq_x].entity.entid = entid
-        if (entid in entitytable):
-            health = entitytable[entid].health
+        if (entid in c.entitytable):
+            health = c.entitytable[entid].health
             button = self.get_widget('healthmaxbutton')
             button.set_label('Set to Max Health (%d)' % (health))
         self.update_ent_square_img()
@@ -1546,14 +1547,14 @@ class MapGUI(BaseGUI):
         self.input_text(curpages, binput, 2, 'script', 'Script')
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
-        if (square.scripts[curpages].trap in traptable.keys()):
-            self.input_dropdown(curpages, binput, 4, 'trap', 'Trap', traptable.values(), None, self.on_script_dropdown_changed)
+        if (square.scripts[curpages].trap in c.traptable.keys()):
+            self.input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
         else:
             self.input_uchar(curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
-        if (square.scripts[curpages].state in containertable.keys()):
-            self.input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", containertable.values(), None, self.on_script_dropdown_changed)
+        if (square.scripts[curpages].state in c.containertable.keys()):
+            self.input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
         else:
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
@@ -1682,8 +1683,8 @@ class MapGUI(BaseGUI):
     def on_healthmaxbutton_clicked(self, widget):
         """ Set the entity's health to its maximum. """
         entid = self.map.squares[self.sq_y][self.sq_x].entity.entid
-        if (entid in entitytable):
-            health = entitytable[entid].health
+        if (entid in c.entitytable):
+            health = c.entitytable[entid].health
             self.get_widget('health').set_value(health)
 
     def on_setinitial_clicked(self, widget):
@@ -1789,7 +1790,7 @@ class MapGUI(BaseGUI):
             self.populate_entity_tab(square)
 
         # ... and scripts (first the ID)
-        if (square.scriptid in objecttypetable):
+        if (square.scriptid in c.objecttypetable):
             self.get_widget('scriptid_num_align').hide()
             self.get_widget('scriptid_dd_align').show()
             self.get_widget('scriptid_dd').set_active(self.object_type_list[square.scriptid])
@@ -1809,9 +1810,9 @@ class MapGUI(BaseGUI):
 
     def populate_entity_tab(self, square):
         """ Populates the entity tab of the square editing screen. """
-        if (square.entity.entid in entitytable):
-            if (entitytable[square.entity.entid].name in self.entitykeys):
-                idx = self.entitykeys.index(entitytable[square.entity.entid].name)
+        if (square.entity.entid in c.entitytable):
+            if (c.entitytable[square.entity.entid].name in self.entitykeys):
+                idx = self.entitykeys.index(c.entitytable[square.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
                 # TODO: Warning/exit on here
@@ -2164,17 +2165,17 @@ class MapGUI(BaseGUI):
                 # Ah well.  For now I'm just going to let it do that.
                 #if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                 #        self.draw_decal_checkbox.get_active()):
-                if (square.walldecalimg in wall_list['walldecal_seethrough']):
+                if (square.walldecalimg in c.wall_list['walldecal_seethrough']):
                     square.wall = 5
-                elif (square.wallimg in wall_list['wall_blocked']):
+                elif (square.wallimg in c.wall_list['wall_blocked']):
                     square.wall = 1
-                elif (square.wallimg in wall_list['wall_seethrough']):
+                elif (square.wallimg in c.wall_list['wall_seethrough']):
                     square.wall = 5
-                elif (square.decalimg in wall_list['decal_blocked']):
+                elif (square.decalimg in c.wall_list['decal_blocked']):
                     square.wall = 1
-                elif (square.decalimg in wall_list['decal_seethrough']):
+                elif (square.decalimg in c.wall_list['decal_seethrough']):
                     square.wall = 5
-                elif (square.floorimg in wall_list['floor_seethrough']):
+                elif (square.floorimg in c.wall_list['floor_seethrough']):
                     square.wall = 5
                 else:
                     square.wall = 0
@@ -2267,17 +2268,17 @@ class MapGUI(BaseGUI):
             square.wall = 0
         if (self.erase_floor_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.floorimg in wall_list['floor_seethrough']):
+                if (square.floorimg in c.wall_list['floor_seethrough']):
                     square.wall = 0
             square.floorimg = 0
         if (self.erase_decal_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.decalimg in wall_list['decal_blocked']+wall_list['decal_seethrough']):
+                if (square.decalimg in c.wall_list['decal_blocked']+c.wall_list['decal_seethrough']):
                     square.wall = 0
             square.decalimg = 0
         if (self.erase_wall_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.wallimg in wall_list['wall_blocked']+wall_list['wall_seethrough']):
+                if (square.wallimg in c.wall_list['wall_blocked']+c.wall_list['wall_seethrough']):
                     square.wall = 0
             square.wallimg = 0
         if (self.erase_walldecal_checkbox.get_active()):
