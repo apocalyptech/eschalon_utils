@@ -22,7 +22,6 @@
 from eschalonb1 import constants as c
 from eschalonb1.character import Character
 from eschalonb1.savefile import LoadException
-#from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
 
 class MainCLI(object):
 
