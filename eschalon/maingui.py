@@ -805,8 +805,8 @@ class MainGUI(BaseGUI):
                 'quiver', 'weap_prim', 'weap_alt', 'shield' ]:
             self.populate_equip_button(equip, True)
 
-        for row in range(10):
-            for col in range(7):
+        for row in range(char.inv_rows):
+            for col in range(char.inv_cols):
                 self.populate_inv_button(row, col, True)
 
         for num in range(8):
@@ -825,6 +825,9 @@ class MainGUI(BaseGUI):
         division, but this is far more maintainable in the long run.  I've honestly been
         considering folding in the rest of the forms into here as well, for similar reasons.
         gui_draw_int(), gui_draw_str(), etc.
+
+        Note that this function will draw in the inventory size for Book 2 - the Book 1
+        loading procedures should hide the extra data as-necessary.
         """
 
         # First our inventory
@@ -902,11 +905,11 @@ class MainGUI(BaseGUI):
     def gui_add_inv_page(self, container, rownum):
         """ Create an inventory page, given the row number. """
         if (rownum == 9):
-            lines_to_alloc = 8
+            lines_to_alloc = 10
         else:
-            lines_to_alloc = 7
+            lines_to_alloc = 8
         table = self.gui_item_page(container, '<b>Inventory Row %d</b>' % (rownum+1), lines_to_alloc, 'invtable%d' % (rownum))
-        for num in range(7):
+        for num in range(8):
             table.attach(self.gui_item_label('Column %d:' % (num+1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('inv_%d_%d' % (rownum, num), self.on_inv_clicked, self.on_inv_action_clicked),
                     2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
@@ -916,7 +919,15 @@ class MainGUI(BaseGUI):
             goldnote.set_markup('<i><b>Note:</b> Column seven is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote.set_line_wrap(True)
             goldnote.show()
-            table.attach(goldnote, 2, 3, 7, 8, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+            self.register_widget('b1_gold_note', goldnote)
+            table.attach(goldnote, 2, 3, 8, 9, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+            goldnote2 = gtk.Label()
+            goldnote2.set_alignment(0, 0.5)
+            goldnote2.set_markup('<i><b>Note:</b> Column eight is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
+            goldnote2.set_line_wrap(True)
+            goldnote2.show()
+            self.register_widget('b2_gold_note', goldnote)
+            table.attach(goldnote2, 2, 3, 9, 10, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
 
     def gui_add_ready_page(self, container):
         """ Create a page for our readied items. """

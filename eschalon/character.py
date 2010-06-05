@@ -38,6 +38,7 @@ class Character(object):
     def __init__(self, df):
         """ A fresh object. """
 
+        self.book = c.book
         self.name = ''
         self.origin = ''
         self.axiom = ''
@@ -62,9 +63,9 @@ class Character(object):
         self.torchused = -1
         self.readyslots = []
         self.inventory = []
-        for i in range(10):
+        for i in range(self.inv_rows):
             self.inventory.append([])
-            for j in range(7):
+            for j in range(self.inv_cols):
                 self.inventory[i].append(Item())
         self.readyitems = []
         for i in range(8):
@@ -96,6 +97,13 @@ class Character(object):
         self.disease = -1
         self.df = df
 
+    def set_inv_size(self, rows, cols):
+        """
+        Sets the size of the inventory array
+        """
+        self.inv_rows = rows
+        self.inv_cols = cols
+
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
@@ -103,6 +111,9 @@ class Character(object):
         newchar = Character.load(self.df.filename)
 
         # Single vals (no need to do actual replication)
+        newchar.book = self.book
+        newchar.inv_rows = self.inv_rows
+        newchar.inv_cols = self.inv_cols
         newchar.name = self.name
         newchar.origin = self.origin
         newchar.axiom = self.axiom
@@ -149,8 +160,8 @@ class Character(object):
             newchar.skills[key] = val
 
         # Objects that need copying
-        for i in range(10):
-            for j in range(7):
+        for i in range(self.inv_rows):
+            for j in range(self.inv_cols):
                 newchar.inventory[i][j] = self.inventory[i][j].replicate()
         for i in range(8):
             newchar.readyitems[i] = self.readyitems[i].replicate()
@@ -222,7 +233,7 @@ class Character(object):
             left-to-right, top-to-bottom format on the inventory screen. """
         self.inventory[self.curinvrow][self.curinvcol].read(self.df)
         self.curinvcol = self.curinvcol + 1
-        if (self.curinvcol == 7):
+        if (self.curinvcol == self.inv_cols):
             self.curinvcol = 0
             self.curinvrow = self.curinvrow + 1
 
@@ -355,7 +366,7 @@ class Character(object):
             self.unknown.preinvzero2 = self.df.readint()
 
             # Inventory
-            for i in range(70):
+            for i in range(self.inv_rows * self.inv_cols):
                 self.additem()
 
             # Equipped
@@ -567,16 +578,24 @@ class Character(object):
             raise LoadException(str(e))
 
         if second == 0:
+            c.switch_to_book(1)
             return B1Character(df)
         else:
+            c.switch_to_book(2)
             return B2Character(df)
 
 class B1Character(Character):
     """
     Book 1 Character definitions
     """
+    def __init__(self, df):
+        self.set_inv_size(10, 7)
+        super(B1Character, self).__init__(df)
 
 class B2Character(Character):
     """
     Book 2 Character definitions
     """
+    def __init__(self, df):
+        self.set_inv_size(10, 8)
+        super(B2Character, self).__init__(df)

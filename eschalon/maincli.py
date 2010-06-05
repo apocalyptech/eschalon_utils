@@ -239,10 +239,10 @@ class MainCLI(object):
         print "INVENTORY"
         print "---------"
         print
-        for row in range(10):
-            for col in range(7):
+        for row in range(char.inv_rows):
+            for col in range(char.inv_cols):
                 print "Row %d, Col %d:" % (row+1, col+1)
-                if (row == 9 and col == 6):
+                if (row == (char.inv_rows-1) and col == (char.inv_cols-1)):
                     print "\tGold: %d" % (char.gold)
                 else:
                     print char.inventory[row][col].display(unknowns)
