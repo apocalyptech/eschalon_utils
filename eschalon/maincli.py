@@ -36,7 +36,7 @@ class MainCLI(object):
 
         # Load in our file
         try:
-            char = Character(options['filename'])
+            char = Character.load(options['filename'])
             char.read()
             self.char = char
         except LoadException, e:

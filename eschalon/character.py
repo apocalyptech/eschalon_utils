@@ -35,10 +35,9 @@ class Character(object):
       * Total time spent playing the game
     """
 
-    def __init__(self, filename):
+    def __init__(self, df):
         """ A fresh object. """
 
-        self.df = None
         self.name = ''
         self.origin = ''
         self.axiom = ''
@@ -95,13 +94,13 @@ class Character(object):
         self.picid = -1
         self.statuses = []
         self.disease = -1
-        self.df = Savefile(filename)
+        self.df = df
 
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
-        newchar = Character(self.df.filename)
+        newchar = Character.load(self.df.filename)
 
         # Single vals (no need to do actual replication)
         newchar.name = self.name
@@ -545,3 +544,39 @@ class Character(object):
         else:
             return 'EL'
 
+    @staticmethod
+    def load(filename):
+        """
+        Static method to load a character file.  This will open the file once and
+        read in a bit of data to determine whether this is a Book 1 character file or
+        a Book 2 character file, and then call the appropriate constructor and
+        return the object.  The individual Book constructors expect to be passed in
+        an 
+        """
+        df = Savefile(filename)
+        # The initial "zero" padding in Book 1 is four bytes, and only one byte in
+        # Book 2.  Since the next bit of data is the character name, as a string,
+        # if the second byte of the file is 00, we'll assume that it's a Book 1 file,
+        # and Book 2 otherwise.
+        try:
+            df.open_r()
+            initital = df.readchar()
+            second = df.readchar()
+            df.close()
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+        if second == 0:
+            return B1Character(df)
+        else:
+            return B2Character(df)
+
+class B1Character(Character):
+    """
+    Book 1 Character definitions
+    """
+
+class B2Character(Character):
+    """
+    Book 2 Character definitions
+    """

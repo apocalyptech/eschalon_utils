@@ -342,7 +342,7 @@ class MainGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            char = Character(filename)
+            char = Character.load(filename)
             char.read()
         except LoadException, e:
             errordiag = self.get_widget('loaderrorwindow')
