@@ -27,7 +27,7 @@ url = 'http://apocalyptech.com/eschalon/'
 authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich', '', 'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 
 __all__ = [ 'app_name', 'version', 'url', 'authors'
-        'Savefile', 'Item', 'Unknowns', 'Character', 'MainGUI', 'LoadException',
+        'Savefile', 'Item', 'B1Unknowns', 'Character', 'MainGUI', 'LoadException',
         'Square', 'Mapscript', 'Undo',
         'constants' ]
 

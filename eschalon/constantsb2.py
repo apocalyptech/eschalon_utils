@@ -86,23 +86,23 @@ class B2Constants:
             0x08: 'Armor (Legs)',
             0x09: 'Armor (Shield)',
             0x0A: 'Armor (Feet)',
-            0x0B: 'unk',
-            0x0C: 'unk',
+            0x0B: 'Amulet',
+            0x0C: 'Ring',
             0x0D: 'unk',
             0x0E: 'unk',
-            0x0F: 'unk',
-            0x10: 'unk',
-            0x11: 'unk',
-            0x12: 'unk',
-            0x13: 'unk',
+            0x0F: 'Potion',
+            0x10: 'Recipe',
+            0x11: 'Reagent',
+            0x12: 'Book',
+            0x13: 'Miscellaneous',
             0x14: 'unk',
             0x15: 'Gem',
             0x16: 'unk',
-            0x17: 'unk',
-            0x18: 'unk',
+            0x17: 'Consumable (food)',
+            0x18: 'Consumable (waterskin)',
             0x19: 'unk',
-            0x1A: 'unk',
-            0x1B: 'unk',
+            0x1A: 'n/a',
+            0x1B: 'Special',
             0x1C: 'unk',
             0x1D: 'unk',
             0x1E: 'unk',
@@ -123,8 +123,10 @@ class B2Constants:
             0x2D: 'unk',
             0x2E: 'unk',
             0x2F: 'unk',
+            0x10D: 'Wand'
             # Not sure if there's anything beyond here...
         }
+
     spelltable = {
             0: 'Draw Water',
             1: 'Element Armor',
@@ -172,33 +174,35 @@ class B2Constants:
             43: 'Mass Boil',
             44: 'Summon Beast'
         }
+    
+    # TODO: this was 1-based in Book1, should check that out
     statustable = {
-            1: 'Chameleon',
-            2: 'Protection from Curses',
-            3: 'Entangled',
-            4: 'Paralyzed',
-            5: 'Poisoned',
-            6: 'Scared',
-            7: 'Stunned',
-            8: 'Off-Balance',
-            9: 'Dense Nimbus',
-            10: 'Enchanted Weapon',
-            11: 'Cat\'s Eyes',
-            12: 'Gravedigger\'s Flame',
-            13: 'Blessed',
-            14: 'Haste',
-            15: 'Ogre Strength',
-            16: 'Invisible',
-            17: 'Leatherskin',
-            18: 'Nimbleness',
-            19: 'Reveal Map',
-            20: 'Stoneskin',
-            21: 'Keensight',
-            22: 'Enkindled Weapon',
-            23: 'Elemental Armor',
-            24: 'Predator Sight',
-            25: 'Mana Fortified',
-            26: 'Greater Protection',
+            0: 'Chameleon',
+            1: 'Protection from Curses',
+            2: 'Entangled',
+            3: 'Paralyzed',
+            4: 'Poisoned',
+            5: 'Scared',
+            6: 'Stunned',
+            7: 'Off-Balance',
+            8: 'Dense Nimbus',
+            9: 'Enchanted Weapon',
+            10: 'Cat\'s Eyes',
+            11: 'Gravedigger\'s Flame',
+            12: 'Blessed',
+            13: 'Haste',
+            14: 'Ogre Strength',
+            15: 'Invisible',
+            16: 'Leatherskin',
+            17: 'Nimbleness',
+            18: 'Reveal Map',
+            19: 'Stoneskin',
+            20: 'Keensight',
+            21: 'Enkindled Weapon',
+            22: 'Elemental Armor',
+            23: 'Predator Sight',
+            24: 'Mana Fortified',
+            25: 'Greater Protection',
         }
 
     # Rather a lot of duplicated information in here, but it turns
@@ -294,4 +298,77 @@ class B2Constants:
             0x20000000: '(unknown)',
             0x40000000: '(unknown)',
             0x80000000: '(unknown)'
+        }
+
+    alchemytable = {
+            1: 'Cat\'s Eyes Brew',
+            2: 'Detox Serum',
+            3: 'Demon Oil',
+            4: 'Elixir of Cure Ailment',
+            5: 'Flask of Charm Cloud',
+            6: 'Flask of Toxic Aura',
+            7: 'Healing Elixir',
+            8: 'Invisibility',
+            9: 'Mana Potion',
+            10: 'Potion of Fortify Mana',
+            11: 'Potion of Greater Protection',
+            12: 'Potion of Haste',
+            13: 'Potion of Keensight',
+            14: 'Potion of Leatherskin',
+            15: 'Potion of Nimbleness',
+            16: 'Potion of Ogre Strength',
+            17: 'Potion of Predator Sight',
+            18: 'Potion of Restoration',
+            19: 'Potion of Stone Skin',
+            20: 'Imbue ToHit',
+            21: 'Imbue Damage',
+            22: 'Harden Armor',
+            23: 'Imbue with Fire',
+            24: 'Imbue with Cold',
+            25: 'Imbue with Poison'
+        }
+
+    gendertable = {
+            1: 'Male',
+            2: 'Female'
+        }
+
+    origintable = {
+            1: 'Nor\'lander',
+            2: 'Barrean',
+            3: 'Emayu',
+            4: 'Therish',
+            5: 'Kessian'
+        }
+
+    axiomtable = {
+            1: 'Atheistic',
+            2: 'Druidic',
+            3: 'Virtuous',
+            4: 'Nefarious',
+            5: 'Agnostic'
+        }
+
+    classtable = {
+            1: 'Fighter',
+            2: 'Rogue',
+            3: 'Magick User',
+            4: 'Healer',
+            5: 'Ranger'
+        }
+
+    picidtable = {
+            1: 'Male #1',
+            2: 'Male #2',
+            3: 'Male #3',
+            4: 'Male #4',
+            5: 'Male #5',
+            6: 'Male #6',
+            7: 'Female #1',
+            8: 'Female #2',
+            9: 'Female #3',
+            10: 'Female #4',
+            11: 'Female #5',
+            12: 'Female #6',
+            4294967295: 'Custom'
         }

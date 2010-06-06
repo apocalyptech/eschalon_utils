@@ -931,8 +931,8 @@ class MainGUI(BaseGUI):
 
     def gui_add_ready_page(self, container):
         """ Create a page for our readied items. """
-        table = self.gui_item_page(container, '<b>Readied Items</b>', 8, 'readytable')
-        for num in range(8):
+        table = self.gui_item_page(container, '<b>Readied Items</b>', 10, 'readytable')
+        for num in range(10):
             table.attach(self.gui_item_label('Item %d:' % (num+1), 'ready_%d_label' % (num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('ready_%d' % (num), self.on_ready_clicked, self.on_ready_action_clicked),
                     2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)

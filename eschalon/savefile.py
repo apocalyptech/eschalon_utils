@@ -141,16 +141,28 @@ class Savefile(object):
         self.df.write(pack('<I', intval))
 
     def readfloat(self):
-        """ Read a float (actually a double) from the savefile. """
+        """ Read a float from the savefile. """
+        if (not self.opened_r):
+            raise IOError('File is not open for reading')
+        return unpack('f', self.df.read(4))[0]
+
+    def writefloat(self, floatval):
+        """ Write a float to the savefile. """
+        if (not self.opened_w):
+            raise IOError('File is not open for writing')
+        self.df.write(pack('f', floatval))
+
+    def readdouble(self):
+        """ Read a double from the savefile. """
         if (not self.opened_r):
             raise IOError('File is not open for reading')
         return unpack('d', self.df.read(8))[0]
 
-    def writefloat(self, floatval):
-        """ Write a float (actually a double) to the savefile. """
+    def writedouble(self, doubleval):
+        """ Write a double to the savefile. """
         if (not self.opened_w):
             raise IOError('File is not open for writing')
-        self.df.write(pack('d', floatval))
+        self.df.write(pack('d', doubleval))
 
     def readstr(self):
         """ Read a string from the savefile, delimited by \r\n """

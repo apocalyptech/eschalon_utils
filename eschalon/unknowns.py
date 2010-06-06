@@ -21,7 +21,7 @@
 
 from eschalonb1.item import Item
 
-class Unknowns(object):
+class B1Unknowns(object):
     """ A class to hold some unknown data, so as not to muddy up the
         main Character class. """
 
@@ -31,8 +31,6 @@ class Unknowns(object):
         self.initzero = -1
         self.charstring = ''
         self.charone = -1
-        self.beginzero1 = -1
-        self.beginzero2 = -1
         self.sparseiblock = []
         self.iblock1 = []
         self.ssiblocks1 = []
@@ -58,8 +56,6 @@ class Unknowns(object):
         newunknown.initzero = self.initzero
         newunknown.charstring = self.charstring
         newunknown.charone = self.charone
-        newunknown.beginzero1 = self.beginzero1
-        newunknown.beginzero2 = self.beginzero2
         newunknown.extstr1 = self.extstr1
         newunknown.extstr2 = self.extstr2
         newunknown.anotherzero = self.anotherzero
@@ -105,8 +101,6 @@ class Unknowns(object):
         ret.append("Initial Zero: %d" % self.initzero)
         ret.append("Empty Character String: %s" % self.charstring)
         ret.append("Usually 1: %d" % self.charone)
-        ret.append("Another integer 1, generally 0: %d" % self.beginzero1)
-        ret.append("Another integer 2, generally 0: %d" % self.beginzero2)
         ret.append(self.iblock(1, self.sparseiblock, 'Sparse integers (interleaved with char statuses)'))
         ret.append(self.iblock(1, self.iblock1))
         ret.append("Block of 2 Strings plus 1 Integer:")
@@ -130,3 +124,27 @@ class Unknowns(object):
             ret.append("File has extra data appended at the end: %d bytes" % len(self.extradata))
 
         return "\n".join(ret)
+
+class B2Unknowns(object):
+    """ A class to hold some unknown data, so as not to muddy up the
+        main Character class. """
+
+    def __init__(self):
+        """ A fresh object with no data. """
+
+        self.initzero = -1
+        self.version = -1 # I suspect this might be savefile version
+        self.zero1 = -1
+        self.fourteenzeros = []
+        self.strangeblock = []
+        self.unknowni1 = -1
+        self.unknowni2 = -1
+        self.unknowni3 = -1
+        self.usually_one = -1
+        self.unknowns1 = -1
+        self.unknownstr1 = -1
+        self.twentyninezeros = []
+        self.unknownstr2 = -1
+        self.unknownstr3 = -1
+        self.unknowns2 = -1
+        self.extradata = ''

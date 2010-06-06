@@ -40,7 +40,7 @@ class MainCLI(object):
             char.read()
             self.char = char
         except LoadException, e:
-            print '"' + options['filename'] + '" could not be opened'
+            print '"' + options['filename'] + '" could not be opened: %s' % (str(e))
             return False
 
         # The --list options will return automatically.  Everything
@@ -88,7 +88,27 @@ class MainCLI(object):
         """ Print out a textual representation of the character's name/level/orientation."""
 
         char = self.char
-        print "%s - Lvl %d %s %s %s" % (char.name, char.level, char.origin, char.axiom, char.classname)
+        if char.book == 1:
+            print "%s - Lvl %d %s %s %s" % (char.name, char.level, char.origin, char.axiom, char.classname)
+        else:
+            str = ['%s - Lvl %d' % (char.name, char.level)]
+            if char.gender in c.gendertable:
+                str.append(c.gendertable[char.gender])
+            else:
+                str.append('(gender %d)' % (char.gender))
+            if char.origin in c.origintable:
+                str.append(c.origintable[char.origin])
+            else:
+                str.append('(origin %d)' % (char.origin))
+            if char.axiom in c.axiomtable:
+                str.append(c.axiomtable[char.axiom])
+            else:
+                str.append('(axiom %d)' % (char.axiom))
+            if char.classname in c.classtable:
+                str.append(c.classtable[char.classname])
+            else:
+                str.append('(class %d)' % (char.classname))
+            print ' '.join(str)
         print
 
     def display_stats(self):
@@ -96,10 +116,16 @@ class MainCLI(object):
 
         char = self.char
 
-        if (char.picid % 256 == 0):
-            print "Profile Picture %d" % (int(char.picid / 256)+1)
+        if char.book == 1:
+            if (char.picid % 256 == 0):
+                print "Profile Picture %d" % (int(char.picid / 256)+1)
+            else:
+                print "Profile Picture ID: %d" % char.picid
         else:
-            print "Profile Picture ID: %d" % char.picid
+            if char.picid in c.picidtable:
+                print "Profile Picture: %s" % (c.picidtable[char.picid])
+            else:
+                print "Profile Picture ID: %d" % char.picid
         print
         print "STR: %2d    INT: %2d     HP: %d/%d" % (char.strength, char.intelligence, char.curhp, char.maxhp)
         print "DEX: %2d    WIS: %2d     MP: %d/%d" % (char.dexterity, char.wisdom, char.curmana, char.maxmana)
@@ -116,9 +142,10 @@ class MainCLI(object):
                     print "\t* %s (Turns left: %d)" % (c.statustable[i], char.statuses[i])
                 else:
                     print "\t* Status %d (unknown) (Turns left: %d)" % (i, char.statuses[i])
-        for key in c.diseasetable.keys():
-            if (char.disease & key == key):
-                print "\t* Diseased: %s" % (c.diseasetable[key])
+        if char.book == 1:
+            for key in c.diseasetable.keys():
+                if (char.disease & key == key):
+                    print "\t* Diseased: %s" % (c.diseasetable[key])
         print
 
         print "SKILLS"
@@ -229,8 +256,9 @@ class MainCLI(object):
         print char.shield.display(unknowns)
         print "Feet:"
         print char.feet.display(unknowns)
-        print "Alternate Weapon:"
-        print char.weap_alt.display(unknowns)
+        if char.book == 1:
+            print "Alternate Weapon:"
+            print char.weap_alt.display(unknowns)
         
     def display_inventory(self, unknowns=False):
         """ Print out a textual representation of the character's inventory. """

@@ -23,8 +23,7 @@ import struct
 from eschalonb1 import constants as c
 from eschalonb1.savefile import Savefile, LoadException
 from eschalonb1.item import Item
-from eschalonb1.unknowns import Unknowns
-#from eschalonb1 import skilltable, spelltable, dirtable, statustable, diseasetable
+from eschalonb1.unknowns import B1Unknowns, B2Unknowns
 
 class Character(object):
     """
@@ -33,6 +32,11 @@ class Character(object):
       * Which map the character's currently on (orientation/position ARE stored here though)
       * Time of day in the game world
       * Total time spent playing the game
+
+    Note that the base class does not define read() and write() methods, which
+    are left up to the specific Book classes (the theory being that the actual
+    underlying formats can be rather different, and it doesn't really make sense
+    to try and work around that.
     """
 
     def __init__(self, df):
@@ -40,9 +44,6 @@ class Character(object):
 
         self.book = c.book
         self.name = ''
-        self.origin = ''
-        self.axiom = ''
-        self.classname = ''
         self.strength = -1
         self.dexterity = -1
         self.endurance = -1
@@ -66,43 +67,44 @@ class Character(object):
         for i in range(self.inv_rows):
             self.inventory.append([])
             for j in range(self.inv_cols):
-                self.inventory[i].append(Item())
+                self.inventory[i].append(Item.new(c.book))
         self.readyitems = []
-        for i in range(8):
-            self.readyitems.append(Item())
+        for i in range(self.ready_rows * self.ready_cols):
+            self.readyitems.append(Item.new(c.book))
         self.curinvcol = 0
         self.curinvrow = 0
-        self.quiver = Item()
-        self.helm = Item()
-        self.cloak = Item()
-        self.amulet = Item()
-        self.torso = Item()
-        self.weap_prim = Item()
-        self.belt = Item()
-        self.gauntlet = Item()
-        self.legs = Item()
-        self.ring1 = Item()
-        self.ring2 = Item()
-        self.shield = Item()
-        self.feet = Item()
-        self.weap_alt = Item()
+        self.quiver = Item.new(c.book)
+        self.helm = Item.new(c.book)
+        self.cloak = Item.new(c.book)
+        self.amulet = Item.new(c.book)
+        self.torso = Item.new(c.book)
+        self.weap_prim = Item.new(c.book)
+        self.belt = Item.new(c.book)
+        self.gauntlet = Item.new(c.book)
+        self.legs = Item.new(c.book)
+        self.ring1 = Item.new(c.book)
+        self.ring2 = Item.new(c.book)
+        self.shield = Item.new(c.book)
+        self.feet = Item.new(c.book)
         self.spells = []
         self.orientation = -1
         self.xpos = -1
         self.ypos = -1
-        self.unknown = Unknowns()
         self.fxblock = []
         self.picid = -1
         self.statuses = []
-        self.disease = -1
+        self.extra_att_points = -1
+        self.extra_skill_points = -1
         self.df = df
 
-    def set_inv_size(self, rows, cols):
+    def set_inv_size(self, rows, cols, ready_rows, ready_cols):
         """
         Sets the size of the inventory array
         """
         self.inv_rows = rows
         self.inv_cols = cols
+        self.ready_rows = ready_rows
+        self.ready_cols = ready_cols
 
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
@@ -142,6 +144,8 @@ class Character(object):
         newchar.ypos = self.ypos
         newchar.picid = self.picid
         newchar.disease = self.disease
+        newchar.extra_att_points = self.extra_att_points
+        newchar.extra_skill_points = self.extra_skill_points
 
         # Lists that need copying
         for val in self.spells:
@@ -163,7 +167,7 @@ class Character(object):
         for i in range(self.inv_rows):
             for j in range(self.inv_cols):
                 newchar.inventory[i][j] = self.inventory[i][j].replicate()
-        for i in range(8):
+        for i in range(self.ready_rows * self.ready_cols):
             newchar.readyitems[i] = self.readyitems[i].replicate()
         newchar.quiver = self.quiver.replicate()
         newchar.helm = self.helm.replicate()
@@ -237,9 +241,50 @@ class Character(object):
             self.curinvcol = 0
             self.curinvrow = self.curinvrow + 1
 
-    def addspell(self):
-        """ Add a spell. """
-        self.spells.append(self.df.readint())
+    @staticmethod
+    def load(filename):
+        """
+        Static method to load a character file.  This will open the file once and
+        read in a bit of data to determine whether this is a Book 1 character file or
+        a Book 2 character file, and then call the appropriate constructor and
+        return the object.  The individual Book constructors expect to be passed in
+        an 
+        """
+        df = Savefile(filename)
+        # The initial "zero" padding in Book 1 is four bytes, and only one byte in
+        # Book 2.  Since the next bit of data is the character name, as a string,
+        # if the second byte of the file is 00, we'll assume that it's a Book 1 file,
+        # and Book 2 otherwise.
+        try:
+            df.open_r()
+            initital = df.readchar()
+            second = df.readchar()
+            df.close()
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+        if second == 0:
+            c.switch_to_book(1)
+            return B1Character(df)
+        else:
+            c.switch_to_book(2)
+            return B2Character(df)
+
+class B1Character(Character):
+    """
+    Book 1 Character definitions
+    """
+    def __init__(self, df):
+        self.set_inv_size(10, 7)
+        super(B1Character, self).__init__(df)
+
+        # Book 1 specific vars
+        self.origin = ''
+        self.axiom = ''
+        self.classname = ''
+        self.weap_alt = Item.new(1)
+        self.disease = -1
+        self.unknown = B1Unknowns()
 
     def read(self):
         """ Read in the whole save file from a file descriptor. """
@@ -280,10 +325,8 @@ class Character(object):
             self.experience = self.df.readint()
             self.level = self.df.readint()
             self.gold = self.df.readint()
-
-            # Unknowns
-            self.unknown.beginzero1 = self.df.readint()
-            self.unknown.beginzero2 = self.df.readint()
+            self.extra_att_points = self.df.readint()
+            self.extra_skill_points = self.df.readint()
 
             # Character statuses
             for i in range(26):
@@ -449,10 +492,8 @@ class Character(object):
         self.df.writeint(self.experience)
         self.df.writeint(self.level)
         self.df.writeint(self.gold)
-
-        # Unknowns
-        self.df.writeint(self.unknown.beginzero1)
-        self.df.writeint(self.unknown.beginzero2)
+        self.df.writeint(self.extra_att_points)
+        self.df.writeint(self.extra_skill_points)
 
         # Statuses
         for i in range(len(self.statuses)):
@@ -549,53 +590,214 @@ class Character(object):
         # Clean up
         self.df.close()
 
+    def addspell(self):
+        """ Add a spell. """
+        self.spells.append(self.df.readint())
+
     def spelltype(self, num):
         if (num < 21):
             return 'DI'
         else:
             return 'EL'
 
-    @staticmethod
-    def load(filename):
-        """
-        Static method to load a character file.  This will open the file once and
-        read in a bit of data to determine whether this is a Book 1 character file or
-        a Book 2 character file, and then call the appropriate constructor and
-        return the object.  The individual Book constructors expect to be passed in
-        an 
-        """
-        df = Savefile(filename)
-        # The initial "zero" padding in Book 1 is four bytes, and only one byte in
-        # Book 2.  Since the next bit of data is the character name, as a string,
-        # if the second byte of the file is 00, we'll assume that it's a Book 1 file,
-        # and Book 2 otherwise.
-        try:
-            df.open_r()
-            initital = df.readchar()
-            second = df.readchar()
-            df.close()
-        except (IOError, struct.error), e:
-            raise LoadException(str(e))
-
-        if second == 0:
-            c.switch_to_book(1)
-            return B1Character(df)
-        else:
-            c.switch_to_book(2)
-            return B2Character(df)
-
-class B1Character(Character):
-    """
-    Book 1 Character definitions
-    """
-    def __init__(self, df):
-        self.set_inv_size(10, 7)
-        super(B1Character, self).__init__(df)
-
 class B2Character(Character):
     """
     Book 2 Character definitions
     """
     def __init__(self, df):
-        self.set_inv_size(10, 8)
+        self.set_inv_size(10, 8, 2, 5)
         super(B2Character, self).__init__(df)
+
+        # Book 2 specific vars
+        self.gender = -1
+        self.origin = -1
+        self.axiom = -1
+        self.classname = -1
+        self.hunger = -1
+        self.thirst = -1
+        self.portal_locs = []
+        self.readied_spell = []
+        self.alchemy_book = []
+        self.statuses_extra = []
+        self.permstatuses = -1
+        self.keyring = []
+        self.equip_slot_1 = []
+        self.equip_slot_2 = []
+        self.unknown = B2Unknowns()
+
+    def read(self):
+        """ Read in the whole save file from a file descriptor. """
+
+        try:
+
+            # Open the file
+            self.df.open_r()
+
+            # Start processing
+            self.unknown.initzero = self.df.readchar()
+
+            # Character info
+            self.name = self.df.readstr()
+            self.gender = self.df.readchar()
+            self.origin = self.df.readchar()
+            self.axiom = self.df.readchar()
+            self.classname = self.df.readchar()
+            self.unknown.version = self.df.readchar()
+            if self.unknown.version == 1:
+                raise LoadException('This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
+            self.strength = self.df.readchar()
+            self.dexterity = self.df.readchar()
+            self.endurance = self.df.readchar()
+            self.speed = self.df.readchar()
+            self.intelligence = self.df.readchar()
+            self.wisdom = self.df.readchar()
+            self.perception = self.df.readchar()
+            self.concentration = self.df.readchar()
+
+            # Skills
+            # TODO: How does this get sorted?  It seems to work for B1 but I
+            # find it suspicious nonetheless
+            for key in sorted(c.skilltable.keys()):
+                self.addskill(key, self.df.readchar())
+
+            # More stats
+            self.extra_att_points = self.df.readchar()
+            self.extra_skill_points = self.df.readchar()
+            self.curhp = self.df.readint()
+            self.curmana = self.df.readint()
+            self.maxhp = self.df.readint()
+            self.maxmana = self.df.readint()
+            self.experience = self.df.readint()
+            self.level = self.df.readint()
+            self.hunger = self.df.readint()
+            self.thirst = self.df.readint()
+
+            # FX block
+            for i in range(7):
+                self.fxblock.append(self.df.readint())
+
+            # Non-permanent Chracter Statuses (will expire automatically)
+            for i in range(26):
+                self.statuses.append(self.df.readint())
+                # TODO: double-check that this is what I think it is
+                self.statuses_extra.append(self.df.readint())
+
+            # Portal anchor locations
+            for i in range(6):
+                portal_anchor = []
+                portal_anchor.append(self.df.readint())
+                portal_anchor.append(self.df.readstr())
+                portal_anchor.append(self.df.readstr())
+                self.portal_locs.append(portal_anchor)
+
+            # Unknown
+            self.unknown.zero1 = self.df.readchar()
+
+            # Spells
+            for i in range(len(c.spelltable)):
+                self.addspell()
+
+            # Currently-readied spell
+            self.readied_spell.append(self.df.readstr())
+            self.readied_spell.append(self.df.readchar())
+
+            # Readied Spells
+            for i in range(10):
+                self.addreadyslot(self.df.readstr(), self.df.readchar())
+
+            # Alchemy Recipes
+            for i in range(25):
+                self.addalchemy()
+
+            # Some unknown values (zeroes so far)
+            for i in range(14):
+                self.unknown.fourteenzeros.append(self.df.readint())
+
+            # Position/orientation
+            self.orientation = self.df.readchar()
+            self.xpos = self.df.readint()
+            self.ypos = self.df.readint()
+
+            # Some unknowns
+            for i in range(5):
+                self.unknown.strangeblock.append(self.df.readchar())
+            self.unknown.unknowni1 = self.df.readint()
+            self.unknown.unknowni2 = self.df.readint()
+            self.unknown.unknowni3 = self.df.readint()
+            self.unknown.usually_one = self.df.readchar()
+
+            # Permanent Statuses (bitfield)
+            self.permstatuses = self.df.readint()
+
+            # More stats
+            self.picid = self.df.readint()
+            self.gold = self.df.readint()
+            self.torches = self.df.readint()
+            self.torchused = self.df.readint()
+
+            # Keyring
+            for i in range(20):
+                self.keyring.append(self.df.readstr())
+
+            # More unknowns
+            self.unknown.unknowns1 = self.df.readshort()
+            self.unknown.unknownstr1 = self.df.readstr()
+            for i in range(29):
+                self.unknown.twentyninezeros.append(self.df.readchar())
+            self.unknown.unknownstr2 = self.df.readstr()
+            self.unknown.unknownstr3 = self.df.readstr()
+            self.unknown.unknowns2 = self.df.readshort()
+
+            # Inventory
+            for i in range(self.inv_rows * self.inv_cols):
+                self.additem()
+
+            # Equipped
+            self.quiver.read(self.df);
+            self.helm.read(self.df);
+            self.cloak.read(self.df);
+            self.amulet.read(self.df);
+            self.torso.read(self.df);
+            self.weap_prim.read(self.df);
+            self.belt.read(self.df);
+            self.gauntlet.read(self.df);
+            self.legs.read(self.df);
+            self.ring1.read(self.df);
+            self.ring2.read(self.df);
+            self.shield.read(self.df);
+            self.feet.read(self.df);
+
+            # Readied items
+            for i in range(10):
+                self.readyitems[i].read(self.df)
+
+            # Equipment Slots
+            for i in range(13):
+                self.equip_slot_1.append(self.df.readstr())
+                self.equip_slot_2.append(self.df.readstr())
+
+            # If there's extra data at the end, we likely don't have
+            # a valid char file
+            self.unknown.extradata = self.df.read()
+            if (len(self.unknown.extradata)>0):
+                raise LoadException('Extra data at end of file')
+
+            # Close the file
+            self.df.close()
+
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+    def addalchemy(self):
+        """ Add an alchemy recipe. """
+        self.alchemy_book.append(self.df.readint())
+
+    def addspell(self):
+        """ Add a spell. """
+        self.spells.append(self.df.readchar())
+
+    def spelltype(self, num):
+        if (num < 22):
+            return 'EL'
+        else:
+            return 'DI'
