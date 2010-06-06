@@ -275,7 +275,7 @@ class B1Character(Character):
     Book 1 Character definitions
     """
     def __init__(self, df):
-        self.set_inv_size(10, 7)
+        self.set_inv_size(10, 7, 2, 4)
         super(B1Character, self).__init__(df)
 
         # Book 1 specific vars

@@ -131,6 +131,8 @@ class MainCLI(object):
         print "DEX: %2d    WIS: %2d     MP: %d/%d" % (char.dexterity, char.wisdom, char.curmana, char.maxmana)
         print "END: %2d    PCP: %2d    EXP: %d" % (char.endurance, char.perception, char.experience)
         print "SPD: %2d    CCN: %2d   GOLD: %d" % (char.speed, char.concentration, char.gold)
+        if (char.book == 2):
+            print "HUNGER: %2d%%    THIRST: %2d%%" % (char.hunger/10.0, char.thirst/10.0)
         print
         
         print "CHARACTER STATUS"
@@ -138,15 +140,28 @@ class MainCLI(object):
         print
         for i in range(len(char.statuses)):
             if (char.statuses[i] > 0):
+                extra = ''
+                if char.book == 2:
+                    if (char.statuses_extra[i] > 0):
+                        extra = ' (extra: %d)' % (char.statuses_extra[i])
                 if (c.statustable.has_key(i)):
-                    print "\t* %s (Turns left: %d)" % (c.statustable[i], char.statuses[i])
+                    print "\t* %s (Turns left: %d)%s" % (c.statustable[i], char.statuses[i], extra)
                 else:
-                    print "\t* Status %d (unknown) (Turns left: %d)" % (i, char.statuses[i])
+                    print "\t* Status %d (unknown) (Turns left: %d)%s" % (i, char.statuses[i], extra)
         if char.book == 1:
             for key in c.diseasetable.keys():
                 if (char.disease & key == key):
                     print "\t* Diseased: %s" % (c.diseasetable[key])
         print
+
+        if char.book == 2:
+            print '"PERMANENT" CHARATER STATUS'
+            print "---------------------------"
+            print
+            for (mask, text) in c.permstatustable.items():
+                if (char.permstatuses & mask == mask):
+                    print "\t* %s" % (text)
+            print
 
         print "SKILLS"
         print "------"
@@ -214,6 +229,9 @@ class MainCLI(object):
         print "READIED SPELLS"
         print "--------------"
         print
+        if char.book == 2:
+            if char.readied_spell[0] != '':
+                print "\t(current) - %s / Level %d" % (char.readied_spell[0], char.readied_spell[1])
         i = 1
         for spell in char.readyslots:
             if (spell[0] != ''):
@@ -222,6 +240,34 @@ class MainCLI(object):
                 print "\t%d - (none)" % (i%10)
             i = i + 1
         print
+
+        if char.book == 2:
+            portal_locs = []
+            for (slot, portal_loc) in enumerate(char.portal_locs):
+                if portal_loc[1] != '':
+                    portal_locs.append("\tSlot %d: %s (%s) at %d" % (slot+1, portal_loc[1], portal_loc[2], portal_loc[0]))
+            if (len(portal_locs) > 0):
+                print "BOUND PORTAL LOCATIONS"
+                print "----------------------"
+                print
+                for portal_loc in portal_locs:
+                    print portal_loc
+                print
+
+    def display_alchemy(self, unknowns=False):
+        """
+        Print out a textual representation of the character's alchemy recipe book.
+        Only valid for Book 2
+        """
+        char = self.char
+        if char.book == 2:
+            print "ALCHEMY RECIPE BOOK"
+            print "-------------------"
+            print
+            for (idx, recipe) in enumerate(char.alchemy_book):
+                if recipe > 0:
+                    print "\t* %s" % (c.alchemytable[idx])
+            print
 
     def display_equip(self, unknowns=False):
         """ Print out a textual representation of the character's equipped items."""
@@ -259,11 +305,39 @@ class MainCLI(object):
         if char.book == 1:
             print "Alternate Weapon:"
             print char.weap_alt.display(unknowns)
+
+        if char.book == 2:
+            slotorder = [ 'Quiver', 'Helm', 'Cloak', 'Amulet', 'Torso',
+                    'Weapon', 'Belt', 'Gauntlet', 'Legs', 'Ring 1', 'Ring 2',
+                    'Shield', 'Feed' ]
+            print
+            print "EQUIPMENT SLOT 1"
+            print "----------------"
+            print
+            for (idx, slot) in enumerate(slotorder):
+                print "\t%s: %s" % (slotorder[idx], char.equip_slot_1[idx])
+            print
+            print "EQUIPMENT SLOT 2"
+            print "----------------"
+            print
+            for (idx, slot) in enumerate(slotorder):
+                print "\t%s: %s" % (slotorder[idx], char.equip_slot_2[idx])
+            print
         
     def display_inventory(self, unknowns=False):
         """ Print out a textual representation of the character's inventory. """
 
         char = self.char
+
+        if char.book == 2:
+            print "KEYRING"
+            print "-------"
+            print
+            for key in char.keyring:
+                if key != '':
+                    print "\t* %s" % (key)
+            print
+
         print "INVENTORY"
         print "---------"
         print
@@ -300,6 +374,9 @@ class MainCLI(object):
 
         if (listoptions['all'] or listoptions['magic']):
             self.display_magic(unknowns)
+
+        if (listoptions['all'] or listoptions['alchemy']):
+            self.display_alchemy(unknowns)
 
         if (listoptions['all'] or listoptions['equip']):
             self.display_equip(unknowns)

@@ -68,6 +68,7 @@ def usage(full=False):
         print "\tstats - Base Character Statistics"
         print "\tavatar - Avatar information"
         print "\tmagic - Magic information"
+        print "\talchemy - Alchemy information (only for Book 2)"
         print "\tequip - Equipment information (armor, weapons, etc)"
         print "\tinv - Inventory listings (including \"ready\" slots)"
         print
@@ -101,6 +102,7 @@ def main(argv=None):
                 'stats': False,
                 'avatar': False,
                 'magic': False,
+                'alchemy': False,
                 'equip': False,
                 'inv': False
                 },
@@ -153,6 +155,9 @@ def main(argv=None):
             elif (a == 'magic'):
                 options['listoptions']['all'] = False
                 options['listoptions']['magic'] = True
+            elif (a == 'alchemy'):
+                options['listoptions']['all'] = False
+                options['listoptions']['alchemy'] = True
             elif (a == 'equip'):
                 options['listoptions']['all'] = False
                 options['listoptions']['equip'] = True
