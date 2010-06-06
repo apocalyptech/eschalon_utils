@@ -348,6 +348,7 @@ class B2Item(Item):
         super(B2Item, self).__init__()
         
         # Attributes which only Book 2 has
+        self.unknownflag = -1
         self.max_hp = -1
         self.cur_hp = -1
         self.attr_modified_1 = -1
@@ -362,7 +363,8 @@ class B2Item(Item):
     def read(self, df):
         """ Given a file descriptor, read in the item. """
 
-        self.type = df.readshort()
+        self.type = df.readchar()
+        self.unknownflag = df.readchar()
         self.item_name = df.readstr()
         self.weight = df.readfloat()
         self.subtype = df.readchar()

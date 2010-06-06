@@ -74,7 +74,6 @@ class B2Constants:
             0x1A: 'Thrown Weapons'
         }
 
-    # TODO: manually look for some values (probably powder kegs, etc; keys?)
     typetable = {
             0x00: '(nothing)',
             0x01: 'Weapon',
@@ -89,7 +88,7 @@ class B2Constants:
             0x0A: 'Armor (Feet)',
             0x0B: 'Amulet',
             0x0C: 'Ring',
-            # 0x0D: '',
+            0x0D: 'Wand',
             0x0E: 'Spell',
             0x0F: 'Potion',
             0x10: 'Recipe',
@@ -101,11 +100,11 @@ class B2Constants:
             0x16: 'Torch',
             0x17: 'Consumable (food)',
             0x18: 'Consumable (waterskin)',
-            # 0x19: '',
+            0x19: 'Gold',
             0x1A: 'n/a',
             0x1B: 'Special',
-            # Not sure if anything's in this space...
-            0x10D: 'Wand'
+            0x1C: 'Key',
+            0x1D: 'Explosive'
             # Not sure if there's anything beyond here...
         }
 
