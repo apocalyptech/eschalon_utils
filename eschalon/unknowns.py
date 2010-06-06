@@ -50,7 +50,7 @@ class B1Unknowns(object):
         self.extradata = ''
 
     def replicate(self):
-        newunknown = Unknowns()
+        newunknown = B1Unknowns()
 
         # Simple Values
         newunknown.initzero = self.initzero
@@ -148,3 +148,73 @@ class B2Unknowns(object):
         self.unknownstr3 = -1
         self.unknowns2 = -1
         self.extradata = ''
+
+    def replicate(self):
+        newunknown = B2Unknowns()
+
+        # Simple Values
+        newunknown.initzero = self.initzero
+        newunknown.version = self.version
+        newunknown.zero1 = self.zero1
+        newunknown.unknowni1 = self.unknowni1
+        newunknown.unknowni2 = self.unknowni2
+        newunknown.unknowni3 = self.unknowni3
+        newunknown.usually_one = self.usually_one
+        newunknown.unknowns1 = self.unknowns1
+        newunknown.unknownstr1 = self.unknownstr1
+        newunknown.unknownstr2 = self.unknownstr2
+        newunknown.unknownstr3 = self.unknownstr3
+        newunknown.unknowns2 = self.unknowns2
+        newunknown.extradata = self.extradata
+
+        # Lists
+        for item in self.fourteenzeros:
+            newunknown.fourteenzeros.append(item)
+        for item in self.strangeblock:
+            newunknown.strangeblock.append(item)
+        for item in self.twentyninezeros:
+            newunknown.twentyninezeros.append(item)
+
+        # ... aaand return our new object
+        return newunknown
+
+    def num_block(self, digits, arr, desc='Block of integers'):
+        """ Display a block of unknown integers. """
+        formatstr = "\t0x%%0%dX - %%d" % (digits)
+        ret = []
+        ret.append(desc)
+        for i in arr:
+            ret.append(formatstr % (i, i))
+        return "\n".join(ret)
+
+    def iblock(self, arr, desc='Block of integers'):
+        """ Display a block of unknown integers. """
+        return self.num_block(8, arr, desc)
+
+    def cblock(self, arr, desc='Block of chars'):
+        """ Display a block of unknown char values. """
+        return self.num_block(2, arr, desc)
+
+    def display(self):
+        """ Show a textual description of all unknown fields. """
+
+        ret = []
+
+        ret.append("Initial Zero: %d" % self.initzero)
+        ret.append("Possibly savefile version: %d" % (self.version))
+        ret.append("Usually Zero: %d" % (self.zero1))
+        ret.append(self.iblock(self.fourteenzeros, 'Fourteen Zeros'))
+        ret.append(self.cblock(self.strangeblock, 'Somewhat Strange Block'))
+        ret.append("Unknown Integer 1: %d" % (self.unknowni1))
+        ret.append("Unknown Integer 2: %d" % (self.unknowni2))
+        ret.append("Unknown Integer 3: %d" % (self.unknowni3))
+        ret.append("Usually One: %d" % (self.usually_one))
+        ret.append("Unknown Short 1: %d" % (self.unknowns1))
+        ret.append("Unknown String 1: %s" % (self.unknownstr1))
+        ret.append(self.cblock(self.twentyninezeros, '29 Zeros'))
+        ret.append("Unknown String 2: %s" % (self.unknownstr2))
+        ret.append("Unknown String 3: %s" % (self.unknownstr3))
+        ret.append("Unknown Short 2: %d" % (self.unknowns2))
+        ret.append("Extra Data: %s" % (self.extradata))
+
+        return "\n".join(ret)

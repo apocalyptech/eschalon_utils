@@ -110,16 +110,13 @@ class Character(object):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
-        newchar = Character.load(self.df.filename)
+        newchar = Character.load(self.df.filename, self.book)
 
         # Single vals (no need to do actual replication)
         newchar.book = self.book
         newchar.inv_rows = self.inv_rows
         newchar.inv_cols = self.inv_cols
         newchar.name = self.name
-        newchar.origin = self.origin
-        newchar.axiom = self.axiom
-        newchar.classname = self.classname
         newchar.strength = self.strength
         newchar.dexterity = self.dexterity
         newchar.endurance = self.endurance
@@ -143,7 +140,6 @@ class Character(object):
         newchar.xpos = self.xpos
         newchar.ypos = self.ypos
         newchar.picid = self.picid
-        newchar.disease = self.disease
         newchar.extra_att_points = self.extra_att_points
         newchar.extra_skill_points = self.extra_skill_points
 
@@ -182,11 +178,19 @@ class Character(object):
         newchar.ring2 = self.ring2.replicate()
         newchar.shield = self.shield.replicate()
         newchar.feet = self.feet.replicate()
-        newchar.weap_alt = self.weap_alt.replicate()
-        newchar.unknown = self.unknown.replicate()
+
+        # Call out to the subclass replication function
+        self._sub_replicate(newchar)
 
         # Now return our duplicated object
         return newchar
+
+    def _sub_replicate(self, newchar):
+        """
+        Just a stub function for superclasses to override, to replicate any
+        superclass-specific data
+        """
+        pass
 
     def setGold(self,goldValue):
         """ Alter gold to new amount. """
@@ -255,7 +259,7 @@ class Character(object):
             self.curinvrow = self.curinvrow + 1
 
     @staticmethod
-    def load(filename):
+    def load(filename, book=None):
         """
         Static method to load a character file.  This will open the file once and
         read in a bit of data to determine whether this is a Book 1 character file or
@@ -264,19 +268,28 @@ class Character(object):
         an 
         """
         df = Savefile(filename)
-        # The initial "zero" padding in Book 1 is four bytes, and only one byte in
-        # Book 2.  Since the next bit of data is the character name, as a string,
-        # if the second byte of the file is 00, we'll assume that it's a Book 1 file,
-        # and Book 2 otherwise.
-        try:
-            df.open_r()
-            initital = df.readchar()
-            second = df.readchar()
-            df.close()
-        except (IOError, struct.error), e:
-            raise LoadException(str(e))
 
-        if second == 0:
+        # First figure out what format to load, if needed
+        if book is None:
+            # The initial "zero" padding in Book 1 is four bytes, and only one byte in
+            # Book 2.  Since the next bit of data is the character name, as a string,
+            # if the second byte of the file is 00, we'll assume that it's a Book 1 file,
+            # and Book 2 otherwise.
+            try:
+                df.open_r()
+                initital = df.readchar()
+                second = df.readchar()
+                df.close()
+            except (IOError, struct.error), e:
+                raise LoadException(str(e))
+
+            if second == 0:
+                book = 1
+            else:
+                book = 2
+
+        # Now actually return the object
+        if book == 1:
             c.switch_to_book(1)
             return B1Character(df)
         else:
@@ -602,6 +615,17 @@ class B1Character(Character):
 
         # Clean up
         self.df.close()
+
+    def _sub_replicate(self, newchar):
+        """
+        Replicate our Book 1 specific data
+        """
+        newchar.origin = self.origin
+        newchar.axiom = self.axiom
+        newchar.classname = self.classname
+        newchar.weap_alt = self.weap_alt.replicate()
+        newchar.disease = self.disease
+        newchar.unknown = self.unknown.replicate()
 
     def addspell(self):
         """ Add a spell. """
@@ -948,6 +972,39 @@ class B2Character(Character):
 
         # Clean up
         self.df.close()
+
+    def _sub_replicate(self, newchar):
+        """
+        Replicate our Book 2 specific data
+        """
+        newchar.gender = self.gender
+        newchar.origin = self.origin
+        newchar.axiom = self.axiom
+        newchar.classname = self.classname
+        newchar.thirst = self.thirst
+        newchar.hunger = self.hunger
+        newchar.permstatuses = self.permstatuses
+
+        # Lists
+        for item in self.readied_spell:
+            newchar.readied_spell.append(item)
+        for recipe in self.alchemy_book:
+            newchar.alchemy_book.append(recipe)
+        for extra in self.statuses_extra:
+            newchar.statuses_extra.append(extra)
+        for key in self.keyring:
+            newchar.keyring.append(key)
+        for equip in self.equip_slot_1:
+            newchar.equip_slot_1.append(equip)
+        for equip in self.equip_slot_2:
+            newchar.equip_slot_2.append(equip)
+
+        # More complex lists
+        for (one, two, three) in self.portal_locs:
+            newchar.portal_locs.append([one, two, three])
+
+        # Objects
+        newchar.unknown = self.unknown.replicate()
 
     def addalchemy(self):
         """ Add an alchemy recipe. """
