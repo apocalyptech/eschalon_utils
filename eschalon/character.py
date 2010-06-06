@@ -221,8 +221,21 @@ class Character(object):
         self.curhp = hpValue
 
     def clearDiseases(self):
-        """ clear all diseases """
-        self.disease = 0x0000
+        """
+        Clear all diseases.  Also clears out severe injuries/curses/etc on Book 2 chars
+        """
+        if self.book == 1:
+            self.disease = 0x0000
+        else:
+            self.permstatuses = self.permstatuses & 0xFFFF0000
+
+    def resetHunger(self):
+        """
+        Resets hunger and thirst; only valid for Book 2 characters, of course.
+        """
+        if self.book == 2:
+            self.hunger = 1000
+            self.thirst = 1000
 
     def addskill(self, skillnum, level):
         """ Add a new skill at a given level. """

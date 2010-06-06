@@ -37,7 +37,7 @@ def usage(full=False):
     print "\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)
     print
     print "To manipulate character data from the console:"
-    print "\t%s [--set-gold=<num>] [--rm-disease]" % (progname)
+    print "\t%s [--set-gold=<num>] [--rm-disease] [--reset-hunger]" % (progname)
     print "\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]"
     print "\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>"
     print
@@ -83,6 +83,9 @@ def usage(full=False):
         print "--set-hp-max or --set-mana-max options will also bring your current HP or"
         print "MP up to the new Max level."
         print
+        print "Note that the --reset-hunger option will maximize both hunger and thirst"
+        print "meters, and will obviously only have an effect on Book 2 characters."
+        print
         print "Additionally, you may use -h or --help to view this message"
     else:
         print "To get a full help listing, with text descriptions of all the options:"
@@ -113,6 +116,7 @@ def main(argv=None):
             'set_hp_max': 0,
             'set_hp_cur': 0,
             'rm_disease': False,
+            'reset_hunger': False,
             'filename' : None
             }
 
@@ -131,7 +135,8 @@ def main(argv=None):
                  'set-mana-cur=',
                  'set-hp-max=',
                  'set-hp-cur=',
-                 'rm-disease'])
+                 'rm-disease',
+                 'reset-hunger'])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -187,6 +192,9 @@ def main(argv=None):
         elif (o in ('--rm-disease')):
             options['gui'] = False
             options['rm_disease'] = True
+        elif (o in ('--reset-hunger')):
+            options['gui'] = False
+            options['reset_hunger'] = True
         else:
             assert False, 'unhandled option'
 

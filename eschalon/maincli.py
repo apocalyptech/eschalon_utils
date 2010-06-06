@@ -74,9 +74,22 @@ class MainCLI(object):
             print 'New Current Mana: %d' % (char.curmana)
 
         if (options['rm_disease'] > 0):
-            print 'Old Disease Flags: %04X' % (char.disease)
-            char.clearDiseases();
-            print 'New Disease Flags: %04X' % (char.disease)
+            if char.book == 1:
+                print 'Old Disease Flags: %04X' % (char.disease)
+                char.clearDiseases();
+                print 'New Disease Flags: %04X' % (char.disease)
+            else:
+                print 'Old Permanent Status Flags: %08X' % (char.permstatuses)
+                char.clearDiseases();
+                print 'New Permanent Status Flags: %08X' % (char.permstatuses)
+
+        if (options['reset_hunger'] > 0):
+            if char.book != 2:
+                print 'Resetting hunger/thirst is only available for Book 2 characters'
+            else:
+                print 'Old Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger/10.0, char.thirst/10.0)
+                char.resetHunger()
+                print 'New Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger/10.0, char.thirst/10.0)
         
         # If we've gotten here, write the file
         char.write()
