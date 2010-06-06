@@ -1,7 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
    06 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
-   Book II Character data loads properly
+   Book II Character data loads and saves properly
 
    04 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Initial Book II integration work

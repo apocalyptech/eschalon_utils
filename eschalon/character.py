@@ -788,6 +788,154 @@ class B2Character(Character):
         except (IOError, struct.error), e:
             raise LoadException(str(e))
 
+    def write(self):
+        """ Writes out the save file. """
+
+        self.df.open_w()
+
+        # Initial Zero
+        self.df.writechar(self.unknown.initzero)
+
+        # Character info
+        self.df.writestr(self.name)
+        self.df.writechar(self.gender)
+        self.df.writechar(self.origin)
+        self.df.writechar(self.axiom)
+        self.df.writechar(self.classname)
+        self.df.writechar(self.unknown.version)
+        self.df.writechar(self.strength)
+        self.df.writechar(self.dexterity)
+        self.df.writechar(self.endurance)
+        self.df.writechar(self.speed)
+        self.df.writechar(self.intelligence)
+        self.df.writechar(self.wisdom)
+        self.df.writechar(self.perception)
+        self.df.writechar(self.concentration)
+
+        # Skills
+        for skill in self.skills.values():
+            self.df.writechar(skill)
+
+        # More stats
+        self.df.writechar(self.extra_att_points)
+        self.df.writechar(self.extra_skill_points)
+        self.df.writeint(self.curhp)
+        self.df.writeint(self.curmana)
+        self.df.writeint(self.maxhp)
+        self.df.writeint(self.maxmana)
+        self.df.writeint(self.experience)
+        self.df.writeint(self.level)
+        self.df.writeint(self.hunger)
+        self.df.writeint(self.thirst)
+
+        # FX Block
+        for fx in self.fxblock:
+            self.df.writeint(fx)
+
+        # Non-permanent statuses
+        for (status, extra) in zip(self.statuses, self.statuses_extra):
+            self.df.writeint(status)
+            self.df.writeint(extra)
+
+        # Portal anchor locations
+        for anchor in self.portal_locs:
+            self.df.writeint(anchor[0])
+            self.df.writestr(anchor[1])
+            self.df.writestr(anchor[2])
+
+        # Unknown
+        self.df.writechar(self.unknown.zero1)
+
+        # Spells
+        for spell in self.spells:
+            self.df.writechar(spell)
+
+        # Readied Spells
+        self.df.writestr(self.readied_spell[0])
+        self.df.writechar(self.readied_spell[1])
+        for (spell, level) in self.readyslots:
+            self.df.writestr(spell)
+            self.df.writechar(level)
+
+        # Alchemy Recipes
+        for recipe in self.alchemy_book:
+            self.df.writeint(recipe)
+
+        # Unknowns
+        for zero in self.unknown.fourteenzeros:
+            self.df.writeint(zero)
+
+        # Position/orientation
+        self.df.writechar(self.orientation)
+        self.df.writeint(self.xpos)
+        self.df.writeint(self.ypos)
+
+        # More unknowns
+        for val in self.unknown.strangeblock:
+            self.df.writechar(val)
+        self.df.writeint(self.unknown.unknowni1)
+        self.df.writeint(self.unknown.unknowni2)
+        self.df.writeint(self.unknown.unknowni3)
+        self.df.writechar(self.unknown.usually_one)
+
+        # Permanent statuses
+        self.df.writeint(self.permstatuses)
+
+        # More stats
+        self.df.writeint(self.picid)
+        self.df.writeint(self.gold)
+        self.df.writeint(self.torches)
+        self.df.writeint(self.torchused)
+
+        # Keyring
+        for key in self.keyring:
+            self.df.writestr(key)
+
+        # Yet more unknowns
+        self.df.writeshort(self.unknown.unknowns1)
+        self.df.writestr(self.unknown.unknownstr1)
+        for zero in self.unknown.twentyninezeros:
+            self.df.writechar(zero)
+        self.df.writestr(self.unknown.unknownstr2)
+        self.df.writestr(self.unknown.unknownstr3)
+        self.df.writeshort(self.unknown.unknowns2)
+
+        # Inventory
+        for row in self.inventory:
+            for item in row:
+                item.write(self.df)
+
+        # Equipped
+        self.quiver.write(self.df);
+        self.helm.write(self.df);
+        self.cloak.write(self.df);
+        self.amulet.write(self.df);
+        self.torso.write(self.df);
+        self.weap_prim.write(self.df);
+        self.belt.write(self.df);
+        self.gauntlet.write(self.df);
+        self.legs.write(self.df);
+        self.ring1.write(self.df);
+        self.ring2.write(self.df);
+        self.shield.write(self.df);
+        self.feet.write(self.df);
+
+        # Readied items
+        for item in self.readyitems:
+            item.write(self.df)
+
+        # Equipment Slots
+        for (slot1, slot2) in zip(self.equip_slot_1, self.equip_slot_2):
+            self.df.writestr(slot1)
+            self.df.writestr(slot2)
+
+        # Any extra data we might have
+        if (len(self.unknown.extradata) > 0):
+            self.df.writestr(self.unknown.extradata)
+
+        # Clean up
+        self.df.close()
+
     def addalchemy(self):
         """ Add an alchemy recipe. """
         self.alchemy_book.append(self.df.readint())
