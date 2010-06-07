@@ -858,7 +858,7 @@ class MainGUI(BaseGUI):
             align.add(spin)
             spin.connect('value-changed', self.on_multarray_changed)
 
-        vbox.pack_start(table)
+        vbox.pack_start(table, False)
         table.show_all()
 
         ###
