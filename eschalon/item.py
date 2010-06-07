@@ -143,20 +143,6 @@ class Item(object):
                 self.zero1 == item.zero1 and
                 self.emptystr == item.emptystr)
 
-    def hasborder(self):
-        """ Decide whether or not a blue border would be drawn for this
-            item, in the game. """
-
-        return (self.attr_modified > 0 or
-            self.skill_modified > 0 or
-            self.hitpoint > 0 or
-            self.mana > 0 or
-            self.tohit > 0 or
-            self.damage > 0 or
-            self.armor > 0 or
-            self.incr > 0 or
-            self.flags > 0)
-
     def display(self, unknowns=False):
         """
         Display a text representation of the item, indented.
@@ -374,6 +360,20 @@ class B1Item(Item):
         self.flags = 0
         self.duration = 0
 
+    def hasborder(self):
+        """ Decide whether or not a blue border would be drawn for this
+            item, in the game. """
+
+        return (self.attr_modified > 0 or
+            self.skill_modified > 0 or
+            self.hitpoint > 0 or
+            self.mana > 0 or
+            self.tohit > 0 or
+            self.damage > 0 or
+            self.armor > 0 or
+            self.incr > 0 or
+            self.flags > 0)
+
 class B2Item(Item):
     """
     Item structure for Book 2
@@ -480,3 +480,11 @@ class B2Item(Item):
         self.attr_modified_3 = 0
         self.attr_modifier_3 = 0
         self.unknownc1 = 0
+
+    def hasborder(self):
+        """ Decide whether or not a blue border would be drawn for this
+            item, in the game. """
+
+        return (self.attr_modified_1 > 0 or
+            self.attr_modified_2 > 0 or
+            self.attr_modified_3 > 0)

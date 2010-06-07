@@ -449,6 +449,7 @@ class BaseGUI(object):
         """ Generates the whole block for an item button, including cut/paste/etc... """
         hbox = gtk.HBox()
         hbox.show()
+        self.register_widget('%s_container' % (name), hbox)
 
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.set_size_request(-1, 35)

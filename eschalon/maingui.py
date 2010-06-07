@@ -51,11 +51,10 @@ if (gtk.check_version(2, 18, 0) is not None):
 # Lookup tables we'll need
 from eschalonb1.gfx import Gfx
 from eschalonb1.basegui import BaseGUI
-from eschalonb1.character import Character
+from eschalonb1.character import Character, B1Character, B2Character
 from eschalonb1.item import Item
 from eschalonb1.savefile import LoadException
 from eschalonb1 import constants as c
-#from eschalonb1 import diseasetable, flagstable
 from eschalonb1 import app_name, version, url, authors
 
 class MainGUI(BaseGUI):
@@ -96,14 +95,17 @@ class MainGUI(BaseGUI):
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['origin', 'axiom', 'classname']
         spellboxentries = []
+        readyentries = ['readied_spell']
         for i in range(10):
             spellboxentries.append('readyslots_spell_%d' % (i))
-        for var in comboboxentries + spellboxentries:
+        for var in comboboxentries + spellboxentries + readyentries:
             self.register_widget(var, self.get_widget('%s_box' % (var)).child)
         for var in comboboxentries:
             self.get_widget(var).connect('changed', self.on_singleval_changed_str)
         for var in spellboxentries:
             self.get_widget(var).connect('changed', self.on_readyslots_changed)
+        for var in readyentries:
+            self.get_widget(var).connect('changed', self.on_cur_ready_changed)
 
         # GUI additions
         self.gui_finish()
@@ -143,14 +145,17 @@ class MainGUI(BaseGUI):
                 'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
                 'on_checkbox_arr_changed': self.on_checkbox_arr_changed,
                 'on_readyslots_changed': self.on_readyslots_changed,
+                'on_cur_ready_changed': self.on_cur_ready_changed,
                 'on_multarray_changed': self.on_multarray_changed,
                 'on_multarray_changed_fx': self.on_multarray_changed_fx,
                 'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
                 'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
+                'on_dropdownplusone_changed_b2': self.on_dropdownplusone_changed_b2,
                 'open_avatarsel': self.open_avatarsel,
                 'avatarsel_on_motion': self.avatarsel_on_motion,
                 'avatarsel_on_expose': self.avatarsel_on_expose,
-                'avatarsel_on_clicked': self.avatarsel_on_clicked
+                'avatarsel_on_clicked': self.avatarsel_on_clicked,
+                'on_b2picid_changed': self.on_b2picid_changed
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -376,8 +381,23 @@ class MainGUI(BaseGUI):
         self.get_widget('itemnotebook').set_current_page(0)
         self.get_widget('invnotebook').set_current_page(0)
 
+        # Now show or hide form elements depending on the book version
+        for char_class in (B1Character, B2Character):
+            self.set_book_elem_visibility(char_class, char_class.book == char.book)
+
         # Return success
         return True
+
+    def set_book_elem_visibility(self, char_class, show):
+        """
+        Show or hide form elements based on the book version
+        """
+        if show:
+            for elem in char_class.form_elements:
+                self.get_widget(elem).show()
+        else:
+            for elem in char_class.form_elements:
+                self.get_widget(elem).hide()
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -470,12 +490,38 @@ class MainGUI(BaseGUI):
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
     def on_dropdownplusone_changed(self, widget):
-        """ What to do when a dropdown is changed, when our index starts at 1. """
+        """ What to do when a dropdown is changed, when our index starts at 1.  """
         wname = widget.get_name()
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active() + 1
         self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+    
+    def on_dropdownplusone_changed_b2(self, widget):
+        """
+        What to do when a dropdown is changed, when our index starts at 1.
+        Also, the GUI elements in question will be prefixed with "b2"
+        """
+        wname = widget.get_name()
+        objwname = wname[2:]
+        (labelwidget, label) = self.get_label_cache(wname)
+        (obj, origobj) = self.get_comp_objects()
+        obj.__dict__[objwname] = widget.get_active() + 1
+        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
+
+    def on_b2picid_changed(self, widget):
+        """
+        Custom handling for the Book 2 Picture ID field
+        """
+        wname = widget.get_name()
+        objwname = wname[2:]
+        (labelwidget, label) = self.get_label_cache(wname)
+        (obj, origobj) = self.get_comp_objects()
+        if (widget.get_active() == 12):
+            obj.__dict__[objwname] = 0xFFFFFFFF
+        else:
+            obj.__dict__[objwname] = widget.get_active() + 1
+        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
@@ -500,6 +546,17 @@ class MainGUI(BaseGUI):
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = val
         self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
+
+    def on_cur_ready_changed(self, widget):
+        """ What to do when our currently-readied spell changes (only on Book 2). """
+        (obj, origobj) = self.get_comp_objects()
+        if obj.book == 1:
+            return
+        (labelwidget, label) = self.get_label_cache('readied_spell')
+        obj.readied_spell = self.get_widget('readied_spell').get_text()
+        obj.readied_spell_lvl = self.get_widget('readied_spell_lvl').get_value_as_int()
+        self.set_changed_widget((origobj.readied_spell == obj.readied_spell) and
+            (origobj.readied_spell_lvl == obj.readied_spell_lvl), 'readied_spell', labelwidget, label)
 
     def on_readyslots_changed(self, widget):
         """ What to do when one of our readied-spell slots changes. """
@@ -639,6 +696,8 @@ class MainGUI(BaseGUI):
             raise Exception('invalid action')
 
     def on_fxblock_button_clicked(self, widget):
+        if self.char.book != 1:
+            return
         fx0 = self.get_widget('fxblock_0')
         fx1 = self.get_widget('fxblock_1')
         fx2 = self.get_widget('fxblock_2')
@@ -667,6 +726,8 @@ class MainGUI(BaseGUI):
 
     def on_multarray_changed_fx(self, widget):
         self.on_multarray_changed(widget)
+        if self.char.book != 1:
+            return
         textwidget = self.get_widget('fxblock_text')
         fx0 = self.get_widget('fxblock_0').get_value_as_int()
         fx1 = self.get_widget('fxblock_1').get_value_as_int()
@@ -749,17 +810,167 @@ class MainGUI(BaseGUI):
         self.populate_form_from_char()
         self.clear_all_changes()
 
+    def prepare_dynamic_form(self, char):
+        """
+        Called when we load a new character, this will update the form with
+        elements which are dynamic based on the Book (skills, spells, etc)
+        """
+
+        ###
+        ### Front-screen skill table
+        ###
+        vbox = self.get_widget('charinfo_vbox')
+        table = self.get_widget('skill_table')
+        if table:
+            vbox.remove(table)
+
+        numrows = len(c.skilltable)/2
+        if (len(c.skilltable) % 2 == 1):
+            numrows += 1
+
+        # Container Table
+        table = gtk.Table(numrows, 5)
+        self.register_widget('skill_table', table)
+        spacelabel = gtk.Label('')
+        spacelabel.set_size_request(20, -1)
+        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+
+        # Contents
+        for (idx, skill) in enumerate(c.skilltable.values()):
+            if (idx < numrows):
+                row = idx
+                col = 1
+            else:
+                row = idx-numrows
+                col = 3
+            label = gtk.Label('%s:' % (skill))
+            label.set_alignment(1, .5)
+            label.set_padding(4, 0)
+            self.register_widget('skills_%d_label' % (idx+1), label)
+            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            
+            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            # TODO: limit is technically >255 on B1
+            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 10)
+            spin = gtk.SpinButton(adjust)
+            self.register_widget('skills_%d' % (idx+1), spin)
+            align.add(spin)
+            spin.connect('value-changed', self.on_multarray_changed)
+
+        vbox.pack_start(table)
+        table.show_all()
+
+        ###
+        ### Character Effects (non-permanent)
+        ###
+        cont = self.get_widget('status_alignment')
+        table = self.get_widget('status_table')
+        if table:
+            cont.remove(table)
+
+        numrows = len(c.statustable)/2
+        if (len(c.statustable) % 2 == 1):
+            numrows += 1
+
+        # Container Table
+        table = gtk.Table(numrows, 5)
+        self.register_widget('status_table', table)
+        spacelabel = gtk.Label('')
+        spacelabel.set_size_request(20, -1)
+        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+
+        # Contents
+        for (idx, skill) in enumerate(c.statustable.values()):
+            if (idx < numrows):
+                row = idx
+                col = 1
+            else:
+                row = idx-numrows
+                col = 3
+            label = gtk.Label('%s:' % (skill))
+            label.set_alignment(1, .5)
+            label.set_padding(4, 0)
+            self.register_widget('statuses_%d_label' % (idx), label)
+            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            
+            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 10)
+            spin = gtk.SpinButton(adjust)
+            self.register_widget('statuses_%d' % (idx), spin)
+            align.add(spin)
+            spin.connect('value-changed', self.on_multarray_changed)
+
+        cont.add(table)
+        table.show_all()
+
+        ###
+        ### Spell Checkboxes
+        ###
+        # TODO: should we alphabetize these?
+        divbox = self.get_widget('divination_vbox')
+        elembox = self.get_widget('elemental_vbox')
+        for box in [divbox, elembox]:
+            for child in box.get_children():
+                box.remove(child)
+        #divbox.clear()
+        #elembox.clear()
+        for (idx, spell) in c.spelltable.items():
+            if char.spelltype(idx) == 'EL':
+                box = elembox
+            else:
+                box = divbox
+            cb = gtk.CheckButton()
+            self.register_widget('spells_%d' % (idx), cb)
+            label = gtk.Label(spell)
+            self.register_widget('spells_%d_label' % (idx), label)
+            cb.connect('toggled', self.on_checkbox_arr_changed)
+            cb.add(label)
+            box.pack_start(cb)
+        elembox.show_all()
+        divbox.show_all()
+
+        ###
+        ### Spell dropdowns
+        ###
+        # TODO: we should be able to do this all with a single listview, yeah?
+        boxes = [self.get_widget('readied_spell_box')]
+        for i in range(10):
+            boxes.append(self.get_widget('readyslots_spell_%d_box' % (i)))
+        spells = sorted(c.spelltable.values())
+        for box in boxes:
+            box.get_model().clear()
+            box.append_text('')
+            for spell in spells:
+                box.append_text(spell)
+
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """
         char = self.origchar
 
+        # First update the form
+        self.prepare_dynamic_form(char)
+
         # Assign values
         self.get_widget('name').set_text(char.name)
-        self.get_widget('origin').set_text(char.origin)
-        self.get_widget('axiom').set_text(char.axiom)
-        self.get_widget('classname').set_text(char.classname)
         self.get_widget('level').set_value(char.level)
-        self.get_widget('picid').set_value(char.picid)
+        if char.book == 1:
+            self.get_widget('origin').set_text(char.origin)
+            self.get_widget('axiom').set_text(char.axiom)
+            self.get_widget('classname').set_text(char.classname)
+            self.get_widget('picid').set_value(char.picid)
+        else:
+            self.get_widget('gender').set_active(char.gender-1)
+            self.get_widget('b2origin').set_active(char.origin-1)
+            self.get_widget('b2axiom').set_active(char.axiom-1)
+            self.get_widget('b2classname').set_active(char.classname-1)
+            if (char.picid < 13):
+                self.get_widget('b2picid').set_active(char.picid-1)
+            else:
+                self.get_widget('b2picid').set_active(12)
+            self.get_widget('hunger').set_value(char.hunger)
+            self.get_widget('thirst').set_value(char.thirst)
 
         self.get_widget('strength').set_value(char.strength)
         self.get_widget('dexterity').set_value(char.dexterity)
@@ -785,12 +996,21 @@ class MainGUI(BaseGUI):
         for num in range(26):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
 
-        for num in range(4):
+        if char.book == 1:
+            fxblocks = 4
+        else:
+            fxblocks = 6
+        for num in range(fxblocks):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
-        for key in c.diseasetable.keys():
-            if (char.disease & key == key):
-                self.get_widget('disease_%04X' % (key)).set_active(True)
+        if char.book == 1:
+            for key in c.diseasetable.keys():
+                if (char.disease & key == key):
+                    self.get_widget('disease_%04X' % (key)).set_active(True)
+        else:
+            for key in c.permstatustable.keys():
+                if (char.permstatuses & key == key):
+                    self.get_widget('permstatuses_%08X' % (key)).set_active(True)
 
         for i in range(39):
             if (char.spells[i] > 0):
@@ -799,10 +1019,16 @@ class MainGUI(BaseGUI):
         for i in range(10):
             self.get_widget('readyslots_spell_%d' % (i)).set_text(char.readyslots[i][0])
             self.get_widget('readyslots_level_%d' % (i)).set_value(char.readyslots[i][1])
+        if char.book == 2:
+            self.get_widget('readied_spell').set_text(char.readied_spell)
+            self.get_widget('readied_spell_lvl').set_value(char.readied_spell_lvl)
 
-        for equip in [ 'helm', 'cloak', 'torso', 'gauntlet', 'belt', 'legs', 'feet',
+        equiplist = [ 'helm', 'cloak', 'torso', 'gauntlet', 'belt', 'legs', 'feet',
                 'amulet', 'ring1', 'ring2',
-                'quiver', 'weap_prim', 'weap_alt', 'shield' ]:
+                'quiver', 'weap_prim', 'shield' ]
+        if char.book == 1:
+            equiplist.append('weap_alt')
+        for equip in equiplist:
             self.populate_equip_button(equip, True)
 
         for row in range(char.inv_rows):
@@ -926,7 +1152,7 @@ class MainGUI(BaseGUI):
             goldnote2.set_markup('<i><b>Note:</b> Column eight is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote2.set_line_wrap(True)
             goldnote2.show()
-            self.register_widget('b2_gold_note', goldnote)
+            self.register_widget('b2_gold_note', goldnote2)
             table.attach(goldnote2, 2, 3, 9, 10, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
 
     def gui_add_ready_page(self, container):

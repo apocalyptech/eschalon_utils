@@ -23,6 +23,8 @@ __all__ = [ 'B1Constants' ]
 
 class B1Constants:
 
+    book = 1
+
     attrtable = {
             0x01: 'Strength',
             0x02: 'Dexterity',

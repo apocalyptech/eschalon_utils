@@ -23,6 +23,8 @@ __all__ = [ 'B2Constants' ]
 
 class B2Constants:
 
+    book = 2
+
     attrtable = {
             0x01: 'Strength',
             0x02: 'Dexterity',
@@ -156,7 +158,6 @@ class B2Constants:
             44: 'Summon Beast'
         }
     
-    # TODO: this was 1-based in Book1, should check that out
     statustable = {
             0: 'Chameleon',
             1: 'Protection from Curses',

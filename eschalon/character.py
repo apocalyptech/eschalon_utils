@@ -39,10 +39,13 @@ class Character(object):
     to try and work around that.
     """
 
+    book = None
+    form_elements = []
+
     def __init__(self, df):
         """ A fresh object. """
 
-        self.book = c.book
+        #self.book = c.book
         self.name = ''
         self.strength = -1
         self.dexterity = -1
@@ -113,7 +116,7 @@ class Character(object):
         newchar = Character.load(self.df.filename, self.book)
 
         # Single vals (no need to do actual replication)
-        newchar.book = self.book
+        #newchar.book = self.book
         newchar.inv_rows = self.inv_rows
         newchar.inv_cols = self.inv_cols
         newchar.name = self.name
@@ -300,6 +303,17 @@ class B1Character(Character):
     """
     Book 1 Character definitions
     """
+
+    book = 1
+    form_elements = ['origin_label', 'origin_box',
+            'axiom_label', 'axiom_box',
+            'classname_label', 'classname_box',
+            'picid_label', 'picid_hbox',
+            'disease_label', 'disease_table',
+            'gfx_preset_vbox',
+            'weap_alt_label', 'weap_alt_container',
+            'b1_gold_note' ]
+
     def __init__(self, df):
         self.set_inv_size(10, 7, 2, 4)
         super(B1Character, self).__init__(df)
@@ -641,6 +655,34 @@ class B2Character(Character):
     """
     Book 2 Character definitions
     """
+
+    book = 2
+    form_elements = [ 'gender_label', 'gender',
+            'b2origin_label', 'b2origin',
+            'b2axiom_label', 'b2axiom',
+            'b2classname_label', 'b2classname',
+            'b2picid_label', 'b2picid',
+            'hunger_label', 'hunger_hbox',
+            'thirst_label', 'thirst_hbox',
+            'permstatus_alignment', 'permstatus_label',
+            'fxblock_4_label', 'fxblock_4',
+            'fxblock_5_label', 'fxblock_5',
+            'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
+            'ready_8_label', 'ready_8_container',
+            'ready_9_label', 'ready_9_container',
+            'inv_0_7_label', 'inv_0_7_container',
+            'inv_1_7_label', 'inv_1_7_container',
+            'inv_2_7_label', 'inv_2_7_container',
+            'inv_3_7_label', 'inv_3_7_container',
+            'inv_4_7_label', 'inv_4_7_container',
+            'inv_5_7_label', 'inv_5_7_container',
+            'inv_6_7_label', 'inv_6_7_container',
+            'inv_7_7_label', 'inv_7_7_container',
+            'inv_8_7_label', 'inv_8_7_container',
+            'inv_9_7_label', 'inv_9_7_container',
+            'b2_gold_note'
+            ]
+
     def __init__(self, df):
         self.set_inv_size(10, 8, 2, 5)
         super(B2Character, self).__init__(df)
@@ -653,7 +695,8 @@ class B2Character(Character):
         self.hunger = -1
         self.thirst = -1
         self.portal_locs = []
-        self.readied_spell = []
+        self.readied_spell = ''
+        self.readied_spell_lvl = -1
         self.alchemy_book = []
         self.statuses_extra = []
         self.permstatuses = -1
@@ -735,8 +778,8 @@ class B2Character(Character):
                 self.addspell()
 
             # Currently-readied spell
-            self.readied_spell.append(self.df.readstr())
-            self.readied_spell.append(self.df.readchar())
+            self.readied_spell = self.df.readstr()
+            self.readied_spell_lvl = self.df.readchar()
 
             # Readied Spells
             for i in range(10):
@@ -888,8 +931,8 @@ class B2Character(Character):
             self.df.writechar(spell)
 
         # Readied Spells
-        self.df.writestr(self.readied_spell[0])
-        self.df.writechar(self.readied_spell[1])
+        self.df.writestr(self.readied_spell)
+        self.df.writechar(self.readied_spell_lvl)
         for (spell, level) in self.readyslots:
             self.df.writestr(spell)
             self.df.writechar(level)
@@ -984,10 +1027,10 @@ class B2Character(Character):
         newchar.thirst = self.thirst
         newchar.hunger = self.hunger
         newchar.permstatuses = self.permstatuses
+        newchar.readied_spell = self.readied_spell
+        newchar.readied_spell_lvl = self.readied_spell_lvl
 
         # Lists
-        for item in self.readied_spell:
-            newchar.readied_spell.append(item)
         for recipe in self.alchemy_book:
             newchar.alchemy_book.append(recipe)
         for extra in self.statuses_extra:

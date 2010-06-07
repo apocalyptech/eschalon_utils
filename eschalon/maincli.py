@@ -243,8 +243,8 @@ class MainCLI(object):
         print "--------------"
         print
         if char.book == 2:
-            if char.readied_spell[0] != '':
-                print "\t(current) - %s / Level %d" % (char.readied_spell[0], char.readied_spell[1])
+            if char.readied_spell != '':
+                print "\t(current) - %s / Level %d" % (char.readied_spell, char.readied_spell_lvl)
         i = 1
         for spell in char.readyslots:
             if (spell[0] != ''):
