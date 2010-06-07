@@ -52,6 +52,10 @@ class Item(object):
             self.tozero()
 
     def tozero(self):
+        """
+        Resets all attributes to zero (or empty strings) - why exactly
+        am I doing this here instead of just in the constructor?
+        """
         self.type = 0
         self.subtype = 0
         self.weight = 0
@@ -61,23 +65,20 @@ class Item(object):
         self.quantity = 0
         self.basedamage = 0
         self.basearmor = 0
-        self.attr_modified = 0
-        self.attr_modifier = 0
-        self.skill_modified = 0
-        self.skill_modifier = 0
-        self.hitpoint = 0
-        self.mana = 0
-        self.tohit = 0
-        self.damage = 0
-        self.armor = 0
-        self.incr = 0
-        self.flags = 0
         self.visibility = 0
-        self.duration = 0
         self.zero1 = 0
         self.item_name = ''
         self.script = ''
         self.emptystr = ''
+
+        # Call out to superclass zeroing
+        self._sub_tozero()
+
+    def _sub_tozero(self):
+        """
+        Function for superclasses to override with zeroing functions.
+        """
+        pass
 
     def replicate(self):
 
@@ -356,6 +357,23 @@ class B1Item(Item):
         newitem.flags = self.flags
         newitem.duration = self.duration
 
+    def _sub_tozero(self):
+        """
+        Zeroes out all Book 1 specific vars
+        """
+        self.attr_modified = 0
+        self.attr_modifier = 0
+        self.skill_modified = 0
+        self.skill_modifier = 0
+        self.hitpoint = 0
+        self.mana = 0
+        self.tohit = 0
+        self.damage = 0
+        self.armor = 0
+        self.incr = 0
+        self.flags = 0
+        self.duration = 0
+
 class B2Item(Item):
     """
     Item structure for Book 2
@@ -447,3 +465,18 @@ class B2Item(Item):
         newitem.attr_modified_3 = self.attr_modified_3
         newitem.attr_modifier_3 = self.attr_modifier_3
         newitem.unknownc1 = self.unknownc1
+
+    def _sub_tozero(self):
+        """
+        Zeroes out all Book 2 specific vars
+        """
+        self.unknownflag = 0
+        self.max_hp = 0
+        self.cur_hp = 0
+        self.attr_modified_1 = 0
+        self.attr_modifier_1 = 0
+        self.attr_modified_2 = 0
+        self.attr_modifier_2 = 0
+        self.attr_modified_3 = 0
+        self.attr_modifier_3 = 0
+        self.unknownc1 = 0
