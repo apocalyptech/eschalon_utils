@@ -80,7 +80,9 @@ class Item(object):
         self.emptystr = ''
 
     def replicate(self):
-        newitem = Item()
+
+        newitem = Item.new(self.book)
+
         newitem.type = self.type
         newitem.subtype = self.subtype
         newitem.item_name = self.item_name
@@ -91,23 +93,21 @@ class Item(object):
         newitem.quantity = self.quantity
         newitem.basedamage = self.basedamage
         newitem.basearmor = self.basearmor
-        newitem.attr_modified = self.attr_modified
-        newitem.attr_modifier = self.attr_modifier
-        newitem.skill_modified = self.skill_modified
-        newitem.skill_modifier = self.skill_modifier
-        newitem.hitpoint = self.hitpoint
-        newitem.mana = self.mana
-        newitem.tohit = self.tohit
-        newitem.damage = self.damage
-        newitem.armor = self.armor
-        newitem.incr = self.incr
-        newitem.flags = self.flags
         newitem.script = self.script
         newitem.visibility = self.visibility
-        newitem.duration = self.duration
         newitem.zero1 = self.zero1
         newitem.emptystr = self.emptystr
+
+        # Call out to superclass replication
+        self._sub_replicate(newitem)
+
         return newitem
+
+    def _sub_replicate(self, newitem):
+        """
+        Stub for superclasses to override, to replicate specific vars
+        """
+        pass
 
     def equals(self, item):
         """
@@ -339,6 +339,23 @@ class B1Item(Item):
         df.writeint(self.zero1)
         df.writeint(self.duration)
 
+    def _sub_replicate(self, newitem):
+        """
+        Replicate Book 1 specific item vars
+        """
+        newitem.attr_modified = self.attr_modified
+        newitem.attr_modifier = self.attr_modifier
+        newitem.skill_modified = self.skill_modified
+        newitem.skill_modifier = self.skill_modifier
+        newitem.hitpoint = self.hitpoint
+        newitem.mana = self.mana
+        newitem.tohit = self.tohit
+        newitem.damage = self.damage
+        newitem.armor = self.armor
+        newitem.incr = self.incr
+        newitem.flags = self.flags
+        newitem.duration = self.duration
+
 class B2Item(Item):
     """
     Item structure for Book 2
@@ -415,3 +432,18 @@ class B2Item(Item):
         df.writestr(self.script)
         df.writestr(self.emptystr)
         df.writeshort(self.zero1)
+
+    def _sub_replicate(self, newitem):
+        """
+        Replicate Book 2 specific item vars
+        """
+        newitem.unknownflag = self.unknownflag
+        newitem.max_hp = self.max_hp
+        newitem.cur_hp = self.cur_hp
+        newitem.attr_modified_1 = self.attr_modified_1
+        newitem.attr_modifier_1 = self.attr_modifier_1
+        newitem.attr_modified_2 = self.attr_modified_2
+        newitem.attr_modifier_2 = self.attr_modifier_2
+        newitem.attr_modified_3 = self.attr_modified_3
+        newitem.attr_modifier_3 = self.attr_modifier_3
+        newitem.unknownc1 = self.unknownc1
