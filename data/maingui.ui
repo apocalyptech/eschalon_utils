@@ -2255,7 +2255,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <child>
                                           <object class="GtkTable" id="table7">
                                             <property name="visible">True</property>
-                                            <property name="n_rows">2</property>
+                                            <property name="n_rows">3</property>
                                             <property name="n_columns">2</property>
                                             <child>
                                               <object class="GtkCheckButton" id="permstatuses_00010000">
@@ -2333,6 +2333,47 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="right_attach">2</property>
                                                 <property name="top_attach">1</property>
                                                 <property name="bottom_attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00000010">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00000010_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Starving</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="top_attach">2</property>
+                                                <property name="bottom_attach">3</property>
+                                                <property name="x_options">GTK_FILL</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00000020">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00000020_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Dehydrated</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="right_attach">2</property>
+                                                <property name="top_attach">2</property>
+                                                <property name="bottom_attach">3</property>
                                               </packing>
                                             </child>
                                           </object>
