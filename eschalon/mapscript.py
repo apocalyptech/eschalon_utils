@@ -77,7 +77,7 @@ class Mapscript(object):
 
         # Populate Items as well
         for num in range(8):
-            self.items.append(Item.new(1))
+            self.items.append(Item.new(c.book))
             self.items[num].tozero()
 
     def replicate(self):
@@ -141,7 +141,7 @@ class Mapscript(object):
 
         # Items
         for num in range(8):
-            self.items.append(Item.new(1))
+            self.items.append(Item.new(c.book))
             if (self.savegame):
                 self.items[num].read(df)
             else:

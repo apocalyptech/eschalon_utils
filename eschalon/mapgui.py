@@ -1475,7 +1475,7 @@ class MapGUI(BaseGUI):
                 items[num] = self.itemclipboard.replicate()
                 self.register_mapitem_change(num, page)
         elif (action == 'delete'):
-            items[num] = Item.new(1, True)
+            items[num] = Item.new(c.book, True)
             items[num].tozero()
             self.register_mapitem_change(num, page)
         else:
