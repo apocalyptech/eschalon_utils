@@ -672,6 +672,7 @@ class B2Character(Character):
             'fxblock_6_label', 'fxblock_6',
             'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
             'b2_portal_header', 'b2_portal_body',
+            'alchemy_tab',
             'ready_8_label', 'ready_8_container',
             'ready_9_label', 'ready_9_container',
             'inv_0_7_label', 'inv_0_7_container',

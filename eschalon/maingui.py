@@ -980,6 +980,35 @@ class MainGUI(BaseGUI):
                 box.append_text(spell)
 
         ###
+        ### Alchemy Recipe Book
+        ### Note that technically we don't need to do this dynamically, since
+        ### these dropdowns only exist for Book 2.
+        ###
+        if char.book == 2:
+            box1 = self.get_widget('alchemy_vbox_1')
+            box2 = self.get_widget('alchemy_vbox_2')
+            for box in [box1, box2]:
+                for widget in box.get_children():
+                    box.remove(widget)
+            numrows = len(c.alchemytable)/2
+            if (len(c.alchemytable) % 2 == 1):
+                numrows += 1
+            for (idx, recipe) in c.alchemytable.items():
+                if (idx < numrows):
+                    box = box1
+                else:
+                    box = box2
+                cb = gtk.CheckButton()
+                self.register_widget('alchemy_book_%d' % (idx), cb)
+                label = gtk.Label(recipe)
+                self.register_widget('alchemy_book_%d_label' % (idx), label)
+                cb.connect('toggled', self.on_checkbox_arr_changed)
+                cb.add(label)
+                box.pack_start(cb)
+            box1.show_all()
+            box2.show_all()
+
+        ###
         ### Item Type and Subtype dropdowns
         ###
         type_dd = self.get_widget('type')
@@ -998,15 +1027,16 @@ class MainGUI(BaseGUI):
         ### these dropdowns only exist for Book 2.
         ###
         # TODO: we should be able to do this all with a single listview, yeah?
-        boxes = []
-        for i in range(1, 4):
-            boxes.append(self.get_widget('attr_modified_%d' % (i)))
-        attributes = c.itemeffecttable.values()
-        for box in boxes:
-            box.get_model().clear()
-            box.append_text('')
-            for attribute in attributes:
-                box.append_text(attribute)
+        if char.book == 2:
+            boxes = []
+            for i in range(1, 4):
+                boxes.append(self.get_widget('attr_modified_%d' % (i)))
+            attributes = c.itemeffecttable.values()
+            for box in boxes:
+                box.get_model().clear()
+                box.append_text('')
+                for attribute in attributes:
+                    box.append_text(attribute)
 
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """
@@ -1066,6 +1096,9 @@ class MainGUI(BaseGUI):
         for num in range(fxblocks):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
+        # TODO: For these set_active() things, should I be setting regardless
+        # instead of just setting when it's True?  What happens when I load a new
+        # char over an old one?
         if char.book == 1:
             for key in c.diseasetable.keys():
                 if (char.disease & key == key):
@@ -1110,6 +1143,8 @@ class MainGUI(BaseGUI):
                 self.get_widget('portal_loc_loc_%d' % (num)).set_value(char.portal_locs[num][0])
                 self.get_widget('portal_loc_map_%d' % (num)).set_text(char.portal_locs[num][1])
                 self.get_widget('portal_loc_mapeng_%d' % (num)).set_text(char.portal_locs[num][2])
+            for idx in c.alchemytable.keys():
+                self.get_widget('alchemy_book_%d' % (idx)).set_active(char.alchemy_book[idx] > 0)
 
     def gui_finish(self):
         """
