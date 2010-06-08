@@ -136,6 +136,58 @@ class BaseGUI(object):
                 'bypass_delete': self.bypass_delete
                 }
 
+    def set_book_elem_visibility(self, classname, show):
+        """
+        Show or hide form elements based on the book version
+        """
+        if show:
+            for elem in classname.form_elements:
+                widget = self.get_widget(elem)
+                if widget:
+                    widget.show()
+        else:
+            for elem in classname.form_elements:
+                widget = self.get_widget(elem)
+                if widget:
+                    widget.hide()
+
+    def prepare_dynamic_item_form(self, book):
+        """
+        Called when we load a new character, this will update the item form with
+        elements which are dynamic based on the Book
+        """
+
+        ###
+        ### Item Type and Subtype dropdowns
+        ###
+        type_dd = self.get_widget('type')
+        type_dd.get_model().clear()
+        for type in c.typetable.values():
+            type_dd.append_text(type)
+        subtype_dd = self.get_widget('subtype')
+        subtype_dd.get_model().clear()
+        subtype_dd.append_text('(none)')
+        for subtype in c.skilltable.values():
+            subtype_dd.append_text(subtype)
+
+        ###
+        ### Item attribute modifier dropdowns
+        ### Note that technically we don't need to do this dynamically, since
+        ### these dropdowns only exist for Book 2.
+        ###
+        # TODO: we should be able to do this all with a single listview, yeah?
+        if book == 2:
+            boxes = []
+            for i in range(1, 4):
+                boxes.append(self.get_widget('attr_modified_%d' % (i)))
+            attributes = c.itemeffecttable.values()
+            for box in boxes:
+                box.get_model().clear()
+                box.append_text('')
+                for attribute in attributes:
+                    box.append_text(attribute)
+
+
     def bypass_delete(self, widget, event):
         """
         Used to prevent a delete-event from actually deleting our object

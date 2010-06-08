@@ -312,9 +312,8 @@ class B1Character(Character):
             'disease_label', 'disease_table',
             'gfx_preset_vbox',
             'weap_alt_label', 'weap_alt_container',
-            'b1_gold_note',
-            'item_b1_modifier_box',
-            'duration_label', 'duration' ]
+            'b1_gold_note'
+            ]
 
     def __init__(self, df):
         self.set_inv_size(10, 7, 2, 4)
@@ -687,15 +686,6 @@ class B2Character(Character):
             'inv_8_7_label', 'inv_8_7_container',
             'inv_9_7_label', 'inv_9_7_container',
             'b2_gold_note',
-            'item_b2_modifier_box',
-            'cur_hp_label', 'cur_hp',
-            'max_hp_label', 'max_hp',
-            'unknownflag', 'unknownflag_label',
-            'unknownc1', 'unknownc1_label',
-            'unknownc2', 'unknownc2_label',
-            'unknownc3', 'unknownc3_label',
-            'unknownc4', 'unknownc4_label',
-            'book2_item_picid_note',
             'keyring_label', 'keyring_align'
             ]
 

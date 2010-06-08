@@ -26,6 +26,7 @@ import traceback
 from eschalonb1 import constants as c
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
+from eschalonb1.item import B1Item, B2Item
 
 # Load our GTK modules
 try:
@@ -654,6 +655,11 @@ class MapGUI(BaseGUI):
         # Load the new map into our SmartDraw object
         self.smartdraw.set_map(self.map)
         self.smartdraw.set_gui(self)
+
+        # Now show or hide form elements depending on the book version
+        for item_class in (B1Item, B2Item):
+            self.set_book_elem_visibility(item_class, item_class.book == c.book)
+        self.prepare_dynamic_item_form(c.book)
 
         # Load information from the character
         if (self.mapinit):
@@ -1333,7 +1339,7 @@ class MapGUI(BaseGUI):
         entry.show()
         self.register_widget('%s_%d' % (name, page), entry)
         entry.set_range(0, max)
-        entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 10))
+        entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 0))
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             entry.set_value(script.__dict__[name])

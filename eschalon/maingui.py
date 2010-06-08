@@ -52,7 +52,7 @@ if (gtk.check_version(2, 18, 0) is not None):
 from eschalonb1.gfx import Gfx
 from eschalonb1.basegui import BaseGUI
 from eschalonb1.character import Character, B1Character, B2Character
-from eschalonb1.item import Item
+from eschalonb1.item import Item, B1Item, B2Item
 from eschalonb1.savefile import LoadException
 from eschalonb1 import constants as c
 from eschalonb1 import app_name, version, url, authors
@@ -395,22 +395,11 @@ class MainGUI(BaseGUI):
         self.get_widget('invnotebook').set_current_page(0)
 
         # Now show or hide form elements depending on the book version
-        for char_class in (B1Character, B2Character):
+        for char_class in (B1Character, B2Character, B1Item, B2Item):
             self.set_book_elem_visibility(char_class, char_class.book == char.book)
 
         # Return success
         return True
-
-    def set_book_elem_visibility(self, char_class, show):
-        """
-        Show or hide form elements based on the book version
-        """
-        if show:
-            for elem in char_class.form_elements:
-                self.get_widget(elem).show()
-        else:
-            for elem in char_class.form_elements:
-                self.get_widget(elem).hide()
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -875,6 +864,9 @@ class MainGUI(BaseGUI):
         elements which are dynamic based on the Book (skills, spells, etc)
         """
 
+        # Make sure to handle the Item window too
+        self.prepare_dynamic_item_form(char.book)
+
         ###
         ### Front-screen skill table
         ###
@@ -1040,36 +1032,6 @@ class MainGUI(BaseGUI):
                 box.pack_start(cb)
             box1.show_all()
             box2.show_all()
-
-        ###
-        ### Item Type and Subtype dropdowns
-        ###
-        type_dd = self.get_widget('type')
-        type_dd.get_model().clear()
-        for type in c.typetable.values():
-            type_dd.append_text(type)
-        subtype_dd = self.get_widget('subtype')
-        subtype_dd.get_model().clear()
-        subtype_dd.append_text('(none)')
-        for subtype in c.skilltable.values():
-            subtype_dd.append_text(subtype)
-
-        ###
-        ### Item attribute modifier dropdowns
-        ### Note that technically we don't need to do this dynamically, since
-        ### these dropdowns only exist for Book 2.
-        ###
-        # TODO: we should be able to do this all with a single listview, yeah?
-        if char.book == 2:
-            boxes = []
-            for i in range(1, 4):
-                boxes.append(self.get_widget('attr_modified_%d' % (i)))
-            attributes = c.itemeffecttable.values()
-            for box in boxes:
-                box.get_model().clear()
-                box.append_text('')
-                for attribute in attributes:
-                    box.append_text(attribute)
 
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """

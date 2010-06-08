@@ -564,6 +564,7 @@
             <child>
               <object class="GtkVBox" id="item_b1_modifier_box">
                 <property name="visible">True</property>
+                <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label55">
                     <property name="visible">True</property>
@@ -1185,6 +1186,7 @@
             <child>
               <object class="GtkVBox" id="item_b2_modifier_box">
                 <property name="visible">True</property>
+                <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
@@ -1478,6 +1480,7 @@
             <child>
               <object class="GtkVBox" id="vbox9">
                 <property name="visible">True</property>
+                <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label67">
                     <property name="visible">True</property>

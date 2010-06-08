@@ -25,11 +25,13 @@ from eschalonb1 import constants as c
 class Item(object):
     """Class to hold a single Item's information."""
 
+    book = None
+    form_elements = []
+
     def __init__(self):
         """ Create a new Item object with no information. """
 
         # Known fields
-        self.book = c.book
         self.type = -1
         self.subtype = -1
         self.item_name = ''
@@ -253,6 +255,11 @@ class B1Item(Item):
     Item structure for Book 1
     """
 
+    book = 1
+    form_elements = [ 'item_b1_modifier_box',
+            'duration_label', 'duration'
+            ]
+
     def __init__(self, zero=False):
         super(B1Item, self).__init__()
         
@@ -386,6 +393,18 @@ class B2Item(Item):
     """
     Item structure for Book 2
     """
+
+    book = 2
+    form_elements = [ 'item_b2_modifier_box',
+            'cur_hp_label', 'cur_hp',
+            'max_hp_label', 'max_hp',
+            'unknownflag', 'unknownflag_label',
+            'unknownc1', 'unknownc1_label',
+            'unknownc2', 'unknownc2_label',
+            'unknownc3', 'unknownc3_label',
+            'unknownc4', 'unknownc4_label',
+            'book2_item_picid_note'
+            ]
 
     def __init__(self, zero=False):
         super(B2Item, self).__init__()
