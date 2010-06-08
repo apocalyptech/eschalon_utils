@@ -559,8 +559,7 @@ class BaseGUI(object):
         button.show()
         self.register_widget('%s_%s' % (itemname, action), button)
         button.connect('clicked', callback)
-        tip = gtk.Tooltips()
-        tip.set_tip(button, name)
+        button.set_tooltip_text(name)
 
         image = gtk.Image()
         image.show()

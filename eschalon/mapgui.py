@@ -24,7 +24,6 @@ import sys
 import time
 import traceback
 from eschalonb1 import constants as c
-#from eschalonb1 import traptable, containertable, objecttypetable, wall_list, entitytable
 from eschalonb1.gfx import Gfx
 from eschalonb1.undo import Undo
 
@@ -1322,8 +1321,7 @@ class MapGUI(BaseGUI):
                 entry.set_text(script.__dict__[name])
         entry.connect('changed', self.on_script_str_changed)
         if (tooltip is not None):
-            tips = gtk.Tooltips()
-            tips.set_tip(entry, tooltip)
+            entry.set_tooltip_text(tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
@@ -1344,8 +1342,7 @@ class MapGUI(BaseGUI):
         else:
             entry.connect('value-changed', signal)
         if (tooltip is not None):
-            tips = gtk.Tooltips()
-            tips.set_tip(entry, tooltip)
+            entry.set_tooltip_text(tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
@@ -1375,8 +1372,7 @@ class MapGUI(BaseGUI):
         else:
             entry.connect('changed', self.on_dropdown_changed)
         if (tooltip is not None):
-            tips = gtk.Tooltips()
-            tips.set_tip(entry, tooltip)
+            entry.set_tooltip_text(tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
@@ -1391,8 +1387,7 @@ class MapGUI(BaseGUI):
         entry.set_active((scriptval & flagval == flagval))
         entry.connect('toggled', self.on_script_flag_changed)
         if (tooltip is not None):
-            tips = gtk.Tooltips()
-            tips.set_tip(entry, tooltip)
+            entry.set_tooltip_text(tooltip)
         align.add(entry)
         table.attach(align, 2, 3, row, row+1)
 
