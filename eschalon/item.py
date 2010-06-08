@@ -177,6 +177,8 @@ class Item(object):
                     ret.append("\t(Note: this item has not been identified yet, difficulty %d)" % (self.visibility))
             ret.append("\tPicture ID: %d" % self.pictureid)
             ret.append("\tValue: %d" % self.value)
+            if self.book == 2 and self.max_hp > 0:
+                ret.append("\tCondition: %d%%" % (self.cur_hp/float(self.max_hp)*100))
             if (self.basedamage > 0):
                 ret.append("\tBase Damage: %d" % self.basedamage)
             if (self.basearmor > 0):

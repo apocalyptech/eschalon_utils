@@ -191,27 +191,31 @@ class MainCLI(object):
         print "AVATAR GRAPHICS FX"
         print "------------------"
         print
-        if (char.fxblock[0] == 1073741824 and
-            char.fxblock[1] == 2111 and
-            char.fxblock[2] == 2560 and
-            char.fxblock[3] == 5120):
-            print "Ordinary FX (no modifiers)"
-        elif (char.fxblock[0] == 1803886340 and
-            char.fxblock[1] == 61503 and
-            char.fxblock[2] == 30720 and
-            char.fxblock[3] == 15360):
-            print "Gravedigger's Flame is On"
-        elif (char.fxblock[0] == 1288490242 and
-            char.fxblock[1] == 41023 and
-            char.fxblock[2] == 38400 and
-            char.fxblock[3] == 32000):
-            print "Torch is On"
-        elif (char.fxblock[0] == 1803886342 and
-            char.fxblock[1] == 61503 and
-            char.fxblock[2] == 38400 and
-            char.fxblock[3] == 32000):
-            print "Torch is On"
-            print "Gravedigger's Flame is On"
+        if char.book == 1:
+            if (char.fxblock[0] == 1073741824 and
+                char.fxblock[1] == 2111 and
+                char.fxblock[2] == 2560 and
+                char.fxblock[3] == 5120):
+                print "Ordinary FX (no modifiers)"
+            elif (char.fxblock[0] == 1803886340 and
+                char.fxblock[1] == 61503 and
+                char.fxblock[2] == 30720 and
+                char.fxblock[3] == 15360):
+                print "Gravedigger's Flame is On"
+            elif (char.fxblock[0] == 1288490242 and
+                char.fxblock[1] == 41023 and
+                char.fxblock[2] == 38400 and
+                char.fxblock[3] == 32000):
+                print "Torch is On"
+            elif (char.fxblock[0] == 1803886342 and
+                char.fxblock[1] == 61503 and
+                char.fxblock[2] == 38400 and
+                char.fxblock[3] == 32000):
+                print "Torch is On"
+                print "Gravedigger's Flame is On"
+            else:
+                for i in char.fxblock:
+                    print "\t* %d" % (i)
         else:
             for i in char.fxblock:
                 print "\t* %d" % (i)

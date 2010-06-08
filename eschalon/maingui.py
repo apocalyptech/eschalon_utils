@@ -151,6 +151,7 @@ class MainGUI(BaseGUI):
                 'on_cur_ready_changed': self.on_cur_ready_changed,
                 'on_multarray_changed': self.on_multarray_changed,
                 'on_multarray_changed_fx': self.on_multarray_changed_fx,
+                'on_portal_loc_changed': self.on_portal_loc_changed,
                 'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
                 'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
                 'on_dropdownplusone_changed_b2': self.on_dropdownplusone_changed_b2,
@@ -533,6 +534,27 @@ class MainGUI(BaseGUI):
         else:
             obj.__dict__[objwname] = widget.get_active() + 1
         self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
+
+    def on_portal_loc_changed(self, widget):
+        """ What to do when one of our bound-portal locations changes. """
+        wname = widget.get_name()
+        (shortwname, num) = wname.rsplit('_', 1)
+        num = int(num)
+        basename = 'portal_loc_%d' % (num)
+        (labelwidget, label) = self.get_label_cache(basename)
+        (obj, origobj) = self.get_comp_objects()
+        if shortwname == 'portal_loc_loc':
+            obj.portal_locs[num][0] = int(widget.get_value())
+        elif shortwname == 'portal_loc_map':
+            obj.portal_locs[num][1] = widget.get_text()
+        elif shortwname == 'portal_loc_mapeng':
+            obj.portal_locs[num][2] = widget.get_text()
+        changed = False
+        for i in range(3):
+            if obj.portal_locs[num][i] != origobj.portal_locs[num][i]:
+                changed = True
+                break
+        self.set_changed_widget(not changed, basename, labelwidget, label)
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
@@ -1082,6 +1104,12 @@ class MainGUI(BaseGUI):
         self.get_widget('gold').set_value(char.gold)
         self.get_widget('torches').set_value(char.torches)
         self.get_widget('torchused').set_value(char.torchused)
+
+        if char.book == 2:
+            for num in range(6):
+                self.get_widget('portal_loc_loc_%d' % (num)).set_value(char.portal_locs[num][0])
+                self.get_widget('portal_loc_map_%d' % (num)).set_text(char.portal_locs[num][1])
+                self.get_widget('portal_loc_mapeng_%d' % (num)).set_text(char.portal_locs[num][2])
 
     def gui_finish(self):
         """

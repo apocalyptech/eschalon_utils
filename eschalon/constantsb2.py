@@ -244,9 +244,9 @@ class B2Constants:
             0x32: 'Freeze Damage',
             0x33: 'Magick Damage',
             0x34: 'Poison',
-            0x35: '(Demon Oil I)',
-            0x36: '(Demon Oil II)',
-            0x37: '(Demon Oil III)'
+            0x35: 'Small Effect Area (thrown potions)',
+            0x36: 'Medium Effect Area (thrown potions)',
+            0x37: 'Large Effect Area (thrown potions)'
         }
 
     # This table is a bitfield lookup

@@ -671,6 +671,7 @@ class B2Character(Character):
             'fxblock_5_label', 'fxblock_5',
             'fxblock_6_label', 'fxblock_6',
             'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
+            'b2_portal_header', 'b2_portal_body',
             'ready_8_label', 'ready_8_container',
             'ready_9_label', 'ready_9_container',
             'inv_0_7_label', 'inv_0_7_container',
@@ -691,7 +692,8 @@ class B2Character(Character):
             'unknownc1', 'unknownc1_label',
             'unknownc2', 'unknownc2_label',
             'unknownc3', 'unknownc3_label',
-            'unknownc4', 'unknownc4_label'
+            'unknownc4', 'unknownc4_label',
+            'book2_item_picid_note'
             ]
 
     def __init__(self, df):
