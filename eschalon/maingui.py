@@ -911,7 +911,7 @@ class MainGUI(BaseGUI):
             align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
             table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
             # TODO: limit is technically >255 on B1
-            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 10)
+            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
             spin = gtk.SpinButton(adjust)
             self.register_widget('skills_%d' % (idx+1), spin)
             align.add(spin)
@@ -955,7 +955,7 @@ class MainGUI(BaseGUI):
             
             align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
             table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 10)
+            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
             spin = gtk.SpinButton(adjust)
             self.register_widget('statuses_%d' % (idx), spin)
             spin.connect('value-changed', self.on_effect_changed)
@@ -964,7 +964,7 @@ class MainGUI(BaseGUI):
             else:
                 hbox = gtk.HBox()
                 hbox.add(spin)
-                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 10)
+                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
                 spin = gtk.SpinButton(adjust)
                 self.register_widget('statuses_extra_%d' % (idx), spin)
                 spin.connect('value-changed', self.on_effect_changed)

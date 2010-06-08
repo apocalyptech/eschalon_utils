@@ -494,6 +494,5 @@ gfx.pak can be found in the Eschalon Book 1 installation folder.  Hit OK to brin
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
-    <property name="page_size">1</property>
   </object>
 </interface>
