@@ -562,13 +562,14 @@ class MainGUI(BaseGUI):
         wname = widget.get_name()
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
-        (labelwidget, label) = self.get_label_cache('statuses_%d' % (arrnum))
+        labelname = 'statuses_%d' % (arrnum)
+        (labelwidget, label) = self.get_label_cache(labelname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = int(widget.get_value())
         changed = (origobj.statuses[arrnum] != obj.statuses[arrnum])
         if c.book == 2 and (origobj.statuses_extra[arrnum] != obj.statuses_extra[arrnum]):
             changed = True
-        self.set_changed_widget(not changed, 'statuses', labelwidget, label)
+        self.set_changed_widget(not changed, labelname, labelwidget, label)
 
     def on_multarray_text_changed(self, widget):
         """ What to do when a string value changes in an array. """
