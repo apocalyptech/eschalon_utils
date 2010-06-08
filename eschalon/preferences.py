@@ -64,7 +64,7 @@ class Prefs(object):
     def set_defaults(self):
         # We're loading gamedir first because sometimes Windows will have its
         # savegames stored in there, so it'd be useful to know that first
-        for vars in [('paths', 'gamedir'), ('paths', 'savegames')]:
+        for vars in [('paths', 'gamedir'), ('paths', 'gamedir_b2'), ('paths', 'savegames')]:
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
@@ -119,6 +119,9 @@ class Prefs(object):
                 return 4
             elif (name == 'warn_global_map'):
                 return 'True'
+        elif (cat == 'paths'):
+            if (name == 'gamedir_b2'):
+                return ''
         return None
 
     def no_prefsfile(self):

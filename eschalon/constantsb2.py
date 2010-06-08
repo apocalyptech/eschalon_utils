@@ -77,7 +77,7 @@ class B2Constants:
         }
 
     typetable = {
-            0x00: '(nothing)',
+            0x00: '(none)',
             0x01: 'Weapon',
             0x02: 'Arrow',
             0x03: 'Armor (Helm)',

@@ -181,7 +181,7 @@
                               <object class="GtkComboBox" id="type">
                                 <property name="visible">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="model">liststore5</property>
+                                <property name="model">item_category_store</property>
                                 <signal name="changed" handler="on_dropdown_changed"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext5"/>
@@ -209,7 +209,7 @@
                               <object class="GtkComboBox" id="subtype">
                                 <property name="visible">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="model">liststore4</property>
+                                <property name="model">item_subcategory_store</property>
                                 <signal name="changed" handler="on_dropdown_changed"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext4"/>
@@ -582,6 +582,16 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="label57">
+                            <property name="width_request">10</property>
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkAlignment" id="alignment109">
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -596,16 +606,6 @@
                                 <signal name="value_changed" handler="on_modifier_changed"/>
                               </object>
                             </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label57">
-                            <property name="width_request">10</property>
-                            <property name="visible">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -2198,225 +2198,17 @@
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore4">
+  <object class="GtkListStore" id="item_subcategory_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Alchemy</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Divination</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Elemental</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Light Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Heavy Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Shields</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cartography</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Dodge</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hide in Shadows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lore </col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Meditation</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Mercantile</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Move Silently</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Pick Locks</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">SkullDuggery</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Spot Hidden</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Survival</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Unarmed Combat</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bludgeoning Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cleaving Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Short Bladed Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Swords</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thrown Weapons</col>
-      </row>
-    </data>
   </object>
-  <object class="GtkListStore" id="liststore5">
+  <object class="GtkListStore" id="item_category_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(nothing)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Weapon</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Arrow</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Helm)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Cloak)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Torso)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Belt)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Gauntlet)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Legs)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Shield)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Armor (Feet)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Amulet</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Ring</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Magic</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown - dynamite maybe?)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Potion</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Reagent</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Reactant</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Miscellaneous</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lock Pick</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gem</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown - n/a)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Consumable</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Gold</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">n/a</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Special</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Key</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">(unknown)</col>
-      </row>
-    </data>
   </object>
   <object class="GtkAdjustment" id="cur_hp_adj">
     <property name="upper">65535</property>

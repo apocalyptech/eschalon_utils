@@ -128,10 +128,13 @@ class MainGUI(BaseGUI):
         # Set up our graphics cache
         self.prefs_init(self.prefs)
         self.optional_gfx()
-        if (self.gamedir_set()):
-            self.gfx = Gfx(self.prefs, self.datadir)
+        self.gfxes = {}
+        if (self.gamedir_set(1)):
+            self.gfxes[1] = Gfx(self.prefs, self.datadir)
         else:
-            self.gfx = None
+            self.gfxes[1] = None
+        self.gfxes[2] = None
+        self.switch_gfx_to(1)
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
@@ -178,6 +181,13 @@ class MainGUI(BaseGUI):
         # Start the main gtk loop
         self.window.show()
         gtk.main()
+
+    def switch_gfx_to(self, book):
+        """
+        Switches our current gfx object to the specified book
+        """
+        self.gfx = self.gfxes[book]
+        self.assert_gfx_buttons()
 
     def assert_gfx_buttons(self):
         """
@@ -371,6 +381,7 @@ class MainGUI(BaseGUI):
         self.putstatus('Editing ' + self.char.df.filename)
 
         # Load information from the character
+        self.switch_gfx_to(self.char.book)
         self.populate_form_from_char()
 
         # Load default dropdowns, since Glade apparently can't
@@ -945,6 +956,19 @@ class MainGUI(BaseGUI):
             box.append_text('')
             for spell in spells:
                 box.append_text(spell)
+
+        ###
+        ### Item Type and Subtype dropdowns
+        ###
+        type_dd = self.get_widget('type')
+        type_dd.get_model().clear()
+        for type in c.typetable.values():
+            type_dd.append_text(type)
+        subtype_dd = self.get_widget('subtype')
+        subtype_dd.get_model().clear()
+        subtype_dd.append_text('(none)')
+        for subtype in c.skilltable.values():
+            subtype_dd.append_text(subtype)
 
         ###
         ### Item attribute modifier dropdowns

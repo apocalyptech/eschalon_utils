@@ -31,7 +31,6 @@ except:
 
 import gobject
 from eschalonb1 import constants as c
-#from eschalonb1 import flagstable
 
 class BaseGUI(object):
 
@@ -145,8 +144,18 @@ class BaseGUI(object):
         widget.hide()
         return True
 
-    def gamedir_set(self):
-        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
+    def gamedir_set(self, book=None):
+        if book is None:
+            if c.book == 1:
+                var = 'gamedir'
+            else:
+                var = 'gamedir_b2'
+        else:
+            if book == 1:
+                var ='gamedir'
+            else:
+                var = 'gamedir_b2'
+        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', var), 'gfx.pak')))
 
     def optional_gfx(self):
         if (not self.gamedir_set()):

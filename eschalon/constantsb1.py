@@ -95,7 +95,7 @@ class B1Constants:
             0x18: 'Thrown Weapons'
         }
     typetable = {
-            0x00: '(nothing)',
+            0x00: '(none)',
             0x01: 'Weapon',
             0x02: 'Arrow',
             0x03: 'Armor (Helm)',
@@ -109,6 +109,7 @@ class B1Constants:
             0x0B: 'Amulet',
             0x0C: 'Ring',
             0x0D: 'Magic',
+            0x0E: '(Explosive?)',
             # 0x0E: Duration field displayed as "Charges" - dynamite of some sort
             0x0F: 'Potion',
             0x10: 'Reagent',
@@ -116,7 +117,7 @@ class B1Constants:
             0x12: 'Miscellaneous',
             0x13: 'Lock Pick',
             0x14: 'Gem',
-            # 0x15: No idea, just comes up n/a
+            0x15: '(unknown - n/a)',
             0x16: 'Consumable',
             0x17: 'Gold',
             0x18: 'n/a',
