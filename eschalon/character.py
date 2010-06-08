@@ -694,7 +694,8 @@ class B2Character(Character):
             'unknownc2', 'unknownc2_label',
             'unknownc3', 'unknownc3_label',
             'unknownc4', 'unknownc4_label',
-            'book2_item_picid_note'
+            'book2_item_picid_note',
+            'keyring_label', 'keyring_align'
             ]
 
     def __init__(self, df):

@@ -150,6 +150,7 @@ class MainGUI(BaseGUI):
                 'on_readyslots_changed': self.on_readyslots_changed,
                 'on_cur_ready_changed': self.on_cur_ready_changed,
                 'on_multarray_changed': self.on_multarray_changed,
+                'on_multarray_text_changed': self.on_multarray_text_changed,
                 'on_multarray_changed_fx': self.on_multarray_changed_fx,
                 'on_portal_loc_changed': self.on_portal_loc_changed,
                 'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
@@ -555,6 +556,16 @@ class MainGUI(BaseGUI):
                 changed = True
                 break
         self.set_changed_widget(not changed, basename, labelwidget, label)
+
+    def on_multarray_text_changed(self, widget):
+        """ What to do when a string value changes in an array. """
+        wname = widget.get_name()
+        (shortname, arrnum) = wname.rsplit('_', 1)
+        arrnum = int(arrnum)
+        (labelwidget, label) = self.get_label_cache(wname)
+        (obj, origobj) = self.get_comp_objects()
+        obj.__dict__[shortname][arrnum] = widget.get_text()
+        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
@@ -1145,6 +1156,8 @@ class MainGUI(BaseGUI):
                 self.get_widget('portal_loc_mapeng_%d' % (num)).set_text(char.portal_locs[num][2])
             for idx in c.alchemytable.keys():
                 self.get_widget('alchemy_book_%d' % (idx)).set_active(char.alchemy_book[idx] > 0)
+            for (idx, key) in enumerate(char.keyring):
+                self.get_widget('keyring_%d' % (idx)).set_text(key)
 
     def gui_finish(self):
         """

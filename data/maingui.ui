@@ -4679,6 +4679,696 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
+                        <child>
+                          <object class="GtkLabel" id="keyring_label">
+                            <property name="visible">True</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">0</property>
+                            <property name="ypad">5</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Keyring&lt;/b&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="keyring_align">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xscale">0</property>
+                            <property name="left_padding">20</property>
+                            <child>
+                              <object class="GtkTable" id="table11">
+                                <property name="visible">True</property>
+                                <property name="n_rows">10</property>
+                                <property name="n_columns">4</property>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_0_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 1:</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_1_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 2:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_2_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 3:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_3_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 4:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">3</property>
+                                    <property name="bottom_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_4_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 5:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_5_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 6:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">5</property>
+                                    <property name="bottom_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_6_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 7:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">6</property>
+                                    <property name="bottom_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_7_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 8:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">7</property>
+                                    <property name="bottom_attach">8</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_8_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 9:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">8</property>
+                                    <property name="bottom_attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_9_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 10:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">9</property>
+                                    <property name="bottom_attach">10</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_11_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 12:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_12_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 13:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_13_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 14:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="bottom_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_14_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 15:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_15_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 16:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="bottom_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_16_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 17:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="bottom_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_17_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 18:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">7</property>
+                                    <property name="bottom_attach">8</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_18_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 19:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">8</property>
+                                    <property name="bottom_attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="keyring_19_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">1</property>
+                                    <property name="label" translatable="yes">Key 20:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                    <property name="top_attach">9</property>
+                                    <property name="bottom_attach">10</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment60">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">9</property>
+                                    <child>
+                                      <object class="GtkLabel" id="keyring_10_label">
+                                        <property name="visible">True</property>
+                                        <property name="xalign">1</property>
+                                        <property name="label" translatable="yes">Key 11:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="right_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment61">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_0">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment62">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_1">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment63">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_2">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment64">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_3">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="bottom_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment65">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_4">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment66">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_5">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="bottom_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment67">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_6">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="bottom_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment68">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_7">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">7</property>
+                                    <property name="bottom_attach">8</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment69">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_8">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">8</property>
+                                    <property name="bottom_attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment70">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_9">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">9</property>
+                                    <property name="bottom_attach">10</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment104">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_10">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment105">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_11">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment106">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_12">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment107">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_13">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">3</property>
+                                    <property name="bottom_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment108">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_14">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment109">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_15">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="bottom_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment110">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_16">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="bottom_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment111">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_17">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">7</property>
+                                    <property name="bottom_attach">8</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment112">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_18">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">8</property>
+                                    <property name="bottom_attach">9</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment113">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkEntry" id="keyring_19">
+                                        <property name="width_request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <signal name="changed" handler="on_multarray_text_changed"/>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">3</property>
+                                    <property name="right_attach">4</property>
+                                    <property name="top_attach">9</property>
+                                    <property name="bottom_attach">10</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">3</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="position">3</property>
