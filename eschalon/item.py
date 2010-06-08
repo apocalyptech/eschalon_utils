@@ -25,7 +25,7 @@ from eschalonb1 import constants as c
 class Item(object):
     """Class to hold a single Item's information."""
 
-    def __init__(self, zero=False):
+    def __init__(self):
         """ Create a new Item object with no information. """
 
         # Known fields
@@ -46,10 +46,6 @@ class Item(object):
         # Unknown fields.
         self.zero1 = -1
         self.emptystr = ''
-
-        # Now, after doing all that, zero things out if we were told to do so
-        if (zero):
-            self.tozero()
 
     def tozero(self):
         """
@@ -243,21 +239,21 @@ class Item(object):
         return "\n".join(ret)
 
     @staticmethod
-    def new(book):
+    def new(book, zero=False):
         """
         Static method to initialize the appropriate type of Item and return it
         """
         if book == 1:
-            return B1Item()
+            return B1Item(zero)
         else:
-            return B2Item()
+            return B2Item(zero)
 
 class B1Item(Item):
     """
     Item structure for Book 1
     """
 
-    def __init__(self):
+    def __init__(self, zero=False):
         super(B1Item, self).__init__()
         
         # Attributes which only Book 1 has
@@ -273,6 +269,10 @@ class B1Item(Item):
         self.flags = -1
         self.hitpoint = -1
         self.duration = -1
+
+        # Now, after doing all that, zero things out if we were told to do so
+        if (zero):
+            self.tozero()
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """
@@ -387,7 +387,7 @@ class B2Item(Item):
     Item structure for Book 2
     """
 
-    def __init__(self):
+    def __init__(self, zero=False):
         super(B2Item, self).__init__()
         
         # Attributes which only Book 2 has
@@ -405,6 +405,10 @@ class B2Item(Item):
         self.unknownc2 = -1
         self.unknownc3 = -1
         self.unknownc4 = -1
+
+        # Now, after doing all that, zero things out if we were told to do so
+        if (zero):
+            self.tozero()
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """

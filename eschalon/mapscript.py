@@ -21,7 +21,6 @@
 
 import struct
 from eschalonb1 import constants as c
-#from eschalonb1 import traptable, containertable, scriptflags
 from eschalonb1.item import Item
 from eschalonb1.savefile import FirstItemLoadException
 
@@ -78,7 +77,7 @@ class Mapscript(object):
 
         # Populate Items as well
         for num in range(8):
-            self.items.append(Item())
+            self.items.append(Item.new(1))
             self.items[num].tozero()
 
     def replicate(self):
@@ -142,7 +141,7 @@ class Mapscript(object):
 
         # Items
         for num in range(8):
-            self.items.append(Item())
+            self.items.append(Item.new(1))
             if (self.savegame):
                 self.items[num].read(df)
             else:

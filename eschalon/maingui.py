@@ -707,7 +707,7 @@ class MainGUI(BaseGUI):
                 self.register_equip_change(equipname)
             pass
         elif (action == 'delete'):
-            self.char.__dict__[equipname] = Item(True)
+            self.char.__dict__[equipname] = Item.new(c.book, True)
             self.register_equip_change(equipname)
         else:
             raise Exception('invalid action')
@@ -728,7 +728,7 @@ class MainGUI(BaseGUI):
                 self.char.inventory[row][col] = self.itemclipboard.replicate()
                 self.register_inv_change(row, col)
         elif (action == 'delete'):
-            self.char.inventory[row][col] = Item(True)
+            self.char.inventory[row][col] = Item.new(c.book, True)
             self.register_inv_change(row, col)
         else:
             raise Exception('invalid action')
@@ -749,7 +749,7 @@ class MainGUI(BaseGUI):
                 self.register_ready_change(num)
             pass
         elif (action == 'delete'):
-            self.char.readyitems[num] = Item(True)
+            self.char.readyitems[num] = Item.new(c.book, True)
             self.register_ready_change(num)
         else:
             raise Exception('invalid action')
