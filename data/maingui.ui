@@ -2392,7 +2392,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                           <object class="GtkTable" id="table6">
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                            <property name="n_rows">6</property>
+                                            <property name="n_rows">7</property>
                                             <property name="n_columns">2</property>
                                             <child>
                                               <object class="GtkLabel" id="fxblock_0_label">
@@ -2627,6 +2627,46 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="right_attach">2</property>
                                                 <property name="top_attach">5</property>
                                                 <property name="bottom_attach">6</property>
+                                                <property name="x_options">GTK_FILL</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="fxblock_6_label">
+                                                <property name="visible">True</property>
+                                                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                                <property name="xalign">1</property>
+                                                <property name="xpad">4</property>
+                                                <property name="label" translatable="yes">FX Val 7:</property>
+                                                <property name="use_markup">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="top_attach">6</property>
+                                                <property name="bottom_attach">7</property>
+                                                <property name="x_options">GTK_FILL</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkAlignment" id="alignment43">
+                                                <property name="visible">True</property>
+                                                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                                <property name="xalign">0</property>
+                                                <property name="xscale">0</property>
+                                                <child>
+                                                  <object class="GtkSpinButton" id="fxblock_6">
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                                    <property name="invisible_char">&#x25CF;</property>
+                                                    <property name="adjustment">fx_7_adjustment</property>
+                                                    <signal name="value_changed" handler="on_multarray_changed_fx"/>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="right_attach">2</property>
+                                                <property name="top_attach">6</property>
+                                                <property name="bottom_attach">7</property>
                                                 <property name="x_options">GTK_FILL</property>
                                               </packing>
                                             </child>
@@ -5406,5 +5446,11 @@ to this character.  Really quit?</property>
       <!-- column-name item -->
       <column type="gchararray"/>
     </columns>
+  </object>
+  <object class="GtkAdjustment" id="fx_7_adjustment">
+    <property name="upper">4294967295</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+    <property name="page_size">10</property>
   </object>
 </interface>

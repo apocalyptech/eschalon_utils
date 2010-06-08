@@ -127,6 +127,7 @@ class BaseGUI(object):
                 'on_checkbox_changed': self.on_checkbox_changed,
                 'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
                 'on_modifier_changed': self.on_modifier_changed,
+                'on_b2_modifier_changed': self.on_b2_modifier_changed,
                 'on_item_close_clicked': self.on_item_close_clicked,
                 'open_itemsel': self.open_itemsel,
                 'imgsel_on_motion': self.imgsel_on_motion,
@@ -317,6 +318,26 @@ class BaseGUI(object):
             self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
                 origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
 
+    def on_b2_modifier_changed(self, widget):
+        """ What to do when a book 2 item attribute changes. """
+        if c.book != 2:
+            return
+        wname = widget.get_name()
+        num = int(wname.split('_')[-1])
+        modifiertext = 'attr_modifier_%d' % (num)
+        modifiedtext = 'attr_modified_%d' % (num)
+        modifier = self.get_widget(modifiertext).get_value_as_int()
+        modified = self.get_widget(modifiedtext).get_active()
+        (obj, origobj) = self.get_comp_objects()
+        if (wname == modifiertext):
+            obj.__dict__[modifiertext] = modifier
+        elif (wname == modifiedtext):
+            obj.__dict__[modifiedtext] = modified
+        if (self.curitemtype != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(modifiertext)
+            self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
+                origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), modifiertext, labelwidget, label)
+
     def on_item_close_clicked(self, widget=None, event=None, dohide=True):
         if (self.curitemtype == self.ITEM_EQUIP):
             self.populate_equip_button(self.curitem)
@@ -373,26 +394,39 @@ class BaseGUI(object):
         self.get_widget('basedamage').set_value(item.basedamage)
         self.get_widget('basearmor').set_value(item.basearmor)
 
-        for key in c.flagstable.keys():
-            if (item.flags & key == key):
-                self.get_widget('flags_%04X' % (key)).set_active(True)
-            else:
-                self.get_widget('flags_%04X' % (key)).set_active(False)
+        if item.book == 1:
+            for key in c.flagstable.keys():
+                if (item.flags & key == key):
+                    self.get_widget('flags_%04X' % (key)).set_active(True)
+                else:
+                    self.get_widget('flags_%04X' % (key)).set_active(False)
 
-        self.get_widget('attr_modifier').set_value(item.attr_modifier)
-        self.get_widget('attr_modified').set_active(item.attr_modified)
-        self.get_widget('skill_modifier').set_value(item.skill_modifier)
-        self.get_widget('skill_modified').set_active(item.skill_modified)
-        self.get_widget('incr').set_active(item.incr)
+            self.get_widget('attr_modifier').set_value(item.attr_modifier)
+            self.get_widget('attr_modified').set_active(item.attr_modified)
+            self.get_widget('skill_modifier').set_value(item.skill_modifier)
+            self.get_widget('skill_modified').set_active(item.skill_modified)
+            self.get_widget('incr').set_active(item.incr)
 
-        self.get_widget('hitpoint').set_value(item.hitpoint)
-        self.get_widget('mana').set_value(item.mana)
-        self.get_widget('tohit').set_value(item.tohit)
-        self.get_widget('damage').set_value(item.damage)
-        self.get_widget('armor').set_value(item.armor)
+            self.get_widget('hitpoint').set_value(item.hitpoint)
+            self.get_widget('mana').set_value(item.mana)
+            self.get_widget('tohit').set_value(item.tohit)
+            self.get_widget('damage').set_value(item.damage)
+            self.get_widget('armor').set_value(item.armor)
+        else:
+            self.get_widget('cur_hp').set_value(item.cur_hp)
+            self.get_widget('max_hp').set_value(item.max_hp)
+            self.get_widget('attr_modifier_1').set_value(item.attr_modifier_1)
+            self.get_widget('attr_modified_1').set_active(item.attr_modified_1)
+            self.get_widget('attr_modifier_2').set_value(item.attr_modifier_2)
+            self.get_widget('attr_modified_2').set_active(item.attr_modified_2)
+            self.get_widget('attr_modifier_3').set_value(item.attr_modifier_3)
+            self.get_widget('attr_modified_3').set_active(item.attr_modified_3)
+            self.get_widget('unknownflag').set_value(item.unknownflag)
+            self.get_widget('unknownc1').set_value(item.unknownc1)
 
         self.get_widget('visibility').set_value(item.visibility)
-        self.get_widget('duration').set_value(item.duration)
+        if item.book == 1:
+            self.get_widget('duration').set_value(item.duration)
         if (item.canstack):
             self.get_widget('canstack').set_active(True)
         else:
@@ -412,15 +446,25 @@ class BaseGUI(object):
         #
         # One more note: we've left off the attr_modified and skill_modified
         # controls from here, because of the compound check function
-        strvals = [ 'item_name', 'script', 'emptystr' ]
-        dropdownvals = [ 'type', 'subtype', 'incr' ]
-        intvals = [ 'value', 'basedamage', 'basearmor',
-                'hitpoint', 'mana', 'tohit', 'damage', 'armor',
-                'visibility', 'duration', 'quantity', 'zero1' ]
-        floatvals = [ 'weight' ]
-        checkboxvals = [ 'canstack' ]
-        checkboxbitvals = [ 'flags_0003' ]
-        modifiervals = [ 'attr_modifier', 'skill_modifier' ]
+        if item.book == 1:
+            strvals = [ 'item_name', 'script', 'emptystr' ]
+            dropdownvals = [ 'type', 'subtype', 'incr' ]
+            intvals = [ 'value', 'basedamage', 'basearmor',
+                    'hitpoint', 'mana', 'tohit', 'damage', 'armor',
+                    'visibility', 'duration', 'quantity', 'zero1' ]
+            floatvals = [ 'weight' ]
+            checkboxvals = [ 'canstack' ]
+            checkboxbitvals = [ 'flags_0003' ]
+            modifiervals = [ 'attr_modifier', 'skill_modifier' ]
+        else:
+            strvals = [ 'item_name', 'script', 'emptystr' ]
+            dropdownvals = [ 'type', 'subtype' ]
+            intvals = [ 'value', 'basedamage', 'basearmor',
+                    'visibility', 'quantity', 'zero1' ]
+            floatvals = [ 'weight' ]
+            checkboxvals = [ 'canstack' ]
+            checkboxbitvals = [ ]
+            modifiervals = [ ]
         for val in strvals:
             self.on_singleval_changed_str(self.get_widget(val))
         for val in dropdownvals:

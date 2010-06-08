@@ -312,7 +312,9 @@ class B1Character(Character):
             'disease_label', 'disease_table',
             'gfx_preset_vbox',
             'weap_alt_label', 'weap_alt_container',
-            'b1_gold_note' ]
+            'b1_gold_note',
+            'item_b1_modifier_box',
+            'duration_label', 'duration' ]
 
     def __init__(self, df):
         self.set_inv_size(10, 7, 2, 4)
@@ -667,6 +669,7 @@ class B2Character(Character):
             'permstatus_alignment', 'permstatus_label',
             'fxblock_4_label', 'fxblock_4',
             'fxblock_5_label', 'fxblock_5',
+            'fxblock_6_label', 'fxblock_6',
             'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
             'ready_8_label', 'ready_8_container',
             'ready_9_label', 'ready_9_container',
@@ -680,7 +683,10 @@ class B2Character(Character):
             'inv_7_7_label', 'inv_7_7_container',
             'inv_8_7_label', 'inv_8_7_container',
             'inv_9_7_label', 'inv_9_7_container',
-            'b2_gold_note'
+            'b2_gold_note',
+            'item_b2_modifier_box',
+            'cur_hp_label', 'cur_hp',
+            'max_hp_label', 'max_hp'
             ]
 
     def __init__(self, df):

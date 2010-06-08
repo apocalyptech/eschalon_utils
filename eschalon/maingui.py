@@ -530,7 +530,8 @@ class MainGUI(BaseGUI):
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
-        obj.__dict__[shortname][arrnum] = widget.get_value_as_int()
+        # TODO: report the bug here - widget.get_value_as_int() returns a signed value...
+        obj.__dict__[shortname][arrnum] = int(widget.get_value())
         self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
 
     def on_checkbox_arr_changed(self, widget):
@@ -945,6 +946,22 @@ class MainGUI(BaseGUI):
             for spell in spells:
                 box.append_text(spell)
 
+        ###
+        ### Item attribute modifier dropdowns
+        ### Note that technically we don't need to do this dynamically, since
+        ### these dropdowns only exist for Book 2.
+        ###
+        # TODO: we should be able to do this all with a single listview, yeah?
+        boxes = []
+        for i in range(1, 4):
+            boxes.append(self.get_widget('attr_modified_%d' % (i)))
+        attributes = c.itemeffecttable.values()
+        for box in boxes:
+            box.get_model().clear()
+            box.append_text('')
+            for attribute in attributes:
+                box.append_text(attribute)
+
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """
         char = self.origchar
@@ -999,7 +1016,7 @@ class MainGUI(BaseGUI):
         if char.book == 1:
             fxblocks = 4
         else:
-            fxblocks = 6
+            fxblocks = 7
         for num in range(fxblocks):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
@@ -1012,7 +1029,7 @@ class MainGUI(BaseGUI):
                 if (char.permstatuses & key == key):
                     self.get_widget('permstatuses_%08X' % (key)).set_active(True)
 
-        for i in range(39):
+        for i in range(len(c.spelltable)):
             if (char.spells[i] > 0):
                 self.get_widget('spells_%d' % (i)).set_active(True)
 
@@ -1035,7 +1052,7 @@ class MainGUI(BaseGUI):
             for col in range(char.inv_cols):
                 self.populate_inv_button(row, col, True)
 
-        for num in range(8):
+        for num in range(char.ready_rows*char.ready_cols):
             self.populate_ready_button(num, True)
 
         self.get_widget('gold').set_value(char.gold)
