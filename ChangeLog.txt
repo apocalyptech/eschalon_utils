@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   07 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Initial GUI support for Book II Characters
+
    06 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Command-line character editing fully supports Book II
 
