@@ -432,6 +432,9 @@ class BaseGUI(object):
             self.get_widget('attr_modified_3').set_active(item.attr_modified_3)
             self.get_widget('unknownflag').set_value(item.unknownflag)
             self.get_widget('unknownc1').set_value(item.unknownc1)
+            self.get_widget('unknownc2').set_value(item.unknownc2)
+            self.get_widget('unknownc3').set_value(item.unknownc3)
+            self.get_widget('unknownc4').set_value(item.unknownc4)
 
         self.get_widget('visibility').set_value(item.visibility)
         if item.book == 1:

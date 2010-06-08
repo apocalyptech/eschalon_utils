@@ -280,8 +280,8 @@ class Character(object):
             # and Book 2 otherwise.
             try:
                 df.open_r()
-                initital = df.readchar()
-                second = df.readchar()
+                initital = df.readuchar()
+                second = df.readuchar()
                 df.close()
             except (IOError, struct.error), e:
                 raise LoadException(str(e))
@@ -686,7 +686,12 @@ class B2Character(Character):
             'b2_gold_note',
             'item_b2_modifier_box',
             'cur_hp_label', 'cur_hp',
-            'max_hp_label', 'max_hp'
+            'max_hp_label', 'max_hp',
+            'unknownflag', 'unknownflag_label',
+            'unknownc1', 'unknownc1_label',
+            'unknownc2', 'unknownc2_label',
+            'unknownc3', 'unknownc3_label',
+            'unknownc4', 'unknownc4_label'
             ]
 
     def __init__(self, df):
@@ -720,35 +725,35 @@ class B2Character(Character):
             self.df.open_r()
 
             # Start processing
-            self.unknown.initzero = self.df.readchar()
+            self.unknown.initzero = self.df.readuchar()
 
             # Character info
             self.name = self.df.readstr()
-            self.gender = self.df.readchar()
-            self.origin = self.df.readchar()
-            self.axiom = self.df.readchar()
-            self.classname = self.df.readchar()
-            self.unknown.version = self.df.readchar()
+            self.gender = self.df.readuchar()
+            self.origin = self.df.readuchar()
+            self.axiom = self.df.readuchar()
+            self.classname = self.df.readuchar()
+            self.unknown.version = self.df.readuchar()
             if self.unknown.version == 1:
                 raise LoadException('This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
-            self.strength = self.df.readchar()
-            self.dexterity = self.df.readchar()
-            self.endurance = self.df.readchar()
-            self.speed = self.df.readchar()
-            self.intelligence = self.df.readchar()
-            self.wisdom = self.df.readchar()
-            self.perception = self.df.readchar()
-            self.concentration = self.df.readchar()
+            self.strength = self.df.readuchar()
+            self.dexterity = self.df.readuchar()
+            self.endurance = self.df.readuchar()
+            self.speed = self.df.readuchar()
+            self.intelligence = self.df.readuchar()
+            self.wisdom = self.df.readuchar()
+            self.perception = self.df.readuchar()
+            self.concentration = self.df.readuchar()
 
             # Skills
             # TODO: How does this get sorted?  It seems to work for B1 but I
             # find it suspicious nonetheless
             for key in sorted(c.skilltable.keys()):
-                self.addskill(key, self.df.readchar())
+                self.addskill(key, self.df.readuchar())
 
             # More stats
-            self.extra_att_points = self.df.readchar()
-            self.extra_skill_points = self.df.readchar()
+            self.extra_att_points = self.df.readuchar()
+            self.extra_skill_points = self.df.readuchar()
             self.curhp = self.df.readint()
             self.curmana = self.df.readint()
             self.maxhp = self.df.readint()
@@ -777,7 +782,7 @@ class B2Character(Character):
                 self.portal_locs.append(portal_anchor)
 
             # Unknown
-            self.unknown.zero1 = self.df.readchar()
+            self.unknown.zero1 = self.df.readuchar()
 
             # Spells
             for i in range(len(c.spelltable)):
@@ -785,11 +790,11 @@ class B2Character(Character):
 
             # Currently-readied spell
             self.readied_spell = self.df.readstr()
-            self.readied_spell_lvl = self.df.readchar()
+            self.readied_spell_lvl = self.df.readuchar()
 
             # Readied Spells
             for i in range(10):
-                self.addreadyslot(self.df.readstr(), self.df.readchar())
+                self.addreadyslot(self.df.readstr(), self.df.readuchar())
 
             # Alchemy Recipes
             for i in range(25):
@@ -800,17 +805,17 @@ class B2Character(Character):
                 self.unknown.fourteenzeros.append(self.df.readint())
 
             # Position/orientation
-            self.orientation = self.df.readchar()
+            self.orientation = self.df.readuchar()
             self.xpos = self.df.readint()
             self.ypos = self.df.readint()
 
             # Some unknowns
             for i in range(5):
-                self.unknown.strangeblock.append(self.df.readchar())
+                self.unknown.strangeblock.append(self.df.readuchar())
             self.unknown.unknowni1 = self.df.readint()
             self.unknown.unknowni2 = self.df.readint()
             self.unknown.unknowni3 = self.df.readint()
-            self.unknown.usually_one = self.df.readchar()
+            self.unknown.usually_one = self.df.readuchar()
 
             # Permanent Statuses (bitfield)
             self.permstatuses = self.df.readint()
@@ -829,7 +834,7 @@ class B2Character(Character):
             self.unknown.unknowns1 = self.df.readshort()
             self.unknown.unknownstr1 = self.df.readstr()
             for i in range(29):
-                self.unknown.twentyninezeros.append(self.df.readchar())
+                self.unknown.twentyninezeros.append(self.df.readuchar())
             self.unknown.unknownstr2 = self.df.readstr()
             self.unknown.unknownstr3 = self.df.readstr()
             self.unknown.unknowns2 = self.df.readshort()
@@ -880,31 +885,31 @@ class B2Character(Character):
         self.df.open_w()
 
         # Initial Zero
-        self.df.writechar(self.unknown.initzero)
+        self.df.writeuchar(self.unknown.initzero)
 
         # Character info
         self.df.writestr(self.name)
-        self.df.writechar(self.gender)
-        self.df.writechar(self.origin)
-        self.df.writechar(self.axiom)
-        self.df.writechar(self.classname)
-        self.df.writechar(self.unknown.version)
-        self.df.writechar(self.strength)
-        self.df.writechar(self.dexterity)
-        self.df.writechar(self.endurance)
-        self.df.writechar(self.speed)
-        self.df.writechar(self.intelligence)
-        self.df.writechar(self.wisdom)
-        self.df.writechar(self.perception)
-        self.df.writechar(self.concentration)
+        self.df.writeuchar(self.gender)
+        self.df.writeuchar(self.origin)
+        self.df.writeuchar(self.axiom)
+        self.df.writeuchar(self.classname)
+        self.df.writeuchar(self.unknown.version)
+        self.df.writeuchar(self.strength)
+        self.df.writeuchar(self.dexterity)
+        self.df.writeuchar(self.endurance)
+        self.df.writeuchar(self.speed)
+        self.df.writeuchar(self.intelligence)
+        self.df.writeuchar(self.wisdom)
+        self.df.writeuchar(self.perception)
+        self.df.writeuchar(self.concentration)
 
         # Skills
         for skill in self.skills.values():
-            self.df.writechar(skill)
+            self.df.writeuchar(skill)
 
         # More stats
-        self.df.writechar(self.extra_att_points)
-        self.df.writechar(self.extra_skill_points)
+        self.df.writeuchar(self.extra_att_points)
+        self.df.writeuchar(self.extra_skill_points)
         self.df.writeint(self.curhp)
         self.df.writeint(self.curmana)
         self.df.writeint(self.maxhp)
@@ -930,18 +935,18 @@ class B2Character(Character):
             self.df.writestr(anchor[2])
 
         # Unknown
-        self.df.writechar(self.unknown.zero1)
+        self.df.writeuchar(self.unknown.zero1)
 
         # Spells
         for spell in self.spells:
-            self.df.writechar(spell)
+            self.df.writeuchar(spell)
 
         # Readied Spells
         self.df.writestr(self.readied_spell)
-        self.df.writechar(self.readied_spell_lvl)
+        self.df.writeuchar(self.readied_spell_lvl)
         for (spell, level) in self.readyslots:
             self.df.writestr(spell)
-            self.df.writechar(level)
+            self.df.writeuchar(level)
 
         # Alchemy Recipes
         for recipe in self.alchemy_book:
@@ -952,17 +957,17 @@ class B2Character(Character):
             self.df.writeint(zero)
 
         # Position/orientation
-        self.df.writechar(self.orientation)
+        self.df.writeuchar(self.orientation)
         self.df.writeint(self.xpos)
         self.df.writeint(self.ypos)
 
         # More unknowns
         for val in self.unknown.strangeblock:
-            self.df.writechar(val)
+            self.df.writeuchar(val)
         self.df.writeint(self.unknown.unknowni1)
         self.df.writeint(self.unknown.unknowni2)
         self.df.writeint(self.unknown.unknowni3)
-        self.df.writechar(self.unknown.usually_one)
+        self.df.writeuchar(self.unknown.usually_one)
 
         # Permanent statuses
         self.df.writeint(self.permstatuses)
@@ -981,7 +986,7 @@ class B2Character(Character):
         self.df.writeshort(self.unknown.unknowns1)
         self.df.writestr(self.unknown.unknownstr1)
         for zero in self.unknown.twentyninezeros:
-            self.df.writechar(zero)
+            self.df.writeuchar(zero)
         self.df.writestr(self.unknown.unknownstr2)
         self.df.writestr(self.unknown.unknownstr3)
         self.df.writeshort(self.unknown.unknowns2)
@@ -1061,7 +1066,7 @@ class B2Character(Character):
 
     def addspell(self):
         """ Add a spell. """
-        self.spells.append(self.df.readchar())
+        self.spells.append(self.df.readuchar())
 
     def spelltype(self, num):
         if (num < 22):

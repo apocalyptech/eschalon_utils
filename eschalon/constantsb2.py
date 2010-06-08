@@ -243,7 +243,10 @@ class B2Constants:
             0x31: 'Fire Damage',
             0x32: 'Freeze Damage',
             0x33: 'Magick Damage',
-            0x34: 'Poison'
+            0x34: 'Poison',
+            0x35: '(Demon Oil I)',
+            0x36: '(Demon Oil II)',
+            0x37: '(Demon Oil III)'
         }
 
     # This table is a bitfield lookup

@@ -210,10 +210,10 @@ class Item(object):
                 for i in range(1, 4):
                     modified_var = self.__dict__['attr_modified_%d' % (i)]
                     modifier_var = self.__dict__['attr_modifier_%d' % (i)]
-                    if modified_var > 0:
+                    if modified_var > 0 or modifier_var > 0:
                         if modified_var in c.itemeffecttable:
                             modified_var = c.itemeffecttable[modified_var]
-                        ret.append("\tSpecial: +%d %s" % (modifier_var, modified_var))
+                        ret.append("\tSpecial (%d): +%d %s" % (i, modifier_var, modified_var))
             ret.append("\tWeight: %0.1f lbs" % self.weight)
             if (self.script != ''):
                 ret.append("\tScript: %s" % self.script)
@@ -230,6 +230,12 @@ class Item(object):
                 ret.append("\tUnknown fields:")
                 ret.append("\t\tZero 1: %d" % self.zero1)
                 ret.append("\t\tEmpty String: %s" % self.emptystr)
+                if (self.book == 2):
+                    ret.append("\t\tUnknown Flag: %d" % (self.unknownflag))
+                    ret.append("\t\tUnknown Byte 1: %d" % (self.unknownc1))
+                    ret.append("\t\tUnknown Byte 2: %d" % (self.unknownc2))
+                    ret.append("\t\tUnknown Byte 3: %d" % (self.unknownc3))
+                    ret.append("\t\tUnknown Byte 4: %d" % (self.unknownc4))
         ret.append('')
 
         return "\n".join(ret)
@@ -394,31 +400,37 @@ class B2Item(Item):
         self.attr_modifier_3 = -1
 
         self.unknownc1 = -1
+        self.unknownc2 = -1
+        self.unknownc3 = -1
+        self.unknownc4 = -1
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """
 
-        self.type = df.readchar()
-        self.unknownflag = df.readchar()
+        self.type = df.readuchar()
+        self.unknownflag = df.readuchar()
         self.item_name = df.readstr()
         self.weight = df.readfloat()
-        self.subtype = df.readchar()
+        self.subtype = df.readuchar()
         self.max_hp = df.readshort()
         self.cur_hp = df.readshort()
-        self.unknownc1 = df.readchar()
-        self.visibility = df.readchar()
+        self.unknownc1 = df.readuchar()
+        self.visibility = df.readuchar()
         self.pictureid = df.readshort()
         self.value = df.readshort()
-        self.canstack = df.readchar()
+        self.canstack = df.readuchar()
         self.quantity = df.readshort()
-        self.basedamage = df.readchar()
-        self.basearmor = df.readchar()
-        self.attr_modified_1 = df.readchar()
-        self.attr_modifier_1 = df.readchar()
-        self.attr_modified_2 = df.readchar()
-        self.attr_modifier_2 = df.readchar()
-        self.attr_modified_3 = df.readchar()
-        self.attr_modifier_3 = df.readint()
+        self.basedamage = df.readuchar()
+        self.basearmor = df.readuchar()
+        self.attr_modified_1 = df.readuchar()
+        self.attr_modifier_1 = df.readuchar()
+        self.attr_modified_2 = df.readuchar()
+        self.attr_modifier_2 = df.readuchar()
+        self.attr_modified_3 = df.readuchar()
+        self.attr_modifier_3 = df.readuchar()
+        self.unknownc2 = df.readuchar()
+        self.unknownc3 = df.readuchar()
+        self.unknownc4 = df.readuchar()
         self.script = df.readstr()
         self.emptystr = df.readstr()
         self.zero1 = df.readshort()
@@ -426,27 +438,30 @@ class B2Item(Item):
     def write(self, df):
         """ Write the item to the file. """
 
-        df.writechar(self.type)
-        df.writechar(self.unknownflag)
+        df.writeuchar(self.type)
+        df.writeuchar(self.unknownflag)
         df.writestr(self.item_name)
         df.writefloat(self.weight)
-        df.writechar(self.subtype)
+        df.writeuchar(self.subtype)
         df.writeshort(self.max_hp)
         df.writeshort(self.cur_hp)
-        df.writechar(self.unknownc1)
-        df.writechar(self.visibility)
+        df.writeuchar(self.unknownc1)
+        df.writeuchar(self.visibility)
         df.writeshort(self.pictureid)
         df.writeshort(self.value)
-        df.writechar(self.canstack)
+        df.writeuchar(self.canstack)
         df.writeshort(self.quantity)
-        df.writechar(self.basedamage)
-        df.writechar(self.basearmor)
-        df.writechar(self.attr_modified_1)
-        df.writechar(self.attr_modifier_1)
-        df.writechar(self.attr_modified_2)
-        df.writechar(self.attr_modifier_2)
-        df.writechar(self.attr_modified_3)
-        df.writeint(self.attr_modifier_3)
+        df.writeuchar(self.basedamage)
+        df.writeuchar(self.basearmor)
+        df.writeuchar(self.attr_modified_1)
+        df.writeuchar(self.attr_modifier_1)
+        df.writeuchar(self.attr_modified_2)
+        df.writeuchar(self.attr_modifier_2)
+        df.writeuchar(self.attr_modified_3)
+        df.writeuchar(self.attr_modifier_3)
+        df.writeuchar(self.unknownc2)
+        df.writeuchar(self.unknownc3)
+        df.writeuchar(self.unknownc4)
         df.writestr(self.script)
         df.writestr(self.emptystr)
         df.writeshort(self.zero1)
@@ -465,6 +480,9 @@ class B2Item(Item):
         newitem.attr_modified_3 = self.attr_modified_3
         newitem.attr_modifier_3 = self.attr_modifier_3
         newitem.unknownc1 = self.unknownc1
+        newitem.unknownc2 = self.unknownc2
+        newitem.unknownc3 = self.unknownc3
+        newitem.unknownc4 = self.unknownc4
 
     def _sub_tozero(self):
         """
@@ -480,6 +498,9 @@ class B2Item(Item):
         self.attr_modified_3 = 0
         self.attr_modifier_3 = 0
         self.unknownc1 = 0
+        self.unknownc2 = 0
+        self.unknownc3 = 0
+        self.unknownc4 = 0
 
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this

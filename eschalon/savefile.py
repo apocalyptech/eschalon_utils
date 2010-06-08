@@ -92,18 +92,6 @@ class Savefile(object):
         """ Read the rest of the file from the handle. """
         return self.df.read(len)
 
-    def readchar(self):
-        """ Read a signed character (1-byte) "integer" from the savefile. """
-        if (not self.opened_r):
-            raise IOError('File is not open for reading')
-        return unpack('b', self.df.read(1))[0]
-
-    def writechar(self, charval):
-        """ Write a signed character (1-byte) "integer" to the savefile. """
-        if (not self.opened_w):
-            raise IOError('File is not open for writing')
-        self.df.write(pack('b', charval))
-
     def readuchar(self):
         """ Read an unsigned character (1-byte) "integer" from the savefile. """
         if (not self.opened_r):
