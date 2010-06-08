@@ -666,6 +666,7 @@ class B2Character(Character):
             'b2picid_label', 'b2picid',
             'hunger_label', 'hunger_hbox',
             'thirst_label', 'thirst_hbox',
+            'b2_second_effect_var_label',
             'permstatus_alignment', 'permstatus_label',
             'fxblock_4_label', 'fxblock_4',
             'fxblock_5_label', 'fxblock_5',

@@ -557,6 +557,19 @@ class MainGUI(BaseGUI):
                 break
         self.set_changed_widget(not changed, basename, labelwidget, label)
 
+    def on_effect_changed(self, widget):
+        """ What to do when our effect value changes.  Slightly different from Books 1 and 2"""
+        wname = widget.get_name()
+        (shortname, arrnum) = wname.rsplit('_', 1)
+        arrnum = int(arrnum)
+        (labelwidget, label) = self.get_label_cache('statuses_%d' % (arrnum))
+        (obj, origobj) = self.get_comp_objects()
+        obj.__dict__[shortname][arrnum] = int(widget.get_value())
+        changed = (origobj.statuses[arrnum] != obj.statuses[arrnum])
+        if c.book == 2 and (origobj.statuses_extra[arrnum] != obj.statuses_extra[arrnum]):
+            changed = True
+        self.set_changed_widget(not changed, 'statuses', labelwidget, label)
+
     def on_multarray_text_changed(self, widget):
         """ What to do when a string value changes in an array. """
         wname = widget.get_name()
@@ -944,8 +957,18 @@ class MainGUI(BaseGUI):
             adjust = gtk.Adjustment(0, 0, 999, 1, 10, 10)
             spin = gtk.SpinButton(adjust)
             self.register_widget('statuses_%d' % (idx), spin)
-            align.add(spin)
-            spin.connect('value-changed', self.on_multarray_changed)
+            spin.connect('value-changed', self.on_effect_changed)
+            if char.book == 1:
+                align.add(spin)
+            else:
+                hbox = gtk.HBox()
+                hbox.add(spin)
+                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 10)
+                spin = gtk.SpinButton(adjust)
+                self.register_widget('statuses_extra_%d' % (idx), spin)
+                spin.connect('value-changed', self.on_effect_changed)
+                hbox.add(spin)
+                align.add(hbox)
 
         cont.add(table)
         table.show_all()
@@ -959,8 +982,6 @@ class MainGUI(BaseGUI):
         for box in [divbox, elembox]:
             for child in box.get_children():
                 box.remove(child)
-        #divbox.clear()
-        #elembox.clear()
         for (idx, spell) in c.spelltable.items():
             if char.spelltype(idx) == 'EL':
                 box = elembox
@@ -1099,6 +1120,7 @@ class MainGUI(BaseGUI):
 
         for num in range(26):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
+            self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
 
         if char.book == 1:
             fxblocks = 4
