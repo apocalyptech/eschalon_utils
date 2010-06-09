@@ -498,7 +498,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="invisible_char">&#x25CF;</property>
-                                    <property name="adjustment">adjustment16</property>
+                                    <property name="adjustment">item_picid_adjustment</property>
                                     <signal name="value_changed" handler="on_singleval_changed_int_itempic"/>
                                   </object>
                                   <packing>
@@ -570,7 +570,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment15</property>
+                                <property name="adjustment">item_value_adjustment</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -594,7 +594,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment14</property>
+                                <property name="adjustment">item_weight_adjustment</property>
                                 <property name="digits">1</property>
                                 <signal name="value_changed" handler="on_singleval_changed_float"/>
                               </object>
@@ -619,7 +619,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment13</property>
+                                <property name="adjustment">item_basedamage_adjustment</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -643,7 +643,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment12</property>
+                                <property name="adjustment">item_basearmor_adjustment</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -697,7 +697,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment11</property>
+                                <property name="adjustment">item_visibility_adjustment</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -853,16 +853,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label57">
-                            <property name="width_request">10</property>
-                            <property name="visible">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkAlignment" id="alignment109">
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -873,10 +863,20 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment10</property>
+                                <property name="adjustment">item_skill_modifier_adj</property>
                                 <signal name="value_changed" handler="on_modifier_changed"/>
                               </object>
                             </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label57">
+                            <property name="width_request">10</property>
+                            <property name="visible">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -939,7 +939,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment9</property>
+                                <property name="adjustment">item_attr_modifier_adj</property>
                                 <signal name="value_changed" handler="on_modifier_changed"/>
                               </object>
                             </child>
@@ -1167,7 +1167,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment8</property>
+                                <property name="adjustment">item_hitpoint_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1276,7 +1276,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment7</property>
+                                <property name="adjustment">item_mana_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1317,7 +1317,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment6</property>
+                                <property name="adjustment">item_tohit_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1358,7 +1358,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment5</property>
+                                <property name="adjustment">item_damage_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1399,7 +1399,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="adjustment">adjustment4</property>
+                                <property name="adjustment">item_armor_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1907,7 +1907,7 @@
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">Used for lanterns, and possibly other similar objects</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment3</property>
+                                <property name="adjustment">item_duration_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1944,7 +1944,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment2</property>
+                                <property name="adjustment">item_quantity_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -1997,7 +1997,7 @@
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">The use of this field is unknown, though it's always been zero on my save files.  Best to leave this alone.</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment1</property>
+                                <property name="adjustment">item_unknownint_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -2065,7 +2065,7 @@
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">This flag has always been zero for me, except on the Plasma Wand, where it was 1</property>
                                 <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">adjustment17</property>
+                                <property name="adjustment">itme_unknownflag_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
                               </object>
                             </child>
@@ -2282,87 +2282,87 @@
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="adjustment1">
+  <object class="GtkAdjustment" id="item_unknownint_adj">
     <property name="upper">4294967295</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment2">
+  <object class="GtkAdjustment" id="item_quantity_adj">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment3">
+  <object class="GtkAdjustment" id="item_duration_adj">
     <property name="upper">65536</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment4">
+  <object class="GtkAdjustment" id="item_armor_adj">
     <property name="lower">-5</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment5">
+  <object class="GtkAdjustment" id="item_damage_adj">
     <property name="lower">-5</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment6">
+  <object class="GtkAdjustment" id="item_tohit_adj">
     <property name="lower">-5</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment7">
+  <object class="GtkAdjustment" id="item_mana_adj">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment8">
+  <object class="GtkAdjustment" id="item_hitpoint_adj">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment9">
+  <object class="GtkAdjustment" id="item_attr_modifier_adj">
     <property name="lower">-5</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment10">
+  <object class="GtkAdjustment" id="item_skill_modifier_adj">
     <property name="lower">-5</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment11">
+  <object class="GtkAdjustment" id="item_visibility_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment12">
+  <object class="GtkAdjustment" id="item_basearmor_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment13">
+  <object class="GtkAdjustment" id="item_basedamage_adjustment">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment14">
+  <object class="GtkAdjustment" id="item_weight_adjustment">
     <property name="upper">65535</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment15">
+  <object class="GtkAdjustment" id="item_value_adjustment">
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment16">
+  <object class="GtkAdjustment" id="item_picid_adjustment">
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -2393,7 +2393,7 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment17">
+  <object class="GtkAdjustment" id="itme_unknownflag_adj">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>

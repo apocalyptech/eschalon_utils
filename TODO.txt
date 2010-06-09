@@ -76,7 +76,3 @@ Internal
  * Square class now holds (x, y) information - can probably switch some stuff
    around to take advantage of that.  Also, that change could use some more
    testing.
- * It seems we may have some non-unique widget names inside the Glade files
-   (ie: button1 existed both in itemgui and mapgui) - need to make sure that
-   nothing that's active in the same gtkbuilder object has duplicates like
-   that.

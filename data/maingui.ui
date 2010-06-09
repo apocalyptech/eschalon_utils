@@ -205,7 +205,7 @@
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
-                                            <property name="model">liststore15</property>
+                                            <property name="model">b1_classname_store</property>
                                             <property name="text_column">0</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext15"/>
@@ -234,7 +234,7 @@
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
-                                            <property name="model">liststore14</property>
+                                            <property name="model">b1_axiom_store</property>
                                             <property name="text_column">0</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext14"/>
@@ -263,7 +263,7 @@
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
-                                            <property name="model">liststore13</property>
+                                            <property name="model">b1_origin_store</property>
                                             <property name="text_column">0</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext13"/>
@@ -379,7 +379,7 @@
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="tooltip_text" translatable="yes">This value seems to be in multiples of 256.  The GUI will let you set just about any value here, though, in case some bits are used for other things I'm not aware of.</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment83</property>
+                                                <property name="adjustment">char_picid_adj</property>
                                                 <signal name="value_changed" handler="on_singleval_changed_int_avatar"/>
                                               </object>
                                             </child>
@@ -483,7 +483,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment84</property>
+                                            <property name="adjustment">char_level_adj</property>
                                             <signal name="changed" handler="on_singleval_changed_int"/>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
@@ -741,7 +741,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment82</property>
+                                            <property name="adjustment">char_concent_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                         </child>
@@ -766,7 +766,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment81</property>
+                                            <property name="adjustment">char_percept_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                         </child>
@@ -791,7 +791,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment80</property>
+                                            <property name="adjustment">char_wis_adj</property>
                                             <signal name="changed" handler="on_singleval_changed_int"/>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
@@ -817,7 +817,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment79</property>
+                                            <property name="adjustment">char_int_adj</property>
                                             <signal name="changed" handler="on_singleval_changed_int"/>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
@@ -841,7 +841,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment78</property>
+                                            <property name="adjustment">char_spd_adj</property>
                                             <signal name="changed" handler="on_singleval_changed_int"/>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
@@ -867,7 +867,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment77</property>
+                                            <property name="adjustment">char_end_adj</property>
                                             <signal name="changed" handler="on_singleval_changed_int"/>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
@@ -893,7 +893,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment76</property>
+                                            <property name="adjustment">char_dex_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                         </child>
@@ -918,7 +918,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment75</property>
+                                            <property name="adjustment">char_str_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                         </child>
@@ -1133,7 +1133,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment74</property>
+                                            <property name="adjustment">char_curhp_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                           <packing>
@@ -1157,7 +1157,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment73</property>
+                                            <property name="adjustment">char_maxhp_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                           <packing>
@@ -1180,7 +1180,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment72</property>
+                                            <property name="adjustment">char_curmana_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                           <packing>
@@ -1204,7 +1204,7 @@
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment71</property>
+                                            <property name="adjustment">char_maxmana_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                           <packing>
@@ -1399,7 +1399,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment70</property>
+                                            <property name="adjustment">char_exp_adj</property>
                                             <signal name="value_changed" handler="on_singleval_changed_int"/>
                                           </object>
                                         </child>
@@ -1433,7 +1433,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                     <property name="invisible_char">&#x25CF;</property>
-                                                    <property name="adjustment">adjustment69</property>
+                                                    <property name="adjustment">char_xpos_adj</property>
                                                     <signal name="value_changed" handler="on_singleval_changed_int"/>
                                                   </object>
                                                 </child>
@@ -1473,7 +1473,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                     <property name="can_focus">True</property>
                                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                     <property name="invisible_char">&#x25CF;</property>
-                                                    <property name="adjustment">adjustment68</property>
+                                                    <property name="adjustment">char_ypos_adj</property>
                                                     <signal name="value_changed" handler="on_singleval_changed_int"/>
                                                   </object>
                                                 </child>
@@ -1502,7 +1502,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                           <object class="GtkComboBox" id="orientation">
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                            <property name="model">liststore12</property>
+                                            <property name="model">orientation_store</property>
                                             <signal name="changed" handler="on_dropdownplusone_changed"/>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext12"/>
@@ -2797,7 +2797,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                   <object class="GtkComboBox" id="fxblock_dropdown">
                                                     <property name="visible">True</property>
                                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                                    <property name="model">liststore11</property>
+                                                    <property name="model">b1_fxblock_store</property>
                                                     <child>
                                                       <object class="GtkCellRendererText" id="cellrenderertext11"/>
                                                       <attributes>
@@ -3517,7 +3517,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment13</property>
+                                            <property name="adjustment">readyslot_0_adj</property>
                                             <signal name="value_changed" handler="on_readyslots_changed"/>
                                           </object>
                                         </child>
@@ -3548,7 +3548,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment12</property>
+                                                <property name="adjustment">readyslot_1_adj</property>
                                                 <signal name="value_changed" handler="on_readyslots_changed"/>
                                               </object>
                                             </child>
@@ -3581,7 +3581,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment11</property>
+                                                <property name="adjustment">readyslot_2_adj</property>
                                                 <signal name="value_changed" handler="on_readyslots_changed"/>
                                               </object>
                                             </child>
@@ -3614,7 +3614,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment10</property>
+                                                <property name="adjustment">readyslot_3_adj</property>
                                                 <signal name="value_changed" handler="on_readyslots_changed"/>
                                               </object>
                                             </child>
@@ -3647,7 +3647,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment9</property>
+                                                <property name="adjustment">readyslot_4_adj</property>
                                                 <signal name="value_changed" handler="on_readyslots_changed"/>
                                               </object>
                                             </child>
@@ -3680,7 +3680,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                                 <property name="invisible_char">&#x25CF;</property>
-                                                <property name="adjustment">adjustment8</property>
+                                                <property name="adjustment">readyslot_5_adj</property>
                                                 <signal name="value_changed" handler="on_readyslots_changed"/>
                                               </object>
                                             </child>
@@ -3707,7 +3707,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment7</property>
+                                            <property name="adjustment">readyslot_6_adj</property>
                                             <signal name="value_changed" handler="on_readyslots_changed"/>
                                           </object>
                                         </child>
@@ -3732,7 +3732,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment6</property>
+                                            <property name="adjustment">readyslot_7_adj</property>
                                             <signal name="value_changed" handler="on_readyslots_changed"/>
                                           </object>
                                         </child>
@@ -3757,7 +3757,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment5</property>
+                                            <property name="adjustment">readyslot_8_adj</property>
                                             <signal name="value_changed" handler="on_readyslots_changed"/>
                                           </object>
                                         </child>
@@ -3782,7 +3782,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="can_focus">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="invisible_char">&#x25CF;</property>
-                                            <property name="adjustment">adjustment4</property>
+                                            <property name="adjustment">readyslot_9_adj</property>
                                             <signal name="value_changed" handler="on_readyslots_changed"/>
                                           </object>
                                         </child>
@@ -4629,7 +4629,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="has_tooltip">True</property>
-                                    <property name="adjustment">adjustment3</property>
+                                    <property name="adjustment">char_torchturns_adj</property>
                                     <signal name="value_changed" handler="on_singleval_changed_int"/>
                                   </object>
                                 </child>
@@ -4653,7 +4653,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="adjustment">adjustment2</property>
+                                    <property name="adjustment">char_torches_adj</property>
                                     <signal name="value_changed" handler="on_singleval_changed_int"/>
                                   </object>
                                 </child>
@@ -4677,7 +4677,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="adjustment">adjustment1</property>
+                                    <property name="adjustment">char_gold_adj</property>
                                     <signal name="value_changed" handler="on_singleval_changed_int"/>
                                   </object>
                                 </child>
@@ -5854,79 +5854,79 @@ to this character.  Really quit?</property>
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="adjustment1">
+  <object class="GtkAdjustment" id="char_gold_adj">
     <property name="value">1</property>
     <property name="upper">4294967296</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment2">
+  <object class="GtkAdjustment" id="char_torches_adj">
     <property name="value">1</property>
     <property name="upper">4294967296</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment3">
+  <object class="GtkAdjustment" id="char_torchturns_adj">
     <property name="value">1</property>
     <property name="upper">300</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment4">
+  <object class="GtkAdjustment" id="readyslot_9_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment5">
+  <object class="GtkAdjustment" id="readyslot_8_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment6">
+  <object class="GtkAdjustment" id="readyslot_7_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment7">
+  <object class="GtkAdjustment" id="readyslot_6_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment8">
+  <object class="GtkAdjustment" id="readyslot_5_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment9">
+  <object class="GtkAdjustment" id="readyslot_4_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment10">
+  <object class="GtkAdjustment" id="readyslot_3_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment11">
+  <object class="GtkAdjustment" id="readyslot_2_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment12">
+  <object class="GtkAdjustment" id="readyslot_1_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment13">
+  <object class="GtkAdjustment" id="readyslot_0_adj">
     <property name="value">1</property>
     <property name="upper">6</property>
     <property name="step_increment">1</property>
@@ -5956,416 +5956,116 @@ to this character.  Really quit?</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment18">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment19">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment20">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment21">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment22">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment23">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment24">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment25">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment26">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment27">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment28">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment29">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment30">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment31">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment32">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment33">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment34">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment35">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment36">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment37">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment38">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment39">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment40">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment41">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment42">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment43">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment44">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment45">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment46">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment47">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment48">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment49">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment50">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment51">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment52">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment53">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment54">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment55">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment56">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment57">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment58">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment59">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment60">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment61">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment62">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment63">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment64">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment65">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment66">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment67">
-    <property name="value">1</property>
-    <property name="upper">999</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment68">
+  <object class="GtkAdjustment" id="char_ypos_adj">
     <property name="value">1</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment69">
+  <object class="GtkAdjustment" id="char_xpos_adj">
     <property name="value">1</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment70">
+  <object class="GtkAdjustment" id="char_exp_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">4294967295</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment71">
+  <object class="GtkAdjustment" id="char_maxmana_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment72">
+  <object class="GtkAdjustment" id="char_curmana_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment73">
+  <object class="GtkAdjustment" id="char_maxhp_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment74">
+  <object class="GtkAdjustment" id="char_curhp_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment75">
+  <object class="GtkAdjustment" id="char_str_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment76">
+  <object class="GtkAdjustment" id="char_dex_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment77">
+  <object class="GtkAdjustment" id="char_end_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment78">
+  <object class="GtkAdjustment" id="char_spd_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment79">
+  <object class="GtkAdjustment" id="char_int_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment80">
+  <object class="GtkAdjustment" id="char_wis_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment81">
+  <object class="GtkAdjustment" id="char_percept_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment82">
+  <object class="GtkAdjustment" id="char_concent_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment83">
+  <object class="GtkAdjustment" id="char_picid_adj">
     <property name="value">1</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment84">
+  <object class="GtkAdjustment" id="char_level_adj">
     <property name="value">1</property>
     <property name="lower">1</property>
     <property name="upper">100</property>
@@ -6378,7 +6078,7 @@ to this character.  Really quit?</property>
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="liststore11">
+  <object class="GtkListStore" id="b1_fxblock_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
@@ -6398,7 +6098,7 @@ to this character.  Really quit?</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore12">
+  <object class="GtkListStore" id="orientation_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
@@ -6430,7 +6130,7 @@ to this character.  Really quit?</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore13">
+  <object class="GtkListStore" id="b1_origin_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
@@ -6453,7 +6153,7 @@ to this character.  Really quit?</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore14">
+  <object class="GtkListStore" id="b1_axiom_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
@@ -6476,7 +6176,7 @@ to this character.  Really quit?</property>
       </row>
     </data>
   </object>
-  <object class="GtkListStore" id="liststore15">
+  <object class="GtkListStore" id="b1_classname_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
