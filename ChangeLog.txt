@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   09 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Added leftover Attribute/Skill points to character editor
+
    07-08 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    GUI Support for Book II characters
 

@@ -1077,6 +1077,8 @@ class MainGUI(BaseGUI):
         self.get_widget('xpos').set_value(char.xpos)
         self.get_widget('ypos').set_value(char.ypos)
         self.get_widget('orientation').set_active(char.orientation-1)
+        self.get_widget('extra_att_points').set_value(char.extra_att_points)
+        self.get_widget('extra_skill_points').set_value(char.extra_skill_points)
 
         for num in range(1, 25):
             self.get_widget('skills_%d' % (num)).set_value(char.skills[num])
