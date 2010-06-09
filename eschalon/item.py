@@ -233,9 +233,6 @@ class Item(object):
                 if (self.book == 2):
                     ret.append("\t\tUnknown Flag: %d" % (self.unknownflag))
                     ret.append("\t\tUnknown Byte 1: %d" % (self.unknownc1))
-                    ret.append("\t\tUnknown Byte 2: %d" % (self.unknownc2))
-                    ret.append("\t\tUnknown Byte 3: %d" % (self.unknownc3))
-                    ret.append("\t\tUnknown Byte 4: %d" % (self.unknownc4))
         ret.append('')
 
         return "\n".join(ret)
@@ -400,9 +397,6 @@ class B2Item(Item):
             'max_hp_label', 'max_hp',
             'unknownflag', 'unknownflag_label',
             'unknownc1', 'unknownc1_label',
-            'unknownc2', 'unknownc2_label',
-            'unknownc3', 'unknownc3_label',
-            'unknownc4', 'unknownc4_label',
             'book2_item_picid_note'
             ]
 
@@ -421,9 +415,6 @@ class B2Item(Item):
         self.attr_modifier_3 = -1
 
         self.unknownc1 = -1
-        self.unknownc2 = -1
-        self.unknownc3 = -1
-        self.unknownc4 = -1
 
         # Now, after doing all that, zero things out if we were told to do so
         if (zero):
@@ -452,10 +443,7 @@ class B2Item(Item):
         self.attr_modified_2 = df.readuchar()
         self.attr_modifier_2 = df.readuchar()
         self.attr_modified_3 = df.readuchar()
-        self.attr_modifier_3 = df.readuchar()
-        self.unknownc2 = df.readuchar()
-        self.unknownc3 = df.readuchar()
-        self.unknownc4 = df.readuchar()
+        self.attr_modifier_3 = df.readsint()
         self.script = df.readstr()
         self.emptystr = df.readstr()
         self.zero1 = df.readshort()
@@ -483,10 +471,7 @@ class B2Item(Item):
         df.writeuchar(self.attr_modified_2)
         df.writeuchar(self.attr_modifier_2)
         df.writeuchar(self.attr_modified_3)
-        df.writeuchar(self.attr_modifier_3)
-        df.writeuchar(self.unknownc2)
-        df.writeuchar(self.unknownc3)
-        df.writeuchar(self.unknownc4)
+        df.writesint(self.attr_modifier_3)
         df.writestr(self.script)
         df.writestr(self.emptystr)
         df.writeshort(self.zero1)
@@ -505,9 +490,6 @@ class B2Item(Item):
         newitem.attr_modified_3 = self.attr_modified_3
         newitem.attr_modifier_3 = self.attr_modifier_3
         newitem.unknownc1 = self.unknownc1
-        newitem.unknownc2 = self.unknownc2
-        newitem.unknownc3 = self.unknownc3
-        newitem.unknownc4 = self.unknownc4
 
     def _sub_tozero(self):
         """
@@ -523,9 +505,6 @@ class B2Item(Item):
         self.attr_modified_3 = 0
         self.attr_modifier_3 = 0
         self.unknownc1 = 0
-        self.unknownc2 = 0
-        self.unknownc3 = 0
-        self.unknownc4 = 0
 
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this

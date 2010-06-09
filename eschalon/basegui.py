@@ -404,6 +404,11 @@ class BaseGUI(object):
             obj.__dict__[modifiertext] = modifier
         elif (wname == modifiedtext):
             obj.__dict__[modifiedtext] = modified
+        if num == 3:
+            if obj.attr_modifier_3 < 0:
+                self.get_widget('attr_modified_plusminus_3').set_text('')
+            else:
+                self.get_widget('attr_modified_plusminus_3').set_text('+')
         if (self.curitemtype != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(modifiertext)
             self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
@@ -494,9 +499,6 @@ class BaseGUI(object):
             self.get_widget('attr_modified_3').set_active(item.attr_modified_3)
             self.get_widget('unknownflag').set_value(item.unknownflag)
             self.get_widget('unknownc1').set_value(item.unknownc1)
-            self.get_widget('unknownc2').set_value(item.unknownc2)
-            self.get_widget('unknownc3').set_value(item.unknownc3)
-            self.get_widget('unknownc4').set_value(item.unknownc4)
 
         self.get_widget('visibility').set_value(item.visibility)
         if item.book == 1:

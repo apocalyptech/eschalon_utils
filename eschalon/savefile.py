@@ -128,6 +128,18 @@ class Savefile(object):
             raise IOError('File is not open for writing')
         self.df.write(pack('<I', intval))
 
+    def readsint(self):
+        """ Read a signed integer from the savefile. """
+        if (not self.opened_r):
+            raise IOError('File is not open for reading')
+        return unpack('<i', self.df.read(4))[0]
+
+    def writesint(self, intval):
+        """ Write a signed integer to the savefile. """
+        if (not self.opened_w):
+            raise IOError('File is not open for writing')
+        self.df.write(pack('<i', intval))
+
     def readfloat(self):
         """ Read a float from the savefile. """
         if (not self.opened_r):
