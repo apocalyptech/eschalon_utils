@@ -21,7 +21,6 @@
 
 import struct
 from eschalonb1 import constants as c
-#from eschalonb1 import dirtable, entitytable
 from eschalonb1.savefile import FirstItemLoadException
 
 class Entity(object):

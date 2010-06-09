@@ -1083,7 +1083,8 @@ class MainGUI(BaseGUI):
 
         for num in range(26):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
-            self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
+            if char.book == 2:
+                self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
 
         if char.book == 1:
             fxblocks = 4
