@@ -80,3 +80,5 @@ Internal
    (ie: button1 existed both in itemgui and mapgui) - need to make sure that
    nothing that's active in the same gtkbuilder object has duplicates like
    that.
+ * Re-input all the damn tooltips that goddamn Glade stripped out when we
+   moved to gtkbuilder
