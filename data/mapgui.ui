@@ -500,6 +500,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Zoom Out</property>
                                 <property name="border_width">2</property>
                                 <signal name="clicked" handler="zoom_out"/>
                                 <child>
@@ -536,6 +537,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Zoom In</property>
                                 <property name="border_width">2</property>
                                 <signal name="clicked" handler="zoom_in"/>
                                 <child>
@@ -794,6 +796,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Having this enabled will cause you to set the Barrier flag on everything you draw.  This option is only available when you have Barrier Highlighting turned on.</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label"/>
                               </object>
@@ -812,6 +815,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="tooltip_text" translatable="yes">Enabling this option will make your barriers see-through.</property>
                                     <property name="draw_indicator">True</property>
                                     <child>
                                       <object class="GtkLabel" id="label33">
@@ -919,6 +923,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Enabling this option will remove the barrier flag on everything you erase.</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label"/>
                               </object>
@@ -965,6 +970,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Use this to completely disable Smartdraw.</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_smartdraw_check_toggled"/>
@@ -989,6 +995,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">When enabled, the app will attempt to set the barrier flag where appropriate.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1003,6 +1010,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">Enabling this will cause the app to try and link up walls and fences intelligently.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1020,6 +1028,7 @@
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">False</property>
                                         <property name="has_tooltip">True</property>
+                                        <property name="tooltip_text" translatable="yes">Attempts to automatically apply floor decals to blend terrain properly.  Specify the preferred edge type below.</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="toggled" handler="on_draw_smart_floor_toggled"/>
@@ -1042,6 +1051,7 @@
                                                 <property name="can_focus">True</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="has_tooltip">True</property>
+                                                <property name="tooltip_text" translatable="yes">This option will make paths going in cardinal directions as straight as possible (most maps in the base Eschalon game are more zig-zaggy)</property>
                                                 <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
@@ -1135,6 +1145,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">Currently just randomizes some decals where appropriate.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1149,6 +1160,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">Some graphics (grass, for instance) were meant to be randomized as you draw.  This will do so.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1163,6 +1175,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">This will automatically fill in more than one square if needed, to complete a more "complex" object.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -1928,6 +1941,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="has_tooltip">True</property>
+                            <property name="tooltip_text" translatable="yes">With this set, entities (such as monsters or NPCs) can see you through the wall and vice-versa.  Ranged weapons and spells can pass through the wall.</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="on_map_flag_changed"/>
                           </object>
@@ -2355,6 +2369,7 @@ another direction, Eschalon will crash.</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
+                                <property name="tooltip_text" translatable="yes">This value is usually either 0 or 1.</property>
                                 <property name="adjustment">adjustment12</property>
                                 <signal name="value_changed" handler="on_singleval_ent_changed_int"/>
                               </object>
@@ -2380,6 +2395,7 @@ another direction, Eschalon will crash.</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
+                                <property name="tooltip_text" translatable="yes">This value is usually either 1 or 2.</property>
                                 <property name="adjustment">adjustment11</property>
                                 <signal name="value_changed" handler="on_singleval_ent_changed_int"/>
                               </object>
@@ -2455,6 +2471,7 @@ another direction, Eschalon will crash.</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
+                                <property name="tooltip_text" translatable="yes">This seems to be 0 for monsters, 1 for friendly NPCs, and 2 for NPCs who are attacking you.</property>
                                 <property name="adjustment">adjustment9</property>
                                 <signal name="value_changed" handler="on_singleval_ent_changed_int"/>
                               </object>
@@ -2576,6 +2593,7 @@ another direction, Eschalon will crash.</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="has_tooltip">True</property>
+                                    <property name="tooltip_text" translatable="yes">The last two digits are the X coordinate, the rest is the Y coordinate.</property>
                                     <property name="adjustment">adjustment8</property>
                                     <signal name="value_changed" handler="on_singleval_ent_changed_int"/>
                                   </object>
@@ -2703,6 +2721,7 @@ another direction, Eschalon will crash.</property>
                             <property name="width_request">350</property>
                             <property name="visible">True</property>
                             <property name="has_tooltip">True</property>
+                            <property name="tooltip_text" translatable="yes">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.</property>
                             <signal name="changed" handler="on_scriptid_dd_changed"/>
                           </object>
                         </child>
@@ -3167,6 +3186,7 @@ another direction, Eschalon will crash.</property>
                       <object class="GtkSpinButton" id="clouds">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">This is typically either zero or one.  It should probably just be a checkbox.</property>
                         <property name="adjustment">adjustment6</property>
                         <signal name="value_changed" handler="on_singleval_map_changed_int"/>
                       </object>

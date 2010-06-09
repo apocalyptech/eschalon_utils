@@ -187,6 +187,16 @@ class BaseGUI(object):
                 for attribute in attributes:
                     box.append_text(attribute)
 
+        ###
+        ### Fix some tooltips
+        ###
+        if book == 1:
+            self.get_widget('visibility').set_tooltip_text('This is generally 1 for ordinary items, and 3 for items which the character hasn\'t identified yet.  Other values\' meanings are unknown.');
+            self.get_widget('quantity').set_tooltip_text('This value only makes sense when \'Can Stack\' is checked, above.  Ordinarily zero for items which can\'t be stacked.');
+        else:
+            self.get_widget('visibility').set_tooltip_text('This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
+            self.get_widget('quantity').set_tooltip_text('This is usually 1 even if \'Can Stack\' is set to No.')
+
 
     def bypass_delete(self, widget, event):
         """

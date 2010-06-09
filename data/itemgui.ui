@@ -181,6 +181,7 @@
                               <object class="GtkComboBox" id="type">
                                 <property name="visible">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">It's possible this isn't a complete list; please let me know if you discover something missing.</property>
                                 <property name="model">item_category_store</property>
                                 <signal name="changed" handler="on_dropdown_changed"/>
                                 <child>
@@ -209,6 +210,7 @@
                               <object class="GtkComboBox" id="subtype">
                                 <property name="visible">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">The subcategory field is typically only used for weapons and armor, to specify the actual type of item.</property>
                                 <property name="model">item_subcategory_store</property>
                                 <signal name="changed" handler="on_dropdown_changed"/>
                                 <child>
@@ -598,6 +600,16 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="label57">
+                            <property name="width_request">10</property>
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkAlignment" id="alignment109">
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -612,16 +624,6 @@
                                 <signal name="value_changed" handler="on_modifier_changed"/>
                               </object>
                             </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label57">
-                            <property name="width_request">10</property>
-                            <property name="visible">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1603,6 +1605,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">Used for lanterns, and possibly other similar objects</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">adjustment3</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
@@ -1666,6 +1669,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">Definitely be careful while editing this field.</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <signal name="changed" handler="on_singleval_changed_str"/>
                               </object>
@@ -1691,6 +1695,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">The use of this field is unknown, though it's always been zero on my save files.  Best to leave this alone.</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">adjustment1</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
@@ -1717,6 +1722,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">The use of this string is unknown.  It's been an empty string on all of my savegames.  Best to leave alone.</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <signal name="changed" handler="on_singleval_changed_str"/>
                               </object>
@@ -1757,6 +1763,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">This flag has always been zero for me, except on the Plasma Wand, where it was 1</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">adjustment17</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
@@ -1796,6 +1803,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">This is usually zero for things in my inventory, often 1 or 2 for weapons and armor found in Merchant inventories (though not always).</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">item_unknown1_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
@@ -1865,6 +1873,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">This byte seems to be used occasionally for potions (consumable and thrown-weapon)</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">item_unknown2_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>
@@ -1889,6 +1898,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="tooltip_text" translatable="yes">This byte seems to be used occasionally for potions (consumable and thrown-weapon)</property>
                                 <property name="invisible_char">&#x25CF;</property>
                                 <property name="adjustment">item_unknown3_adj</property>
                                 <signal name="value_changed" handler="on_singleval_changed_int"/>

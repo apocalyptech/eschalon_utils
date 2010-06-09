@@ -204,6 +204,7 @@
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">liststore15</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -232,6 +233,7 @@
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">liststore14</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -260,6 +262,7 @@
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">liststore13</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -374,6 +377,7 @@
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">True</property>
                                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                                <property name="tooltip_text" translatable="yes">This value seems to be in multiples of 256.  The GUI will let you set just about any value here, though, in case some bits are used for other things I'm not aware of.</property>
                                                 <property name="invisible_char">&#x25CF;</property>
                                                 <property name="adjustment">adjustment83</property>
                                                 <signal name="value_changed" handler="on_singleval_changed_int_avatar"/>
@@ -400,6 +404,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Click here to choose an avatar instead of setting a number.</property>
                                             <signal name="clicked" handler="open_avatarsel"/>
                                             <child>
                                               <object class="GtkImage" id="picid_image">
@@ -3220,6 +3225,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_0_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3248,6 +3254,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_1_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3276,6 +3283,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_2_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3304,6 +3312,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_3_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3332,6 +3341,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_4_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3360,6 +3370,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_5_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3388,6 +3399,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_6_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3416,6 +3428,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_7_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3444,6 +3457,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_8_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3472,6 +3486,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_9_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -3805,6 +3820,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_readied_list</property>
                                             <property name="text_column">0</property>
                                             <child>
@@ -4006,6 +4022,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4021,6 +4038,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4036,6 +4054,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4051,6 +4070,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4066,6 +4086,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4081,6 +4102,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="width_request">100</property>
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This is the filename of the map.</property>
                                         <property name="invisible_char">&#x25CF;</property>
                                         <signal name="changed" handler="on_portal_loc_changed"/>
                                       </object>
@@ -4100,6 +4122,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4121,6 +4144,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4142,6 +4166,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4163,6 +4188,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4184,6 +4210,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4197,9 +4224,6 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
                                       <object class="GtkAlignment" id="alignment51">
                                         <property name="visible">True</property>
                                         <property name="left_padding">5</property>
@@ -4208,6 +4232,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <property name="width_request">150</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="tooltip_text" translatable="yes">This value is probably only used to show information to the player.</property>
                                             <property name="invisible_char">&#x25CF;</property>
                                             <signal name="changed" handler="on_portal_loc_changed"/>
                                           </object>
@@ -4345,6 +4370,9 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="top_attach">6</property>
                                         <property name="bottom_attach">7</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
