@@ -197,6 +197,22 @@ class BaseGUI(object):
             self.get_widget('visibility').set_tooltip_text('This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
             self.get_widget('quantity').set_tooltip_text('This is usually 1 even if \'Can Stack\' is set to No.')
 
+        ###
+        ### Glade is seriously problematic; handle this TreeView connecting
+        ### stuff by hand.
+        ###
+        col = gtk.TreeViewColumn('Potion', gtk.CellRendererText(), text = 0)
+        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col.set_fixed_width(150)
+        col.set_clickable(True)
+        col.set_sort_column_id(0)
+        self.get_widget('b2_potion_magic_treeview').append_column(col)
+        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text = 1)
+        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col.set_fixed_width(150)
+        col.set_clickable(True)
+        col.set_sort_column_id(1)
+        self.get_widget('b2_potion_magic_treeview').append_column(col)
 
     def bypass_delete(self, widget, event):
         """

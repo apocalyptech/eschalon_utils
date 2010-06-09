@@ -2,6 +2,259 @@
 <interface>
   <!-- interface-requires gtk+ 2.12 -->
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Elements</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Toxins</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Magick</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Disease</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore2">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Strength</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Dexterity</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Endurance</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Speed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Intelligence</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Wisdom</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Perception</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Concentration</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="liststore3">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Alchemy</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Divination</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Elemental</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Light Armor</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Heavy Armor</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Shields</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cartography</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Dodge</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hide in Shadows</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Lore</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Meditation</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Mercantile</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Move Silently</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Pick Locks</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">SkullDuggery</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Spot Hidden</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Survival</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Unarmed Combat</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bludgeoning Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bows</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cleaving Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Short Bladed Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Swords</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Thrown Weapons</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="item_subcategory_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="item_category_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="atrr_modified_1_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="atrr_modified_2_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="atrr_modified_3_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="b2_potion_magic_view">
+    <columns>
+      <!-- column-name Potion -->
+      <column type="gchararray"/>
+      <!-- column-name Value -->
+      <column type="gint"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Cat's Eyes Brew</col>
+        <col id="1">5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Detox</col>
+        <col id="1">72</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Demon Oil (all levels)</col>
+        <col id="1">129</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Healing (all levels)</col>
+        <col id="1">258</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Leatherskin</col>
+        <col id="1">513</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Mana (all levels)</col>
+        <col id="1">1040</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Predator Sight</col>
+        <col id="1">2176</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Keensight</col>
+        <col id="1">4112</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Charm Cloud</col>
+        <col id="1">5120</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Fortify Mana</col>
+        <col id="1">8704</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Haste (all levels)</col>
+        <col id="1">8224</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Ogre Strength</col>
+        <col id="1">16392</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Restoration</col>
+        <col id="1">16640</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cure Ailment</col>
+        <col id="1">33024</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Greater Protection</col>
+        <col id="1">49152</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Toxic Aura</col>
+        <col id="1">65538</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Stoneskin</col>
+        <col id="1">67584</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Invisibility (all levels)</col>
+        <col id="1">131076</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkWindow" id="itemwindow">
     <property name="width_request">460</property>
     <property name="height_request">390</property>
@@ -600,6 +853,16 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="label57">
+                            <property name="width_request">10</property>
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkAlignment" id="alignment109">
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -614,16 +877,6 @@
                                 <signal name="value_changed" handler="on_modifier_changed"/>
                               </object>
                             </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label57">
-                            <property name="width_request">10</property>
-                            <property name="visible">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1211,7 +1464,7 @@
                     <child>
                       <object class="GtkTable" id="table2">
                         <property name="visible">True</property>
-                        <property name="n_rows">4</property>
+                        <property name="n_rows">5</property>
                         <property name="n_columns">2</property>
                         <child>
                           <object class="GtkLabel" id="attr_modifier_1_label">
@@ -1456,14 +1709,11 @@
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
-                        </child>
-                        <child>
                           <object class="GtkLabel" id="label6">
                             <property name="width_request">300</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">The third modifier is the only one which can have a negative value, and uses four bytes instead of one (as the other modifiers do).  For potions (and potions used as thrown weapons), though, some of the bits in here seem to be used as flags of some sort.</property>
+                            <property name="label" translatable="yes">The third modifier is the only one which can have a negative value, and uses four bytes instead of one (as the other modifiers do).  For potions (and potions used as thrown weapons), though, some of the bits in here seem to be used as flags of some sort:</property>
                             <property name="wrap">True</property>
                           </object>
                           <packing>
@@ -1472,6 +1722,38 @@
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
                           </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="scrolledwindow1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="hscrollbar_policy">automatic</property>
+                            <property name="vscrollbar_policy">automatic</property>
+                            <property name="shadow_type">in</property>
+                            <child>
+                              <object class="GtkTreeView" id="b2_potion_magic_treeview">
+                                <property name="width_request">300</property>
+                                <property name="height_request">100</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="model">b2_potion_magic_view</property>
+                                <property name="search_column">0</property>
+                                <property name="fixed_height_mode">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">4</property>
+                            <property name="bottom_attach">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
                         </child>
                       </object>
                     </child>
@@ -2085,159 +2367,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Elements</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Toxins</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Magick</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Disease</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="liststore2">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Strength</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Dexterity</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Endurance</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Speed</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Intelligence</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Wisdom</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Perception</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Concentration</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="liststore3">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Alchemy</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Divination</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Elemental</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Light Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Heavy Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Shields</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cartography</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Dodge</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hide in Shadows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lore</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Meditation</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Mercantile</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Move Silently</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Pick Locks</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">SkullDuggery</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Spot Hidden</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Survival</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Unarmed Combat</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bludgeoning Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cleaving Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Short Bladed Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Swords</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thrown Weapons</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="item_subcategory_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="item_category_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkAdjustment" id="cur_hp_adj">
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
@@ -2247,24 +2376,6 @@
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-  </object>
-  <object class="GtkListStore" id="atrr_modified_1_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="atrr_modified_2_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="atrr_modified_3_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkAdjustment" id="attr_modifier_1_adj">
     <property name="upper">255</property>
