@@ -127,6 +127,7 @@ class MainGUI(BaseGUI):
 
         # Set up our graphics cache
         self.prefs_init(self.prefs)
+        # TODO: should only throw a warning if we're on Book 1, yeah?
         self.optional_gfx()
         self.gfxes = {}
         if (self.gamedir_set(1)):
@@ -145,6 +146,8 @@ class MainGUI(BaseGUI):
                 'on_save_as': self.on_save_as,
                 'on_prefs': self.on_prefs,
                 'save_char': self.save_char,
+                'choose_book_1': self.choose_book_1,
+                'choose_book_2': self.choose_book_2,
                 'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
                 'on_checkbox_arr_changed': self.on_checkbox_arr_changed,
                 'on_readyslots_changed': self.on_readyslots_changed,
@@ -173,16 +176,61 @@ class MainGUI(BaseGUI):
 
         # If we were given a filename, load it.  If not, display the load dialog
         if (self.options['filename'] == None):
-            if (not self.on_load()):
+            if (not self.initial_load_window()):
                 return
         else:
             if (not self.load_from_file(self.options['filename'])):
-                if (not self.on_load()):
+                if (not self.initial_load_window()):
                     return
 
         # Start the main gtk loop
         self.window.show()
         gtk.main()
+
+    def initial_load_window(self):
+        """
+        This is what we do when we have to throw up an initial load window.
+        (This is just here to see if we need to throw out our "choose Book
+        1 or Book 2" dialog.)
+        """
+        sg1 = self.prefs.get_str('paths', 'savegames')
+        sg2 = self.prefs.get_str('paths', 'savegames_b2')
+        have_both = False
+        preferred_dir = None
+        if (sg1 and sg1 != '' and os.path.isdir(sg1)):
+            preferred_dir = sg1
+        if (sg2 and sg2 != '' and os.path.isdir(sg2)):
+            if preferred_dir is not None:
+                have_both = True
+            preferred_dir = sg2
+
+        if have_both:
+            dialog = self.get_widget('choose_b1_b2_loc_window')
+            resp = dialog.run()
+            dialog.hide()
+            if resp == 1:
+                preferred_dir = sg1
+            elif resp == 2:
+                preferred_dir = sg2
+            else:
+                # Other options are "Quit" and closing the dialog, which
+                # amounts to the same thing; exit out of the app.
+                return None
+
+        print "passing in %s" % (preferred_dir)
+        return self.on_load(None, preferred_dir)
+
+    def choose_book_1(self, widget=None):
+        """
+        Chooses book 1 as the initial file load location
+        """
+        self.get_widget('choose_b1_b2_loc_window').response(1)
+
+    def choose_book_2(self, widget=None):
+        """
+        Chooses book 2 as the initial file load location
+        """
+        self.get_widget('choose_b1_b2_loc_window').response(2)
 
     def switch_gfx_to(self, book):
         """
@@ -218,7 +266,7 @@ class MainGUI(BaseGUI):
             self.gfx = Gfx(self.prefs)
 
     # Use this to display the loading dialog, and deal with the main window accordingly
-    def on_load(self, widget=None):
+    def on_load(self, widget=None, preferred_dir=None):
         
         # Blank out the main area
         self.mainbook.set_sensitive(False)
@@ -235,7 +283,8 @@ class MainGUI(BaseGUI):
         # Figure out what our initial path should be
         path = ''
         if (self.char == None):
-            path = self.prefs.get_str('paths', 'savegames')
+            # This will only happen during the initial load
+            path = preferred_dir
         else:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
 

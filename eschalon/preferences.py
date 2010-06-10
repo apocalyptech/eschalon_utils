@@ -64,7 +64,7 @@ class Prefs(object):
     def set_defaults(self):
         # We're loading gamedir first because sometimes Windows will have its
         # savegames stored in there, so it'd be useful to know that first
-        for vars in [('paths', 'gamedir'), ('paths', 'gamedir_b2'), ('paths', 'savegames')]:
+        for vars in [('paths', 'gamedir'), ('paths', 'gamedir_b2'), ('paths', 'savegames'), ('paths', 'savegames_b2')]:
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
@@ -144,6 +144,8 @@ class Prefs(object):
                 if (not os.path.isdir(path)):
                     path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
                 return path
+            elif (name == 'savegames_b2'):
+                return os.path.join(os.path.expanduser('~'), '.basilisk_games', 'book2_saved_games')
             elif (name == 'gamedir'):
                 for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
                     fulldir = os.path.join(dir, 'eschalon_book_1')
@@ -162,11 +164,13 @@ class Prefs(object):
 
     def darwin_default(self, cat, name):
         """ Default values on Darwin """
-        # TODO: These are completely untested - the gamedir in particular is a
-        # total guess on my part.
+        # TODO: These are completely untested - the gamedir and savegames_b2 in particular are
+        # both total guesses on my part.
         if (cat == 'paths'):
             if (name == 'savegames'):
                 return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 1 Saved Games')
+            elif (name == 'savegames'):
+                return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 2 Saved Games')
             elif (name == 'gamedir'):
                 return '/Applications/Eschalon Book I.app'
         return self.global_default(cat, name)
@@ -236,6 +240,20 @@ class Prefs(object):
                         return testdir
                 # ... and if we get here, just return our most recent testdir, anyway
                 return testdir
+            elif (name == 'savegames_b2'):
+                basedir = os.path.expanduser('~')
+                savedir = os.path.join('Basilisk Games', 'Book 2 Saved Games')
+                # Huzzah for flailing about!
+                for dir in [ os.path.join(basedir, 'Local Settings', 'Application Data', savedir),
+                        os.path.join(basedir, 'Application Data', savedir),
+                        os.path.join(basedir, 'My Documents', savedir),
+                        os.path.join(basedir, 'AppData', 'Roaming', savedir),
+                        os.path.join(basedir, 'AppData', savedir)]:
+                    if (os.path.isdir(dir)):
+                        return dir
+                # If we got here, um, do what?
+                #return os.path.join(basedir, 'Application Data', savedir)
+                return ''
             elif (name == 'gamedir'):
                 for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
                     testdir = os.path.join(dir, 'Eschalon Book I')

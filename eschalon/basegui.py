@@ -89,6 +89,7 @@ class BaseGUI(object):
 
         # Prefs fields
         self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
+        self.prefs_savegame_b2 = self.prefsbuilder.get_object('savegame_b2_chooser')
         self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
         self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
         self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
@@ -253,6 +254,7 @@ class BaseGUI(object):
         return True
 
     def on_prefs(self, widget):
+        # TODO: Bah, this is going to overwrite Book 2 prefs when it should leave them alone.
         changed = False
         curdir = self.prefsobj.get_str('paths', 'gamedir')
         if (self.gamedir_set()):
@@ -261,6 +263,8 @@ class BaseGUI(object):
             alert_changed = False
         if (self.prefsobj.get_str('paths', 'savegames') != ''):
             self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
+        if (self.prefsobj.get_str('paths', 'savegames_b2') != ''):
+            self.prefs_savegame_b2.set_current_folder(self.prefsobj.get_str('paths', 'savegames_b2'))
         if (self.prefsobj.get_str('paths', 'gamedir') != ''):
             self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
         if (self.prefsobj.get_int('mapgui', 'default_zoom')):
@@ -272,6 +276,7 @@ class BaseGUI(object):
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
             self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
+            self.prefsobj.set_str('paths', 'savegames_b2', self.prefs_savegame_b2.get_filename())
             self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
             self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
             self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())

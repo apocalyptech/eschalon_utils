@@ -6562,4 +6562,133 @@ to this character.  Really quit?</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkDialog" id="choose_b1_b2_loc_window">
+    <property name="border_width">5</property>
+    <property name="type_hint">normal</property>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox4">
+        <property name="visible">True</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkVBox" id="vbox4">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkLabel" id="choose_title_label">
+                <property name="visible">True</property>
+                <property name="xpad">20</property>
+                <property name="ypad">20</property>
+                <property name="label" translatable="yes">You appear to have both Eschalon Book I and Eschalon Book II installed.  Which savegame directory do you want to open?</property>
+                <property name="wrap">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkAlignment" id="alignment119">
+                <property name="visible">True</property>
+                <property name="bottom_padding">10</property>
+                <child>
+                  <object class="GtkHBox" id="hbox6">
+                    <property name="visible">True</property>
+                    <child>
+                      <object class="GtkAlignment" id="alignment120">
+                        <property name="visible">True</property>
+                        <property name="xalign">1</property>
+                        <property name="xscale">0.20000000298023224</property>
+                        <property name="right_padding">20</property>
+                        <child>
+                          <object class="GtkButton" id="choose_b1_button">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="events">GDK_BUTTON_MOTION_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="clicked" handler="choose_book_1"/>
+                            <child>
+                              <object class="GtkLabel" id="choose_b1_label">
+                                <property name="visible">True</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes">Book 1</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment121">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0.20000000298023224</property>
+                        <property name="left_padding">20</property>
+                        <child>
+                          <object class="GtkButton" id="choose_b2_button">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="events">GDK_BUTTON_MOTION_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="clicked" handler="choose_book_2"/>
+                            <child>
+                              <object class="GtkLabel" id="choose_b2_label">
+                                <property name="visible">True</property>
+                                <property name="xpad">10</property>
+                                <property name="label" translatable="yes">Book 2</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area4">
+            <property name="visible">True</property>
+            <property name="layout_style">center</property>
+            <child>
+              <object class="GtkButton" id="choose_quit_button">
+                <property name="label">gtk-quit</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-7">choose_quit_button</action-widget>
+    </action-widgets>
+  </object>
 </interface>
