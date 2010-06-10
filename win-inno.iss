@@ -33,6 +33,7 @@ Source: "C:\InstPrograms\eschalon\dist\*"; DestDir: {app}; Flags: ignoreversion 
 [Icons]
 Name: "{group}\Book 1 Character Editor"; Filename: "{app}\eschalon_b1_char.exe"
 Name: "{group}\Book 1 Map Editor"; Filename: "{app}\eschalon_b1_map.exe"
+Name: "{group}\Book 2 Character Editor"; Filename: "{app}\eschalon_b2_char.exe"
 
 [Run]
 Filename: "{app}\eschalon_b1_char.exe"; Description: "{cm:LaunchProgram,Eschalon Book I Character Editor}"; Flags: nowait postinstall skipifsilent
