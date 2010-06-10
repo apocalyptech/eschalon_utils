@@ -3,7 +3,7 @@
 # $Id$
 # 
 #
-# Eschalon Book 1 Savefile Editor
+# Eschalon Book 2 Savefile Editor
 # Copyright (C) 2008-2010 CJ Kucera
 # 
 # This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@ from eschalon.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
-    progname = 'eschalon_b1_char.py'
+    progname = 'eschalon_b2_char.py'
     print
     print "To launch the GUI:"
     print "\t%s [<charfile>]" % (progname)
@@ -37,7 +37,7 @@ def usage(full=False):
     print "\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)
     print
     print "To manipulate character data from the console:"
-    print "\t%s [--set-gold=<num>] [--rm-disease]" % (progname)
+    print "\t%s [--set-gold=<num>] [--rm-disease] [--reset-hunger]" % (progname)
     print "\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]"
     print "\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>"
     print
@@ -68,6 +68,7 @@ def usage(full=False):
         print "\tstats - Base Character Statistics"
         print "\tavatar - Avatar information"
         print "\tmagic - Magic information"
+        print "\talchemy - Alchemy information"
         print "\tequip - Equipment information (armor, weapons, etc)"
         print "\tinv - Inventory listings (including \"ready\" slots)"
         print
@@ -81,6 +82,9 @@ def usage(full=False):
         print "you may find that you're slightly off when you enter the game.  Using the"
         print "--set-hp-max or --set-mana-max options will also bring your current HP or"
         print "MP up to the new Max level."
+        print
+        print "Note that the --reset-hunger option will maximize both hunger and thirst"
+        print "meters."
         print
         print "Additionally, you may use -h or --help to view this message"
     else:
@@ -101,6 +105,7 @@ def main(argv=None):
                 'stats': False,
                 'avatar': False,
                 'magic': False,
+                'alchemy': False,
                 'equip': False,
                 'inv': False
                 },
@@ -111,6 +116,7 @@ def main(argv=None):
             'set_hp_max': 0,
             'set_hp_cur': 0,
             'rm_disease': False,
+            'reset_hunger': False,
             'filename' : None
             }
 
@@ -129,7 +135,8 @@ def main(argv=None):
                  'set-mana-cur=',
                  'set-hp-max=',
                  'set-hp-cur=',
-                 'rm-disease'])
+                 'rm-disease',
+                 'reset-hunger'])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -153,6 +160,9 @@ def main(argv=None):
             elif (a == 'magic'):
                 options['listoptions']['all'] = False
                 options['listoptions']['magic'] = True
+            elif (a == 'alchemy'):
+                options['listoptions']['all'] = False
+                options['listoptions']['alchemy'] = True
             elif (a == 'equip'):
                 options['listoptions']['all'] = False
                 options['listoptions']['equip'] = True
@@ -182,6 +192,9 @@ def main(argv=None):
         elif (o in ('--rm-disease')):
             options['gui'] = False
             options['rm_disease'] = True
+        elif (o in ('--reset-hunger')):
+            options['gui'] = False
+            options['reset_hunger'] = True
         else:
             assert False, 'unhandled option'
 
@@ -200,9 +213,9 @@ def main(argv=None):
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalon.maingui import MainGUI
-        prog = MainGUI(options, Prefs(), 1)
+        prog = MainGUI(options, Prefs(), 2)
     else:
-        prog = MainCLI(options, Prefs(), 1)
+        prog = MainCLI(options, Prefs(), 2)
 
     # ... and run it
     return prog.run()

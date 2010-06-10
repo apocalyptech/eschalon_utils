@@ -59,10 +59,12 @@ from eschalon import app_name, version, url, authors
 
 class MainGUI(BaseGUI):
 
-    def __init__(self, options, prefs):
+    def __init__(self, options, prefs, req_book):
         self.options = options
         self.prefs = prefs
         self.path_init()
+        self.req_book = req_book
+        c.switch_to_book(req_book)
 
     def run(self):
 
@@ -127,15 +129,12 @@ class MainGUI(BaseGUI):
 
         # Set up our graphics cache
         self.prefs_init(self.prefs)
-        # TODO: should only throw a warning if we're on Book 1, yeah?
-        self.optional_gfx()
-        self.gfxes = {}
-        if (self.gamedir_set(1)):
-            self.gfxes[1] = Gfx(self.prefs, self.datadir)
+        if self.req_book == 1:
+            self.optional_gfx()
+        if (self.gamedir_set() and self.req_book == 1):
+            self.gfx = Gfx(self.prefs, self.datadir)
         else:
-            self.gfxes[1] = None
-        self.gfxes[2] = None
-        self.switch_gfx_to(1)
+            self.gfx = None
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
@@ -146,8 +145,6 @@ class MainGUI(BaseGUI):
                 'on_save_as': self.on_save_as,
                 'on_prefs': self.on_prefs,
                 'save_char': self.save_char,
-                'choose_book_1': self.choose_book_1,
-                'choose_book_2': self.choose_book_2,
                 'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
                 'on_checkbox_arr_changed': self.on_checkbox_arr_changed,
                 'on_readyslots_changed': self.on_readyslots_changed,
@@ -176,68 +173,16 @@ class MainGUI(BaseGUI):
 
         # If we were given a filename, load it.  If not, display the load dialog
         if (self.options['filename'] == None):
-            if (not self.initial_load_window()):
+            if (not self.on_load()):
                 return
         else:
             if (not self.load_from_file(self.options['filename'])):
-                if (not self.initial_load_window()):
+                if (not self.on_load()):
                     return
 
         # Start the main gtk loop
         self.window.show()
         gtk.main()
-
-    def initial_load_window(self):
-        """
-        This is what we do when we have to throw up an initial load window.
-        (This is just here to see if we need to throw out our "choose Book
-        1 or Book 2" dialog.)
-        """
-        sg1 = self.prefs.get_str('paths', 'savegames')
-        sg2 = self.prefs.get_str('paths', 'savegames_b2')
-        have_both = False
-        preferred_dir = None
-        if (sg1 and sg1 != '' and os.path.isdir(sg1)):
-            preferred_dir = sg1
-        if (sg2 and sg2 != '' and os.path.isdir(sg2)):
-            if preferred_dir is not None:
-                have_both = True
-            preferred_dir = sg2
-
-        if have_both:
-            dialog = self.get_widget('choose_b1_b2_loc_window')
-            resp = dialog.run()
-            dialog.hide()
-            if resp == 1:
-                preferred_dir = sg1
-            elif resp == 2:
-                preferred_dir = sg2
-            else:
-                # Other options are "Quit" and closing the dialog, which
-                # amounts to the same thing; exit out of the app.
-                return None
-
-        print "passing in %s" % (preferred_dir)
-        return self.on_load(None, preferred_dir)
-
-    def choose_book_1(self, widget=None):
-        """
-        Chooses book 1 as the initial file load location
-        """
-        self.get_widget('choose_b1_b2_loc_window').response(1)
-
-    def choose_book_2(self, widget=None):
-        """
-        Chooses book 2 as the initial file load location
-        """
-        self.get_widget('choose_b1_b2_loc_window').response(2)
-
-    def switch_gfx_to(self, book):
-        """
-        Switches our current gfx object to the specified book
-        """
-        self.gfx = self.gfxes[book]
-        self.assert_gfx_buttons()
 
     def assert_gfx_buttons(self):
         """
@@ -263,10 +208,10 @@ class MainGUI(BaseGUI):
             dialog.destroy()
         self.assert_gfx_buttons()
         if (changed and self.gamedir_set()):
-            self.gfx = Gfx(self.prefs)
+            self.gfx = Gfx(self.prefs, self.datadir)
 
     # Use this to display the loading dialog, and deal with the main window accordingly
-    def on_load(self, widget=None, preferred_dir=None):
+    def on_load(self, widget=None):
         
         # Blank out the main area
         self.mainbook.set_sensitive(False)
@@ -284,7 +229,7 @@ class MainGUI(BaseGUI):
         path = ''
         if (self.char == None):
             # This will only happen during the initial load
-            path = preferred_dir
+            path = self.get_current_savegame_dir()
         else:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
 
@@ -408,10 +353,11 @@ class MainGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            char = Character.load(filename)
+            char = Character.load(filename, None, self.req_book)
             char.read()
         except LoadException, e:
             errordiag = self.get_widget('loaderrorwindow')
+            self.get_widget('loaderror_textview').get_buffer().set_text(e.text)
             errordiag.run()
             errordiag.hide()
             return False
@@ -432,7 +378,6 @@ class MainGUI(BaseGUI):
         self.putstatus('Editing ' + self.char.df.filename)
 
         # Load information from the character
-        self.switch_gfx_to(self.char.book)
         self.populate_form_from_char()
 
         # Load default dropdowns, since Glade apparently can't

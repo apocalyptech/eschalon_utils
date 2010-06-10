@@ -262,7 +262,7 @@ class Character(object):
             self.curinvrow = self.curinvrow + 1
 
     @staticmethod
-    def load(filename, book=None):
+    def load(filename, book=None, req_book=None):
         """
         Static method to load a character file.  This will open the file once and
         read in a bit of data to determine whether this is a Book 1 character file or
@@ -290,6 +290,10 @@ class Character(object):
                 book = 1
             else:
                 book = 2
+
+        # See if we're required to conform to a specific book
+        if (req_book is not None and book != req_book):
+            raise LoadException('This utility can only load Book %d Character files; this file is from Book %d' % (req_book, book))
 
         # Now actually return the object
         if book == 1:

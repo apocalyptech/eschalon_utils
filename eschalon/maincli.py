@@ -25,10 +25,11 @@ from eschalon.savefile import LoadException
 
 class MainCLI(object):
 
-    def __init__(self, options, prefs):
+    def __init__(self, options, prefs, req_book):
         """ A fresh object, with no data. """
         self.options = options
         self.prefs = prefs
+        self.req_book = req_book
 
     def run(self):
         
@@ -36,7 +37,7 @@ class MainCLI(object):
 
         # Load in our file
         try:
-            char = Character.load(options['filename'])
+            char = Character.load(options['filename'], self.req_book)
             char.read()
             self.char = char
         except LoadException, e:
