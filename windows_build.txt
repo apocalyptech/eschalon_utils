@@ -1,0 +1,26 @@
+To build on Windows
+-------------------
+
+Requirements:
+
+  * GTK+/Python/PyGTK (app should be runnable as Python scripts)
+  * cx_Freeze
+  * Inno Setup Compiler
+
+Process:
+
+    1) To avoid having to change paths in win-inno.iss, copy to
+       C:\InstPrograms\eschalon_utils
+
+    2) From a DOS cmd, run "win-setup.py build_exe"
+
+    3) Copy everything from inside build/exe.win32-2.6 to dist/
+       (which is where win-setup.py put some .exe and .zip files)
+
+    4) Copy data/ to dist/
+
+    5) Copy C:\GTK\(lib|etc) to dist/  (is this actually needed?)
+
+    6) Right-click on win-inno.iss and choose "Compile"
+
+You should be left with a nice self-contained EXE in Output/
