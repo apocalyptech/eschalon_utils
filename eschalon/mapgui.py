@@ -23,10 +23,10 @@ import os
 import sys
 import time
 import traceback
-from eschalonb1 import constants as c
-from eschalonb1.gfx import Gfx
-from eschalonb1.undo import Undo
-from eschalonb1.item import B1Item, B2Item
+from eschalon import constants as c
+from eschalon.gfx import Gfx
+from eschalon.undo import Undo
+from eschalon.item import B1Item, B2Item
 
 # Load our GTK modules
 try:
@@ -55,15 +55,15 @@ if (gtk.check_version(2, 18, 0) is not None):
     dialog.run()
     dialog.destroy()
 
-from eschalonb1.map import Map
-from eschalonb1.item import Item
-from eschalonb1.square import Square
-from eschalonb1.basegui import BaseGUI
-from eschalonb1.smartdraw import SmartDraw
-from eschalonb1.mapscript import Mapscript
-from eschalonb1.savefile import LoadException
-from eschalonb1.entity import Entity
-from eschalonb1 import app_name, version, url, authors
+from eschalon.map import Map
+from eschalon.item import Item
+from eschalon.square import Square
+from eschalon.basegui import BaseGUI
+from eschalon.smartdraw import SmartDraw
+from eschalon.mapscript import Mapscript
+from eschalon.savefile import LoadException
+from eschalon.entity import Entity
+from eschalon import app_name, version, url, authors
 
 class MapGUI(BaseGUI):
 

@@ -20,9 +20,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import constants as c
-from eschalonb1.item import Item
-from eschalonb1.savefile import FirstItemLoadException
+from eschalon import constants as c
+from eschalon.item import Item
+from eschalon.savefile import FirstItemLoadException
 
 class Mapscript(object):
     """

@@ -21,10 +21,10 @@
 
 import os
 import struct
-from eschalonb1.savefile import Savefile, LoadException, FirstItemLoadException
-from eschalonb1.square import Square
-from eschalonb1.mapscript import Mapscript
-from eschalonb1.entity import Entity
+from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
+from eschalon.square import Square
+from eschalon.mapscript import Mapscript
+from eschalon.entity import Entity
 
 class Map(object):
     """ The base Map class.  """

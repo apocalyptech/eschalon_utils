@@ -23,7 +23,7 @@ import sys
 import os
 import os.path
 import ConfigParser
-from eschalonb1 import app_name
+from eschalon import app_name
 
 # Load windows registry, if we can
 try:

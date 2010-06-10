@@ -20,8 +20,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import constants as c
-from eschalonb1.savefile import FirstItemLoadException
+from eschalon import constants as c
+from eschalon.savefile import FirstItemLoadException
 
 class Entity(object):
     """ A class to hold data about a particular entity on a map. """

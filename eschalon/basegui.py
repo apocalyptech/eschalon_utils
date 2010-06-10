@@ -30,7 +30,7 @@ except:
     sys.exit(1)
 
 import gobject
-from eschalonb1 import constants as c
+from eschalon import constants as c
 
 class BaseGUI(object):
 

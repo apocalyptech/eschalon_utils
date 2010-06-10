@@ -20,10 +20,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalonb1 import constants as c
-from eschalonb1.savefile import Savefile, LoadException
-from eschalonb1.item import Item
-from eschalonb1.unknowns import B1Unknowns, B2Unknowns
+from eschalon import constants as c
+from eschalon.savefile import Savefile, LoadException
+from eschalon.item import Item
+from eschalon.unknowns import B1Unknowns, B2Unknowns
 
 class Character(object):
     """

@@ -6,18 +6,18 @@
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0FCD12BE-F238-438E-BBC4-77FEEEE05DC3}
-AppName=Eschalon Book I Utilities
-AppVerName=Eschalon Book I Utilities 0.5.1
+AppName=Eschalon Utilities
+AppVerName=Eschalon Utilities 0.6.0
 AppPublisher=CJ Kucera
 AppPublisherURL=http://apocalyptech.com/eschalon/
 AppSupportURL=http://apocalyptech.com/eschalon/
 AppUpdatesURL=http://apocalyptech.com/eschalon/
-DefaultDirName={pf}\Eschalon Book I Utilities
-DefaultGroupName=Eschalon Book I Utilities
+DefaultDirName={pf}\Eschalon Utilities
+DefaultGroupName=Eschalon Utilities
 AllowNoIcons=yes
 LicenseFile=C:\InstPrograms\eschalon\COPYING.txt
 InfoBeforeFile=C:\InstPrograms\eschalon\README.txt
-OutputBaseFilename=eschalon_b1_utils_0_5_1_setup
+OutputBaseFilename=eschalon_utils_0_6_0_setup
 Compression=lzma
 SolidCompression=yes
 
@@ -31,8 +31,8 @@ Source: "C:\InstPrograms\eschalon\dist\*"; DestDir: {app}; Flags: ignoreversion 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\Character Editor"; Filename: "{app}\eschalon_b1_char.exe"
-Name: "{group}\Map Editor"; Filename: "{app}\eschalon_b1_map.exe"
+Name: "{group}\Book 1 Character Editor"; Filename: "{app}\eschalon_b1_char.exe"
+Name: "{group}\Book 1 Map Editor"; Filename: "{app}\eschalon_b1_map.exe"
 
 [Run]
 Filename: "{app}\eschalon_b1_char.exe"; Description: "{cm:LaunchProgram,Eschalon Book I Character Editor}"; Flags: nowait postinstall skipifsilent

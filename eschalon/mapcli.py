@@ -20,8 +20,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import sys
-from eschalonb1.map import Map
-from eschalonb1.savefile import LoadException
+from eschalon.map import Map
+from eschalon.savefile import LoadException
 
 class MapCLI(object):
 

@@ -49,13 +49,13 @@ if (gtk.check_version(2, 18, 0) is not None):
     dialog.destroy()
 
 # Lookup tables we'll need
-from eschalonb1.gfx import Gfx
-from eschalonb1.basegui import BaseGUI
-from eschalonb1.character import Character, B1Character, B2Character
-from eschalonb1.item import Item, B1Item, B2Item
-from eschalonb1.savefile import LoadException
-from eschalonb1 import constants as c
-from eschalonb1 import app_name, version, url, authors
+from eschalon.gfx import Gfx
+from eschalon.basegui import BaseGUI
+from eschalon.character import Character, B1Character, B2Character
+from eschalon.item import Item, B1Item, B2Item
+from eschalon.savefile import LoadException
+from eschalon import constants as c
+from eschalon import app_name, version, url, authors
 
 class MainGUI(BaseGUI):
 

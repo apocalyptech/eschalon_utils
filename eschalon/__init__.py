@@ -31,8 +31,8 @@ __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Square', 'Mapscript', 'Undo',
         'constants' ]
 
-from eschalonb1.constantsb1 import B1Constants
-from eschalonb1.constantsb2 import B2Constants
+from eschalon.constantsb1 import B1Constants
+from eschalon.constantsb2 import B2Constants
 
 class Constants:
     """

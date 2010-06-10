@@ -19,9 +19,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from eschalonb1 import constants as c
-from eschalonb1.character import Character
-from eschalonb1.savefile import LoadException
+from eschalon import constants as c
+from eschalon.character import Character
+from eschalon.savefile import LoadException
 
 class MainCLI(object):
 

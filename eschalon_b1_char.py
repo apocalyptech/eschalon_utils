@@ -21,9 +21,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import getopt, sys
-from eschalonb1.character import Character
-from eschalonb1.maincli import MainCLI
-from eschalonb1.preferences import Prefs
+from eschalon.character import Character
+from eschalon.maincli import MainCLI
+from eschalon.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -212,7 +212,7 @@ def main(argv=None):
         # We're waiting until now to import, so people just using CLI don't need
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
-        from eschalonb1.maingui import MainGUI
+        from eschalon.maingui import MainGUI
         prog = MainGUI(options, Prefs())
     else:
         prog = MainCLI(options, Prefs())

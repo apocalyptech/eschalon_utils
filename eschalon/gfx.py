@@ -27,9 +27,8 @@ import cairo
 import gobject
 import StringIO
 from struct import unpack
-from eschalonb1 import constants as c
-#from eschalonb1 import entitytable
-from eschalonb1.savefile import Savefile, LoadException
+from eschalon import constants as c
+from eschalon.savefile import Savefile, LoadException
 
 class GfxCache(object):
     """

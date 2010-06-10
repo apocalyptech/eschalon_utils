@@ -20,9 +20,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import getopt, sys
-from eschalonb1.map import Map
-from eschalonb1.mapcli import MapCLI
-from eschalonb1.preferences import Prefs
+from eschalon.map import Map
+from eschalon.mapcli import MapCLI
+from eschalon.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -152,7 +152,7 @@ def main(argv=None):
         # We're waiting until now to import, so people just using CLI don't need
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
-        from eschalonb1.mapgui import MapGUI
+        from eschalon.mapgui import MapGUI
         prog = MapGUI(options, Prefs())
     else:
         prog = MapCLI(options, Prefs())
