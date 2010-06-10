@@ -1,4 +1,4 @@
-Eschalon Book 1 Savefile Editor
+Eschalon Savefile Editor
 Copyright (C) 2008-2010 CJ Kucera
 
 This program is free software; you can redistribute it and/or modify
@@ -22,15 +22,16 @@ http://www.axialis.com/free/icons/ for details.
 ABOUT
 -----
 
-This package contains two little applications for editing savegames in
-the game Eschalon Book I, by Basilisk Games.
+This package contains applications for editing savegames in
+the games Eschalon Book I and Book II, by Basilisk Games.
 
    http://basiliskgames.com/eschalon-book-i
+   http://basiliskgames.com/eschalon-book-ii
 
-The first is eschalon_b1_char.py, which can edit saved character
-information, and the other is eschalon_b1_map.py, which can be used to
-edit maps (both the maps stored in your savegame, and the stock maps
-which are included in Eschalon's "data" directory).
+For Book I, there's a character editor and a map editor.  For Book II,
+there's currently just a character editor.  The Book I map editor can
+edit maps stored as part of your savegame, and the global maps included
+in Book I's "data" directory.
 
 Right now it supports just about everything you'd want to edit, though
 there's still plenty of values in the file of whose purpose I'm unaware.
@@ -54,20 +55,16 @@ platform, so I'm not sure what needs to be done to package it up and get it
 running.  If you're familiar with those kinds of things, let me know and
 I'll get going on it.
 
-One other note: Certainly let me know if you use this on other architectures
-(I'm just on x86) and see funky values through the GUI.  I'm not sure if the
-game has a set endianness to its values or not, which could possibly weird
-some stuff out.
-
 INSTALLATION, GENERAL
 ---------------------
 
-The map editor component of this package requires that an Eschalon install
-directory be present on your system.  The application will try to locate it
-on its own, but if the installation directory isn't found, you'll be
-prompted to provide the location.  The character editor can now use the
-Eschalon game directory to do image lookups of its own, but it doesn't
-actually require the directory to be present.
+The map editor component of this package requires that an Eschalon Book I
+install directory be present on your system.  The application will try to
+locate it on its own, but if the installation directory isn't found, you'll
+be prompted to provide the location.  The character editor for Book I can
+now use the Eschalon game directory to do image lookups of its own, but it
+doesn't actually require the directory to be present.  The Book II character
+editor doesn't yet read any graphics data from the game itself.
 
 Both the map editor and the character editor have a preferences screen (which
 write to the same config file, so the same configuration applies to both
@@ -81,12 +78,13 @@ INSTALLATION, LINUX
 
 There's no official installation scripts for the app.  What I'd recommend on a
 Linux system is just leaving it untarred wherever you untarred it, and make
-a symlink to eschalon_b1_char.py and eschalon_b1_map.py into somewhere in
-your $PATH (~/bin is probably the best location).  For example:
+a symlink to eschalon_b1_char.py, eschalon_b1_map.py, and eschalon_b2_char.py
+into somewhere in your $PATH (~/bin is probably the best location).  For example:
 
    $ cd ~/bin
    $ ln -s /path/to/eschalon_b1_char.py .
    $ ln -s /path/to/eschalon_b1_map.py .
+   $ ln -s /path/to/eschalon_b2_char.py .
 
 At that point you should be able to just run "eschalon_b1_char.py" from the
 command prompt, for instance.  Setting up shortcuts through your window
@@ -126,12 +124,12 @@ USAGE
 -----
 
 The applications are mostly designed to be run via their GUIs, which you
-can launch simply by double-clicking or running either eschalon_b1_char.py or
-eschalon_b1_map.py.  There are commandline options for both, though, and you
-can get help for those options by running "eschalon_b1_char.py -h", for
-instance, to get help with the character editor.  A few of the character
-editor commandline options may be useful.  The options available on the map
-editor are far less useful.
+can launch simply by double-clicking or running eschalon_b1_char.py,
+eschalon_b1_map.py or eschalon_b2_char.py.  There are commandline options for
+both, though, and you can get help for those options by running
+"eschalon_b1_char.py -h", for instance, to get help with the character editor.
+A few of the character editor commandline options may be useful.  The options
+available on the map editor are far less useful.
 
 The drawing features on the map editor are fairly new still, and I expect that
 bugs will eventually be found.  Let me know!
