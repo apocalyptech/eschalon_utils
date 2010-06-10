@@ -59,6 +59,21 @@ GUI2Exe_Target_2 = Executable(
     )
 
 
+GUI2Exe_Target_3 = Executable(
+    # what to build
+    script = "eschalon_b2_char.py",
+    initScript = None,
+    base = None,
+    targetDir = r"dist",
+    targetName = "eschalon_b2_char.exe",
+    compress = True,
+    copyDependentFiles = False,
+    appendScriptToExe = False,
+    appendScriptToLibrary = False,
+    icon = None
+    )
+
+
 # That's serious now: we have all (or almost all) the options cx_Freeze
 # supports. I put them all even if some of them are usually defaulted
 # and not used. Some of them I didn't even know about.
@@ -77,7 +92,7 @@ setup(
                              }
                },
                            
-    executables = [GUI2Exe_Target_1, GUI2Exe_Target_2]
+    executables = [GUI2Exe_Target_1, GUI2Exe_Target_2, GUI2Exe_Target_3]
     )
 
 # This is a place where any post-compile code may go.
