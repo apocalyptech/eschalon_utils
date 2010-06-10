@@ -22,7 +22,6 @@ Character GUI
  * Implement the "Unknowns" screen
  * Highlight the Inventory Notebook labels when there's a change in one
    of them
- * Support old AND new Tooltip style, so this doesn't break with PyGTK 3.0
  * Mouseover notification of previous values (for changed values)
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
@@ -42,8 +41,6 @@ Map GUI
    partially munged using our current method.
  * Square rendering seems to be getting a bit slow; should see if
    there's anything to be done about that.
- * Hive Queen graphic doesn't seem to load on Windows into Pixbuf - see
-   http://bugzilla.gnome.org/show_bug.cgi?id=575583
  * There are some Tree graphics stored in set B which don't get turned off
    with our "Trees" toggle.  This is especially noticeable in, for instance,
    41.map, where the "Trees" toggle basically does nothing.
@@ -57,11 +54,11 @@ Map GUI
  * Add in "special" tile stuff to smart walls
  * Exception handling when we're drawing the map (shouldn't really happen, but
    we should handle it if it does, regardless)
- * "Select All / Deselect All" buttons in the View menu would be nice
  * Erasing should re-smart-draw stuff around it, perhaps?
  * Erasing should also re-do barriers if wanted, perhaps?
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
+ * Whoa, windows zoom is going to 7?  Also, click-and-drag seems choppy in Win
 
 Internal
 --------
@@ -71,8 +68,6 @@ Internal
    it belongs, too, though the map GUI doesn't really need most of it.
  * A whole lot of code-cleaning should really be done, it's pretty spaghetti
    in there.
- * Classes have been moved to new-style classes but for the most part aren't
-   taking advantage of the benefits of doing so.
  * Square class now holds (x, y) information - can probably switch some stuff
    around to take advantage of that.  Also, that change could use some more
    testing.
