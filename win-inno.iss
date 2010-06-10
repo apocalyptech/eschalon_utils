@@ -27,7 +27,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 ;Source: "C:\InstPrograms\eschalon\dist\eschalon_b1_char.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "C:\InstPrograms\eschalon\dist\eschalon_b1_map.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\InstPrograms\eschalon\dist\*"; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\InstPrograms\eschalon_utils\dist\*"; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
