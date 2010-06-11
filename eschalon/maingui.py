@@ -388,10 +388,6 @@ class MainGUI(BaseGUI):
         self.get_widget('itemnotebook').set_current_page(0)
         self.get_widget('invnotebook').set_current_page(0)
 
-        # Now show or hide form elements depending on the book version
-        for char_class in (B1Character, B2Character, B1Item, B2Item):
-            self.set_book_elem_visibility(char_class, char_class.book == char.book)
-
         # Return success
         return True
 
@@ -852,187 +848,9 @@ class MainGUI(BaseGUI):
         self.populate_form_from_char()
         self.clear_all_changes()
 
-    def prepare_dynamic_form(self, char):
-        """
-        Called when we load a new character, this will update the form with
-        elements which are dynamic based on the Book (skills, spells, etc)
-        """
-
-        # Make sure to handle the Item window too
-        self.prepare_dynamic_item_form(char.book)
-
-        ###
-        ### Front-screen skill table
-        ###
-        vbox = self.get_widget('charinfo_vbox')
-        table = self.get_widget('skill_table')
-        if table:
-            vbox.remove(table)
-
-        numrows = len(c.skilltable)/2
-        if (len(c.skilltable) % 2 == 1):
-            numrows += 1
-
-        # Container Table
-        table = gtk.Table(numrows, 5)
-        self.register_widget('skill_table', table)
-        spacelabel = gtk.Label('')
-        spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
-
-        # Contents
-        for (idx, skill) in enumerate(c.skilltable.values()):
-            if (idx < numrows):
-                row = idx
-                col = 1
-            else:
-                row = idx-numrows
-                col = 3
-            label = gtk.Label('%s:' % (skill))
-            label.set_alignment(1, .5)
-            label.set_padding(4, 0)
-            self.register_widget('skills_%d_label' % (idx+1), label)
-            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            
-            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
-            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            # TODO: limit is technically >255 on B1
-            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
-            spin = gtk.SpinButton(adjust)
-            self.register_widget('skills_%d' % (idx+1), spin)
-            align.add(spin)
-            spin.connect('value-changed', self.on_multarray_changed)
-
-        vbox.pack_start(table, False)
-        table.show_all()
-
-        ###
-        ### Character Effects (non-permanent)
-        ###
-        cont = self.get_widget('status_alignment')
-        table = self.get_widget('status_table')
-        if table:
-            cont.remove(table)
-
-        numrows = len(c.statustable)/2
-        if (len(c.statustable) % 2 == 1):
-            numrows += 1
-
-        # Container Table
-        table = gtk.Table(numrows, 5)
-        self.register_widget('status_table', table)
-        spacelabel = gtk.Label('')
-        spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
-
-        # Contents
-        for (idx, skill) in enumerate(c.statustable.values()):
-            if (idx < numrows):
-                row = idx
-                col = 1
-            else:
-                row = idx-numrows
-                col = 3
-            label = gtk.Label('%s:' % (skill))
-            label.set_alignment(1, .5)
-            label.set_padding(4, 0)
-            self.register_widget('statuses_%d_label' % (idx), label)
-            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            
-            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
-            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
-            spin = gtk.SpinButton(adjust)
-            self.register_widget('statuses_%d' % (idx), spin)
-            spin.connect('value-changed', self.on_effect_changed)
-            if char.book == 1:
-                align.add(spin)
-            else:
-                hbox = gtk.HBox()
-                hbox.add(spin)
-                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
-                spin = gtk.SpinButton(adjust)
-                self.register_widget('statuses_extra_%d' % (idx), spin)
-                spin.connect('value-changed', self.on_effect_changed)
-                hbox.add(spin)
-                align.add(hbox)
-
-        cont.add(table)
-        table.show_all()
-
-        ###
-        ### Spell Checkboxes
-        ###
-        # TODO: should we alphabetize these?
-        divbox = self.get_widget('divination_vbox')
-        elembox = self.get_widget('elemental_vbox')
-        for box in [divbox, elembox]:
-            for child in box.get_children():
-                box.remove(child)
-        for (idx, spell) in c.spelltable.items():
-            if char.spelltype(idx) == 'EL':
-                box = elembox
-            else:
-                box = divbox
-            cb = gtk.CheckButton()
-            self.register_widget('spells_%d' % (idx), cb)
-            label = gtk.Label(spell)
-            self.register_widget('spells_%d_label' % (idx), label)
-            cb.connect('toggled', self.on_checkbox_arr_changed)
-            cb.add(label)
-            box.pack_start(cb)
-        elembox.show_all()
-        divbox.show_all()
-
-        ###
-        ### Spell dropdowns
-        ###
-        # TODO: we should be able to do this all with a single listview, yeah?
-        boxes = [self.get_widget('readied_spell_box')]
-        for i in range(10):
-            boxes.append(self.get_widget('readyslots_spell_%d_box' % (i)))
-        spells = sorted(c.spelltable.values())
-        for box in boxes:
-            box.get_model().clear()
-            box.append_text('')
-            for spell in spells:
-                box.append_text(spell)
-
-        ###
-        ### Alchemy Recipe Book
-        ### Note that technically we don't need to do this dynamically, since
-        ### these dropdowns only exist for Book 2.
-        ###
-        if char.book == 2:
-            box1 = self.get_widget('alchemy_vbox_1')
-            box2 = self.get_widget('alchemy_vbox_2')
-            for box in [box1, box2]:
-                for widget in box.get_children():
-                    box.remove(widget)
-            numrows = len(c.alchemytable)/2
-            if (len(c.alchemytable) % 2 == 1):
-                numrows += 1
-            for (idx, recipe) in c.alchemytable.items():
-                if (idx < numrows):
-                    box = box1
-                else:
-                    box = box2
-                cb = gtk.CheckButton()
-                self.register_widget('alchemy_book_%d' % (idx), cb)
-                label = gtk.Label(recipe)
-                self.register_widget('alchemy_book_%d_label' % (idx), label)
-                cb.connect('toggled', self.on_checkbox_arr_changed)
-                cb.add(label)
-                box.pack_start(cb)
-            box1.show_all()
-            box2.show_all()
-
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """
         char = self.origchar
-
-        # First update the form
-        self.prepare_dynamic_form(char)
 
         # Assign values
         self.get_widget('name').set_text(char.name)
@@ -1179,6 +997,186 @@ class MainGUI(BaseGUI):
         # Now our readied items
         ready_viewport = self.get_widget('ready_viewport')
         self.gui_add_ready_page(ready_viewport)
+
+        #####
+        ##### Now construct things that might be dependent on Book
+        ##### (we were handling this in prepare_dynamic_form() on each
+        ##### new character load until we split it out into its own
+        ##### executable)
+        #####
+
+        # Make sure to handle the Item window too
+        self.item_gui_finish(c.book)
+
+        ###
+        ### Front-screen skill table
+        ###
+        vbox = self.get_widget('charinfo_vbox')
+        table = self.get_widget('skill_table')
+        if table:
+            vbox.remove(table)
+
+        numrows = len(c.skilltable)/2
+        if (len(c.skilltable) % 2 == 1):
+            numrows += 1
+
+        # Container Table
+        table = gtk.Table(numrows, 5)
+        self.register_widget('skill_table', table)
+        spacelabel = gtk.Label('')
+        spacelabel.set_size_request(20, -1)
+        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+
+        # Contents
+        for (idx, skill) in enumerate(c.skilltable.values()):
+            if (idx < numrows):
+                row = idx
+                col = 1
+            else:
+                row = idx-numrows
+                col = 3
+            label = gtk.Label('%s:' % (skill))
+            label.set_alignment(1, .5)
+            label.set_padding(4, 0)
+            self.register_widget('skills_%d_label' % (idx+1), label)
+            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            
+            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            # TODO: limit is technically >255 on B1
+            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
+            spin = gtk.SpinButton(adjust)
+            self.register_widget('skills_%d' % (idx+1), spin)
+            align.add(spin)
+            spin.connect('value-changed', self.on_multarray_changed)
+
+        vbox.pack_start(table, False)
+        table.show_all()
+
+        ###
+        ### Character Effects (non-permanent)
+        ###
+        cont = self.get_widget('status_alignment')
+        table = self.get_widget('status_table')
+        if table:
+            cont.remove(table)
+
+        numrows = len(c.statustable)/2
+        if (len(c.statustable) % 2 == 1):
+            numrows += 1
+
+        # Container Table
+        table = gtk.Table(numrows, 5)
+        self.register_widget('status_table', table)
+        spacelabel = gtk.Label('')
+        spacelabel.set_size_request(20, -1)
+        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+
+        # Contents
+        for (idx, skill) in enumerate(c.statustable.values()):
+            if (idx < numrows):
+                row = idx
+                col = 1
+            else:
+                row = idx-numrows
+                col = 3
+            label = gtk.Label('%s:' % (skill))
+            label.set_alignment(1, .5)
+            label.set_padding(4, 0)
+            self.register_widget('statuses_%d_label' % (idx), label)
+            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            
+            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
+            spin = gtk.SpinButton(adjust)
+            self.register_widget('statuses_%d' % (idx), spin)
+            spin.connect('value-changed', self.on_effect_changed)
+            if c.book == 1:
+                align.add(spin)
+            else:
+                hbox = gtk.HBox()
+                hbox.add(spin)
+                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
+                spin = gtk.SpinButton(adjust)
+                self.register_widget('statuses_extra_%d' % (idx), spin)
+                spin.connect('value-changed', self.on_effect_changed)
+                hbox.add(spin)
+                align.add(hbox)
+
+        cont.add(table)
+        table.show_all()
+
+        ###
+        ### Spell Checkboxes
+        ###
+        # TODO: should we alphabetize these?
+        divbox = self.get_widget('divination_vbox')
+        elembox = self.get_widget('elemental_vbox')
+        for box in [divbox, elembox]:
+            for child in box.get_children():
+                box.remove(child)
+        for (idx, spell) in c.spelltable.items():
+            if c.spelltype[idx] == 'EL':
+                box = elembox
+            else:
+                box = divbox
+            cb = gtk.CheckButton()
+            self.register_widget('spells_%d' % (idx), cb)
+            label = gtk.Label(spell)
+            self.register_widget('spells_%d_label' % (idx), label)
+            cb.connect('toggled', self.on_checkbox_arr_changed)
+            cb.add(label)
+            box.pack_start(cb)
+        elembox.show_all()
+        divbox.show_all()
+
+        ###
+        ### Spell dropdowns
+        ###
+        # TODO: we should be able to do this all with a single listview, yeah?
+        boxes = [self.get_widget('readied_spell_box')]
+        for i in range(10):
+            boxes.append(self.get_widget('readyslots_spell_%d_box' % (i)))
+        spells = sorted(c.spelltable.values())
+        for box in boxes:
+            box.get_model().clear()
+            box.append_text('')
+            for spell in spells:
+                box.append_text(spell)
+
+        ###
+        ### Alchemy Recipe Book
+        ### Note that technically we don't need to do this dynamically, since
+        ### these dropdowns only exist for Book 2.
+        ###
+        if c.book == 2:
+            box1 = self.get_widget('alchemy_vbox_1')
+            box2 = self.get_widget('alchemy_vbox_2')
+            for box in [box1, box2]:
+                for widget in box.get_children():
+                    box.remove(widget)
+            numrows = len(c.alchemytable)/2
+            if (len(c.alchemytable) % 2 == 1):
+                numrows += 1
+            for (idx, recipe) in c.alchemytable.items():
+                if (idx < numrows):
+                    box = box1
+                else:
+                    box = box2
+                cb = gtk.CheckButton()
+                self.register_widget('alchemy_book_%d' % (idx), cb)
+                label = gtk.Label(recipe)
+                self.register_widget('alchemy_book_%d_label' % (idx), label)
+                cb.connect('toggled', self.on_checkbox_arr_changed)
+                cb.add(label)
+                box.pack_start(cb)
+            box1.show_all()
+            box2.show_all()
+
+        # Now show or hide form elements depending on the book version
+        for char_class in (B1Character, B2Character, B1Item, B2Item):
+            self.set_book_elem_visibility(char_class, char_class.book == c.book)
 
     def gui_item_page(self, container, pagetitle, rows, tablename):
         """ Sets up a page to store item information. """

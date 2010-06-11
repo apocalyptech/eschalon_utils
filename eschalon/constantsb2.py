@@ -157,6 +157,14 @@ class B2Constants:
             43: 'Mass Boil',
             44: 'Summon Beast'
         }
+
+    # Should maybe just have a Spell class for this instead
+    spelltype = {}
+    for spell in spelltable.keys():
+        if (spell < 22):
+            spelltype[spell] = 'EL'
+        else:
+            spelltype[spell] = 'DI'
     
     statustable = {
             0: 'Chameleon',

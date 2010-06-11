@@ -152,7 +152,7 @@ class BaseGUI(object):
                 if widget:
                     widget.hide()
 
-    def prepare_dynamic_item_form(self, book):
+    def item_gui_finish(self, book):
         """
         Called when we load a new character, this will update the item form with
         elements which are dynamic based on the Book

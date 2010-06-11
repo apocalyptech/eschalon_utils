@@ -166,6 +166,15 @@ class B1Constants:
             37: 'Invisibility',
             38: 'Supernova'
         }
+
+    # Should maybe just have a Spell class for this instead
+    spelltype = {}
+    for spell in spelltable.keys():
+        if (spell < 21):
+            spelltype[spell] = 'DI'
+        else:
+            spelltype[spell] = 'EL'
+
     statustable = {
             0: 'Stunned',
             1: 'Air Shielded',
@@ -345,3 +354,4 @@ class B1Constants:
         range(85, 89) + range(112, 116) + range(121, 125) +
         [39, 41, 42, 57, 144, 214])
     wall_list['walldecal_seethrough'] = [19, 20]
+

@@ -241,7 +241,7 @@ class MainCLI(object):
         print
         for i in range(len(char.spells)):
             if (char.spells[i] == 1):
-                print "\t* %s - %s" % (char.spelltype(i), c.spelltable[i])
+                print "\t* %s - %s" % (c.spelltype[i], c.spelltable[i])
         print
 
         print "READIED SPELLS"

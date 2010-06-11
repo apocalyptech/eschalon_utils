@@ -247,6 +247,13 @@ class MapGUI(BaseGUI):
             self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
             self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
 
+        # Finish populating Item windows (dependent on Book)
+        self.item_gui_finish(c.book)
+
+        # Now show or hide form elements depending on the book version
+        for item_class in (B1Item, B2Item):
+            self.set_book_elem_visibility(item_class, item_class.book == c.book)
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_load': self.on_load,
@@ -657,11 +664,6 @@ class MapGUI(BaseGUI):
         # Load the new map into our SmartDraw object
         self.smartdraw.set_map(self.map)
         self.smartdraw.set_gui(self)
-
-        # Now show or hide form elements depending on the book version
-        for item_class in (B1Item, B2Item):
-            self.set_book_elem_visibility(item_class, item_class.book == c.book)
-        self.prepare_dynamic_item_form(c.book)
 
         # Load information from the character
         if (self.mapinit):

@@ -650,12 +650,6 @@ class B1Character(Character):
         """ Add a spell. """
         self.spells.append(self.df.readint())
 
-    def spelltype(self, num):
-        if (num < 21):
-            return 'DI'
-        else:
-            return 'EL'
-
 class B2Character(Character):
     """
     Book 2 Character definitions
@@ -1066,9 +1060,3 @@ class B2Character(Character):
     def addspell(self):
         """ Add a spell. """
         self.spells.append(self.df.readuchar())
-
-    def spelltype(self, num):
-        if (num < 22):
-            return 'EL'
-        else:
-            return 'DI'
