@@ -892,10 +892,10 @@ class MainGUI(BaseGUI):
         self.get_widget('extra_att_points').set_value(char.extra_att_points)
         self.get_widget('extra_skill_points').set_value(char.extra_skill_points)
 
-        for num in range(1, 25):
+        for num in range(1, len(c.skilltable)+1):
             self.get_widget('skills_%d' % (num)).set_value(char.skills[num])
 
-        for num in range(26):
+        for num in range(len(c.statustable)):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
             if char.book == 2:
                 self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
