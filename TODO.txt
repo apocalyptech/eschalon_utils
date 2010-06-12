@@ -72,4 +72,5 @@ Internal
    around to take advantage of that.  Also, that change could use some more
    testing.
  * SpinButton get_value_as_int() returns signed values when it shouldn't,
-   should probably move away from using that entirely.
+   should probably move away from using that entirely.  See:
+   https://bugzilla.gnome.org/show_bug.cgi?id=621400
