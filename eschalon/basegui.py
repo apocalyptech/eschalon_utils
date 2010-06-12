@@ -351,7 +351,7 @@ class BaseGUI(object):
         """ What to do when an int value changes. """
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
-        obj.__dict__[wname] = widget.get_value_as_int()
+        obj.__dict__[wname] = int(widget.get_value())
         if (self.curitemtype != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)

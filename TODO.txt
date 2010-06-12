@@ -71,3 +71,5 @@ Internal
  * Square class now holds (x, y) information - can probably switch some stuff
    around to take advantage of that.  Also, that change could use some more
    testing.
+ * SpinButton get_value_as_int() returns signed values when it shouldn't,
+   should probably move away from using that entirely.
