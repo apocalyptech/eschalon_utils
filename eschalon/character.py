@@ -739,8 +739,6 @@ class B2Character(Character):
             self.concentration = self.df.readuchar()
 
             # Skills
-            # TODO: How does this get sorted?  It seems to work for B1 but I
-            # find it suspicious nonetheless
             for key in sorted(c.skilltable.keys()):
                 self.addskill(key, self.df.readuchar())
 
@@ -763,7 +761,6 @@ class B2Character(Character):
             # Non-permanent Chracter Statuses (will expire automatically)
             for i in range(26):
                 self.statuses.append(self.df.readint())
-                # TODO: double-check that this is what I think it is
                 self.statuses_extra.append(self.df.readint())
 
             # Portal anchor locations

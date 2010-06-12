@@ -157,7 +157,7 @@ class MainCLI(object):
                 extra = ''
                 if char.book == 2:
                     if (char.statuses_extra[i] > 0):
-                        extra = ' (extra: %d)' % (char.statuses_extra[i])
+                        extra = '  - extra (casting level): %d' % (char.statuses_extra[i])
                 if (c.statustable.has_key(i)):
                     print "\t* %s (Turns left: %d)%s" % (c.statustable[i], char.statuses[i], extra)
                 else:

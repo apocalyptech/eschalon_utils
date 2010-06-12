@@ -155,8 +155,8 @@ class Item(object):
         else:
             ret.append("\t%s" % self.item_name)
             if (c.typetable.has_key(self.type)):
-                # TODO: remove the hex display here
-                ret.append("\tCategory: %s (0x%04X)" % (c.typetable[self.type], self.type))
+                #ret.append("\tCategory: %s (0x%04X)" % (c.typetable[self.type], self.type))
+                ret.append("\tCategory: %s" % (c.typetable[self.type]))
             else:
                 ret.append("\tCategory: 0x%08X" % (self.type))
             if (self.subtype != 0):

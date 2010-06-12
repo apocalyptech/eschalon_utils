@@ -907,17 +907,24 @@ class MainGUI(BaseGUI):
         for num in range(fxblocks):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
-        # TODO: For these set_active() things, should I be setting regardless
-        # instead of just setting when it's True?  What happens when I load a new
-        # char over an old one?
         if char.book == 1:
             for key in c.diseasetable.keys():
                 if (char.disease & key == key):
-                    self.get_widget('disease_%04X' % (key)).set_active(True)
+                    act = True
+                else:
+                    act = False
+                widget = self.get_widget('disease_%04X' % (key))
+                if widget:
+                    widget.set_active(act)
         else:
             for key in c.permstatustable.keys():
                 if (char.permstatuses & key == key):
-                    self.get_widget('permstatuses_%08X' % (key)).set_active(True)
+                    act = True
+                else:
+                    act = False
+                widget = self.get_widget('permstatuses_%08X' % (key))
+                if widget:
+                    widget.set_active(act)
 
         for i in range(len(c.spelltable)):
             if (char.spells[i] > 0):
