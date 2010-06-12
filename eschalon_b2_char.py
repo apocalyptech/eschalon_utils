@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # vim: set expandtab tabstop=4 shiftwidth=4:
 # $Id$
-# 
 #
-# Eschalon Book 2 Savefile Editor
+# Eschalon Savefile Editor
 # Copyright (C) 2008-2010 CJ Kucera
 # 
 # This program is free software; you can redistribute it and/or modify
