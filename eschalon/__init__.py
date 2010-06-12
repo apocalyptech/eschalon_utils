@@ -52,7 +52,7 @@ class Constants:
 
     def switch_to_book(self, book):
         if book != self.book:
-            print "Switching to Book %d Constants" % (book)
+            #print "Switching to Book %d Constants" % (book)
             # First clear out the old constants
             if self.book:
                 for (key, val) in self.groups[self.book].__dict__.items():
