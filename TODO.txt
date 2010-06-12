@@ -25,6 +25,7 @@ Character GUI
  * Mouseover notification of previous values (for changed values)
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
+ * Whoops, need to update the window title for "Book 1" versus "Book 2"
 
 Map GUI
 -------
