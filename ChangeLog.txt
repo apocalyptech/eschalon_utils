@@ -2,6 +2,7 @@
 
    12 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Fix window title for Book 2 Character Editor
+   Added unskilled weapon penalty statuses for Book 2
 
 *eschalon_utils-0.6.0 (12 Jun 2010)
 

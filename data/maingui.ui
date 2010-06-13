@@ -2490,6 +2490,112 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="position">5</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkLabel" id="label15">
+                                        <property name="visible">True</property>
+                                        <property name="xalign">0</property>
+                                        <property name="ypad">1</property>
+                                        <property name="label" translatable="yes">&lt;b&gt;Unskilled Penalties&lt;/b&gt; &lt;i&gt;(these get overwritten as well)&lt;/i&gt;</property>
+                                        <property name="use_markup">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="position">6</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkAlignment" id="alignment120">
+                                        <property name="visible">True</property>
+                                        <property name="left_padding">20</property>
+                                        <child>
+                                          <object class="GtkTable" id="table12">
+                                            <property name="visible">True</property>
+                                            <property name="n_rows">2</property>
+                                            <property name="n_columns">2</property>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00001000">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00001000_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Weapon</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="x_options">GTK_FILL</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00008000">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00008000_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Shield</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="top_attach">1</property>
+                                                <property name="bottom_attach">2</property>
+                                                <property name="x_options">GTK_FILL</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00002000">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00002000_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Armor (light)</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="right_attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="permstatuses_00004000">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="receives_default">False</property>
+                                                <property name="draw_indicator">True</property>
+                                                <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                                                <child>
+                                                  <object class="GtkLabel" id="permstatuses_00004000_label">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes">Armor (heavy)</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="right_attach">2</property>
+                                                <property name="top_attach">1</property>
+                                                <property name="bottom_attach">2</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="position">7</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
