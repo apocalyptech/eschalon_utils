@@ -2345,7 +2345,6 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label49">
-                                        <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="ypad">1</property>
                                         <property name="label" translatable="yes">&lt;b&gt;Calculated&lt;/b&gt; &lt;i&gt;(these will get overwritten by the engine automatically)&lt;/i&gt;</property>
@@ -2357,7 +2356,6 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     </child>
                                     <child>
                                       <object class="GtkAlignment" id="alignment22">
-                                        <property name="visible">True</property>
                                         <property name="left_padding">20</property>
                                         <child>
                                           <object class="GtkTable" id="table7">
@@ -2492,7 +2490,6 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="label15">
-                                        <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="ypad">1</property>
                                         <property name="label" translatable="yes">&lt;b&gt;Unskilled Penalties&lt;/b&gt; &lt;i&gt;(these get overwritten as well)&lt;/i&gt;</property>
@@ -2504,7 +2501,6 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                     </child>
                                     <child>
                                       <object class="GtkAlignment" id="alignment120">
-                                        <property name="visible">True</property>
                                         <property name="left_padding">20</property>
                                         <child>
                                           <object class="GtkTable" id="table12">
