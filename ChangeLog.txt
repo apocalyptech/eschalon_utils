@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   12 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fix window title for Book 2 Character Editor
+
 *eschalon_utils-0.6.0 (12 Jun 2010)
 
    09 Jun 2010; CJ Kucera <pez@apocalyptech.com> :

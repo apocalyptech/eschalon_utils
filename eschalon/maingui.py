@@ -980,6 +980,9 @@ class MainGUI(BaseGUI):
         loading procedures should hide the extra data as-necessary.
         """
 
+        # Update the title
+        self.window.set_title('Eschalon Book %d Character Editor' % (c.book))
+
         # First our inventory
         inv_viewport = self.get_widget('inv_viewport')
         inv_book = gtk.Notebook()

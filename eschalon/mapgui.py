@@ -248,6 +248,7 @@ class MapGUI(BaseGUI):
             self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
 
         # Finish populating Item windows (dependent on Book)
+        self.window.set_title('Eschalon Book %d Map Editor' % (c.book))
         self.item_gui_finish(c.book)
 
         # Now show or hide form elements depending on the book version
