@@ -570,15 +570,19 @@ class BaseGUI(object):
             checkboxvals = [ 'canstack' ]
             checkboxbitvals = [ 'flags_0003' ]
             modifiervals = [ 'attr_modifier', 'skill_modifier' ]
+            b2modifiervals = [ ]
         else:
             strvals = [ 'item_name', 'script', 'emptystr' ]
             dropdownvals = [ 'type', 'subtype' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
-                    'visibility', 'quantity', 'zero1' ]
+                    'visibility', 'quantity', 'zero1',
+                    'cur_hp', 'max_hp',
+                    'unknownflag', 'unknownc1' ]
             floatvals = [ 'weight' ]
             checkboxvals = [ 'canstack' ]
             checkboxbitvals = [ ]
             modifiervals = [ ]
+            b2modifiervals = [ 'attr_modifier_1', 'attr_modifier_2', 'attr_modifier_3' ]
         for val in strvals:
             self.on_singleval_changed_str(self.get_widget(val))
         for val in dropdownvals:
@@ -593,6 +597,8 @@ class BaseGUI(object):
             self.on_checkbox_bit_changed(self.get_widget(val))
         for val in modifiervals:
             self.on_modifier_changed(self.get_widget(val))
+        for val in b2modifiervals:
+            self.on_b2_modifier_changed(self.get_widget(val))
         self.on_singleval_changed_int_itempic(self.get_widget('pictureid'))
 
     def gui_item_label(self, label, name):
