@@ -26,6 +26,7 @@ Character GUI
  * (and CLI, actually) - show some more useful messages when a file can't
    be loaded
  * "Unskilled Penalty" 'permanent' status for Book 2 savegames
+ * Need to enlarge the GUI windows a bit; on my laptop they're too small
 
 Map GUI
 -------
