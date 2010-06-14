@@ -870,6 +870,7 @@ class MainGUI(BaseGUI):
             self.get_widget('axiom').set_text(char.axiom)
             self.get_widget('classname').set_text(char.classname)
             self.get_widget('picid').set_value(char.picid)
+            self.on_singleval_changed_int_avatar(self.get_widget('picid'))
         else:
             self.get_widget('gender').set_active(char.gender-1)
             self.get_widget('b2origin').set_active(char.origin-1)
