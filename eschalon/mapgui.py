@@ -838,7 +838,7 @@ class MapGUI(BaseGUI):
 
     def on_script_str_changed(self, widget):
         """ When a script string changes. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
@@ -852,7 +852,7 @@ class MapGUI(BaseGUI):
 
     def on_script_int_changed(self, widget):
         """ When a script integer changes. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
@@ -862,7 +862,7 @@ class MapGUI(BaseGUI):
     def on_locklevel_changed(self, widget):
         """ When our lock level changes. """
         self.on_script_int_changed(widget)
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (labelname, page) = wname.rsplit('_', 1)
         otherlabel = self.get_widget('other_%d_label' % (int(page)))
         if (widget.get_value_as_int() == 99):
@@ -892,38 +892,38 @@ class MapGUI(BaseGUI):
 
     def on_direction_changed(self, widget):
         """ Special case for changing the entity direction. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_active() + 1
         self.update_ent_square_img()
 
     def on_singleval_ent_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_value_as_int()
 
     def on_singleval_ent_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_text()
 
     def on_singleval_map_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         map = self.map
         map.__dict__[wname] = widget.get_value_as_int()
 
     def on_singleval_map_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         map = self.map
         map.__dict__[wname] = widget.get_text()
 
     def on_singleval_square_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         square = self.map.squares[self.sq_y][self.sq_x]
         square.__dict__[wname] = widget.get_value_as_int()
 
@@ -1419,7 +1419,7 @@ class MapGUI(BaseGUI):
         What to do whan a bit field changes.  Currently just the
         destructible flag.
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (name, flagval) = wname.rsplit('_', 1)
         square = self.map.squares[self.sq_y][self.sq_x]
         self.on_flag_changed(name, flagval, widget, square)
@@ -1429,7 +1429,7 @@ class MapGUI(BaseGUI):
         What to do whan a bit field changes.  Currently just the
         destructible flag.
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (name, flagval, page) = wname.rsplit('_', 2)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
@@ -1443,7 +1443,7 @@ class MapGUI(BaseGUI):
 
     def on_script_dropdown_changed(self, widget):
         """ Handle the trap dropdown change. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (varname, page) = wname.rsplit('_', 2)
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
@@ -1451,7 +1451,7 @@ class MapGUI(BaseGUI):
 
     def on_mapitem_clicked(self, widget, doshow=True):
         """ What to do when our item button is clicked. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (varname, num, page, button) = wname.rsplit('_', 3)
         num = int(num)
         page = int(page)
@@ -1471,7 +1471,7 @@ class MapGUI(BaseGUI):
 
     def on_mapitem_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an item. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (varname, num, page, action) = wname.rsplit('_', 3)
         num = int(num)
         page = int(page)
@@ -1651,7 +1651,7 @@ class MapGUI(BaseGUI):
         Called to remove a script.  This needs to handle renumbering the
         remaining scripts if necessary, too.
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (button_name, page) = wname.rsplit('_', 1)
         page = int(page)
         square = self.map.squares[self.sq_y][self.sq_x]
@@ -2013,7 +2013,7 @@ class MapGUI(BaseGUI):
         Given a widget (should be an object selection DrawingArea),
         populate the self.imgsel_* variables with the appropriate stuff.
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, letter, bar) = wname.split('_', 2)
         if (letter != self.objsel_current):
             for (key, val) in self.objsel_panes[letter].items():
@@ -2085,7 +2085,7 @@ class MapGUI(BaseGUI):
         self.activity_label.set_markup('Activity: %s' % (newlabel))
 
     def on_control_toggle(self, widget):
-        clicked = widget.get_name()
+        clicked = gtk.Buildable.get_name(widget)
         if (widget.get_active()):
             if (clicked == 'ctl_edit_toggle'):
                 self.edit_mode = self.MODE_EDIT

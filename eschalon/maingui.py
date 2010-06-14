@@ -420,7 +420,7 @@ class MainGUI(BaseGUI):
         """
         if self.curitemtype == self.ITEM_EQUIP:
             (labelwidget, label) = self.get_label_cache(self.curitem)
-            labelname = labelwidget.get_name()
+            labelname = gtk.Buildable.get_name(labelwidget)
             (labelname, foo) = labelname.rsplit('_', 1)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         elif self.curitemtype == self.ITEM_INV:
@@ -483,7 +483,7 @@ class MainGUI(BaseGUI):
     
     def on_dropdownplusone_changed(self, widget):
         """ What to do when a dropdown is changed, when our index starts at 1.  """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active() + 1
@@ -494,7 +494,7 @@ class MainGUI(BaseGUI):
         What to do when a dropdown is changed, when our index starts at 1.
         Also, the GUI elements in question will be prefixed with "b2"
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         objwname = wname[2:]
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
@@ -505,7 +505,7 @@ class MainGUI(BaseGUI):
         """
         Custom handling for the Book 2 Picture ID field
         """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         objwname = wname[2:]
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
@@ -517,7 +517,7 @@ class MainGUI(BaseGUI):
 
     def on_portal_loc_changed(self, widget):
         """ What to do when one of our bound-portal locations changes. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (shortwname, num) = wname.rsplit('_', 1)
         num = int(num)
         basename = 'portal_loc_%d' % (num)
@@ -538,7 +538,7 @@ class MainGUI(BaseGUI):
 
     def on_effect_changed(self, widget):
         """ What to do when our effect value changes.  Slightly different from Books 1 and 2"""
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         labelname = 'statuses_%d' % (arrnum)
@@ -552,7 +552,7 @@ class MainGUI(BaseGUI):
 
     def on_multarray_text_changed(self, widget):
         """ What to do when a string value changes in an array. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
@@ -562,7 +562,7 @@ class MainGUI(BaseGUI):
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
@@ -573,7 +573,7 @@ class MainGUI(BaseGUI):
 
     def on_checkbox_arr_changed(self, widget):
         """ What to do when a checkbox changes, and it's in an array. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         if (widget.get_active()):
             val = 1
         else:
@@ -598,7 +598,7 @@ class MainGUI(BaseGUI):
 
     def on_readyslots_changed(self, widget):
         """ What to do when one of our readied-spell slots changes. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, slotnum) = wname.rsplit('_', 1)
         slotnum = int(slotnum)
         spell = self.get_widget('readyslots_spell_%d' % (slotnum)).get_text()
@@ -613,7 +613,7 @@ class MainGUI(BaseGUI):
 
     def on_inv_clicked(self, widget, doshow=True):
         """ What to do when our inventory-item button is clicked. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, row, col, bar) = wname.rsplit('_', 3)
         row = int(row)
         col = int(col)
@@ -626,7 +626,7 @@ class MainGUI(BaseGUI):
 
     def on_equip_clicked(self, widget, doshow=True):
         """ What to do when our equipped-item button is clicked. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (equipname, foo) = wname.rsplit('_', 1)
         self.curitemtype = self.ITEM_EQUIP
         self.curitem = equipname
@@ -637,7 +637,7 @@ class MainGUI(BaseGUI):
 
     def on_ready_clicked(self, widget, doshow=True):
         """ What to do when our readied-item button is clicked. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, num, bar) = wname.rsplit('_', 2)
         num = int(num)
         self.curitemtype = self.ITEM_READY
@@ -673,7 +673,7 @@ class MainGUI(BaseGUI):
 
     def on_equip_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an equipped item. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (equipname, action) = wname.rsplit('_', 1)
         if (action == 'cut'):
             self.on_equip_action_clicked(self.get_widget('%s_copy' % equipname))
@@ -693,7 +693,7 @@ class MainGUI(BaseGUI):
 
     def on_inv_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an inventory item. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, row, col, action) = wname.rsplit('_', 3)
         row = int(row)
         col = int(col)
@@ -714,7 +714,7 @@ class MainGUI(BaseGUI):
 
     def on_ready_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete a readied item. """
-        wname = widget.get_name()
+        wname = gtk.Buildable.get_name(widget)
         (foo, num, action) = wname.rsplit('_', 2)
         num = int(num)
         if (action == 'cut'):
