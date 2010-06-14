@@ -94,6 +94,16 @@ class MainGUI(BaseGUI):
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
+        # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
+        # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
+        for object in self.builder.get_objects():
+            try:
+                builder_name = gtk.Buildable.get_name(object)
+                if builder_name:
+                    object.set_name(builder_name)
+            except TypeError:
+                pass
+
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['origin', 'axiom', 'classname']
         spellboxentries = []
@@ -420,7 +430,7 @@ class MainGUI(BaseGUI):
         """
         if self.curitemtype == self.ITEM_EQUIP:
             (labelwidget, label) = self.get_label_cache(self.curitem)
-            labelname = gtk.Buildable.get_name(labelwidget)
+            labelname = labelwidget.get_name()
             (labelname, foo) = labelname.rsplit('_', 1)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         elif self.curitemtype == self.ITEM_INV:
@@ -483,7 +493,7 @@ class MainGUI(BaseGUI):
     
     def on_dropdownplusone_changed(self, widget):
         """ What to do when a dropdown is changed, when our index starts at 1.  """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active() + 1
@@ -494,7 +504,7 @@ class MainGUI(BaseGUI):
         What to do when a dropdown is changed, when our index starts at 1.
         Also, the GUI elements in question will be prefixed with "b2"
         """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         objwname = wname[2:]
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
@@ -505,7 +515,7 @@ class MainGUI(BaseGUI):
         """
         Custom handling for the Book 2 Picture ID field
         """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         objwname = wname[2:]
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
@@ -517,7 +527,7 @@ class MainGUI(BaseGUI):
 
     def on_portal_loc_changed(self, widget):
         """ What to do when one of our bound-portal locations changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (shortwname, num) = wname.rsplit('_', 1)
         num = int(num)
         basename = 'portal_loc_%d' % (num)
@@ -538,7 +548,7 @@ class MainGUI(BaseGUI):
 
     def on_effect_changed(self, widget):
         """ What to do when our effect value changes.  Slightly different from Books 1 and 2"""
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         labelname = 'statuses_%d' % (arrnum)
@@ -552,7 +562,7 @@ class MainGUI(BaseGUI):
 
     def on_multarray_text_changed(self, widget):
         """ What to do when a string value changes in an array. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
@@ -562,7 +572,7 @@ class MainGUI(BaseGUI):
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (shortname, arrnum) = wname.rsplit('_', 1)
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
@@ -573,7 +583,7 @@ class MainGUI(BaseGUI):
 
     def on_checkbox_arr_changed(self, widget):
         """ What to do when a checkbox changes, and it's in an array. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         if (widget.get_active()):
             val = 1
         else:
@@ -598,7 +608,7 @@ class MainGUI(BaseGUI):
 
     def on_readyslots_changed(self, widget):
         """ What to do when one of our readied-spell slots changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (foo, slotnum) = wname.rsplit('_', 1)
         slotnum = int(slotnum)
         spell = self.get_widget('readyslots_spell_%d' % (slotnum)).get_text()
@@ -613,7 +623,7 @@ class MainGUI(BaseGUI):
 
     def on_inv_clicked(self, widget, doshow=True):
         """ What to do when our inventory-item button is clicked. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (foo, row, col, bar) = wname.rsplit('_', 3)
         row = int(row)
         col = int(col)
@@ -626,7 +636,7 @@ class MainGUI(BaseGUI):
 
     def on_equip_clicked(self, widget, doshow=True):
         """ What to do when our equipped-item button is clicked. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (equipname, foo) = wname.rsplit('_', 1)
         self.curitemtype = self.ITEM_EQUIP
         self.curitem = equipname
@@ -637,7 +647,7 @@ class MainGUI(BaseGUI):
 
     def on_ready_clicked(self, widget, doshow=True):
         """ What to do when our readied-item button is clicked. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (foo, num, bar) = wname.rsplit('_', 2)
         num = int(num)
         self.curitemtype = self.ITEM_READY
@@ -673,7 +683,7 @@ class MainGUI(BaseGUI):
 
     def on_equip_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an equipped item. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (equipname, action) = wname.rsplit('_', 1)
         if (action == 'cut'):
             self.on_equip_action_clicked(self.get_widget('%s_copy' % equipname))
@@ -693,7 +703,7 @@ class MainGUI(BaseGUI):
 
     def on_inv_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete an inventory item. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (foo, row, col, action) = wname.rsplit('_', 3)
         row = int(row)
         col = int(col)
@@ -714,7 +724,7 @@ class MainGUI(BaseGUI):
 
     def on_ready_action_clicked(self, widget):
         """ What to do when we cut/copy/paste/delete a readied item. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (foo, num, action) = wname.rsplit('_', 2)
         num = int(num)
         if (action == 'cut'):

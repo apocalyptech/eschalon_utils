@@ -94,6 +94,16 @@ class BaseGUI(object):
         self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
         self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
 
+        # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
+        # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
+        for object in self.prefsbuilder.get_objects():
+            try:
+                builder_name = gtk.Buildable.get_name(object)
+                if builder_name:
+                    object.set_name(builder_name)
+            except TypeError:
+                pass
+
         # Connect handler
         self.prefssel.connect('changed', self.on_prefs_changed)
 
@@ -340,7 +350,7 @@ class BaseGUI(object):
 
     def on_singleval_changed_str(self, widget):
         """ What to do when a string value changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_text()
         if (self.curitemtype != self.ITEM_MAP):
@@ -349,7 +359,7 @@ class BaseGUI(object):
 
     def on_singleval_changed_int(self, widget):
         """ What to do when an int value changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = int(widget.get_value())
         if (self.curitemtype != self.ITEM_MAP):
@@ -358,7 +368,7 @@ class BaseGUI(object):
 
     def on_singleval_changed_float(self, widget):
         """ What to do when an int value changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_value()
         # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
@@ -374,7 +384,7 @@ class BaseGUI(object):
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active()
         if (self.curitemtype != self.ITEM_MAP):
@@ -383,7 +393,7 @@ class BaseGUI(object):
 
     def on_checkbox_changed(self, widget):
         """ What to do when a regular checkbox changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         ischecked = widget.get_active()
         (obj, origobj) = self.get_comp_objects()
         if (ischecked):
@@ -396,7 +406,7 @@ class BaseGUI(object):
 
     def on_checkbox_bit_changed(self, widget):
         """ What to do when a checkbox changes, and it's a bitfield. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         ischecked = widget.get_active()
         (shortname, mask) = wname.rsplit('_', 1)
         mask = int(mask, 16)
@@ -411,7 +421,7 @@ class BaseGUI(object):
 
     def on_modifier_changed(self, widget):
         """ What to do when our attr or skill modifier changes. """
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         (which, type) = wname.rsplit('_', 1)
         modifiertext = '%s_modifier' % (which)
         modifiedtext = '%s_modified' % (which)
@@ -431,7 +441,7 @@ class BaseGUI(object):
         """ What to do when a book 2 item attribute changes. """
         if c.book != 2:
             return
-        wname = gtk.Buildable.get_name(widget)
+        wname = widget.get_name()
         num = int(wname.split('_')[-1])
         modifiertext = 'attr_modifier_%d' % (num)
         modifiedtext = 'attr_modified_%d' % (num)
