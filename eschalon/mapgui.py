@@ -623,7 +623,7 @@ class MapGUI(BaseGUI):
             if response == gtk.RESPONSE_OK:
                 if (not self.load_from_file(dialog.get_filename())):
                     rundialog = True
-            elif response == gtk.RESPONSE_CANCEL:
+            else:
                 # Check to see if this was the initial load, started without a filename
                 if (self.map == None):
                     return False
