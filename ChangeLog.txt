@@ -1,7 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
    14 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
-   Fix for gtk+ 2.20
+   Fix to support gtk+ 2.20
+   Bundle Windows version with gtk+ 2.20
 
    12 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Fix window title for Book 2 Character Editor
