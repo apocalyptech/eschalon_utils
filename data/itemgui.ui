@@ -1459,7 +1459,6 @@
                   <object class="GtkAlignment" id="alignment6">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
-                    <property name="xscale">0</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkTable" id="table2">
@@ -1709,21 +1708,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label6">
-                            <property name="width_request">300</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">The third modifier is the only one which can have a negative value, and uses four bytes instead of one (as the other modifiers do).  For potions (and potions used as thrown weapons), though, some of the bits in here seem to be used as flags of some sort:</property>
-                            <property name="wrap">True</property>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkScrolledWindow" id="scrolledwindow1">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1750,10 +1734,45 @@
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkLabel" id="b2_modifier_spacer_1_label">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkLabel" id="b2_modifier_spacer_2_label">
+                            <property name="visible">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">4</property>
+                            <property name="bottom_attach">5</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment16">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <child>
+                              <object class="GtkLabel" id="label6">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">The third modifier is the only one which can have a negative value, and uses four bytes instead of one (as the other modifiers do).  For potions (and potions used as thrown weapons), though, some of the bits in here seem to be used as flags of some sort:</property>
+                                <property name="use_markup">True</property>
+                                <property name="wrap">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                          </packing>
                         </child>
                       </object>
                     </child>
@@ -2288,7 +2307,7 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="item_quantity_adj">
-    <property name="upper">255</property>
+    <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
