@@ -175,7 +175,7 @@ class Item(object):
             ret.append("\tPicture ID: %d" % self.pictureid)
             ret.append("\tValue: %d" % self.value)
             if self.book == 2 and self.max_hp > 0:
-                ret.append("\tCondition: %d%%" % (self.cur_hp/float(self.max_hp)*100))
+                ret.append("\tCondition: %d%% (%d of %d)" % (self.cur_hp/float(self.max_hp)*100, self.cur_hp, self.max_hp))
             if (self.basedamage > 0):
                 ret.append("\tBase Damage: %d" % self.basedamage)
             if (self.basearmor > 0):
