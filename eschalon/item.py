@@ -27,7 +27,7 @@ class Item(object):
     book = None
     form_elements = []
 
-    def __init__(self):
+    def __init__(self, zero=False):
         """ Create a new Item object with no information. """
 
         # Known fields
@@ -47,6 +47,10 @@ class Item(object):
         # Unknown fields.
         self.zero1 = -1
         self.emptystr = ''
+
+        # Now, after doing all that, zero things out if we were told to do so
+        if (zero):
+            self.tozero()
 
     def tozero(self):
         """
@@ -113,7 +117,8 @@ class Item(object):
         checking if our values are the same, NOT if we're *actually*
         the same object.  Returns true for equality, false for inequality.
         """
-        return (self.type == item.type and
+        return (self._sub_equals(item) and
+                self.type == item.type and
                 self.subtype == item.subtype and
                 self.item_name == item.item_name and
                 self.weight == item.weight and
@@ -123,22 +128,16 @@ class Item(object):
                 self.quantity == item.quantity and
                 self.basedamage == item.basedamage and
                 self.basearmor == item.basearmor and
-                self.attr_modified == item.attr_modified and
-                self.attr_modifier == item.attr_modifier and
-                self.skill_modified == item.skill_modified and
-                self.skill_modifier == item.skill_modifier and
-                self.hitpoint == item.hitpoint and
-                self.mana == item.mana and
-                self.tohit == item.tohit and
-                self.damage == item.damage and
-                self.armor == item.armor and
-                self.incr == item.incr and
-                self.flags == item.flags and
                 self.script == item.script and
                 self.visibility == item.visibility and
-                self.duration == item.duration and
                 self.zero1 == item.zero1 and
                 self.emptystr == item.emptystr)
+
+    def _sub_equals(self, item):
+        """
+        Stub for superclasses to override, to check for equality
+        """
+        pass
 
     def display(self, unknowns=False):
         """
@@ -257,7 +256,6 @@ class B1Item(Item):
             ]
 
     def __init__(self, zero=False):
-        super(B1Item, self).__init__()
         
         # Attributes which only Book 1 has
         self.attr_modified = -1
@@ -273,9 +271,8 @@ class B1Item(Item):
         self.hitpoint = -1
         self.duration = -1
 
-        # Now, after doing all that, zero things out if we were told to do so
-        if (zero):
-            self.tozero()
+        # Now the parent constructor
+        super(B1Item, self).__init__(zero)
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """
@@ -371,6 +368,23 @@ class B1Item(Item):
         self.flags = 0
         self.duration = 0
 
+    def _sub_equals(self, item):
+        """
+        Book 1 specific equality.
+        """
+        return (self.attr_modified == item.attr_modified and
+                self.attr_modifier == item.attr_modifier and
+                self.skill_modified == item.skill_modified and
+                self.skill_modifier == item.skill_modifier and
+                self.hitpoint == item.hitpoint and
+                self.mana == item.mana and
+                self.tohit == item.tohit and
+                self.damage == item.damage and
+                self.armor == item.armor and
+                self.incr == item.incr and
+                self.flags == item.flags and
+                self.duration == item.duration)
+
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this
             item, in the game. """
@@ -400,7 +414,6 @@ class B2Item(Item):
             ]
 
     def __init__(self, zero=False):
-        super(B2Item, self).__init__()
         
         # Attributes which only Book 2 has
         self.unknownflag = -1
@@ -415,9 +428,8 @@ class B2Item(Item):
 
         self.unknownc1 = -1
 
-        # Now, after doing all that, zero things out if we were told to do so
-        if (zero):
-            self.tozero()
+        # Now the parent constructor
+        super(B2Item, self).__init__()
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """
@@ -504,6 +516,21 @@ class B2Item(Item):
         self.attr_modified_3 = 0
         self.attr_modifier_3 = 0
         self.unknownc1 = 0
+
+    def _sub_equals(self, item):
+        """
+        Book 1 specific equality.
+        """
+        return (self.unknownflag == item.unknownflag and
+                self.max_hp == item.max_hp and
+                self.cur_hp == item.cur_hp and
+                self.attr_modified_1 == item.attr_modified_1 and
+                self.attr_modifier_1 == item.attr_modifier_1 and
+                self.attr_modified_2 == item.attr_modified_2 and
+                self.attr_modifier_2 == item.attr_modifier_2 and
+                self.attr_modified_3 == item.attr_modified_3 and
+                self.attr_modifier_3 == item.attr_modifier_3 and
+                self.unknownc1 == item.unknownc1)
 
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this

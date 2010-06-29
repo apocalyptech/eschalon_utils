@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   29 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Cleaned up Item equality testing
+
    16 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Item quantity should allow values greater than 255
 
