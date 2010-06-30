@@ -938,8 +938,7 @@ class MainGUI(BaseGUI):
                     widget.set_active(act)
 
         for i in range(len(c.spelltable)):
-            if (char.spells[i] > 0):
-                self.get_widget('spells_%d' % (i)).set_active(True)
+            self.get_widget('spells_%d' % (i)).set_active(char.spells[i])
 
         for i in range(10):
             self.get_widget('readyslots_spell_%d' % (i)).set_text(char.readyslots[i][0])

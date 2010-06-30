@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   30 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed spell checkbox population when loading multiple chars
+
    29 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Cleaned up Item equality testing
 
