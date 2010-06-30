@@ -429,7 +429,7 @@ class B2Item(Item):
         self.unknownc1 = -1
 
         # Now the parent constructor
-        super(B2Item, self).__init__()
+        super(B2Item, self).__init__(zero)
 
     def read(self, df):
         """ Given a file descriptor, read in the item. """
