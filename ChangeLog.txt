@@ -1,5 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.6.2 (01 Jul 2010)
+
    01 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug for savegame map loading on Steam versions of Book 1
 
