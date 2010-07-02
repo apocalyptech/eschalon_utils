@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   01 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a bug for savegame map loading on Steam versions of Book 1
+
    30 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed spell checkbox population when loading multiple chars
 
