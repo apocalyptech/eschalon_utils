@@ -2,7 +2,8 @@
 
    09 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug where entity scripts and object scripts weren't
-   getting updated properly in the map editor.
+      getting updated properly in the map editor.
+   Fixed another similar bug with an unknown item value
 
 *eschalon_utils-0.6.2 (01 Jul 2010)
 

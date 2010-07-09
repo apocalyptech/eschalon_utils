@@ -230,7 +230,7 @@ class Item(object):
                 ret.append("\t\tEmpty String: %s" % self.emptystr)
                 if (self.book == 2):
                     ret.append("\t\tUnknown Flag: %d" % (self.unknownflag))
-                    ret.append("\t\tUnknown Byte 1: %d" % (self.unknownc1))
+                    ret.append("\t\tUnknown Byte 1: %d" % (self.itemunknownc1))
         ret.append('')
 
         return "\n".join(ret)
@@ -409,7 +409,7 @@ class B2Item(Item):
             'cur_hp_label', 'cur_hp',
             'max_hp_label', 'max_hp',
             'unknownflag', 'unknownflag_label',
-            'unknownc1', 'unknownc1_label',
+            'itemunknownc1', 'itemunknownc1_label',
             'book2_item_picid_note'
             ]
 
@@ -426,7 +426,7 @@ class B2Item(Item):
         self.attr_modified_3 = -1
         self.attr_modifier_3 = -1
 
-        self.unknownc1 = -1
+        self.itemunknownc1 = -1
 
         # Now the parent constructor
         super(B2Item, self).__init__(zero)
@@ -441,7 +441,7 @@ class B2Item(Item):
         self.subtype = df.readuchar()
         self.max_hp = df.readshort()
         self.cur_hp = df.readshort()
-        self.unknownc1 = df.readuchar()
+        self.itemunknownc1 = df.readuchar()
         self.visibility = df.readuchar()
         self.pictureid = df.readshort()
         self.value = df.readshort()
@@ -469,7 +469,7 @@ class B2Item(Item):
         df.writeuchar(self.subtype)
         df.writeshort(self.max_hp)
         df.writeshort(self.cur_hp)
-        df.writeuchar(self.unknownc1)
+        df.writeuchar(self.itemunknownc1)
         df.writeuchar(self.visibility)
         df.writeshort(self.pictureid)
         df.writeshort(self.value)
@@ -500,7 +500,7 @@ class B2Item(Item):
         newitem.attr_modifier_2 = self.attr_modifier_2
         newitem.attr_modified_3 = self.attr_modified_3
         newitem.attr_modifier_3 = self.attr_modifier_3
-        newitem.unknownc1 = self.unknownc1
+        newitem.itemunknownc1 = self.itemunknownc1
 
     def _sub_tozero(self):
         """
@@ -515,7 +515,7 @@ class B2Item(Item):
         self.attr_modifier_2 = 0
         self.attr_modified_3 = 0
         self.attr_modifier_3 = 0
-        self.unknownc1 = 0
+        self.itemunknownc1 = 0
 
     def _sub_equals(self, item):
         """
@@ -530,7 +530,7 @@ class B2Item(Item):
                 self.attr_modifier_2 == item.attr_modifier_2 and
                 self.attr_modified_3 == item.attr_modified_3 and
                 self.attr_modifier_3 == item.attr_modifier_3 and
-                self.unknownc1 == item.unknownc1)
+                self.itemunknownc1 == item.itemunknownc1)
 
     def hasborder(self):
         """ Decide whether or not a blue border would be drawn for this

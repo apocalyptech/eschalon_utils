@@ -546,7 +546,7 @@ class BaseGUI(object):
             self.get_widget('attr_modifier_3').set_value(item.attr_modifier_3)
             self.get_widget('attr_modified_3').set_active(item.attr_modified_3)
             self.get_widget('unknownflag').set_value(item.unknownflag)
-            self.get_widget('unknownc1').set_value(item.unknownc1)
+            self.get_widget('itemunknownc1').set_value(item.itemunknownc1)
 
         self.get_widget('visibility').set_value(item.visibility)
         if item.book == 1:
@@ -587,7 +587,7 @@ class BaseGUI(object):
             intvals = [ 'value', 'basedamage', 'basearmor',
                     'visibility', 'quantity', 'zero1',
                     'cur_hp', 'max_hp',
-                    'unknownflag', 'unknownc1' ]
+                    'unknownflag', 'itemunknownc1' ]
             floatvals = [ 'weight' ]
             checkboxvals = [ 'canstack' ]
             checkboxbitvals = [ ]
