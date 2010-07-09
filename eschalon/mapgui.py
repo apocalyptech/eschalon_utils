@@ -1839,7 +1839,7 @@ class MapGUI(BaseGUI):
             print "Not in table"
             pass
         self.get_widget('direction').set_active(square.entity.direction-1)
-        self.get_widget('script').set_text(square.entity.script)
+        self.get_widget('entscript').set_text(square.entity.entscript)
         if (self.map.is_savegame()):
             self.get_widget('friendly').set_value(square.entity.friendly)
             self.get_widget('health').set_value(square.entity.health)

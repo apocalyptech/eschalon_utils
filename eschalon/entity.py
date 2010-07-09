@@ -34,7 +34,7 @@ class Entity(object):
         self.x = -1
         self.y = -1
         self.direction = -1
-        self.script = ''
+        self.entscript = ''
 
         self.friendly = -1
         self.unknownc1 = -1
@@ -53,7 +53,7 @@ class Entity(object):
         newentity.x = self.x
         newentity.y = self.y
         newentity.direction = self.direction
-        newentity.script = self.script
+        newentity.entscript = self.entscript
         newentity.friendly = self.friendly
         newentity.unknownc1 = self.unknownc1
         newentity.health = self.health
@@ -79,7 +79,7 @@ class Entity(object):
         self.x = df.readuchar()
         self.y = df.readuchar()
         self.direction = df.readuchar()
-        self.script = df.readstr()
+        self.entscript = df.readstr()
         if (self.savegame):
             self.friendly = df.readuchar()
             self.unknownc1 = df.readuchar()
@@ -96,7 +96,7 @@ class Entity(object):
         df.writeuchar(self.x)
         df.writeuchar(self.y)
         df.writeuchar(self.direction)
-        df.writestr(self.script)
+        df.writestr(self.entscript)
         if (self.savegame):
             df.writeuchar(self.friendly)
             df.writeuchar(self.unknownc1)
@@ -112,7 +112,7 @@ class Entity(object):
         self.y = y
         self.entid = 1
         self.direction = 1
-        self.script = ''
+        self.entscript = ''
         if (self.savegame):
             self.friendly = 0
             self.unknownc1 = 0
@@ -133,7 +133,7 @@ class Entity(object):
                 self.y == entity.y and
                 self.entid == entity.entid and
                 self.direction == entity.direction and
-                self.script == entity.script and
+                self.entscript == entity.entscript and
                 self.savegame == entity.savegame and
                 self.friendly == entity.friendly and
                 self.unknownc1 == entity.unknownc1 and
@@ -163,7 +163,7 @@ class Entity(object):
             ret.append("\tFacing %s" % (c.dirtable[self.direction]))
         else:
             ret.append("\tDirection ID: %d" % (self.direction))
-        ret.append("\tScript: %s" % self.script)
+        ret.append("\tScript: %s" % self.entscript)
         if (self.savegame):
             ret.append("\tFriendly: %d" % (self.friendly))
             ret.append("\tHealth: %d" % (self.health))

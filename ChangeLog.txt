@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   09 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a bug where entity scripts and object scripts weren't
+   getting updated properly in the map editor.
+
 *eschalon_utils-0.6.2 (01 Jul 2010)
 
    01 Jul 2010; CJ Kucera <pez@apocalyptech.com> :

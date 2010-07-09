@@ -2071,7 +2071,7 @@
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
                             <child>
-                              <object class="GtkEntry" id="script">
+                              <object class="GtkEntry" id="entscript">
                                 <property name="width_request">280</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -2132,7 +2132,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="script_label">
+                          <object class="GtkLabel" id="entscript_label">
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
                             <property name="xpad">5</property>
