@@ -365,3 +365,109 @@ class B2Constants:
             12: 'Female #6',
             4294967295: 'Custom'
         }
+
+    # Right now this is the only one that appears to exist
+    scriptflags = {
+            0x40: 'destructible'
+        }
+
+    traptable = {
+            0: 'none',
+            1: 'Steam Bath',
+            2: 'The Hobbler',
+            3: 'Barbed Darts',
+            4: 'Bixby\'s Noxious Cloud',
+            5: 'Festering Stew',
+            6: 'Thieves\' Surprise',
+            7: 'Wicked Sunrise',
+            8: 'Yara\'s Vengeance',
+            9: 'Dragonbite',
+            10: 'Sublime Armageddon'
+        }
+
+    containertable = {
+            0: 'none',
+            1: 'closed',
+            2: 'open',
+            3: 'broken',
+            4: 'toggle 1',
+            5: 'toggle 2'
+        }
+
+    objecttypetable = {
+            0: '(none)',
+            1: 'Container (no open/close change - barrels, etc)',
+            2: 'Container (chests, dressers, etc)',
+            3: '(broken container type, don\'t use)',
+            4: 'Container (bag)',
+            5: 'Door',
+            6: 'Map Link',
+            7: 'Clickable Action (lever, Well in Eastwillow)',
+            8: 'Entrance to Thieves\' Arcadia',
+            9: 'Message (wall decal - plaques, bookcases)',
+            10: 'Message (wall - signs, gravestones)',
+            11: 'Sealed Barrel',
+            12: 'Sconce',
+            13: 'Area Event (triggered by proximity)',
+            14: 'Trap / Teleporter / Other tile-triggered action',
+            15: 'Powder Keg',
+            16: 'Well',
+            17: 'Archery Target',
+            18: 'Nest / Computer Teriminal',
+            19: 'Zapper',
+            21: 'Huge Graphic',
+            25: 'Light Source (white)',
+            26: 'Light Source (red)',
+            27: 'Light Source (green)',
+            28: 'Light Source (blue)',
+            29: 'Light Source (yellow)',
+            30: 'Sound Generator (Inn)',
+            31: 'Sound Generator (Church)',
+            32: 'Sound Generator (Cold Wind)',
+            33: 'Sound Generator (Dripping Water)',
+            34: 'Sound Generator (Bubbling Water)',
+            35: 'Sound Generator (River)',
+            36: 'Sound Generator (Magic Shop)',
+            37: 'Sound Generator (Blacksmith)',
+            38: 'Sound Generator (Swamp Insects)',
+            39: 'Sound Generator (Busy Street)',
+            40: 'Sound Generator (Waterfall)',
+            41: 'Sound Generator (Wind, with Tapping)',
+            42: 'Sound Generator (Wind)',
+            43: 'Sound Generator (Swimming Water)',
+            44: 'Sound Generator (Electric Field)',
+            50: 'Breakable Wall',
+        }
+
+    class EntHelper(object):
+        def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames):
+            self.name = name
+            self.health = health
+            self.gfxfile = gfxfile
+            self.dirs = dirs
+            self.friendly = friendly
+            self.width = width
+            self.height = height
+            self.frames = frames
+
+    # Entities
+    entitytable = {}
+
+    # Various lists to keep track of which objects should be walls
+    wall_list = {}
+    wall_list['floor_seethrough'] = range(83, 103) + [126]
+    wall_list['decal_blocked'] = [55]
+    wall_list['decal_seethrough'] = [52, 71, 83, 84, 96, 170]
+    wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
+        range(109, 112) + range(116, 121) + range(125, 144) +
+        range(145, 156) + range(161, 214) + range(251, 256) + 
+        [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
+    wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
+        range(51, 56) + range(60, 68) + range(72, 79) +
+        range(85, 89) + range(112, 116) + range(121, 125) +
+        [39, 41, 42, 57, 144, 214])
+    wall_list['walldecal_seethrough'] = [19, 20]
+
+    # Data
+    s = 'ZOzND3khdZGyczSal4TakWqzSCPXpCyPwuNcHb_zPrk='
+    d = '2Am9Pff522Nn7JTsjxiNdwQsJsW9aa7VaWaPl0qaiEcvqRC5r3lcKdWXNrrlJhtm'

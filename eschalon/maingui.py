@@ -139,12 +139,9 @@ class MainGUI(BaseGUI):
 
         # Set up our graphics cache
         self.prefs_init(self.prefs)
-        if self.req_book == 1:
-            self.optional_gfx()
-        if (self.gamedir_set() and self.req_book == 1):
-            self.gfx = Gfx(self.prefs, self.datadir)
-        else:
-            self.gfx = None
+        self.optional_gfx()
+        if self.gamedir_set():
+            self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
         self.assert_gfx_buttons()
 
         # Dictionary of signals.

@@ -21,6 +21,7 @@
 
 import os
 import struct
+from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalon.square import Square
 from eschalon.mapscript import Mapscript
@@ -38,8 +39,10 @@ class Map(object):
     DIR_W = 0x40
     DIR_NW = 0x80
 
-    def __init__(self, filename):
-        """ A fresh object. """
+    def __init__(self, df):
+        """
+        A fresh object.
+        """
 
         # Everything else follows...
         self.df = None
@@ -73,6 +76,10 @@ class Map(object):
 
         self.extradata = ''
 
+        # Note that book 1 doesn't actually have this, but for sanity's
+        # sake we're putting it in the base class
+        self.tree_set = -1
+
         self.cursqcol = 0
         self.cursqrow = 0
 
@@ -80,28 +87,16 @@ class Map(object):
         for i in range(200):
             self.squares.append([])
             for j in range(100):
-                self.squares[i].append(Square(j, i))
+                self.squares[i].append(Square.new(c.book, j, i))
 
         self.scripts = []
         self.entities = []
 
-        self.df = Savefile(filename)
+        self.df = df
         self.set_df_ent()
 
     def set_df_ent(self):
         self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
-
-    def is_global(self):
-        return (self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0)
-
-    def is_savegame(self):
-        return not self.is_global()
-        # Savegames are... evil?  I guess?
-        # ... On the Greenhouse and direct-from-Basilisk versions, the savegame map files have
-        # always had "666" in these values for me.  On at least one Steam version, it looks
-        # like the first value is 320, so we're just going to invert is_global() instead.
-        # Which is really what we should have been doing anyway, but whatever.
-        #return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
 
     def replicate(self):
         # Note that this could, theoretically, lead to contention issues, since
@@ -133,6 +128,7 @@ class Map(object):
         newmap.savegame_2 = self.savegame_2
         newmap.savegame_3 = self.savegame_3
         newmap.extradata = self.extradata
+        newmap.tree_set = self.tree_set
 
         # Copy squares
         for i in range(200):
@@ -168,6 +164,13 @@ class Map(object):
         # Now return our duplicated object
         return newmap
 
+    def set_square_savegame(self):
+        """ Sets the savegame flag appropriately for all squares """
+        savegame = self.is_savegame()
+        for row in self.squares:
+            for square in row:
+                square.savegame = savegame
+
     def addsquare(self):
         """ Add a new square, assuming that the squares are stored in a
             left-to-right, top-to-bottom format in the map. """
@@ -180,7 +183,7 @@ class Map(object):
     def addscript(self):
         """ Add a mapscript. """
         try:
-            script = Mapscript(self.is_savegame())
+            script = Mapscript.new(c.book, self.is_savegame())
             script.read(self.df)
             # Note that once we start deleting scripts, you'll have to update both constructs here.
             # Something along the lines of this should do:
@@ -206,7 +209,7 @@ class Map(object):
     def addentity(self):
         """ Add an entity. """
         try:
-            entity = Entity(self.is_savegame())
+            entity = Entity.new(c.book, self.is_savegame())
             entity.read(self.df_ent)
             self.entities.append(entity)
             if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
@@ -222,6 +225,145 @@ class Map(object):
         if (ent is not None):
             self.entities.remove(ent)
             square.delentity()
+
+    def rgb_color(self):
+        return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
+
+    def coords_relative(self, x, y, dir):
+        """
+        Static method to return coordinates for the square
+        relative to the given coords.  1 = N, 2 = NE, etc
+        """
+        if (dir == self.DIR_N):
+            if (y < 2):
+                return None
+            else:
+                return (x, y-2)
+        elif (dir == self.DIR_NE):
+            if ((y % 2) == 0):
+                if (y > 0):
+                    return (x, y-1)
+                else:
+                    return None
+            elif (x < 99):
+                return (x+1, y-1)
+            else:
+                return None
+        elif (dir == self.DIR_E):
+            if (x < 99):
+                return (x+1, y)
+            else:
+                return None
+        elif (dir == self.DIR_SE):
+            if ((y % 2) == 0):
+                return (x, y+1)
+            elif (x < 99 and y < 199):
+                return (x+1, y+1)
+            else:
+                return None
+        elif (dir == self.DIR_S):
+            if (y < 198):
+                return (x, y+2)
+            else:
+                return None
+        elif (dir == self.DIR_SW):
+            if ((y % 2) == 1):
+                if (y < 199):
+                    return (x, y+1)
+                else:
+                    return None
+            elif (x > 0):
+                return (x-1, y+1)
+            else:
+                return None
+        elif (dir == self.DIR_W):
+            if (x > 1):
+                return (x-1, y)
+            else:
+                return None
+        elif (dir == self.DIR_NW):
+            if ((y % 2) == 1):
+                return (x, y-1)
+            elif (y > 0 and x > 0):
+                return (x-1, y-1)
+            else:
+                return None
+        else:
+            return None
+
+    def square_relative(self, x, y, dir):
+        """ Returns a square object relative to the given coords. """
+        coords = self.coords_relative(x, y, dir)
+        if (coords):
+            return self.squares[coords[1]][coords[0]]
+        else:
+            return None
+
+    @staticmethod
+    def load(filename, book=None, req_book=None):
+        """
+        Static method to load a map file.  This will open the file once
+        and read in a bit of data to determine whether this is a Book 1 map file
+        or a Book 1 map file, and then call the appropriate constructor and
+        return the object.
+        """
+        df = Savefile(filename)
+
+        # Both B1 and B2 map files start with nine strings (though their meanings
+        # vary) - at that point, Book 2 goes into some integer data whereas Book
+        # 1 has a couple more strings.  The first two binary bytes in Book 2 seem
+        # to each *always* be 0x01, so that's how we'll differentiate
+        if book is None:
+            try:
+                df.open_r()
+                for i in range(9):
+                    df.readstr()
+                c1 = df.readuchar()
+                c2 = df.readuchar()
+                df.close()
+            except (IOError, struct.error), e:
+                raise LoadException(str(e))
+
+            if c1 == 1 or c2 == 1:
+                book = 2
+            else:
+                book = 1
+
+        # See if we're required to conform to a specific book
+        if (req_book is not None and book != req_book):
+            raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (req_book, book))
+
+        # Now actually return the object
+        if book == 1:
+            c.switch_to_book(1)
+            return B1Map(df)
+        else:
+            c.switch_to_book(2)
+            return B2Map(df)
+
+class B1Map(Map):
+    """
+    Book 1 Map definitions
+    """
+
+    def __init__(self, df):
+
+        # Book 1-specific vars
+        self.mapid = -1
+        self.exit_north = ''
+        self.exit_east = ''
+        self.exit_south = ''
+        self.exit_west = ''
+        self.unknownh1 = -1
+        self.parallax_1 = -1
+        self.parallax_2 = -1
+        self.clouds = -1
+        self.savegame_1 = -1
+        self.savegame_2 = -1
+        self.savegame_3 = -1
+
+        # Base class attributes
+        super(B1Map, self).__init__(df)
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -258,6 +400,7 @@ class Map(object):
             self.savegame_3 = self.df.readint()
 
             # Squares
+            self.set_square_savegame()
             for i in range(200*100):
                 self.addsquare()
 
@@ -346,75 +489,191 @@ class Map(object):
             entity.write(self.df_ent)
         self.df_ent.close()
 
-    def rgb_color(self):
-        return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
+    def is_global(self):
+        return (self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0)
 
-    def coords_relative(self, x, y, dir):
-        """
-        Static method to return coordinates for the square
-        relative to the given coords.  1 = N, 2 = NE, etc
-        """
-        if (dir == self.DIR_N):
-            if (y < 2):
-                return None
-            else:
-                return (x, y-2)
-        elif (dir == self.DIR_NE):
-            if ((y % 2) == 0):
-                if (y > 0):
-                    return (x, y-1)
-                else:
-                    return None
-            elif (x < 99):
-                return (x+1, y-1)
-            else:
-                return None
-        elif (dir == self.DIR_E):
-            if (x < 99):
-                return (x+1, y)
-            else:
-                return None
-        elif (dir == self.DIR_SE):
-            if ((y % 2) == 0):
-                return (x, y+1)
-            elif (x < 99 and y < 199):
-                return (x+1, y+1)
-            else:
-                return None
-        elif (dir == self.DIR_S):
-            if (y < 198):
-                return (x, y+2)
-            else:
-                return None
-        elif (dir == self.DIR_SW):
-            if ((y % 2) == 1):
-                if (y < 199):
-                    return (x, y+1)
-                else:
-                    return None
-            elif (x > 0):
-                return (x-1, y+1)
-            else:
-                return None
-        elif (dir == self.DIR_W):
-            if (x > 1):
-                return (x-1, y)
-            else:
-                return None
-        elif (dir == self.DIR_NW):
-            if ((y % 2) == 1):
-                return (x, y-1)
-            elif (y > 0 and x > 0):
-                return (x-1, y-1)
-            else:
-                return None
-        else:
-            return None
+    def is_savegame(self):
+        return not self.is_global()
+        # Savegames are... evil?  I guess?
+        # ... On the Greenhouse and direct-from-Basilisk versions, the savegame map files have
+        # always had "666" in these values for me.  On at least one Steam version, it looks
+        # like the first value is 320, so we're just going to invert is_global() instead.
+        # Which is really what we should have been doing anyway, but whatever.
+        #return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
 
-    def square_relative(self, x, y, dir):
-        """ Returns a square object relative to the given coords. """
-        coords = self.coords_relative(x, y, dir)
-        if (coords):
-            return self.squares[coords[1]][coords[0]]
-        else:
-            return None
+class B2Map(Map):
+    """
+    Book 2 Map definitions
+    """
+
+    def __init__(self, df):
+
+        # Book 2 specific vars
+        self.openingscript = ''
+        self.unknownstr1 = ''
+        self.unknownstr2 = ''
+        self.soundfile4 = ''
+        self.unknownc1 = -1
+        self.unknownc2 = -1
+        self.unknownc3 = -1
+        self.unknownc4 = -1
+        self.unknowni2 = -1
+        self.unknowni3 = -1
+        self.unknowni4 = -1
+        self.unknownc5 = -1
+        self.unknownc6 = -1
+        self.unknownc7 = -1
+        self.unknownc8 = -1
+        self.unknownstr4 = ''
+        self.unknownstr5 = ''
+        self.unknownstr6 = ''
+
+        # Now the base attributes
+        super(B2Map, self).__init__(df)
+
+    def read(self):
+        """ Read in the whole map from a file descriptor. """
+
+        try:
+
+            # Open the file
+            self.df.open_r()
+
+            # Start processing
+            self.mapname = self.df.readstr()
+            self.openingscript = self.df.readstr()
+            self.unknownstr1 = self.df.readstr()
+            self.unknownstr2 = self.df.readstr()
+            self.skybox = self.df.readstr()
+            self.soundfile1 = self.df.readstr()
+            self.soundfile2 = self.df.readstr()
+            self.soundfile3 = self.df.readstr()
+            self.soundfile4 = self.df.readstr()
+            self.unknownc1 = self.df.readuchar()
+            self.unknownc2 = self.df.readuchar()
+            self.unknownc3 = self.df.readuchar()
+            self.unknownc4 = self.df.readuchar()
+            self.color_r = self.df.readuchar()
+            self.color_g = self.df.readuchar()
+            self.color_b = self.df.readuchar()
+            self.color_a = self.df.readuchar()
+            # unknowni1 looks like it may contain parallax values
+            self.unknowni1 = self.df.readint()
+            self.unknowni2 = self.df.readint()
+            self.unknowni3 = self.df.readint()
+            self.unknowni4 = self.df.readint()
+            self.tree_set = self.df.readint()
+
+            # These are all zero on the "global" map files
+            self.unknownc5 = self.df.readuchar()
+            self.unknownc6 = self.df.readuchar()
+            self.unknownc7 = self.df.readuchar()
+            self.unknownc8 = self.df.readuchar()
+
+            self.unknownstr4 = self.df.readstr()
+            self.unknownstr5 = self.df.readstr()
+            self.unknownstr6 = self.df.readstr()
+
+            # Squares
+            self.set_square_savegame()
+            for i in range(200*100):
+                self.addsquare()
+
+            # Scripts...  Just keep going until EOF
+            try:
+                while (self.addscript()):
+                    pass
+            except FirstItemLoadException, e:
+                pass
+
+            # Entities...  Just keep going until EOF (note that this is in a separate file)
+            # Also note that we have to support situations where there is no entity file
+            if (self.df_ent.exists()):
+                self.df_ent.open_r()
+                try:
+                    while (self.addentity()):
+                        pass
+                except FirstItemLoadException, e:
+                    pass
+                self.df_ent.close()
+
+            # If there's extra data at the end, we likely don't have
+            # a valid char file
+            self.extradata = self.df.read()
+            if (len(self.extradata)>0):
+                raise LoadException('Extra data at end of file')
+
+            # Close the file
+            self.df.close()
+
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+    def write(self):
+        """ Writes out the map to the file descriptor. """
+        
+        # Open the file
+        self.df.open_w()
+
+        # Start
+        self.df.writestr(self.mapname)
+        self.df.writestr(self.openingscript)
+        self.df.writestr(self.unknownstr1)
+        self.df.writestr(self.unknownstr2)
+        self.df.writestr(self.skybox)
+        self.df.writestr(self.soundfile1)
+        self.df.writestr(self.soundfile2)
+        self.df.writestr(self.soundfile3)
+        self.df.writestr(self.soundfile4)
+        self.df.writeuchar(self.unknownc1)
+        self.df.writeuchar(self.unknownc2)
+        self.df.writeuchar(self.unknownc3)
+        self.df.writeuchar(self.unknownc4)
+        self.df.writeuchar(self.color_r)
+        self.df.writeuchar(self.color_g)
+        self.df.writeuchar(self.color_b)
+        self.df.writeuchar(self.color_a)
+        self.df.writeint(self.unknowni1)
+        self.df.writeint(self.unknowni2)
+        self.df.writeint(self.unknowni3)
+        self.df.writeint(self.unknowni4)
+        self.df.writeint(self.tree_set)
+        self.df.writeuchar(self.unknownc5)
+        self.df.writeuchar(self.unknownc6)
+        self.df.writeuchar(self.unknownc7)
+        self.df.writeuchar(self.unknownc8)
+        self.df.writestr(self.unknownstr4)
+        self.df.writestr(self.unknownstr5)
+        self.df.writestr(self.unknownstr6)
+
+        # Squares
+        for row in self.squares:
+            for square in row:
+                square.write(self.df)
+
+        # Scripts
+        for script in self.scripts:
+            script.write(self.df)
+
+        # Any extra data we might have
+        if (len(self.extradata) > 0):
+            self.df.writestr(self.extradata)
+
+        # Clean up
+        self.df.close()
+
+        # Now write out entities, which actually happens in a different file
+        # We open regardless of entities, because we'd have to zero out the
+        # file.
+        self.set_df_ent()
+        self.df_ent.open_w()
+        for entity in self.entities:
+            entity.write(self.df_ent)
+        self.df_ent.close()
+
+    def is_global(self):
+        return (self.unknownc5 == 0 and self.unknownc6 == 0 and self.unknownc7 == 0)
+
+    def is_savegame(self):
+        return not self.is_global()
+        #return (self.unknownc5 != 0 or self.unknownc6 != 0 or self.unknownc7 != 0)

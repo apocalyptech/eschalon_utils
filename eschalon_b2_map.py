@@ -141,6 +141,9 @@ def main(argv=None):
     # Set our filename, if we have it
     if (len(args) > 0):
         options['filename'] = args[0]
+        # TODO: this was here to support me doing mass graphic exports.
+        # remove it?
+        options['filenames'] = args
 
     # Make sure we have a filename still
     if (not options['gui'] and options['filename'] == None):
@@ -153,9 +156,9 @@ def main(argv=None):
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalon.mapgui import MapGUI
-        prog = MapGUI(options, Prefs(), 1)
+        prog = MapGUI(options, Prefs(), 2)
     else:
-        prog = MapCLI(options, Prefs(), 1)
+        prog = MapCLI(options, Prefs(), 2)
 
     # ... and run it
     return prog.run()

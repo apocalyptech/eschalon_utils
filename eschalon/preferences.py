@@ -68,7 +68,7 @@ class Prefs(object):
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
-        for vars in [('mapgui', 'warn_global_map')]:
+        for vars in [('mapgui', 'warn_global_map'), ('mapgui', 'warn_slow_zip')]:
             self.set_bool(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
@@ -118,6 +118,8 @@ class Prefs(object):
             if (name == 'default_zoom'):
                 return 4
             elif (name == 'warn_global_map'):
+                return 'True'
+            elif (name == 'warn_slow_zip'):
                 return 'True'
         elif (cat == 'paths'):
             if (name == 'gamedir_b2'):

@@ -6,4 +6,5 @@ echo "Cleaning package before releasing"
 find . -name .cvsignore -exec rm {} \;
 rm -rf ignore
 rm -f cvsrelease
+rm -f eb2_zipfile_crypt.py
 echo "... done"

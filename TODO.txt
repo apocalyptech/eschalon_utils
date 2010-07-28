@@ -28,6 +28,7 @@ Character GUI
  * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * When copying items, the "condition"-changed indicator doesn't populate
    automatically
+ * XP spinbutton should allow 0
 
 Map GUI
 -------
@@ -77,3 +78,4 @@ Internal
  * SpinButton get_value_as_int() returns signed values when it shouldn't,
    should probably move away from using that entirely.  See:
    https://bugzilla.gnome.org/show_bug.cgi?id=621400
+ * Give the B2/B1 prefs a good testing before release

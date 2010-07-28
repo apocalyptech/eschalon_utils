@@ -91,8 +91,10 @@ class BaseGUI(object):
         self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
         self.prefs_savegame_b2 = self.prefsbuilder.get_object('savegame_b2_chooser')
         self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
+        self.prefs_gamedir_b2 = self.prefsbuilder.get_object('gamedata_b2_chooser')
         self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
         self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
+        self.prefs_warn_slowzip = self.prefsbuilder.get_object('prefs_warn_slowzip')
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
@@ -122,9 +124,8 @@ class BaseGUI(object):
         # Set up prefs rows
         pixbuf = self.prefswindow.render_icon(gtk.STOCK_OPEN, gtk.ICON_SIZE_DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
-        if c.book == 1:
-            pixbuf = self.prefswindow.render_icon(gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
-            store.set(store.append(), 0, pixbuf, 1, 'Map Editor', 2, 1)
+        pixbuf = self.prefswindow.render_icon(gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
+        store.set(store.append(), 0, pixbuf, 1, 'Map Editor', 2, 1)
 
     def item_signals(self):
         """ Returns the signals that need to be attached for items. """
@@ -134,6 +135,7 @@ class BaseGUI(object):
                 'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
                 'on_singleval_changed_float': self.on_singleval_changed_float,
                 'on_dropdown_changed': self.on_dropdown_changed,
+                'on_type_dropdown_changed': self.on_type_dropdown_changed,
                 'on_checkbox_changed': self.on_checkbox_changed,
                 'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
                 'on_modifier_changed': self.on_modifier_changed,
@@ -233,18 +235,23 @@ class BaseGUI(object):
         widget.hide()
         return True
 
+    def gamedir_set_b1(self):
+        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
+
+    def gamedir_set_b2(self):
+        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'datapak')))
+
     def gamedir_set(self, book=None):
         if book is None:
             if c.book == 1:
-                var = 'gamedir'
+                return self.gamedir_set_b1()
             else:
-                var = 'gamedir_b2'
+                return self.gamedir_set_b2()
         else:
             if book == 1:
-                var ='gamedir'
+                return self.gamedir_set_b1()
             else:
-                var = 'gamedir_b2'
-        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', var), 'gfx.pak')))
+                return self.gamedir_set_b2()
 
     def get_current_savegame_dir(self):
         """
@@ -254,6 +261,15 @@ class BaseGUI(object):
             return self.prefsobj.get_str('paths', 'savegames')
         else:
             return self.prefsobj.get_str('paths', 'savegames_b2')
+
+    def get_current_gamedir(self):
+        """
+        Returns the appropriate gamedir, depending on if we're book 1 or 2
+        """
+        if c.book == 1:
+            return self.prefsobj.get_str('paths', 'gamedir')
+        else:
+            return self.prefsobj.get_str('paths', 'gamedir_b2')
 
     def optional_gfx(self):
         if (not self.gamedir_set()):
@@ -278,6 +294,8 @@ class BaseGUI(object):
             alert_changed = True
         else:
             alert_changed = False
+        if (self.prefsobj.get_int('mapgui', 'default_zoom')):
+            self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
         if c.book == 1:
             curdir = self.prefsobj.get_str('paths', 'gamedir')
             self.prefsbuilder.get_object('b1_dir_tab').show()
@@ -286,30 +304,36 @@ class BaseGUI(object):
                 self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
             if (self.prefsobj.get_str('paths', 'gamedir') != ''):
                 self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
-            if (self.prefsobj.get_int('mapgui', 'default_zoom')):
-                self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
         else:
-            curdir = ''
+            curdir = self.prefsobj.get_str('paths', 'gamedir_b2')
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').show()
             if (self.prefsobj.get_str('paths', 'savegames_b2') != ''):
                 self.prefs_savegame_b2.set_current_folder(self.prefsobj.get_str('paths', 'savegames_b2'))
+            if (self.prefsobj.get_str('paths', 'gamedir_b2') != ''):
+                self.prefs_gamedir_b2.set_current_folder(self.prefsobj.get_str('paths', 'gamedir_b2'))
         self.prefs_warn_global.set_active(self.prefsobj.get_bool('mapgui', 'warn_global_map'))
+        self.prefs_warn_slowzip.set_active(self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
         #self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
+            self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
+            self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
+            self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
             if c.book == 1:
                 self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
                 self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
-                self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
-                self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
                 # TODO: Should check for valid dirs here?
                 if (curdir != self.prefsobj.get_str('paths', 'gamedir')):
                     changed = True
             else:
                 self.prefsobj.set_str('paths', 'savegames_b2', self.prefs_savegame_b2.get_filename())
+                self.prefsobj.set_str('paths', 'gamedir_b2', self.prefs_gamedir_b2.get_filename())
+                # TODO: Should check for valid dirs here?
+                if (curdir != self.prefsobj.get_str('paths', 'gamedir_b2')):
+                    changed = True
             self.prefsobj.save()
         return (changed, alert_changed)
 
@@ -376,11 +400,16 @@ class BaseGUI(object):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
 
+    def update_itempic_image(self):
+        if (self.gfx is not None):
+            (obj, origobj) = self.get_comp_objects()
+            self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(obj))
+            #self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
+
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
         self.on_singleval_changed_int(widget)
-        if (self.gfx is not None):
-            self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
+        self.update_itempic_image()
     
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
@@ -390,6 +419,15 @@ class BaseGUI(object):
         if (self.curitemtype != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+    
+    def on_type_dropdown_changed(self, widget):
+        """
+        What to do when the item type dropdown is changed.
+        Only has an actual effect in Book 2, though technically Book 1 will go through
+        the motions as well.
+        """
+        self.on_dropdown_changed(widget)
+        self.update_itempic_image()
 
     def on_checkbox_changed(self, widget):
         """ What to do when a regular checkbox changes. """
@@ -500,7 +538,7 @@ class BaseGUI(object):
         if (item.item_name == '' or self.gfx is None):
             imgwidget.set_from_stock(gtk.STOCK_EDIT, 4)
         else:
-            imgwidget.set_from_pixbuf(self.gfx.get_item(item.pictureid, 26))
+            imgwidget.set_from_pixbuf(self.gfx.get_item(item, 26))
         # to resize buttons, we have to do this:
         tablewidget.check_resize()
         # ... that may be a gtk+ bug, have to submit that to find out.
@@ -689,9 +727,19 @@ class BaseGUI(object):
     def open_itemsel(self, widget):
         if (self.gfx is not None):
             self.imgsel_launch(self.get_widget('pictureid'),
-                    42, 42, 10, 24,
+                    self.gfx.item_dim, self.gfx.item_dim, self.gfx.item_cols, self.gfx.item_rows,
                     self.gfx.get_item,
-                    False)
+                    False, 0,
+                    self.imgsel_item_creation_func)
+
+    def imgsel_item_creation_func(self, id):
+        """
+        Creates a fake Item object with the given picid.
+        """
+        (obj, origobj) = self.get_comp_objects()
+        item = obj.replicate()
+        item.pictureid = id
+        return item
 
     def imgsel_init_bgcolor(self):
         (x, y) = self.imgsel_bgcolor_img.get_size_request()
@@ -714,7 +762,16 @@ class BaseGUI(object):
         self.imgsel_bgcolor_img.set_from_pixbuf(pixbuf)
         self.imgsel_bgcolor_pixbuf = pixbuf
 
-    def imgsel_launch(self, widget, width, height, cols, rows, getfunc, bgcolor_select=True, offset=0):
+    def imgsel_launch(self, widget, width, height, cols, rows, getfunc, bgcolor_select=True, offset=0, getfunc_obj_func=None):
+        """
+        Launches a window to select graphics from one of our files.
+        widget - the spinbutton widget we'll be populating once chosen
+        width/height/cols/rows - dimensions of the graphics file to use
+        getfunc - function (in Gfx) to call to get the individual graphics
+        bgcolor_select - whether to show the background color select area
+        offset - not sure, actually
+        getfunc_req_obj - Does our getfunc require an object, rather than the ID?
+        """
         self.imgsel_init = False
         self.imgsel_clean = []
         self.imgsel_window = self.get_widget('imgselwindow')
@@ -739,6 +796,8 @@ class BaseGUI(object):
         self.imgsel_mousey_prev = -1
         self.imgsel_blank = None
         self.imgsel_getfunc = getfunc
+        self.imgsel_getfunc_obj_func = getfunc_obj_func
+        self.imgsel_getfunc_extraarg = None
         self.imgsel_pixbuffunc = None
         self.imgsel_init_bgcolor()
         req_width = self.imgsel_x+25
@@ -772,7 +831,14 @@ class BaseGUI(object):
         imgnum = (y*self.imgsel_cols)+x
         if (imgnum < 0 or imgnum > (self.imgsel_rows * self.imgsel_cols)):
             return
-        pixbuf = self.imgsel_getfunc(imgnum+self.imgsel_offset, None, True)
+        if self.imgsel_getfunc_obj_func:
+            loadnum = self.imgsel_getfunc_obj_func(imgnum+self.imgsel_offset)
+        else:
+            loadnum = imgnum+self.imgsel_offset
+        if self.imgsel_getfunc_extraarg is not None:
+            pixbuf = self.imgsel_getfunc(loadnum, None, True, self.imgsel_getfunc_extraarg)
+        else:
+            pixbuf = self.imgsel_getfunc(loadnum, None, True)
         if (self.imgsel_pixbuffunc is not None):
             pixbuf = self.imgsel_pixbuffunc(pixbuf)
         if (pixbuf is None):

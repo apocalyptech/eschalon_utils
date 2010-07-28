@@ -1,5 +1,32 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+   Merged Book 2 Map Branch :
+
+      28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+      Integration with czipfile and cleanup of Book 2 preferences
+
+      11 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+      Book 2 Map element lookup screens populate properly
+      Torches and Zappers display in Book 2 maps
+
+      10 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+      Item images populate in the GUI for book 2
+
+      09 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+      Book 2 mapscripts now populate in the GUI
+      Book 2 entities now populate in the GUI
+      Saving of Book 2 maps is supported now
+
+      24 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+      Book 2 Entities get drawn in map GUI
+
+      21 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+      Initial Book 2 Map GUI integration
+
+      18 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
+      Initial Book 2 Map object integration
+
 *eschalon_utils-0.6.3 (09 Jul 2010)
 
    09 Jul 2010; CJ Kucera <pez@apocalyptech.com> :

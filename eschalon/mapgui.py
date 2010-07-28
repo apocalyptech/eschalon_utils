@@ -20,13 +20,16 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
+import csv
 import sys
 import time
 import traceback
+import cStringIO
 from eschalon import constants as c
 from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item
+from eschalon.entity import B1Entity, B2Entity
 
 # Load our GTK modules
 try:
@@ -109,11 +112,11 @@ class MapGUI(BaseGUI):
             }
         }
 
-    def __init__(self, options, prefs):
+    def __init__(self, options, prefs, req_book):
         self.options = options
         self.prefs = prefs
         self.path_init()
-        self.req_book = 1
+        self.req_book = req_book
         c.switch_to_book(self.req_book)
 
         # Call out to the base initialization
@@ -164,6 +167,7 @@ class MapGUI(BaseGUI):
         self.tree_toggle = self.get_widget('tree_button')
         self.objectdecal_toggle = self.get_widget('objectdecal_button')
         self.entity_toggle = self.get_widget('entity_button')
+        self.huge_gfx_toggle = self.get_widget('huge_gfx_button')
         self.barrier_hi_toggle = self.get_widget('barrier_hi_button')
         self.script_hi_toggle = self.get_widget('script_hi_button')
         self.entity_hi_toggle = self.get_widget('entity_hi_button')
@@ -248,7 +252,25 @@ class MapGUI(BaseGUI):
         self.prefs_init(self.prefs)
         if (not self.require_gfx()):
             return
-        self.gfx = Gfx(self.prefs, self.datadir)
+        self.gfx = Gfx.new(self.req_book, self.prefs, self.datadir)
+
+        # Show a slow-loading zip warning if necessary
+        if not self.gfx.fast_zipfile:
+            self.get_widget('render_slowzip_warning').show()
+            self.drawstatuswindow.set_size_request(350, 200)
+            warn = self.prefs.get_bool('mapgui', 'warn_slow_zip')
+            if warn:
+                dialog = self.get_widget('slowzipwarndialog')
+                resp = dialog.run()
+                if(self.get_widget('slowzipwarn_check').get_active() != warn):
+                    self.prefs.set_bool('mapgui', 'warn_slow_zip', self.get_widget('slowzipwarn_check').get_active())
+                    self.prefs.save()
+                dialog.hide()
+                if resp != gtk.RESPONSE_OK:
+                    sys.exit(1)
+
+        # Now that we're sure we have a data dir, load in our entities
+        self.populate_entities()
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
@@ -262,7 +284,7 @@ class MapGUI(BaseGUI):
         self.item_gui_finish(c.book)
 
         # Now show or hide form elements depending on the book version
-        for item_class in (B1Item, B2Item):
+        for item_class in (B1Item, B2Item, B1Entity, B2Entity):
             self.set_book_elem_visibility(item_class, item_class.book == c.book)
 
         # Dictionary of signals.
@@ -369,6 +391,9 @@ class MapGUI(BaseGUI):
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
+        if self.req_book == 2:
+            self.zoom_levels.append(64)
+        self.get_widget('map_zoom_adj').set_upper(len(self.zoom_levels)-1)
         default_zoom = self.prefs.get_int('mapgui', 'default_zoom')-1
         if (default_zoom >= len(self.zoom_levels)):
             default_zoom = len(self.zoom_levels)-1
@@ -461,10 +486,40 @@ class MapGUI(BaseGUI):
 
         # Now add an idle_timeout to initialize the map - this is how our
         # initial load happens
+        #gobject.idle_add(self.export_map_pngs)
         gobject.idle_add(self.draw_map)
 
         # ... and get into the main gtk loop
         gtk.main()
+
+    def populate_entities(self):
+        """
+        Populates our entities, if need be.
+        (Currently only does things for Book 2, since they can be sourced from
+        a CSV file)
+        """
+        # x / y sizing
+        # 0 / 0 1024x1024, sixteen to a row
+        # 0 / 32 1024x1024, sixteen to a row
+        # 32 / 0 1024x1024, ten to a row
+        # 32 / 32 2048x2048, twenty-one to a row (with some left over)
+        # 64 / 64 2048x2048, sixteen to a row
+        if self.req_book != 2:
+            return
+        reader = csv.DictReader(cStringIO.StringIO(self.gfx.readfile('entities.csv', 'data')))
+        for row in reader:
+            xoff = int(row['Xoff'])
+            yoff = int(row['Yoff'])
+            width = 64 + xoff
+            height = 64 + yoff
+            c.entitytable[int(row['ID'])] = c.EntHelper(row['Name'],
+                int(row['HP']),
+                '%s.png' % (row['file']),
+                int(row['Dirs']),
+                int(row['Align']),
+                width,
+                height,
+                int(row['Frame']))
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -597,7 +652,7 @@ class MapGUI(BaseGUI):
         # Figure out what our initial path should be
         path = ''
         if (self.map == None):
-            path = self.prefs.get_str('paths', 'savegames')
+            path = self.get_current_savegame_dir()
         else:
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
 
@@ -650,7 +705,7 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map(filename)
+            map = Map.load(filename, None, self.req_book)
             map.read()
         except LoadException, e:
             print e
@@ -683,7 +738,7 @@ class MapGUI(BaseGUI):
         # If we appear to be editing a global map file and haven't
         # been told otherwise, show a dialog warning the user
         warn = self.prefs.get_bool('mapgui', 'warn_global_map')
-        if (not map.is_savegame() and warn and filename.find(self.prefs.get_str('paths', 'gamedir')) != -1):
+        if (not map.is_savegame() and warn and filename.find(self.get_current_gamedir()) != -1):
             self.globalwarn_check.set_active(warn)
             resp = self.globalwarndialog.run()
             self.globalwarndialog.hide()
@@ -874,11 +929,18 @@ class MapGUI(BaseGUI):
         self.on_script_int_changed(widget)
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
-        otherlabel = self.get_widget('other_%d_label' % (int(page)))
-        if (widget.get_value_as_int() == 99):
-            otherlabel.set_text('Slider Combination:')
+        if c.book == 1:
+            otherlabel = self.get_widget('other_%d_label' % (int(page)))
+            if (widget.get_value_as_int() == 99):
+                otherlabel.set_text('Slider Combination:')
+            else:
+                otherlabel.set_markup('<i>Other Value (0-3):</i>')
         else:
-            otherlabel.set_markup('<i>Other Value (0-3):</i>')
+            sliderloot = self.get_widget('slider_loot_%d_label' % (int(page)))
+            if (widget.get_value_as_int() == 12):
+                sliderloot.set_text('Slider Combination:')
+            else:
+                sliderloot.set_markup('Loot Level (0-10):')
 
     def update_ent_square_img(self):
         entity = self.map.squares[self.sq_y][self.sq_x].entity
@@ -976,7 +1038,7 @@ class MapGUI(BaseGUI):
     def on_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        (pixbuf, height) = self.gfx.get_object(widget.get_value_as_int(), None, True)
+        (pixbuf, height, offset) = self.gfx.get_object(widget.get_value_as_int(), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -985,7 +1047,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        (pixbuf, height) = self.gfx.get_object(widget.get_value_as_int(), None, True)
+        (pixbuf, height, offset) = self.gfx.get_object(widget.get_value_as_int(), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1142,6 +1204,10 @@ class MapGUI(BaseGUI):
         self.z_3xheight = self.z_height*3
         self.z_4xheight = self.z_height*4
         self.z_5xheight = self.z_height*5
+
+        # Our squarebuf size (the one we draw squares onto) may vary based on book
+        self.z_squarebuf_w = int(self.z_width * self.gfx.squarebuf_mult)
+        self.z_squarebuf_offset = int((self.z_squarebuf_w - self.z_width)/2)
 
         # Clean up our zoom icons
         if (scalenum == 0):
@@ -1368,13 +1434,13 @@ class MapGUI(BaseGUI):
         table.attach(align, 2, 3, row, row+1)
 
     def input_uchar(self, page, table, row, name, text, tooltip=None, signal=None):
-        self.input_spin(page, table, row, name, text, 255, tooltip, signal)
+        self.input_spin(page, table, row, name, text, 0xFF, tooltip, signal)
 
     def input_short(self, page, table, row, name, text, tooltip=None):
-        self.input_spin(page, table, row, name, text, 65535, tooltip)
+        self.input_spin(page, table, row, name, text, 0xFFFF, tooltip)
 
     def input_int(self, page, table, row, name, text, tooltip=None):
-        self.input_spin(page, table, row, name, text, 4294967295, tooltip)
+        self.input_spin(page, table, row, name, text, 0xFFFFFFFF, tooltip)
 
     def input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
         self.input_label(page, table, row, name, text)
@@ -1574,16 +1640,54 @@ class MapGUI(BaseGUI):
         else:
             self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
-        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock', self.on_locklevel_changed)
-        self.input_uchar(curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
-
-        # If we ever get more flags, this'll have to change
-        if (square.scripts[curpages].flags & ~0x40 == 0):
-            self.input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+        if c.book == 1:
+            locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
         else:
-            self.input_short(curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+            locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
+        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
 
-        self.input_uchar(curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+        if c.book == 1:
+            # Book 1-specific values
+            self.input_uchar(curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+
+            # If we ever get more flags, this'll have to change
+            if (square.scripts[curpages].flags & ~0x40 == 0):
+                self.input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+            else:
+                self.input_short(curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+
+            self.input_uchar(curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+        else:
+            # Book 2-specific values
+            self.input_short(curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
+            self.input_uchar(curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
+
+            # Condition is special, we're using an hbox here
+            scr = self.map.squares[self.sq_y][self.sq_x].scripts[curpages]
+            self.input_label(curpages, binput, 9, 'cur_condition', 'Condition')
+            hbox = gtk.HBox()
+            curentry = gtk.SpinButton()
+            self.register_widget('cur_condition_%d' % (curpages), curentry)
+            curentry.set_range(0, 0xFFFFFFFF)
+            curentry.set_adjustment(gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
+            maxlabel = gtk.Label('out of:')
+            self.register_widget('max_condition_%d_label' % (curpages), maxlabel)
+            maxentry = gtk.SpinButton()
+            self.register_widget('max_condition_%d' % (curpages), maxentry)
+            maxentry.set_range(0, 0xFFFFFFFF)
+            maxentry.set_adjustment(gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
+            hbox.add(curentry)
+            hbox.add(maxlabel)
+            hbox.add(maxentry)
+            if (script is not None):
+                curentry.set_value(scr.cur_condition)
+                maxentry.set_value(scr.max_condition)
+            curentry.connect('value-changed', self.on_script_int_changed)
+            maxentry.connect('value-changed', self.on_script_int_changed)
+            align = gtk.Alignment(0, 0.5, 0, 1)
+            align.add(hbox)
+            align.show_all()
+            binput.attach(align, 2, 3, 9, 10)
 
         # Contents
         contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
@@ -1618,11 +1722,12 @@ class MapGUI(BaseGUI):
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
-        self.input_short(curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
-        self.input_short(curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
-        self.input_int(curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
-        self.input_int(curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
-        self.input_int(curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
+        if c.book == 1:
+            self.input_short(curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
+            self.input_short(curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
+            self.input_int(curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
+            self.input_int(curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
+            self.input_int(curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()
@@ -1688,7 +1793,7 @@ class MapGUI(BaseGUI):
         Script object and handles adding it to the notebook.
         """
         square = self.map.squares[self.sq_y][self.sq_x]
-        script = Mapscript(self.map.is_savegame())
+        script = Mapscript.new(c.book, self.map.is_savegame())
         script.tozero(self.sq_x, self.sq_y)
         self.map.scripts.append(script)
         square.addscript(script)
@@ -1713,7 +1818,7 @@ class MapGUI(BaseGUI):
         square = self.map.squares[self.sq_y][self.sq_x]
         if (square.entity is None):
             # create a new entity and toggle
-            ent = Entity(self.map.is_savegame())
+            ent = Entity.new(c.book, self.map.is_savegame())
             ent.tozero(self.sq_x, self.sq_y)
             self.map.entities.append(ent)
             square.addentity(ent)
@@ -1844,10 +1949,13 @@ class MapGUI(BaseGUI):
             self.get_widget('friendly').set_value(square.entity.friendly)
             self.get_widget('health').set_value(square.entity.health)
             self.get_widget('unknownc1').set_value(square.entity.unknownc1)
-            self.get_widget('unknownc2').set_value(square.entity.unknownc2)
             self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
-            self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
             self.get_widget('initial_loc').set_value(square.entity.initial_loc)
+            if c.book == 1:
+                self.get_widget('unknownc2').set_value(square.entity.unknownc2)
+                self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
+            else:
+                self.get_widget('movement').set_value(square.entity.movement)
 
     def update_object_note(self):
         """
@@ -1875,37 +1983,37 @@ class MapGUI(BaseGUI):
     def open_floorsel(self, widget):
         """ Show the floor selection window. """
         self.imgsel_launch(self.get_widget('floorimg'),
-                52, 26, 6, 32,
+                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 
     def open_draw_floorsel(self, widget):
         """ Show the floor selection window for our drawing widget. """
         self.imgsel_launch(self.draw_floor_spin,
-                52, 26, 6, 32,
+                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 
     def open_decalsel(self, widget):
         """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
-                52, 26, 6, 32,
+                self.gfx.square_width, self.gfx.square_height, self.gfx.decal_cols, self.gfx.decal_rows,
                 self.gfx.get_decal, True, 1)
 
     def open_draw_decalsel(self, widget):
         """ Show the decal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_decal_spin,
-                52, 26, 6, 32,
+                self.gfx.square_width, self.gfx.square_height, self.gfx.decal_cols, self.gfx.decal_rows,
                 self.gfx.get_decal, True, 1)
 
     def open_walldecalsel(self, widget):
         """ Show the wall decal selection window. """
         self.imgsel_launch(self.get_widget('walldecalimg'),
-                52, 78, 6, 10,
+                self.gfx.square_width, self.gfx.square_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
                 self.gfx.get_object_decal, True, 1)
 
     def open_draw_walldecalsel(self, widget):
         """ Show the walldecal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_walldecal_spin,
-                52, 78, 6, 10,
+                self.gfx.square_width, self.gfx.square_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
                 self.gfx.get_object_decal, True, 1)
 
     def objsel_fix_pixbuf(self, pixbuf):
@@ -1919,7 +2027,21 @@ class MapGUI(BaseGUI):
         to reduce code duplication here.  This should probably be
         in a class, somehow, instead of a dict.
         """
+        if c.book == 1:
+            self.get_widget('imgsel_scroll1').show()
+            letters = ['d', 'c', 'b', 'a']
+            self.get_widget('objsel_a_title_label').set_label('Set A (misc)')
+            self.get_widget('objsel_b_title_label').set_label('Set B (misc)')
+            self.get_widget('objsel_c_title_label').set_label('Set C (walls)')
+            self.get_widget('objsel_d_title_label').set_label('Set D (trees)')
+        else:
+            self.get_widget('imgsel_scroll1').hide()
+            letters = ['c', 'd', 'a']
+            self.get_widget('objsel_a_title_label').set_label('Set A (misc)')
+            self.get_widget('objsel_c_title_label').set_label('Set B (walls)')
+            self.get_widget('objsel_d_title_label').set_label('Set C (trees)')
         self.imgsel_window = self.get_widget('objselwindow')
+        self.imgsel_window.set_size_request((self.gfx.obj_a_width*self.gfx.obj_a_cols)+60, 600)
         if (spinwidget is None):
             self.imgsel_widget = self.get_widget('wallimg')
         else:
@@ -1928,6 +2050,8 @@ class MapGUI(BaseGUI):
         self.imgsel_bgcolor_img = self.get_widget('objsel_bgcolor_img')
         self.imgsel_bgcolor_event = self.get_widget('objsel_bgcolor_event')
         self.imgsel_getfunc = self.gfx.get_object
+        self.imgsel_getfunc_obj_func = None
+        self.imgsel_getfunc_extraarg = self.map.tree_set
         self.imgsel_pixbuffunc = self.objsel_fix_pixbuf
         self.imgsel_init_bgcolor()
         self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
@@ -1936,79 +2060,81 @@ class MapGUI(BaseGUI):
                 'init': False,
                 'clean': [],
                 'area': self.get_widget('objsel_a_area'),
-                'width': 52,
-                'height': 52,
-                'cols': 6,
-                'rows': 16,
-                'x': 52*6,
-                'y': 52*16,
-                'offset': 1,
+                'width': self.gfx.obj_a_width,
+                'height': self.gfx.obj_a_height,
+                'cols': self.gfx.obj_a_cols,
+                'rows': self.gfx.obj_a_rows,
+                'x': self.gfx.obj_a_width*self.gfx.obj_a_cols,
+                'y': self.gfx.obj_a_height*self.gfx.obj_a_rows,
+                'offset': self.gfx.obj_a_offset,
                 'mousex': -1,
                 'mousey': -1,
                 'mousex_prev': -1,
                 'mousey_prev': -1,
                 'blank': None,
+                'page': 0,
             }
-        self.objsel_panes['b'] = {
-                'init': False,
-                'clean': [],
-                'area': self.get_widget('objsel_b_area'),
-                'width': 52,
-                'height': 78,
-                'cols': 6,
-                'rows': 10,
-                'x': 52*6,
-                'y': 78*10,
-                'offset': 101,
-                'mousex': -1,
-                'mousey': -1,
-                'mousex_prev': -1,
-                'mousey_prev': -1,
-                'blank': None,
-            }
+        if c.book == 1:
+            self.objsel_panes['b'] = {
+                    'init': False,
+                    'clean': [],
+                    'area': self.get_widget('objsel_b_area'),
+                    'width': self.gfx.obj_b_width,
+                    'height': self.gfx.obj_b_height,
+                    'cols': self.gfx.obj_b_cols,
+                    'rows': self.gfx.obj_b_rows,
+                    'x': self.gfx.obj_b_width*self.gfx.obj_b_cols,
+                    'y': self.gfx.obj_b_height*self.gfx.obj_b_rows,
+                    'offset': self.gfx.obj_b_offset,
+                    'mousex': -1,
+                    'mousey': -1,
+                    'mousex_prev': -1,
+                    'mousey_prev': -1,
+                    'blank': None,
+                    'page': 1,
+                }
         self.objsel_panes['c'] = {
                 'init': False,
                 'clean': [],
                 'area': self.get_widget('objsel_c_area'),
-                'width': 52,
-                'height': 78,
-                'cols': 6,
-                'rows': 10,
-                'x': 52*6,
-                'y': 78*10,
-                'offset': 161,
+                'width': self.gfx.obj_c_width,
+                'height': self.gfx.obj_c_height,
+                'cols': self.gfx.obj_c_cols,
+                'rows': self.gfx.obj_c_rows,
+                'x': self.gfx.obj_c_width*self.gfx.obj_c_cols,
+                'y': self.gfx.obj_c_height*self.gfx.obj_c_rows,
+                'offset': self.gfx.obj_c_offset,
                 'mousex': -1,
                 'mousey': -1,
                 'mousex_prev': -1,
                 'mousey_prev': -1,
                 'blank': None,
+                'page': 2,
             }
         self.objsel_panes['d'] = {
                 'init': False,
                 'clean': [],
                 'area': self.get_widget('objsel_d_area'),
-                'width': 52,
-                'height': 130,
-                'cols': 5,
-                'rows': 1,
-                'x': 52*5,
-                'y': 130,
-                'offset': 251,
+                'width': self.gfx.obj_d_width,
+                'height': self.gfx.obj_d_height,
+                'cols': self.gfx.obj_d_cols,
+                'rows': self.gfx.obj_d_rows,
+                'x': self.gfx.obj_d_width*self.gfx.obj_d_cols,
+                'y': self.gfx.obj_d_height*self.gfx.obj_d_rows,
+                'offset': self.gfx.obj_d_offset,
                 'mousex': -1,
                 'mousey': -1,
                 'mousex_prev': -1,
                 'mousey_prev': -1,
                 'blank': None,
+                'page': 3,
             }
         # Set initial page
-        curpage = 3
-        letters = ['d', 'c', 'b', 'a']
+        curpage = 0
         for letter in letters:
             if (self.imgsel_widget.get_value_as_int() >= self.objsel_panes[letter]['offset']):
+                curpage = self.objsel_panes[letter]['page']
                 break
-            curpage -= 1
-        if (curpage < 0):
-            curpage = 0
         self.objsel_book.set_current_page(curpage)
         self.objsel_current = ''
         #self.load_objsel_vars(self.get_widget('objsel_%s_area' % (letters[3-curpage])))
@@ -2126,7 +2252,7 @@ class MapGUI(BaseGUI):
             self.diff_x = 0
             self.diff_y = 0
             self.maparea.window.set_cursor(self.cursor_move_drag)
-        elif (action == self.ACTION_EDIT):
+        if (action == self.ACTION_EDIT):
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
                     self.undo.store(self.sq_x, self.sq_y)
@@ -2139,6 +2265,30 @@ class MapGUI(BaseGUI):
         elif (action == self.ACTION_ERASE):
             self.erasing = True
             self.action_erase_square(self.sq_x, self.sq_y)
+        #else:
+        #    # Book 2 stupid reporting (for now)
+        #    square = self.map.squares[self.sq_y][self.sq_x]
+        #    if square:
+        #        print "Square at (%d, %d)" % (self.sq_x, self.sq_y)
+        #        print "   Barrier Flag: %d" % (square.wall)
+        #        print "   Floor: %d" % (square.floorimg)
+        #        print "   Decal: %d" % (square.decalimg)
+        #        print "   Wall: %d" % (square.wallimg)
+        #        print "   Wall Decal: %d" % (square.walldecalimg)
+        #        print "   Unknown: %d" % (square.unknown5)
+        #        print "   Script ID: %d" % (square.scriptid)
+        #        if len(square.scripts) > 0:
+        #            for (i, script) in enumerate(square.scripts):
+        #                print "   Script %d:" % (i+1)
+        #                print script.display()
+        #                print
+        #        elif square.scriptid != 0:
+        #            print "   No script object!"
+        #        if square.entity:
+        #            print
+        #            print "   Entity:"
+        #            print square.entity.display()
+        #        print
 
     def on_released(self, widget=None, event=None):
         if (self.dragging or self.drawing or self.erasing):
@@ -2350,7 +2500,7 @@ class MapGUI(BaseGUI):
 
     def draw_check_set_to(self, status):
         return self.mass_update_checkboxes(status, [self.floor_toggle, self.decal_toggle, self.object_toggle,
-            self.wall_toggle, self.tree_toggle, self.objectdecal_toggle, self.entity_toggle])
+            self.wall_toggle, self.tree_toggle, self.objectdecal_toggle, self.entity_toggle, self.huge_gfx_toggle])
 
     def draw_check_all(self, widget):
         self.draw_check_set_to(True)
@@ -2395,11 +2545,19 @@ class MapGUI(BaseGUI):
             pointer = (1, 1, 1, 0.5)
 
         if (square.entity is not None):
-            entity = True
-            if (square.entity.friendly == 1):
-                entity = (0, 1, 0, 0.5)
+            if self.req_book == 1 or self.map.is_savegame():
+                if (square.entity.friendly == 1):
+                    entity = (0, 1, 0, 0.5)
+                else:
+                    entity = (1, 0, 0, 0.5)
             else:
-                entity = (1, 0, 0, 0.5)
+                if square.entity.entid in c.entitytable:
+                    if c.entitytable[square.entity.entid].friendly == 1:
+                        entity = (0, 1, 0, 0.5)
+                    else:
+                        entity = (1, 0, 0, 0.5)
+                else:
+                    entity = (1, 0, 0, 0.5)
 
         if (square.scriptid != 0 and len(square.scripts) > 0):
             script = (1, 1, 0, 0.5)
@@ -2452,7 +2610,7 @@ class MapGUI(BaseGUI):
         if (do_main_paint and usecache and not pointer):
             main_ctx.save()
             main_ctx.set_operator(cairo.OPERATOR_SOURCE)
-            main_ctx.rectangle(x1, top, self.z_width, height)
+            main_ctx.rectangle(x1-self.z_squarebuf_offset, top, self.z_squarebuf_w, height)
             main_ctx.set_source_surface(self.guicache, 0, 0)
             main_ctx.fill()
             main_ctx.restore()
@@ -2476,7 +2634,7 @@ class MapGUI(BaseGUI):
         if (self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
                 sq_ctx.paint()
                 drawn = True
 
@@ -2484,40 +2642,68 @@ class MapGUI(BaseGUI):
         if (self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_4xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
                 sq_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
-                if (square.decalimg == 52):
+                if ((self.req_book == 1 and square.decalimg == 52) or
+                    (self.req_book == 2 and square.decalimg == 101)):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
-                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)
+                        # TODO: in book 2, campfire wall objects will overwrite some of our campfire flame
+                        # (note that the campfire wall object will NOT provide an in-game flame on its own)
+                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
                         yoffset = int(self.z_height*0.4)
                         sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
                         sq_ctx.paint()
 
-        # Draw the object
         wallid = square.wallimg
-        if (self.object_toggle.get_active() and wallid<161):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+        try:
+            walltype = self.gfx.wall_types[wallid]
+        except KeyError:
+            # This should only happen for Book 2 maps, and should only
+            # denote that it's one of the gigantic graphic maps.
+            print 'Unknown wall type %d' % (wallid)
+            walltype = self.gfx.TYPE_NONE
+
+        # Draw the object
+        if (self.object_toggle.get_active() and walltype == self.gfx.TYPE_OBJ):
+            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                 sq_ctx.paint()
                 drawn = True
+
+        # Draw a zapper
+        if (self.req_book == 2 and self.object_toggle.get_active() and square.scriptid == 19):
+            pixbuf = self.gfx.get_zapper(self.curzoom)
+            if pixbuf is not None:
+                xoffset = self.z_squarebuf_offset
+                yoffset = 0
+                sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
+                sq_ctx.paint()
 
         # Draw walls
-        if (self.wall_toggle.get_active() and wallid<251 and wallid>160):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+        if (self.wall_toggle.get_active() and walltype == self.gfx.TYPE_WALL):
+            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                 sq_ctx.paint()
                 drawn = True
+                # TODO: this object should really be a TYPE_OBJ instead...
+                if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+                    pixbuf = self.gfx.get_flame(self.curzoom)
+                    if (pixbuf is not None):
+                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
+                        yoffset = int(self.z_height*0.3)
+                        sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
+                        sq_ctx.paint()
 
         # Draw trees
-        if (self.tree_toggle.get_active() and wallid>250):
-            (pixbuf, pixheight) = self.gfx.get_object(wallid, self.curzoom)
+        if (self.tree_toggle.get_active() and walltype == self.gfx.TYPE_TREE):
+            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.map.tree_set)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_height*(4-pixheight))
+                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                 sq_ctx.paint()
                 drawn = True
 
@@ -2525,19 +2711,22 @@ class MapGUI(BaseGUI):
         if (self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, 0, self.z_2xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_2xheight)
                 sq_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
-                if (square.walldecalimg == 17 or square.walldecalimg == 18):
+                if ((self.req_book == 1 and (square.walldecalimg == 17 or square.walldecalimg == 18)) or
+                    (self.req_book == 2 and (square.walldecalimg == 2 or square.walldecalimg == 4))):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         xoffset = int(pixbuf.get_width()*0.3)
                         yoffset = int(self.z_height/4)
-                        if (square.walldecalimg == 17):
-                            sq_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset, self.z_2xheight+yoffset)
+                        if (self.req_book == 2):
+                            yoffset -= 1
+                        if (square.walldecalimg == 17 or square.walldecalimg == 2):
+                            sq_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset+self.z_squarebuf_offset, self.z_2xheight+yoffset)
                         else:
-                            sq_ctx.set_source_surface(pixbuf, xoffset, self.z_2xheight+yoffset)
+                            sq_ctx.set_source_surface(pixbuf, xoffset+self.z_squarebuf_offset, self.z_2xheight+yoffset)
                         sq_ctx.paint()
 
         # Draw the entity if needed
@@ -2549,15 +2738,21 @@ class MapGUI(BaseGUI):
         if (square.entity is not None and self.entity_toggle.get_active()):
             ent_img = self.gfx.get_entity(square.entity.entid, square.entity.direction, self.curzoom)
             if (ent_img is not None):
-                if (ent_img.get_width() > self.curzoom):
+                if (ent_img.get_width() > self.z_squarebuf_w):
+                    # This whole bit here will copy our squarebuf into a larger surface, centered
+                    # (so, transparent on the side)
                     self.ent_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
                     self.ent_ctx = cairo.Context(self.ent_surf)
-                    op_xoffset = int((ent_img.get_width()-self.curzoom)/2)
+                    op_xoffset = int((ent_img.get_width()-self.z_squarebuf_w)/2)
                     self.ent_ctx.set_source_surface(op_surf, op_xoffset, 0)
                     self.ent_ctx.paint()
                     op_surf = self.ent_surf
                     op_ctx = self.ent_ctx
-                op_ctx.set_source_surface(ent_img, 0, self.z_5xheight-ent_img.get_height())
+                if (op_surf.get_width() > ent_img.get_width()):
+                    offset = int((op_surf.get_width() - ent_img.get_width())/2)
+                else:
+                    offset = 0
+                op_ctx.set_source_surface(ent_img, offset, self.z_5xheight-ent_img.get_height())
                 op_ctx.paint()
                 drawn = True
 
@@ -2593,14 +2788,39 @@ class MapGUI(BaseGUI):
             if (usecache):
                 # We only get here when we're the pointer
                 self.composite_simple(op_ctx, op_surf, pointer)
-                main_ctx.set_source_surface(op_surf, x1-op_xoffset, top-buftop)
+                main_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_squarebuf_offset, top-buftop)
                 main_ctx.paint()
             else:
                 # This is only for the initial map population
-                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset, top-buftop)
+                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_squarebuf_offset, top-buftop)
                 self.guicache_ctx.paint()
 
-        return (op_surf, op_xoffset)
+        return (op_surf, op_xoffset+self.z_squarebuf_offset)
+
+    def draw_huge_gfx(self, square):
+        """
+        Draws a "huge" graphic image on our map (like Hammerlorne, etc).
+        Only used in Book 2.
+        """
+        if square.scriptid == 21 and len(square.scripts) > 0:
+            img = self.gfx.get_huge_gfx(square.scripts[0].extratext, self.curzoom)
+            if img:
+                #img.write_to_png('test_%s' % (square.scripts[0].extratext))
+
+                x = square.x
+                y = square.y
+                # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
+                # (for instance, when initially loading the map)
+                if (y % 2 == 1):
+                    xpad = self.z_halfwidth
+                else:
+                    xpad = 0
+
+                xstart = (x*self.z_width)+xpad - int(img.get_width()/2) + self.z_height
+                ystart = y*self.z_halfheight + self.z_height
+
+                self.guicache_ctx.set_source_surface(img, xstart, ystart-img.get_height())
+                self.guicache_ctx.paint()
 
     def update_composite(self):
 
@@ -2618,28 +2838,56 @@ class MapGUI(BaseGUI):
             pixbuf = self.gfx.get_decal(square.decalimg, 52, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-            if (square.decalimg == 52):
+            if ((self.req_book == 1 and square.decalimg == 52) or
+                (self.req_book == 2 and square.decalimg == 101)):
                 pixbuf = self.gfx.get_flame(52, True)
                 if (pixbuf is not None):
                     pixbuf.composite(comp_pixbuf, 17, 88, 18, 30, 17, 88, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.wallimg > 0):
-            (pixbuf, pixheight) = self.gfx.get_object(square.wallimg, 52, True)
+            (pixbuf, pixheight, offset) = self.gfx.get_object(square.wallimg, 52, True, self.map.tree_set)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 26*(4-pixheight), 52, 26*(pixheight+1), 0, 26*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+            if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+                pixbuf = self.gfx.get_flame(52, True)
+                if (pixbuf is not None):
+                    pixbuf.composite(comp_pixbuf, 17, 35, 18, 30, 17, 35, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.walldecalimg > 0):
             pixbuf = self.gfx.get_object_decal(square.walldecalimg, 52, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf, 0, 52, 52, 78, 0, 52, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-            if (square.walldecalimg == 17 or square.walldecalimg == 18):
+            if ((self.req_book == 1 and (square.walldecalimg == 17 or square.walldecalimg == 18)) or
+                (self.req_book == 2 and (square.walldecalimg == 2 or square.walldecalimg == 4))):
                 pixbuf = self.gfx.get_flame(52, True)
                 if (pixbuf is not None):
                     if (square.walldecalimg == 17):
+                        pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                    elif (square.walldecalimg == 18):
+                        pixbuf.composite(comp_pixbuf, 5, 58, 18, 30, 5, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                    elif (square.walldecalimg == 2):
                         pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
                     else:
                         pixbuf.composite(comp_pixbuf, 5, 58, 18, 30, 5, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
+
+    def export_map_pngs(self):
+        """
+        A little sub to loop through and write out a PNG of each mapname
+        """
+        # TODO: keep?  throw away?
+        self.mapinit = True
+        self.set_zoom_vars(1)
+        print self.options
+        for file in self.options['filenames']:
+            self.load_from_file(file)
+            #self.draw_map()
+            (pngfile, junk) = file.split('.')
+            pngfile = '%s.png' % (pngfile)
+            self.guicache.write_to_png(pngfile)
+        import sys
+        sys.exit(0)
+        return False
 
     def draw_map(self):
         """
@@ -2664,7 +2912,7 @@ class MapGUI(BaseGUI):
         self.ctx.set_source_rgba(0, 0, 0, 1)
         self.ctx.paint()
 
-        self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
         self.squarebuf_ctx = cairo.Context(self.squarebuf)
         self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
         self.guicache_ctx = cairo.Context(self.guicache)
@@ -2688,7 +2936,7 @@ class MapGUI(BaseGUI):
             self.erase_barrier.set_sensitive(False)
 
         # Set up a "blank" tile to draw everything else on top of
-        self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
         sq_ctx = cairo.Context(self.blanksquare)
         sq_ctx.save()
         sq_ctx.set_operator(cairo.OPERATOR_CLEAR)
@@ -2696,20 +2944,26 @@ class MapGUI(BaseGUI):
         sq_ctx.restore()
 
         # Set up a default square with just a black tile, for otherwise-empty tiles
-        self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width, self.z_5xheight)
+        self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
         basic_ctx = cairo.Context(self.basicsquare)
         basic_ctx.set_source_rgba(0, 0, 0, 1)
-        basic_ctx.move_to(0, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_halfwidth, self.z_4xheight)
-        basic_ctx.line_to(self.z_width, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_halfwidth, self.z_5xheight)
+        basic_ctx.move_to(self.z_squarebuf_offset+0, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_squarebuf_offset+self.z_halfwidth, self.z_4xheight)
+        basic_ctx.line_to(self.z_squarebuf_offset+self.z_width, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_squarebuf_offset+self.z_halfwidth, self.z_5xheight)
         basic_ctx.close_path()
         basic_ctx.fill()
 
         # Draw the squares
         for y in range(len(self.map.squares)):
+            huge_gfxes = []
             for x in range(len(self.map.squares[y])):
                 self.draw_square(x, y)
+                if self.map.squares[y][x].scriptid == 21:
+                    huge_gfxes.append(self.map.squares[y][x])
+            if self.req_book == 2 and self.huge_gfx_toggle.get_active():
+                for square in huge_gfxes:
+                    self.draw_huge_gfx(square)
             self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
             while gtk.events_pending():
                 gtk.main_iteration()
