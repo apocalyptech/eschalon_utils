@@ -142,6 +142,8 @@ class MainGUI(BaseGUI):
         self.optional_gfx()
         if self.gamedir_set():
             self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
+        else:
+            self.gfx = None
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
