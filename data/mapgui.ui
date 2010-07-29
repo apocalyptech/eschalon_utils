@@ -1135,6 +1135,25 @@
                                                 <property name="position">4</property>
                                               </packing>
                                             </child>
+                                            <child>
+                                              <object class="GtkAlignment" id="alignment54">
+                                                <property name="visible">True</property>
+                                                <property name="left_padding">10</property>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="decalpref_snow">
+                                                    <property name="label" translatable="yes">Snow</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can_focus">True</property>
+                                                    <property name="receives_default">False</property>
+                                                    <property name="draw_indicator">True</property>
+                                                    <property name="group">decalpref_grass</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="position">5</property>
+                                              </packing>
+                                            </child>
                                           </object>
                                         </child>
                                       </object>

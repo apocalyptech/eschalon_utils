@@ -260,7 +260,8 @@ class B2Entity(Entity):
     """
 
     book = 2
-    form_elements = [ 'movement_label', 'movement' ]
+    form_elements = [ 'movement_label', 'movement',
+            'decalpref_snow' ]
 
     def __init__(self, savegame):
         super(B2Entity, self).__init__(savegame)
