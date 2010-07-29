@@ -182,7 +182,9 @@ class B1Entity(Entity):
 
     book = 1
     form_elements = [ 'unknownc1_label', 'unknownc1',
-            'ent_zero2_label', 'ent_zero2'
+            'ent_zero2_label', 'ent_zero2',
+            'wall_01_label', 'wall_01',
+            'wall_04_label', 'wall_04'
             ]
 
     def __init__(self, savegame):
@@ -261,7 +263,8 @@ class B2Entity(Entity):
 
     book = 2
     form_elements = [ 'movement_label', 'movement',
-            'decalpref_snow' ]
+            'decalpref_snow',
+            'b2_walltype_label', 'b2_walltype' ]
 
     def __init__(self, savegame):
         super(B2Entity, self).__init__(savegame)

@@ -319,6 +319,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
                 'on_direction_changed': self.on_direction_changed,
                 'on_map_flag_changed': self.on_map_flag_changed,
+                'on_b2_walltype_changed': self.on_b2_walltype_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
@@ -1511,6 +1512,13 @@ class MapGUI(BaseGUI):
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         self.on_flag_changed(name, flagval, widget, script)
 
+    def on_b2_walltype_changed(self, widget):
+        """
+        What to do when our Book 2 walltype dropdown is changed.
+        """
+        model = widget.get_model()
+        self.map.squares[self.sq_y][self.sq_x].wall = model[widget.get_active()][1]
+
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
@@ -1876,25 +1884,47 @@ class MapGUI(BaseGUI):
         self.get_widget('square_notebook').set_current_page(0)
 
         # First the main items.  Wall stuff first.
-        wallflags = ( 0x01, 0x04 )
-        flagstotal = sum(map(int, wallflags))
-        if (square.wall & ~flagstotal == 0):
-            self.get_widget('wall_label').hide()
-            self.get_widget('wall').hide()
-            for flag in wallflags:
-                self.get_widget('wall_%02X_label' % flag).show()
-                self.get_widget('wall_%02X' % flag).show()
-                if (square.wall & flag == flag):
-                    self.get_widget('wall_%02X' % flag).set_active(True)
-                else:
-                    self.get_widget('wall_%02X' % flag).set_active(False)
+        # Note that we're handling B1 and B2 walls differently.  Should
+        # maybe just change everything to be the dropdown like in B2...
+        # TODO: ^
+        if c.book == 1:
+            wallflags = ( 0x01, 0x04 )
+            flagstotal = sum(map(int, wallflags))
+            if (square.wall & ~flagstotal == 0):
+                self.get_widget('wall_label').hide()
+                self.get_widget('wall').hide()
+                for flag in wallflags:
+                    self.get_widget('wall_%02X_label' % flag).show()
+                    self.get_widget('wall_%02X' % flag).show()
+                    if (square.wall & flag == flag):
+                        self.get_widget('wall_%02X' % flag).set_active(True)
+                    else:
+                        self.get_widget('wall_%02X' % flag).set_active(False)
+            else:
+                self.get_widget('wall_label').show()
+                self.get_widget('wall').show()
+                for flag in wallflags:
+                    self.get_widget('wall_%02X_label' % flag).hide()
+                    self.get_widget('wall_%02X' % flag).hide()
+                self.get_widget('wall').set_value(square.wall)
         else:
-            self.get_widget('wall_label').show()
-            self.get_widget('wall').show()
-            for flag in wallflags:
-                self.get_widget('wall_%02X_label' % flag).hide()
-                self.get_widget('wall_%02X' % flag).hide()
-            self.get_widget('wall').set_value(square.wall)
+            wallvals = (0, 1, 2, 5)
+            if square.wall in wallvals:
+                self.get_widget('wall_label').hide()
+                self.get_widget('wall').hide()
+                self.get_widget('b2_walltype_label').show()
+                self.get_widget('b2_walltype').show()
+                model = self.get_widget('b2_walltype').get_model()
+                for (idx, row) in enumerate(model):
+                    if (row[1] == square.wall):
+                        self.get_widget('b2_walltype').set_active(idx)
+                        break
+            else:
+                self.get_widget('b2_walltype_label').hide()
+                self.get_widget('b2_walltype').hide()
+                self.get_widget('wall_label').show()
+                self.get_widget('wall').show()
+                self.get_widget('wall').set_value(square.wall)
 
         # ... and now the rest
         self.get_widget('floorimg').set_value(square.floorimg)
@@ -2579,6 +2609,8 @@ class MapGUI(BaseGUI):
 
         if (square.wall == 1):
             barrier = (.784, .784, .784, 0.5)
+        elif (square.wall == 2):
+            barrier = (.41, .75, .83, 0.5)
         elif (square.wall == 5):
             barrier = (.684, .684, .950, 0.5)
         elif (square.floorimg == 126 and not self.floor_toggle.get_active()):
