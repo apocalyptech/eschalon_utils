@@ -847,6 +847,9 @@ class SmartDraw(object):
     def draw_smart_complex_floor(self, square, undo):
         return self.draw_smart_complex_obj(self.complex_obj_floor, square, undo)
 
+    def draw_smart_complex_decal(self, square, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_decal, square, undo)
+
     @staticmethod
     def new(book):
         """
@@ -1056,6 +1059,8 @@ class B1SmartDraw(SmartDraw):
         self.complex_obj_wall.add(wagon)
         wagon.add(self.DIR_NE, 84)
 
+        self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
+
 class B2SmartDraw(SmartDraw):
     """
     SmartDraw for Book 2
@@ -1262,7 +1267,7 @@ class B2SmartDraw(SmartDraw):
         self.complex_obj_wall.add(tent_ne)
         tent_ne.add(self.DIR_E, 86)
 
-        self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'wallimg')
+        self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
 
         stairs_ne = ComplexObj('Stairs (NE/SW)', 134)
         self.complex_obj_decal.add(stairs_ne)
@@ -1270,4 +1275,4 @@ class B2SmartDraw(SmartDraw):
 
         stairs_ne = ComplexObj('Stairs (NW/SE)', 151)
         self.complex_obj_decal.add(stairs_ne)
-        stairs_ne.add(self.DIR_SW, 152)
+        stairs_ne.add(self.DIR_SE, 152)

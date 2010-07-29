@@ -2385,6 +2385,14 @@ class MapGUI(BaseGUI):
             if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
                 self.smartdraw.draw_walldecal(square)
 
+            # Smart decals (triggered by the floor checkbox for now)
+            if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
+                (text, affected_squares) = self.smartdraw.draw_smart_complex_decal(square, self.undo)
+                if (text is not None):
+                    self.undo.set_text('Smart Draw (%s)' % (text))
+                    for adjsquare in affected_squares:
+                        self.redraw_square(adjsquare.x, adjsquare.y)
+
             # And then close off our undo and redraw if needed
             if (self.undo.finish()):
                 self.redraw_square(x, y)
