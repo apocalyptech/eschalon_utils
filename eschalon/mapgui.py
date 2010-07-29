@@ -140,7 +140,7 @@ class MapGUI(BaseGUI):
 
         self.mapinit = False
         self.undo = None
-        self.smartdraw = SmartDraw()
+        self.smartdraw = SmartDraw.new(c.book)
 
         # Start up our GUI
         self.builder = gtk.Builder()

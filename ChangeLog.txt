@@ -1,6 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
    28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
+   Some work on Book 2 Smartdraw constants
    Merged Book 2 Map Branch :
 
       28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
