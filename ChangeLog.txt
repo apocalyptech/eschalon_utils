@@ -2,6 +2,7 @@
 
    29 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed Book 2 Fence smartdrawing
+   Floor decal randomization
 
    28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Some work on Book 2 Smartdraw constants

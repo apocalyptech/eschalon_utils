@@ -2382,6 +2382,8 @@ class MapGUI(BaseGUI):
                         self.redraw_square(adjsquare.x, adjsquare.y)
 
             # Handles "smart" decals if needed
+            if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_floor.get_active()):
+                self.smartdraw.draw_decal(square)
             if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
                 self.smartdraw.draw_walldecal(square)
 

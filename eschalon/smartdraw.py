@@ -655,6 +655,20 @@ class SmartDraw(object):
         else:
             return (curdecal != square.decalimg or curfloor != square.floorimg)
 
+    def draw_decal(self, square):
+        """
+        Draws using the given decal.  Right now this just processes randomization
+        if we're asked to
+        """
+        # First set up and make sure that we're even drawing a wall
+        retarr = []
+        if (self.gui.smart_randomize.get_active()):
+            for tileset in self.random_decal:
+                if square.decalimg in tileset:
+                    square.decalimg = random.choice(tileset)
+                    break
+        return None
+
     def draw_walldecal(self, square):
         """
         Draws using the given wall decal.  Right now this just processes randomization
@@ -886,6 +900,20 @@ class B1SmartDraw(SmartDraw):
                 [40, 41],        # Cobbles
                 [79, 80, 81, 82] # "Dry" Grass
             ]
+        self.random_decal = [
+                range(13, 19),    # Bloodstains, small-to-med
+                range(26, 31),    # Brown smudges
+                [31, 32],         # Hay/Straw
+                [37, 43, 49],     # Smudges
+                [50, 51, 56, 57], # Dead bodies
+                [73, 74, 82],     # Scattered wood
+                [75, 76],         # Rubble
+                [77, 78],         # Smashed somethingorother
+                [79, 80],         # Skeletons
+                [88, 89, 90],     # Mushrooms
+                [116, 117, 118, 119], # Cracks
+                [44, 169],        # Greenish smudge
+            ]
         self.random_obj = [
                 [91, 92, 93],         # Shrubs
                 [95, 96],             # Marshy Shrubs
@@ -1073,6 +1101,7 @@ class B2SmartDraw(SmartDraw):
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
         self.fenceids = [47, 48, 61, 62, 63, 64]
+        # TODO: B2 actually has a couple of sets which could be bigfenced
         self.bigfencestart = 362
         self.special = 301
         self.tilesets = {
@@ -1085,6 +1114,22 @@ class B2SmartDraw(SmartDraw):
                 [9, 10, 11, 12],   # Gravelish
                 [14, 15],          # Cobbles
                 [81, 82, 83, 84],  # Snow
+            ]
+        self.random_decal = [
+                [87, 103, 104],    # Rubble
+                [97, 98, 99],      # Smudges
+                range(113, 120),   # Bloodstains, small-to-med
+                [120, 121],        # Bloodstains, large
+                [122, 123],        # Slime?
+                [106, 107],        # Starfish
+                [181, 182],        # Smashed somethingorother
+                [167, 168, 184, 199, 200], # More smashed objects
+                [153, 169],        # Strewn papers
+                range(209, 213),   # Brown smudge
+                [213, 214],        # Snow texture
+                [241, 242, 243],   # Cracks
+                [72, 88],          # Hay/Straw
+                [225, 226, 227],   # Mushrooms
             ]
         self.random_obj = [
                 [33, 34],             # Little tropical trees
