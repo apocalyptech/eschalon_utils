@@ -196,8 +196,8 @@ class SmartDraw(object):
         for start in self.wallstarts:
             if (square.wallimg >= start and square.wallimg < start+10):
                 return start
-        if (square.wallimg >= self.fencestart and square.wallimg < self.fencestart+6):
-            return self.fencestart
+        if (square.wallimg in self.fenceids):
+            return self.fenceids[0]
         if (square.wallimg >= self.bigfencestart and square.wallimg < self.bigfencestart+2):
             return self.bigfencestart
         return None
@@ -226,7 +226,7 @@ class SmartDraw(object):
         # be problematic if I were to try to handle everything in one function
         # here.
         #if (wallgroup == self.fencestart):
-        if (wallgroup in [self.fencestart, self.bigfencestart]):
+        if (wallgroup in [self.fenceids[0], self.bigfencestart]):
             return self.draw_fence(square, wallgroup)
         #elif (wallgroup == self.bigfencestart):
         #    return self.draw_fence(square)
@@ -338,7 +338,7 @@ class SmartDraw(object):
         retarr = []
 
         # Figure out what kind of fence we are
-        if (fencestart == self.fencestart):
+        if (fencestart == self.fenceids[0]):
             idx = self.IDX_FENCE
         else:
             idx = self.IDX_BIGFENCE
@@ -376,11 +376,11 @@ class SmartDraw(object):
             if (flagcount == 0):
                 connflags = self.indexes[idx][0]
             elif (flagcount == 1):
-                if ((connflags & self.DIR_NE) == self.DIR_NE or
-                    (connflags & self.DIR_SW) == self.DIR_SW):
-                    connflags = self.indexes[idx][0]
-                else:
-                    connflags = self.indexes[idx][1]
+                # In both B1 and B2, our first two fence images are the straight ones
+                for fenceidx in [0, 1]:
+                    for dir in [self.DIR_NE, self.DIR_SW, self.DIR_SE, self.DIR_NW]:
+                        if ((connflags & dir) == dir and (self.indexes[idx][fenceidx] & dir) == dir):
+                            connflags = self.indexes[idx][fenceidx]
             else:
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
@@ -405,7 +405,7 @@ class SmartDraw(object):
         """
 
         # First grab our current status and add in the requested connection
-        idx = square.wallimg - self.fencestart
+        idx = square.wallimg - self.fenceids[0]
         curflags = self.indexes[self.IDX_FENCE][idx]
         newflags = dir
 
@@ -420,7 +420,7 @@ class SmartDraw(object):
             if testsquare is None:
                 continue
             testgroup = self.get_wall_group(testsquare)
-            if (testgroup and testgroup == self.fencestart):
+            if (testgroup and testgroup == self.fenceids[0]):
                 conncount += 1
                 newflags = (newflags | testdir)
                 break
@@ -439,7 +439,7 @@ class SmartDraw(object):
         if (curflags == newflags):
             return False
         else:
-            square.wallimg = self.fencestart + self.revindexes[self.IDX_FENCE][newflags]
+            square.wallimg = self.fenceids[0] + self.revindexes[self.IDX_FENCE][newflags]
             return True
 
     def add_big_fence_connection(self, square, dir):
@@ -865,7 +865,7 @@ class B1SmartDraw(SmartDraw):
 
         # Hardcoded Graphics info
         self.wallstarts = [161, 171, 181, 191, 201]
-        self.fencestart = 73
+        self.fenceids = range(73, 79)
         self.bigfencestart = 140
         self.special = 213
         self.tilesets = {
@@ -1064,7 +1064,7 @@ class B2SmartDraw(SmartDraw):
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
-        self.fencestart = 47
+        self.fenceids = [47, 48, 61, 62, 63, 64]
         self.bigfencestart = 362
         self.special = 301
         self.tilesets = {
@@ -1120,8 +1120,8 @@ class B2SmartDraw(SmartDraw):
         self.add_index(self.IDX_FENCE, 17, self.DIR_NW|self.DIR_SW)
 
         # "Big" fence Indexes
-        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_NW|self.DIR_SE)
 
         # Grass Indexes
         self.add_index(self.IDX_GRASS, 1, self.DIR_NE|self.DIR_SW)
