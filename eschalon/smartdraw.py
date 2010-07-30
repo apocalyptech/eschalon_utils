@@ -1214,7 +1214,8 @@ class B2SmartDraw(SmartDraw):
         self.add_index(self.IDX_GRASS, 69, self.DIR_NE|self.DIR_SE|self.DIR_SW)
         self.add_index(self.IDX_GRASS, 70, self.DIR_W|self.DIR_S)
         self.add_index(self.IDX_GRASS, 71, self.DIR_SW|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 71, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 85, self.DIR_NW|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 86, self.DIR_SE|self.DIR_SW|self.DIR_NW)
 
         # Sand Indexes
         self.add_index(self.IDX_SAND, 129, self.DIR_NW)
