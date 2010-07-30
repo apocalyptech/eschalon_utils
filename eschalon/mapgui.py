@@ -2806,7 +2806,6 @@ class MapGUI(BaseGUI):
         except KeyError:
             # This should only happen for Book 2 maps, and should only
             # denote that it's one of the gigantic graphic maps.
-            print 'Unknown wall type %d' % (wallid)
             walltype = self.gfx.TYPE_NONE
 
         # Draw the object

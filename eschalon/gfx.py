@@ -734,8 +734,7 @@ class B2Gfx(Gfx):
             return (None, 0, 0)
         try:
             walltype = self.wall_types[objnum]
-        except TypeError:
-            #print "unknown objnum: %d" % (objnum)
+        except KeyError:
             return (None, 0, 0)
         if (walltype == self.TYPE_OBJ):
             if (self.objcache1 is None):
