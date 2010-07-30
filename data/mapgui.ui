@@ -4706,7 +4706,6 @@ to modify the global map files.</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-    <property name="page_size">10</property>
   </object>
   <object class="GtkDialog" id="slowzipwarndialog">
     <property name="width_request">450</property>
