@@ -1540,8 +1540,7 @@ class MapGUI(BaseGUI):
             signal = self.on_singleval_map_changed_int
         entry = func(table, row, varname, text, tooltip, signal)
 
-    def input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
-        # TODO: genericize this
+    def script_input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
@@ -1562,8 +1561,7 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 1, 2, row, row+1)
 
-    def input_flag(self, page, table, row, name, flagval, text, tooltip=None):
-        # TODO: genericize
+    def script_input_flag(self, page, table, row, name, flagval, text, tooltip=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
@@ -1723,13 +1721,6 @@ class MapGUI(BaseGUI):
         binput = gtk.Table(10, 2)
         binput.show()
 
-        # TODO: remove this
-        #spacer = gtk.Label('')
-        #spacer.show()
-        #spacer.set_padding(11, 0)
-        #binput.attach(spacer, 0, 1, 0, 10, gtk.FILL, gtk.FILL|gtk.EXPAND)
-        #basic_box.pack_start(binput, False, False)
-
         align = gtk.Alignment(.5, .5, 1, 1)
         align.set_padding(0, 0, 11, 0)
         align.add(binput)
@@ -1747,13 +1738,13 @@ class MapGUI(BaseGUI):
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
         if (square.scripts[curpages].trap in c.traptable.keys()):
-            self.input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
+            self.script_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
         else:
             self.script_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
         if (square.scripts[curpages].state in c.containertable.keys()):
-            self.input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
+            self.script_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
         else:
             self.script_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
@@ -1769,7 +1760,7 @@ class MapGUI(BaseGUI):
 
             # If we ever get more flags, this'll have to change
             if (square.scripts[curpages].flags & ~0x40 == 0):
-                self.input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+                self.script_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
                 self.script_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
 
