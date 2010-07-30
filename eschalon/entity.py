@@ -184,7 +184,16 @@ class B1Entity(Entity):
     form_elements = [ 'unknownc1_label', 'unknownc1',
             'ent_zero2_label', 'ent_zero2',
             'wall_01_label', 'wall_01',
-            'wall_04_label', 'wall_04'
+            'wall_04_label', 'wall_04',
+            'exit_north_label', 'exit_north_combo',
+            'exit_west_label', 'exit_west_combo',
+            'exit_east_label', 'exit_east_combo',
+            'exit_south_label', 'exit_south_combo',
+            'unknownh1_label', 'unknownh1',
+            'parallax_1_label', 'parallax_1',
+            'parallax_2_label', 'parallax_2',
+            'clouds_label', 'clouds',
+            'mapid_label', 'mapid',
             ]
 
     def __init__(self, savegame):
@@ -264,7 +273,10 @@ class B2Entity(Entity):
     book = 2
     form_elements = [ 'movement_label', 'movement',
             'decalpref_snow',
-            'b2_walltype_label', 'b2_walltype' ]
+            'b2_walltype_label', 'b2_walltype',
+            'openingscript_label', 'openingscript',
+            'soundfile4_label', 'soundfile4_combo'
+            ]
 
     def __init__(self, savegame):
         super(B2Entity, self).__init__(savegame)

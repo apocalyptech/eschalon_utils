@@ -846,3 +846,12 @@ class B2Gfx(Gfx):
         self.zip.setpassword(text)
 
         self.loaded = True
+
+    def filelist(self):
+        """
+        Returns a list of all files inside the archive.
+        """
+        if self.loaded:
+            return self.zip.namelist()
+        else:
+            return []

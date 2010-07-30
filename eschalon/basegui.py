@@ -915,15 +915,30 @@ class BaseGUI(object):
         self.imgsel_init = False
         self.imgsel_area.queue_draw()
 
-    def get_gamedir_filelist(self, dir, ext, keepext=True, matchprefix=None):
-        path = os.path.join(self.prefs.get_str('paths', 'gamedir'), dir)
-        files = os.listdir(path)
+    def get_gamedir_filelist(self, dir, ext, keepext=True, matchprefixes=None):
+        if c.book == 1:
+            path = os.path.join(self.prefs.get_str('paths', 'gamedir'), dir)
+            files = os.listdir(path)
+        else:
+            files = []
+            for file in self.gfx.filelist():
+                # TODO: see how this goes in Windows, don't know how zipfile will report
+                (filedir, filename) = os.path.split(file)
+                if filedir == dir:
+                    files.append(filename)
+
         filelist = []
         ext = '.%s' % (ext)
         extlen = -len(ext)
         for file in files:
-            if (matchprefix is not None and file[:len(matchprefix)] != matchprefix):
-                continue
+            if matchprefixes is not None:
+                matched = False
+                for prefix in matchprefixes:
+                    if file[:len(prefix)] == prefix:
+                        matched = True
+                        break
+                if not matched:
+                    continue
             if file[extlen:] == ext:
                 if (keepext):
                     filelist.append(file)

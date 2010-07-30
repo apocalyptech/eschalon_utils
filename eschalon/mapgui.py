@@ -274,7 +274,7 @@ class MapGUI(BaseGUI):
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
-                'soundfile1', 'soundfile2', 'soundfile3', 'skybox']
+                'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
         for var in comboboxentries:
             self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
             self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
@@ -286,6 +286,9 @@ class MapGUI(BaseGUI):
         # Now show or hide form elements depending on the book version
         for item_class in (B1Item, B2Item, B1Entity, B2Entity):
             self.set_book_elem_visibility(item_class, item_class.book == c.book)
+
+        # ... and while we're at it, finish building some GUI elements
+        self.map_gui_finish()
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
@@ -450,9 +453,15 @@ class MapGUI(BaseGUI):
             box.append_text(key)
 
         # Grab some lists of files
+        # Note that maplist will be empty for B2, but that's okay since B2 won't
+        # end up using it.
         maplist = self.get_gamedir_filelist('data', 'map', False)
         ogglist = self.get_gamedir_filelist('music', 'ogg')
-        wavlist = self.get_gamedir_filelist('sound', 'wav', True, 'atmos_')
+        wavlist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
+        if c.book == 1:
+            skyboxlist = ['back1.png', 'back2.png', 'back3.png']
+        else:
+            skyboxlist = ['shear_wall.png']
 
         # Populate the dropdowns on our global properties window
         self.populate_comboboxentry('exit_north_combo', maplist)
@@ -462,6 +471,8 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('soundfile1_combo', ogglist)
         self.populate_comboboxentry('soundfile2_combo', ogglist)
         self.populate_comboboxentry('soundfile3_combo', wavlist)
+        self.populate_comboboxentry('soundfile4_combo', wavlist)
+        self.populate_comboboxentry('skybox_combo', skyboxlist)
 
         # And populate our object/script type dropdown as well
         self.object_type_list = {}
@@ -587,6 +598,34 @@ class MapGUI(BaseGUI):
 
         # Clean up
         dialog.destroy()
+
+    def map_gui_finish(self):
+        """
+        The current state of Glade (3.6.7 as of this writing) has some really annoying
+        behavior with regards to SpinButtons and Adjustments.  Given that I've been
+        considering ditching Glade/GTKBuilder anyway, rather than fight through it, I'll
+        just construct some things here.  Note that this is entirely unknown values for
+        the global map properties window, right now.
+        """
+        # TODO: doublecheck for name collisions on these unknowns
+        if c.book == 2:
+            table = self.get_widget('map_prop_unknown_table')
+            self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
+            self.prop_unknown_input_spin(self.input_int, 'i', table, 3, 4)
+            self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Appears to be coordinates, under some circumstances')
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 1, 6)
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 3, 8)
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 4, 9)
+            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 5, 10, 'This should be zero for global maps', False)
+            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 6, 11, 'This is often nonzero on savegames', False)
+            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 7, 12, 'This is often nonzero on savegames', False)
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 8, 13)
+            self.prop_unknown_input_text(table, 1, 14)
+            self.prop_unknown_input_text(table, 2, 15)
+            self.prop_unknown_input_text(table, 4, 16)
+            self.prop_unknown_input_text(table, 5, 17)
+            self.prop_unknown_input_text(table, 6, 18)
 
     def on_prefs(self, widget=None):
         """ Override on_prefs a bit. """
@@ -860,27 +899,47 @@ class MapGUI(BaseGUI):
 
     def on_prop_button_clicked(self, widget=None):
         """ Show the global properties window. """
-        self.get_widget('mapid').set_text(self.map.mapid)
         if (self.map.is_savegame()):
             self.get_widget('maptype').set_text('From Savegame')
         else:
             self.get_widget('maptype').set_text('Global Map File')
         self.get_widget('mapname').set_text(self.map.mapname)
-        self.get_widget('exit_north').set_text(self.map.exit_north)
-        self.get_widget('exit_east').set_text(self.map.exit_east)
-        self.get_widget('exit_south').set_text(self.map.exit_south)
-        self.get_widget('exit_west').set_text(self.map.exit_west)
         self.get_widget('soundfile1').set_text(self.map.soundfile1)
         self.get_widget('soundfile2').set_text(self.map.soundfile2)
         self.get_widget('soundfile3').set_text(self.map.soundfile3)
         self.get_widget('skybox').set_text(self.map.skybox)
-        self.get_widget('parallax_1').set_value(self.map.parallax_1)
-        self.get_widget('parallax_2').set_value(self.map.parallax_2)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
-        self.get_widget('unknownh1').set_value(self.map.unknownh1)
         self.get_widget('unknowni1').set_value(self.map.unknowni1)
-        self.get_widget('clouds').set_value(self.map.clouds)
+        if c.book == 1:
+            self.get_widget('mapid').set_text(self.map.mapid)
+            self.get_widget('exit_north').set_text(self.map.exit_north)
+            self.get_widget('exit_east').set_text(self.map.exit_east)
+            self.get_widget('exit_south').set_text(self.map.exit_south)
+            self.get_widget('exit_west').set_text(self.map.exit_west)
+            self.get_widget('parallax_1').set_value(self.map.parallax_1)
+            self.get_widget('parallax_2').set_value(self.map.parallax_2)
+            self.get_widget('unknownh1').set_value(self.map.unknownh1)
+            self.get_widget('clouds').set_value(self.map.clouds)
+        else:
+            self.get_widget('openingscript').set_text(self.map.openingscript)
+            self.get_widget('soundfile4').set_text(self.map.soundfile4)
+            self.get_widget('unknowni2').set_value(self.map.unknowni2)
+            self.get_widget('unknowni3').set_value(self.map.unknowni3)
+            self.get_widget('unknowni4').set_value(self.map.unknowni4)
+            self.get_widget('unknownc1').set_value(self.map.unknownc1)
+            self.get_widget('unknownc2').set_value(self.map.unknownc2)
+            self.get_widget('unknownc3').set_value(self.map.unknownc3)
+            self.get_widget('unknownc4').set_value(self.map.unknownc4)
+            #self.get_widget('unknownc5').set_value(self.map.unknownc5)
+            #self.get_widget('unknownc6').set_value(self.map.unknownc6)
+            #self.get_widget('unknownc7').set_value(self.map.unknownc7)
+            self.get_widget('unknownc8').set_value(self.map.unknownc8)
+            self.get_widget('unknownstr1').set_text(self.map.unknownstr1)
+            self.get_widget('unknownstr2').set_text(self.map.unknownstr2)
+            self.get_widget('unknownstr4').set_text(self.map.unknownstr4)
+            self.get_widget('unknownstr5').set_text(self.map.unknownstr5)
+            self.get_widget('unknownstr6').set_text(self.map.unknownstr6)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
@@ -1381,24 +1440,41 @@ class MapGUI(BaseGUI):
         self.get_widget('entity_toggle_img').set_from_stock(image, 4)
         self.get_widget('entity_toggle_text').set_text(text)
 
-    def input_label(self, page, table, row, name, text):
+    def input_label(self, table, row, name, text):
         label = gtk.Label()
         label.show()
         label.set_markup('%s:' % text)
         label.set_alignment(1, 0.5)
         label.set_justify(gtk.JUSTIFY_RIGHT)
         label.set_padding(5, 4)
-        self.register_widget('%s_%d_label' % (name, page), label)
-        table.attach(label, 1, 2, row, row+1, gtk.FILL, gtk.FILL)
+        self.register_widget('%s_label' % (name), label)
+        table.attach(label, 0, 1, row, row+1, gtk.FILL, gtk.FILL)
+        return label
 
-    def input_text(self, page, table, row, name, text, tooltip=None):
-        self.input_label(page, table, row, name, text)
+    def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None):
+        self.input_label(table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.Entry()
         entry.show()
-        self.register_widget('%s_%d' % (name, page), entry)
-        entry.set_size_request(250, -1)
+        self.register_widget(name, entry)
+        if width is not None:
+            entry.set_size_request(width, -1)
+        if signal is not None:
+            entry.connect('changed', signal)
+        if (tooltip is not None):
+            entry.set_tooltip_text(tooltip)
+        align.add(entry)
+        table.attach(align, 1, 2, row, row+1)
+        return entry
+
+    def script_input_text(self, page, table, row, name, text, tooltip=None):
+        varname = '%s_%d' % (name, page)
+        entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250)
+        # TODO: previously, these values were set *before* connecting to the
+        # signal handler...  Because we've moved the assignment out here, the
+        # signal handler's already attached.  Make sure that doesn't cause
+        # problems...
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (name[:9] == 'item_name'):
@@ -1407,44 +1483,66 @@ class MapGUI(BaseGUI):
                 entry.set_text(script.items[itemnum].item_name)
             else:
                 entry.set_text(script.__dict__[name])
-        entry.connect('changed', self.on_script_str_changed)
-        if (tooltip is not None):
-            entry.set_tooltip_text(tooltip)
-        align.add(entry)
-        table.attach(align, 2, 3, row, row+1)
+        return entry
 
-    def input_spin(self, page, table, row, name, text, max, tooltip=None, signal=None):
-        self.input_label(page, table, row, name, text)
+    def prop_unknown_input_text(self, table, num, row, tooltip=None):
+        varname = 'unknownstr%d' % (num)
+        text = '<i>Unknown String %d</i>' % (num)
+        return self.input_text(table, row, varname, text, tooltip, self.on_singleval_map_changed_str)
+
+    def input_spin(self, table, row, name, text, max, tooltip=None, signal=None):
+        self.input_label(table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.SpinButton()
         entry.show()
-        self.register_widget('%s_%d' % (name, page), entry)
+        self.register_widget(name, entry)
         entry.set_range(0, max)
         entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 0))
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
-            entry.set_value(script.__dict__[name])
-        if (signal is None):
-            entry.connect('value-changed', self.on_script_int_changed)
-        else:
+        if (signal is not None):
             entry.connect('value-changed', signal)
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 2, 3, row, row+1)
+        table.attach(align, 1, 2, row, row+1)
+        return entry
 
-    def input_uchar(self, page, table, row, name, text, tooltip=None, signal=None):
-        self.input_spin(page, table, row, name, text, 0xFF, tooltip, signal)
+    def input_uchar(self, table, row, name, text, tooltip=None, signal=None):
+        return self.input_spin(table, row, name, text, 0xFF, tooltip, signal)
 
-    def input_short(self, page, table, row, name, text, tooltip=None):
-        self.input_spin(page, table, row, name, text, 0xFFFF, tooltip)
+    def input_short(self, table, row, name, text, tooltip=None, signal=None):
+        return self.input_spin(table, row, name, text, 0xFFFF, tooltip, signal)
 
-    def input_int(self, page, table, row, name, text, tooltip=None):
-        self.input_spin(page, table, row, name, text, 0xFFFFFFFF, tooltip)
+    def input_int(self, table, row, name, text, tooltip=None, signal=None):
+        return self.input_spin(table, row, name, text, 0xFFFFFFFF, tooltip, signal)
+
+    def script_input_spin(self, func, page, table, row, name, text, tooltip=None, signal=None):
+        varname = '%s_%d' % (name, page)
+        if signal is None:
+            signal = self.on_script_int_changed
+        entry = func(table, row, varname, text, tooltip, signal)
+        # TODO: previously, these values were set *before* connecting to the
+        # signal handler...  Because we've moved the assignment out here, the
+        # signal handler's already attached.  Make sure that doesn't cause
+        # problems...
+        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        if (script is not None):
+            entry.set_value(script.__dict__[name])
+
+    def prop_unknown_input_spin(self, func, type, table, num, row, tooltip=None, signal=None):
+        textdict = {
+                'i': 'Int',
+                'c': 'Char',
+                }
+        varname = 'unknown%s%d' % (type, num)
+        text = '<i>Unknown %s %d</i>' % (textdict.get(type, '?'), num)
+        if signal is None:
+            signal = self.on_singleval_map_changed_int
+        entry = func(table, row, varname, text, tooltip, signal)
 
     def input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
-        self.input_label(page, table, row, name, text)
+        # TODO: genericize this
+        self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.combo_box_new_text()
@@ -1462,10 +1560,11 @@ class MapGUI(BaseGUI):
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 2, 3, row, row+1)
+        table.attach(align, 1, 2, row, row+1)
 
     def input_flag(self, page, table, row, name, flagval, text, tooltip=None):
-        self.input_label(page, table, row, name, text)
+        # TODO: genericize
+        self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.CheckButton()
@@ -1477,7 +1576,7 @@ class MapGUI(BaseGUI):
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 2, 3, row, row+1)
+        table.attach(align, 1, 2, row, row+1)
 
     def on_flag_changed(self, name, flagval_str, widget, object):
         """
@@ -1621,58 +1720,68 @@ class MapGUI(BaseGUI):
 
         # Basic Information
         basic_box = self.script_group_box('<b>Basic Information</b>')
-        binput = gtk.Table(10, 3)
+        binput = gtk.Table(10, 2)
         binput.show()
-        spacer = gtk.Label('')
-        spacer.show()
-        spacer.set_padding(11, 0)
-        binput.attach(spacer, 0, 1, 0, 10, gtk.FILL, gtk.FILL|gtk.EXPAND)
-        basic_box.pack_start(binput, False, False)
+
+        # TODO: remove this
+        #spacer = gtk.Label('')
+        #spacer.show()
+        #spacer.set_padding(11, 0)
+        #binput.attach(spacer, 0, 1, 0, 10, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        #basic_box.pack_start(binput, False, False)
+
+        align = gtk.Alignment(.5, .5, 1, 1)
+        align.set_padding(0, 0, 11, 0)
+        align.add(binput)
+        align.show()
+        basic_box.pack_start(align, False, False)
+
+        # TODO: the input_* functions were just modified rather heavily; TEST TEST TEST
 
         # Basic Inputs
-        self.input_text(curpages, binput, 0, 'description', '(to update)',
+        self.script_input_text(curpages, binput, 0, 'description', '(to update)',
                 '(to update)')
-        self.input_text(curpages, binput, 1, 'extratext', '(to update)',
+        self.script_input_text(curpages, binput, 1, 'extratext', '(to update)',
                 '(to update)')
-        self.input_text(curpages, binput, 2, 'script', 'Script')
+        self.script_input_text(curpages, binput, 2, 'script', 'Script')
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
         if (square.scripts[curpages].trap in c.traptable.keys()):
             self.input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
         else:
-            self.input_uchar(curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
+            self.script_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
         if (square.scripts[curpages].state in c.containertable.keys()):
             self.input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
         else:
-            self.input_uchar(curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
+            self.script_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
         if c.book == 1:
             locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
         else:
             locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
-        self.input_uchar(curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
+        self.script_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
 
         if c.book == 1:
             # Book 1-specific values
-            self.input_uchar(curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+            self.script_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
             # If we ever get more flags, this'll have to change
             if (square.scripts[curpages].flags & ~0x40 == 0):
                 self.input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
-                self.input_short(curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+                self.script_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
 
-            self.input_uchar(curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+            self.script_input_spin(self.input_uchar, curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
         else:
             # Book 2-specific values
-            self.input_short(curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
-            self.input_uchar(curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
+            self.script_input_spin(self.input_short, curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
+            self.script_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
 
             # Condition is special, we're using an hbox here
             scr = self.map.squares[self.sq_y][self.sq_x].scripts[curpages]
-            self.input_label(curpages, binput, 9, 'cur_condition', 'Condition')
+            self.input_label(binput, 9, 'cur_condition_%s' % (curpages), 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
             self.register_widget('cur_condition_%d' % (curpages), curentry)
@@ -1695,7 +1804,7 @@ class MapGUI(BaseGUI):
             align = gtk.Alignment(0, 0.5, 0, 1)
             align.add(hbox)
             align.show_all()
-            binput.attach(align, 2, 3, 9, 10)
+            binput.attach(align, 1, 2, 9, 10)
 
         # Contents
         contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
@@ -1711,13 +1820,14 @@ class MapGUI(BaseGUI):
         # Contents Inputs (varies based on savefile status)
         if (square.scripts[curpages].savegame):
             for num in range(8):
-                self.input_label(curpages, cinput, num, 'item_%d_%d' % (num, curpages), 'Item %d' % (num+1))
+                # TODO: widget name is unchanged here, after genericizing-edits
+                self.input_label(cinput, num, 'item_%d_%d' % (num, curpages), 'Item %d' % (num+1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
                         2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND)
                 self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
-                self.input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
+                self.script_input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
 
         # Unknowns
         unknown_box = self.script_group_box('<b>Unknowns</b>')
@@ -1731,11 +1841,11 @@ class MapGUI(BaseGUI):
 
         # Data in Unknowns block
         if c.book == 1:
-            self.input_short(curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
-            self.input_short(curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
-            self.input_int(curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
-            self.input_int(curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
-            self.input_int(curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
+            self.script_input_spin(self.input_short, curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
+            self.script_input_spin(self.input_short, curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
+            self.script_input_spin(self.input_int, curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
+            self.script_input_spin(self.input_int, curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
+            self.script_input_spin(self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()
