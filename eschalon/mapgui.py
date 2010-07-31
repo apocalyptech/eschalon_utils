@@ -3101,7 +3101,7 @@ class MapGUI(BaseGUI):
             huge_gfxes = []
             for x in range(len(self.map.squares[y])):
                 self.draw_square(x, y)
-                if self.map.squares[y][x].scriptid == 21:
+                if self.map.squares[y][x].scriptid == 21 and self.map.squares[y][x].wallimg == 1000:
                     huge_gfxes.append(self.map.squares[y][x])
             if self.req_book == 2 and self.huge_gfx_toggle.get_active():
                 for square in huge_gfxes:
