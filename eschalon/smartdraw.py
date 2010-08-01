@@ -143,12 +143,13 @@ class SmartDraw(object):
     IDX_SAND = 3
     IDX_BIGFENCE = 4
     IDX_SNOW = 5
+    IDX_LAVA = 6
 
     def __init__(self):
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {}, {}, {}, {}, {} ]
-        self.revindexes = [ {}, {}, {}, {}, {}, {} ]
+        self.indexes = [ {}, {}, {}, {}, {}, {}, {} ]
+        self.revindexes = [ {}, {}, {}, {}, {}, {}, {} ]
         self.beach_index = {}
         self.beach_revindex = {}
 
@@ -522,13 +523,16 @@ class SmartDraw(object):
         # and which decal type to strip out
         if (self.gui.get_widget('decalpref_grass').get_active()):
             idxtype = self.IDX_GRASS
-            blacklist = [self.IDX_SAND, self.IDX_SNOW]
+            blacklist = [self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]
         elif (self.gui.get_widget('decalpref_sand').get_active()):
             idxtype = self.IDX_SAND
-            blacklist = [self.IDX_GRASS, self.IDX_SNOW]
+            blacklist = [self.IDX_GRASS, self.IDX_SNOW, self.IDX_LAVA]
         elif (self.gui.get_widget('decalpref_snow').get_active()):
             idxtype = self.IDX_SNOW
-            blacklist = [self.IDX_GRASS, self.IDX_SAND]
+            blacklist = [self.IDX_GRASS, self.IDX_SAND, self.IDX_LAVA]
+        elif (self.gui.get_widget('decalpref_lava').get_active()):
+            idxtype = self.IDX_LAVA
+            blacklist = [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW]
         else:
             # TODO: We should probably raise an exception or something here,
             # instead...
@@ -573,7 +577,7 @@ class SmartDraw(object):
             # Now let's just get out of here if we're a grass square ourselves.
             # We could have exited earlier, but this way we can recurse around ourselves
             # without duplicating much code.
-            for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW]:
+            for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
                 if (square.decalimg in self.indexes[idx].keys()):
                     square.decalimg = 0
 
@@ -637,7 +641,7 @@ class SmartDraw(object):
                             if (flagcount != 0):
                                 break
                 if (connflags == 0):
-                    for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW]:
+                    for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
                         if (square.decalimg in self.indexes[idx]):
                             square.decalimg = 0
                 else:
@@ -702,7 +706,7 @@ class SmartDraw(object):
         curdecal = square.decalimg
         curfloor = square.floorimg
         blacklist = []
-        for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW]:
+        for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
             blacklist.extend(self.indexes[self.IDX_GRASS].keys())
 
         # Find out if we're drawing a water tile, or one of the sand tiles
@@ -892,6 +896,7 @@ class B1SmartDraw(SmartDraw):
                 self.IDX_GRASS: [9, 10, 11, 12],
                 self.IDX_SAND: [124, 125],
                 self.IDX_SNOW: [],
+                self.IDX_LAVA: [],
             }
         self.random_terrain = [
                 [3, 4],          # Red ground of some sort
@@ -1003,6 +1008,7 @@ class B1SmartDraw(SmartDraw):
                 self.IDX_GRASS: [161, 162, 167, 168],
                 self.IDX_SAND: [138, 144],
                 self.IDX_SNOW: [],
+                self.IDX_LAVA: [],
             }
 
         # Beach indexes (these are floor tiles, not decals - the directions
@@ -1108,6 +1114,7 @@ class B2SmartDraw(SmartDraw):
                 self.IDX_GRASS: [1, 2, 3, 4],
                 self.IDX_SAND: [13],
                 self.IDX_SNOW: [81, 82, 83, 84],
+                self.IDX_LAVA: [61, 63, 64, 69, 70, 71, 77, 80, 85, 86, 87, 88, 90, 91] + range(93, 109)
             }
         self.random_terrain = [
                 [1, 2, 3, 4],      # Regular Grass
@@ -1241,11 +1248,28 @@ class B2SmartDraw(SmartDraw):
         self.add_index(self.IDX_SNOW, 249, self.DIR_NW|self.DIR_NE)
         self.add_index(self.IDX_SNOW, 250, self.DIR_SW|self.DIR_NE)
 
+        # Lava Indexes
+        self.add_index(self.IDX_LAVA, 219, self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 220, self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 221, self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 222, self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 223, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 235, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 236, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 237, self.DIR_SW|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 238, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 239, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 252, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 253, self.DIR_SW|self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 254, self.DIR_NW|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 255, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+
         # Pool to randomly choose from if we're completely surrounded
         self.tile_fullest = {
                 self.IDX_GRASS: [69, 71, 85, 86],
                 self.IDX_SAND: [133, 149],
                 self.IDX_SNOW: [234, 250],
+                self.IDX_LAVA: [252, 253, 254, 255],
             }
 
         # Beach indexes (these are floor tiles, not decals - the directions

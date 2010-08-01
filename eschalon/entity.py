@@ -272,7 +272,7 @@ class B2Entity(Entity):
 
     book = 2
     form_elements = [ 'movement_label', 'movement',
-            'decalpref_snow',
+            'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
             'openingscript_label', 'openingscript',
             'soundfile4_label', 'soundfile4_combo'
