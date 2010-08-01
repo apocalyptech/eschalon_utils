@@ -1161,7 +1161,7 @@ class B2SmartDraw(SmartDraw):
                 self.IDX_GRASS: [1, 2, 3, 4],
                 self.IDX_SAND: [13],
                 self.IDX_SNOW: [81, 82, 83, 84],
-                self.IDX_LAVA: [61, 63, 64, 69, 70, 71, 77, 80, 85, 86, 87, 88, 90, 91] + range(93, 109)
+                self.IDX_LAVA: [109]
             }
         self.random_terrain = [
                 [1, 2, 3, 4],      # Regular Grass
