@@ -653,11 +653,58 @@ class SmartDraw(object):
                 square.decalimg = 0
                 break
 
+        # Finally, if we're handling Lava tiles, we need to do one more recursive loop
+        # to draw a complimentary decal on the actual Lava tiles themselves.
+        if (recurse and idxtype == self.IDX_LAVA):
+            newaffected = self.draw_complimentary_decals(idxtype, square, known)
+            for testsquare in newaffected:
+                if testsquare not in affected:
+                    affected.append(testsquare)
+
         # And now return
         if (recurse):
             return affected
         else:
             return (curdecal != square.decalimg or curfloor != square.floorimg)
+
+    def draw_complimentary_decals(self, idxtype, centersquare, known):
+        """
+        This is an extra recursive loop, run after the main draw_floor() routine,
+        which will "double up" decal images (eg: for Book 2 Lava decals, which
+        needs to have a decal on the lava tiles themselves).  Note that, unfortunately,
+        to process this correctly, we have to recurse an additional level out.
+        """
+        actionsquares = []
+        for square in [centersquare] + known.values():
+            if square is None:
+                continue
+            if square.floorimg not in self.tilesets[idxtype]:
+                continue
+            connflags = 0
+            flagcount = 0
+            for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
+                adjsquare = self.map.square_relative(square.x, square.y, dir)
+                if adjsquare is None:
+                    continue
+                if adjsquare.floorimg in self.tilesets[idxtype]:
+                    continue
+                if adjsquare.decalimg in self.indexes[idxtype]:
+                    idxdir = self.indexes[idxtype][adjsquare.decalimg]
+                    if (idxdir & self.REV_DIR[dir] == self.REV_DIR[dir]):
+                        flagcount += 1
+                        connflags = connflags | dir
+            if flagcount == 4:
+                actionsquares.append((square, random.choice(self.tile_fullest[idxtype])))
+            elif flagcount == 0:
+                actionsquares.append((square, 0))
+            else:
+                actionsquares.append((square, self.revindexes[idxtype][connflags]))
+        affected = []
+        for (square, newdecal) in actionsquares:
+            if square.decalimg != newdecal:
+                affected.append(square)
+                square.decalimg = newdecal
+        return affected
 
     def draw_decal(self, square):
         """
