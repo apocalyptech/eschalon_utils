@@ -2489,17 +2489,19 @@ class MapGUI(BaseGUI):
                 # Ah well.  For now I'm just going to let it do that.
                 #if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                 #        self.draw_decal_checkbox.get_active()):
-                if (square.walldecalimg in c.wall_list['walldecal_seethrough']):
+                if (square.walldecalimg in self.smartdraw.wall_list['walldecal_seethrough']):
                     square.wall = 5
-                elif (square.wallimg in c.wall_list['wall_blocked']):
+                elif (c.book == 2 and square.wallimg in self.smartdraw.wall_list['wall_restrict']):
+                    square.wall = 2
+                elif (square.wallimg in self.smartdraw.wall_list['wall_blocked']):
                     square.wall = 1
-                elif (square.wallimg in c.wall_list['wall_seethrough']):
+                elif (square.wallimg in self.smartdraw.wall_list['wall_seethrough']):
                     square.wall = 5
-                elif (square.decalimg in c.wall_list['decal_blocked']):
+                elif (square.decalimg in self.smartdraw.wall_list['decal_blocked']):
                     square.wall = 1
-                elif (square.decalimg in c.wall_list['decal_seethrough']):
+                elif (square.decalimg in self.smartdraw.wall_list['decal_seethrough']):
                     square.wall = 5
-                elif (square.floorimg in c.wall_list['floor_seethrough']):
+                elif (square.floorimg in self.smartdraw.wall_list['floor_seethrough']):
                     square.wall = 5
                 else:
                     square.wall = 0
@@ -2602,17 +2604,17 @@ class MapGUI(BaseGUI):
             square.wall = 0
         if (self.erase_floor_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.floorimg in c.wall_list['floor_seethrough']):
+                if (square.floorimg in self.smartdraw.wall_list['floor_seethrough']):
                     square.wall = 0
             square.floorimg = 0
         if (self.erase_decal_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.decalimg in c.wall_list['decal_blocked']+c.wall_list['decal_seethrough']):
+                if (square.decalimg in self.smartdraw.wall_list['decal_blocked']+self.smartdraw.wall_list['decal_seethrough']):
                     square.wall = 0
             square.decalimg = 0
         if (self.erase_wall_checkbox.get_active()):
             if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                if (square.wallimg in c.wall_list['wall_blocked']+c.wall_list['wall_seethrough']):
+                if (square.wallimg in self.smartdraw.wall_list['wall_blocked']+self.smartdraw.wall_list['wall_seethrough']):
                     square.wall = 0
             square.wallimg = 0
         if (self.erase_walldecal_checkbox.get_active()):

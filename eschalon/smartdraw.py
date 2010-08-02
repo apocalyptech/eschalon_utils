@@ -937,6 +937,22 @@ class B1SmartDraw(SmartDraw):
 
     def init_vars(self):
 
+        # Various lists to keep track of which objects should be walls
+        self.wall_list = {}
+        self.wall_list['floor_seethrough'] = range(83, 103) + [126]
+        self.wall_list['decal_blocked'] = [55]
+        self.wall_list['decal_seethrough'] = [52, 71, 83, 84, 96, 170]
+        self.wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
+            range(109, 112) + range(116, 121) + range(125, 144) +
+            range(145, 156) + range(161, 214) + range(251, 256) + 
+            [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
+        self.wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
+            range(51, 56) + range(60, 68) + range(72, 79) +
+            range(85, 89) + range(112, 116) + range(121, 125) +
+            [39, 41, 42, 57, 144, 214])
+        self.wall_list['walldecal_seethrough'] = [19, 20]
+        self.wall_list['wall_restrict'] = []
+
         # Hardcoded Graphics info
         self.wallstarts = [161, 171, 181, 191, 201]
         self.fenceids = range(73, 79)
@@ -1153,6 +1169,29 @@ class B2SmartDraw(SmartDraw):
     book = 2
 
     def init_vars(self):
+
+        # Various lists to keep track of which objects should be walls
+        # Note that water tiles in Book 2 are automatically made seethrough-wall
+        # by the engine, so we don't have to specify them here.
+        self.wall_list = {}
+        self.wall_list['floor_seethrough'] = []
+        self.wall_list['decal_blocked'] = [134, 150, 151, 152]
+        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
+            range(170, 174) + range(185, 191) + range(202, 206))
+        self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 83, 86, 100, 116, 147] +
+            range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
+            range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 378) +
+            range(384, 396) + [400, 401, 406] + range(251, 256))
+        self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
+            range(44, 57) + [58] + range(61, 69) + range(71, 82) + [84, 85] +
+            range(87, 97) + [99] + range(101, 107) + range(108, 114) + range(117, 119) +
+            range(121, 129) + range(130, 134) + range(136, 147) + range(148, 151) +
+            [270, 271] + range(315, 320) + [333] + range(346, 352) +
+            [364, 365, 367, 381] + range(396, 400) +
+            [407])
+        self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
+        self.wall_list['wall_restrict'] = ([107] + range(298, 304) + [332, 378, 379, 380, 382, 383] +
+            range(402, 406))
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
