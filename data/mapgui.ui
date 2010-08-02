@@ -1079,98 +1079,19 @@
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkAlignment" id="alignment45">
+                                              <object class="GtkComboBox" id="decalpref">
                                                 <property name="visible">True</property>
-                                                <property name="left_padding">10</property>
+                                                <property name="model">decalpref_store</property>
+                                                <property name="active">0</property>
                                                 <child>
-                                                  <object class="GtkRadioButton" id="decalpref_grass">
-                                                    <property name="label" translatable="yes">Grass</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw_indicator">True</property>
-                                                  </object>
+                                                  <object class="GtkCellRendererText" id="decalpref_renderer"/>
+                                                  <attributes>
+                                                    <attribute name="text">0</attribute>
+                                                  </attributes>
                                                 </child>
                                               </object>
                                               <packing>
                                                 <property name="position">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkAlignment" id="alignment47">
-                                                <property name="visible">True</property>
-                                                <property name="left_padding">10</property>
-                                                <child>
-                                                  <object class="GtkRadioButton" id="decalpref_sand">
-                                                    <property name="label" translatable="yes">Sand</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <property name="group">decalpref_grass</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="position">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkAlignment" id="alignment48">
-                                                <property name="visible">True</property>
-                                                <property name="left_padding">10</property>
-                                                <child>
-                                                  <object class="GtkRadioButton" id="decalpref_beach">
-                                                    <property name="label" translatable="yes">Beach</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <property name="group">decalpref_grass</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="position">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkAlignment" id="alignment54">
-                                                <property name="visible">True</property>
-                                                <property name="left_padding">10</property>
-                                                <child>
-                                                  <object class="GtkRadioButton" id="decalpref_snow">
-                                                    <property name="label" translatable="yes">Snow</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <property name="group">decalpref_grass</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="position">5</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkAlignment" id="alignment61">
-                                                <property name="visible">True</property>
-                                                <property name="left_padding">10</property>
-                                                <child>
-                                                  <object class="GtkRadioButton" id="decalpref_lava">
-                                                    <property name="label" translatable="yes">Lava</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can_focus">True</property>
-                                                    <property name="receives_default">False</property>
-                                                    <property name="draw_indicator">True</property>
-                                                    <property name="group">decalpref_grass</property>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="position">6</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -4918,5 +4839,13 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
         <col id="1">5</col>
       </row>
     </data>
+  </object>
+  <object class="GtkListStore" id="decalpref_store">
+    <columns>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+      <!-- column-name idx -->
+      <column type="guint"/>
+    </columns>
   </object>
 </interface>

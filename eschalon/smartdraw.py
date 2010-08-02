@@ -137,6 +137,8 @@ class SmartDraw(object):
             DIR_S|DIR_W: DIR_SW
         }
 
+    # Note that Beach is a special one, but we put it in the list
+    # so that our newer-style decalpref dropdown has a value to use
     IDX_WALL = 0
     IDX_FENCE = 1
     IDX_GRASS = 2
@@ -144,12 +146,13 @@ class SmartDraw(object):
     IDX_BIGFENCE = 4
     IDX_SNOW = 5
     IDX_LAVA = 6
+    IDX_BEACH = 7
 
     def __init__(self):
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {}, {}, {}, {}, {}, {} ]
-        self.revindexes = [ {}, {}, {}, {}, {}, {}, {} ]
+        self.indexes = [ {}, {}, {}, {}, {}, {}, {}, {} ]
+        self.revindexes = [ {}, {}, {}, {}, {}, {}, {}, {} ]
         self.beach_index = {}
         self.beach_revindex = {}
 
@@ -494,7 +497,10 @@ class SmartDraw(object):
         # should be not a wall
 
         # Go elsewhere if we're drawing beach stuffs
-        if (self.gui.get_widget('decalpref_beach').get_active()):
+        iter = self.gui.get_widget('decalpref').get_active_iter()
+        model = self.gui.get_widget('decalpref').get_model()
+        idxtype = model.get_value(iter, 1)
+        if (idxtype == self.IDX_BEACH):
             return self.draw_beach(square)
 
         connflags = 0
@@ -521,18 +527,15 @@ class SmartDraw(object):
 
         # Figure out whether to try and fit grass decals or sand decals,
         # and which decal type to strip out
-        if (self.gui.get_widget('decalpref_grass').get_active()):
-            idxtype = self.IDX_GRASS
-            blacklist = [self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]
-        elif (self.gui.get_widget('decalpref_sand').get_active()):
-            idxtype = self.IDX_SAND
-            blacklist = [self.IDX_GRASS, self.IDX_SNOW, self.IDX_LAVA]
-        elif (self.gui.get_widget('decalpref_snow').get_active()):
-            idxtype = self.IDX_SNOW
-            blacklist = [self.IDX_GRASS, self.IDX_SAND, self.IDX_LAVA]
-        elif (self.gui.get_widget('decalpref_lava').get_active()):
-            idxtype = self.IDX_LAVA
-            blacklist = [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW]
+        decalpref_blacklists = {}
+        full_idx_list = [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]
+        for idx in full_idx_list:
+            decalpref_blacklists[idx] = []
+            for inner_idx in full_idx_list:
+                if idx != inner_idx:
+                    decalpref_blacklists[idx].append(inner_idx)
+        if idxtype in decalpref_blacklists:
+            blacklist = decalpref_blacklists[idxtype]
         else:
             # TODO: We should probably raise an exception or something here,
             # instead...
@@ -577,7 +580,7 @@ class SmartDraw(object):
             # Now let's just get out of here if we're a grass square ourselves.
             # We could have exited earlier, but this way we can recurse around ourselves
             # without duplicating much code.
-            for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
+            for idx in full_idx_list:
                 if (square.decalimg in self.indexes[idx].keys()):
                     square.decalimg = 0
 
@@ -641,7 +644,7 @@ class SmartDraw(object):
                             if (flagcount != 0):
                                 break
                 if (connflags == 0):
-                    for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
+                    for idx in full_idx_list:
                         if (square.decalimg in self.indexes[idx]):
                             square.decalimg = 0
                 else:

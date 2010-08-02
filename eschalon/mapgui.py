@@ -484,6 +484,16 @@ class MapGUI(BaseGUI):
             self.object_type_list[val] = typeidx
             self.object_type_list_rev[typeidx] = val
 
+        # Populate our smartdraw decal preference dropdown
+        store = self.get_widget('decalpref_store')
+        store.append(['Grass', self.smartdraw.IDX_GRASS])
+        store.append(['Sand', self.smartdraw.IDX_SAND])
+        store.append(['Beach', self.smartdraw.IDX_BEACH])
+        if c.book > 1:
+            store.append(['Snow', self.smartdraw.IDX_SNOW])
+            store.append(['Lava', self.smartdraw.IDX_LAVA])
+        self.get_widget('decalpref').set_active(0)
+
         # ... initialize a couple of hidden spinboxes
         self.draw_floor_spin.set_value(1)
         self.draw_decal_spin.set_value(1)
