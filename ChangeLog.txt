@@ -4,6 +4,7 @@
    Auto-fill max health on new Entities
    Smartdraw decal preference is now a dropdown
    Complex object wall flags get updated properly now
+   Initial support for premade object placement
 
    31 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Book 2 Lava smartdrawing seems to work

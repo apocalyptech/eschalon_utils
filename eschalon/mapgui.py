@@ -75,6 +75,7 @@ class MapGUI(BaseGUI):
     MODE_MOVE = 1
     MODE_DRAW = 2
     MODE_ERASE = 3
+    MODE_OBJECT = 4
 
     # Actions that a mouse click can take
     ACTION_NONE = -1
@@ -82,6 +83,7 @@ class MapGUI(BaseGUI):
     ACTION_DRAG = 1
     ACTION_DRAW = 2
     ACTION_ERASE = 4
+    ACTION_OBJECT = 5
 
     # Mouse button constants
     MOUSE_LEFT = 1
@@ -109,7 +111,12 @@ class MapGUI(BaseGUI):
             MOUSE_LEFT: ACTION_ERASE,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
-            }
+            },
+        MODE_OBJECT: {
+            MOUSE_LEFT: ACTION_OBJECT,
+            MOUSE_MIDDLE: ACTION_DRAG,
+            MOUSE_RIGHT: ACTION_EDIT
+            },
         }
 
     def __init__(self, options, prefs, req_book):
@@ -175,10 +182,6 @@ class MapGUI(BaseGUI):
         self.itemsel = self.get_widget('itemselwindow')
         self.floorsel = self.get_widget('floorselwindow')
         self.composite_area = self.get_widget('composite_area')
-        self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
-        self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
-        self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
-        self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.menu_undo = self.get_widget('menu_undo')
         self.menu_undo_label = self.menu_undo.get_children()[0]
         self.menu_redo = self.get_widget('menu_redo')
@@ -217,12 +220,6 @@ class MapGUI(BaseGUI):
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
 
-        # The glade setting here doesn't seem to actually work
-        self.ctl_edit_toggle.set_property('draw-indicator', False)
-        self.ctl_move_toggle.set_property('draw-indicator', False)
-        self.ctl_draw_toggle.set_property('draw-indicator', False)
-        self.ctl_erase_toggle.set_property('draw-indicator', False)
-
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
         for object in self.builder.get_objects():
@@ -240,7 +237,8 @@ class MapGUI(BaseGUI):
             self.MODE_EDIT: None,
             self.MODE_MOVE: gtk.gdk.Cursor(gtk.gdk.FLEUR),
             self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL),
-            self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE)
+            self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE),
+            self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN)
             }
 
         # Initialize item stuff
@@ -494,6 +492,12 @@ class MapGUI(BaseGUI):
             store.append(['Lava', self.smartdraw.IDX_LAVA])
         self.get_widget('decalpref').set_active(0)
 
+        # Populate our object placement dropdown
+        store = self.get_widget('objectplace_store')
+        for (idx, obj) in enumerate(self.smartdraw.premade_objects):
+            store.append([obj.name, idx])
+        self.get_widget('objectplace_combo').set_active(0)
+
         # Resize some images for Book 2 sizes
         if c.book > 1:
             self.get_widget('composite_area').set_size_request(64, 160)
@@ -573,6 +577,8 @@ class MapGUI(BaseGUI):
                 self.ctl_draw_toggle.set_active(True)
             elif (key == 'r'):
                 self.ctl_erase_toggle.set_active(True)
+            elif (key == 'o'):
+                self.ctl_object_toggle.set_active(True)
 
     def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
@@ -625,11 +631,51 @@ class MapGUI(BaseGUI):
     def map_gui_finish(self):
         """
         The current state of Glade (3.6.7 as of this writing) has some really annoying
-        behavior with regards to SpinButtons and Adjustments.  Given that I've been
+        behavior with regards to SpinButtons and Adjustments, in addition to other
+        frustrating issues which make editing problematic.  It's a shame.  Given that I've been
         considering ditching Glade/GTKBuilder anyway, rather than fight through it, I'll
-        just construct some things here.  Note that this is entirely unknown values for
-        the global map properties window, right now.
+        just construct some things here.
         """
+
+        # Draw our control box
+        ctlbox = self.get_widget('control_alignment')
+        vbox = gtk.VBox()
+        hbox = gtk.HBox()
+        first = None
+        for (name, text, key, image) in [
+            ('edit', 'Edit', 'e', 'icon-pointer.png'),
+            ('move', 'Move', 'm', 'icon-hand.png'),
+            (None, None, None, None),
+            ('draw', 'Draw', 'd', 'icon-draw.png'),
+            ('erase', 'Erase', 'r', 'icon-erase.png'),
+            ('object', 'Object', 'o', 'icon-object.png')]:
+            if name is None:
+                vbox.add(hbox)
+                hbox = gtk.HBox()
+                continue
+            radio = gtk.RadioButton(first)
+            radio.set_property('draw-indicator', False)
+            radio.set_relief(gtk.RELIEF_NONE)
+            if first is None:
+                radio.set_active(True)
+                first = radio
+            self.register_widget('ctl_%s_toggle' % (name), radio)
+            radio.add(gtk.image_new_from_file(self.datafile(image)))
+            radio.set_tooltip_markup('%s <i>(%s)</i>' % (text, key))
+            radio.connect('toggled', self.on_control_toggle)
+            hbox.add(radio)
+        vbox.add(hbox)
+        ctlbox.add(vbox)
+        vbox.show_all()
+
+        # This used to happen at the start of run(), will have to do it
+        # here instead.
+        self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
+        self.ctl_move_toggle = self.get_widget('ctl_move_toggle')
+        self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
+        self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
+        self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
+
         # TODO: doublecheck for name collisions on these unknowns
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
@@ -2326,13 +2372,21 @@ class MapGUI(BaseGUI):
         self.load_objsel_vars(widget)
         self.imgsel_on_motion(widget, event)
 
-    def draw_erase_toggle(self, to_draw=True):
-        if to_draw:
-            self.get_widget('draw_frame').show()
-            self.get_widget('erase_frame').hide()
-        else:
-            self.get_widget('draw_frame').hide()
-            self.get_widget('erase_frame').show()
+    def clear_action_frames(self, which):
+        for widgetname in ['draw_frame', 'erase_frame', 'object_frame']:
+            if widgetname == which:
+                self.get_widget(widgetname).show()
+            else:
+                self.get_widget(widgetname).hide()
+
+    def toggle_draw_frame(self):
+        self.clear_action_frames('draw_frame')
+
+    def toggle_erase_frame(self):
+        self.clear_action_frames('erase_frame')
+
+    def toggle_place_object_frame(self):
+        self.clear_action_frames('object_frame')
 
     def update_activity_label(self, widget=None):
         newlabel = ''
@@ -2341,7 +2395,7 @@ class MapGUI(BaseGUI):
         elif self.ctl_move_toggle.get_active():
             newlabel = 'Scrolling Map'
         elif self.ctl_draw_toggle.get_active():
-            self.draw_erase_toggle(True)
+            self.toggle_draw_frame()
             elems = []
             if (self.draw_floor_checkbox.get_active()):
                 elems.append('Floors')
@@ -2358,7 +2412,7 @@ class MapGUI(BaseGUI):
             else:
                 newlabel = 'Drawing (no elements selected)'
         elif self.ctl_erase_toggle.get_active():
-            self.draw_erase_toggle(False)
+            self.toggle_erase_frame()
             elems = []
             if (self.erase_floor_checkbox.get_active()):
                 elems.append('Floors')
@@ -2374,6 +2428,9 @@ class MapGUI(BaseGUI):
                 newlabel = 'Erasing %s' % (', '.join(elems))
             else:
                 newlabel = 'Erasing (no elements selected)'
+        elif self.ctl_object_toggle.get_active():
+            self.toggle_place_object_frame()
+            newlabel = 'Placing Objects'
         else:
             newlabel = '<i>Unknown</i>'
         self.activity_label.set_markup('Activity: %s' % (newlabel))
@@ -2389,6 +2446,8 @@ class MapGUI(BaseGUI):
                 self.edit_mode = self.MODE_DRAW
             elif (clicked == 'ctl_erase_toggle'):
                 self.edit_mode = self.MODE_ERASE
+            elif (clicked == 'ctl_object_toggle'):
+                self.edit_mode = self.MODE_OBJECT
             else:
                 # TODO: Except here or something
                 print "Unknown control toggled, should never get here"
@@ -2423,30 +2482,8 @@ class MapGUI(BaseGUI):
         elif (action == self.ACTION_ERASE):
             self.erasing = True
             self.action_erase_square(self.sq_x, self.sq_y)
-        #else:
-        #    # Book 2 stupid reporting (for now)
-        #    square = self.map.squares[self.sq_y][self.sq_x]
-        #    if square:
-        #        print "Square at (%d, %d)" % (self.sq_x, self.sq_y)
-        #        print "   Barrier Flag: %d" % (square.wall)
-        #        print "   Floor: %d" % (square.floorimg)
-        #        print "   Decal: %d" % (square.decalimg)
-        #        print "   Wall: %d" % (square.wallimg)
-        #        print "   Wall Decal: %d" % (square.walldecalimg)
-        #        print "   Unknown: %d" % (square.unknown5)
-        #        print "   Script ID: %d" % (square.scriptid)
-        #        if len(square.scripts) > 0:
-        #            for (i, script) in enumerate(square.scripts):
-        #                print "   Script %d:" % (i+1)
-        #                print script.display()
-        #                print
-        #        elif square.scriptid != 0:
-        #            print "   No script object!"
-        #        if square.entity:
-        #            print
-        #            print "   Entity:"
-        #            print square.entity.display()
-        #        print
+        elif (action == self.ACTION_OBJECT):
+            self.action_place_object_square(self.sq_x, self.sq_y)
 
     def on_released(self, widget=None, event=None):
         if (self.dragging or self.drawing or self.erasing):
@@ -2647,6 +2684,29 @@ class MapGUI(BaseGUI):
         # This just randomizes, so don't bother here.
         #if (self.erase_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
         #    self.smartdraw.draw_walldecal(square)
+
+        # And then close off our undo and redraw if needed
+        if (self.undo.finish()):
+            self.redraw_square(x, y)
+            self.update_undo_gui()
+
+    def action_place_object_square(self, x, y):
+        """ What to do when we're told to place an object on a square on the map."""
+
+        # Make sure we know what we're drawing
+        iter = self.get_widget('objectplace_combo').get_active_iter()
+        model = self.get_widget('objectplace_combo').get_model()
+        objidx = model.get_value(iter, 1)
+
+        # Store our undo state
+        self.undo.store(x, y)
+        self.undo.set_text('Place Object "%s"' % (self.smartdraw.premade_objects[objidx].name))
+        
+        # Grab our square object
+        square = self.map.squares[y][x]
+
+        # Let's just implement this in SmartDraw
+        self.smartdraw.place_object(square, objidx)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):

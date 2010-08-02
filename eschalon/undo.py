@@ -51,6 +51,9 @@ class Additional(object):
         reference to that object may become invalid later on
         due to outside undo/redo activity.
         """
+        # TODO: we're gonna start using this for our object
+        # placements, which will involve Scripts.  Undo should
+        # handle that stuff properly, but it won't right now.
         self.new_decalimg = self.square.decalimg
         self.new_wallimg = self.square.wallimg
         self.new_floorimg = self.square.floorimg

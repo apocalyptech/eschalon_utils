@@ -20,7 +20,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import random
+from eschalon import constants as c
 from eschalon.map import Map
+from eschalon.square import Square
+from eschalon.mapscript import Mapscript
 
 class ComplexObjStep(object):
     """
@@ -81,6 +84,79 @@ class ComplexObjCollection(object):
             if object.matches(id):
                 return object
         return None
+
+class PremadeObject(object):
+    """
+    A class to hold information about a premade object.  For instance,
+    it'd be nice to be able to just plop a door down, or a chest,
+    without having to do the actual object creation in the square
+    editor.
+    """
+
+    # TODO: combine Premade and Complex, eh?  Doors should have the
+    # frame adjacent, etc.
+    def __init__(self, name):
+        self.name = name
+        self.square = Square.new(c.book, -1, -1)
+        self.square.savegame = True
+        self.mapscript = None
+        self.do_wall = False
+        self.do_floorimg = False
+        self.do_decalimg = False
+        self.do_wallimg = False
+        self.do_walldecalimg = False
+        self.do_script = False
+
+    def set_wall(self, wall):
+        self.do_wall = True
+        self.square.wall = wall
+
+    def set_floorimg(self, floorimg):
+        self.do_floorimg = True
+        self.square.floorimg = floorimg
+
+    def set_decalimg(self, decalimg):
+        self.do_decalimg = True
+        self.square.decalimg = decalimg
+
+    def set_wallimg(self, wallimg):
+        self.do_wallimg = True
+        self.square.wallimg = wallimg
+
+    def set_walldecalimg(self, floorimg):
+        self.do_walldecalimg = True
+        self.square.walldecalimg = floorimg
+
+    def set_script(self, scriptid):
+        self.do_script = True
+        self.square.scriptid = scriptid
+
+    def create_scriptobj(self, initcontents=None):
+        self.mapscript = Mapscript.new(c.book, True)
+        self.mapscript.tozero(-1, -1)
+        if initcontents is not None:
+            self.mapscript.items[0].item_name = 'random'
+
+    def apply_to(self, map, square):
+        if self.do_wall:
+            square.wall = self.square.wall
+        if self.do_floorimg:
+            square.floorimg = self.square.floorimg
+        if self.do_decalimg:
+            square.decalimg = self.square.decalimg
+        if self.do_wallimg:
+            square.wallimg = self.square.wallimg
+        if self.do_walldecalimg:
+            square.walldecalimg = self.square.walldecalimg
+        if self.do_script:
+            square.scriptid = self.square.scriptid
+            for i in range(len(square.scripts)):
+                map.delscript(square.x, square.y, 0)
+            if self.mapscript is not None:
+                square.addscript(self.mapscript.replicate())
+                map.scripts.append(square.scripts[0])
+                square.scripts[0].x = square.x
+                square.scripts[0].y = square.y
 
 class SmartDraw(object):
     """
@@ -181,6 +257,10 @@ class SmartDraw(object):
 
     def set_map(self, map):
         self.map = map
+        for obj in self.premade_objects:
+            obj.square.savegame = map.is_savegame()
+            if obj.mapscript is not None:
+                obj.mapscript.savegame = map.is_savegame()
 
     def set_gui(self, gui):
         self.gui = gui
@@ -921,6 +1001,12 @@ class SmartDraw(object):
     def draw_smart_complex_decal(self, square, undo):
         return self.draw_smart_complex_obj(self.complex_obj_decal, square, undo)
 
+    def place_object(self, square, objidx):
+        """
+        Places a premade object on a square
+        """
+        self.premade_objects[objidx].apply_to(self.map, square)
+
     @staticmethod
     def new(book):
         """
@@ -1163,6 +1249,9 @@ class B1SmartDraw(SmartDraw):
         wagon.add(self.DIR_NE, 84)
 
         self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
+
+        # Now premade objects
+        self.premade_objects = []
 
 class B2SmartDraw(SmartDraw):
     """
@@ -1438,3 +1527,102 @@ class B2SmartDraw(SmartDraw):
         stairs_ne = ComplexObj('Stairs (NW/SE)', 151, 5)
         self.complex_obj_decal.add(stairs_ne)
         stairs_ne.add(self.DIR_SE, 152)
+
+        # Now premade objects
+        self.premade_objects = []
+
+        obj = PremadeObject('Closed Wooden Door /')
+        obj.set_wall(1)
+        obj.set_wallimg(266)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A wooden door.'
+        obj.mapscript.state = 1
+        obj.mapscript.cur_condition = 450
+        obj.mapscript.max_condition = 450
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Open Wooden Door /')
+        obj.set_wall(0)
+        obj.set_wallimg(267)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A wooden door.'
+        obj.mapscript.state = 2
+        obj.mapscript.cur_condition = 450
+        obj.mapscript.max_condition = 450
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Closed Wooden Door \\')
+        obj.set_wall(1)
+        obj.set_wallimg(268)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A wooden door.'
+        obj.mapscript.state = 1
+        obj.mapscript.cur_condition = 450
+        obj.mapscript.max_condition = 450
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Open Wooden Door \\')
+        obj.set_wall(0)
+        obj.set_wallimg(269)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A wooden door.'
+        obj.mapscript.state = 2
+        obj.mapscript.cur_condition = 450
+        obj.mapscript.max_condition = 450
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Closed Banded Door /')
+        obj.set_wall(1)
+        obj.set_wallimg(282)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A heavy, reinforced door.'
+        obj.mapscript.state = 1
+        obj.mapscript.cur_condition = 1100
+        obj.mapscript.max_condition = 1100
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Open Banded Door /')
+        obj.set_wall(0)
+        obj.set_wallimg(283)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A heavy, reinforced door.'
+        obj.mapscript.state = 2
+        obj.mapscript.cur_condition = 1100
+        obj.mapscript.max_condition = 1100
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Closed Banded Door \\')
+        obj.set_wall(1)
+        obj.set_wallimg(284)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A heavy, reinforced door.'
+        obj.mapscript.state = 1
+        obj.mapscript.cur_condition = 1100
+        obj.mapscript.max_condition = 1100
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Open Banded Door \\')
+        obj.set_wall(0)
+        obj.set_wallimg(285)
+        obj.set_walldecalimg(19)
+        obj.set_script(5)
+        obj.create_scriptobj('random')
+        obj.mapscript.description = 'A heavy, reinforced door.'
+        obj.mapscript.state = 2
+        obj.mapscript.cur_condition = 1100
+        obj.mapscript.max_condition = 1100
+        self.premade_objects.append(obj)
