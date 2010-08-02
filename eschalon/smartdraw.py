@@ -38,10 +38,11 @@ class ComplexObj(object):
     tile (examples being tents, beds, wagons, a carpet, and cliffs)
     """
     
-    def __init__(self, name, starttile):
+    def __init__(self, name, starttile, wallflag=None):
         self.name = name
         self.steps = [ComplexObjStep(starttile)]
         self.revdir = None
+        self.wallflag = wallflag
     def add(self, dir, tile):
         step = ComplexObjStep(tile)
         step.dir = dir
@@ -905,6 +906,8 @@ class SmartDraw(object):
                             affected.append(newsquare)
                             newsquare.__dict__[collection.var] = id
                             (curx, cury) = (newsquare.x, newsquare.y)
+                            if obj.wallflag is not None:
+                                newsquare.wall = obj.wallflag
                     else:
                         break
         return (text, affected)
@@ -1107,55 +1110,55 @@ class B1SmartDraw(SmartDraw):
         carpet.add(self.DIR_SW, 77)
         carpet.add(self.DIR_SW, 78)
 
-        chasm_1 = ComplexObj('Chasm (1)', 85)
+        chasm_1 = ComplexObj('Chasm (1)', 85, 5)
         self.complex_obj_floor.add(chasm_1)
         chasm_1.add(self.DIR_S, 91)
         chasm_1.add(self.DIR_S, 97)
 
-        chasm_2 = ComplexObj('Chasm (2)', 86)
+        chasm_2 = ComplexObj('Chasm (2)', 86, 5)
         self.complex_obj_floor.add(chasm_2)
         chasm_2.add(self.DIR_S, 92)
         chasm_2.add(self.DIR_S, 98)
 
-        chasm_3 = ComplexObj('Chasm (3)', 87)
+        chasm_3 = ComplexObj('Chasm (3)', 87, 5)
         self.complex_obj_floor.add(chasm_3)
         chasm_3.add(self.DIR_S, 93)
         chasm_3.add(self.DIR_S, 99)
 
-        chasm_4 = ComplexObj('Chasm (4)', 88)
+        chasm_4 = ComplexObj('Chasm (4)', 88, 5)
         self.complex_obj_floor.add(chasm_4)
         chasm_4.add(self.DIR_S, 94)
         chasm_4.add(self.DIR_S, 100)
 
-        chasm_5 = ComplexObj('Chasm (5)', 89)
+        chasm_5 = ComplexObj('Chasm (5)', 89, 5)
         self.complex_obj_floor.add(chasm_5)
         chasm_5.add(self.DIR_S, 95)
         chasm_5.add(self.DIR_S, 101)
 
-        chasm_6 = ComplexObj('Chasm (6)', 90)
+        chasm_6 = ComplexObj('Chasm (6)', 90, 5)
         self.complex_obj_floor.add(chasm_6)
         chasm_6.add(self.DIR_S, 96)
         chasm_6.add(self.DIR_S, 102)
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
         
-        bed_ne = ComplexObj('Bed (NE/SW)', 23)
+        bed_ne = ComplexObj('Bed (NE/SW)', 23, 1)
         self.complex_obj_wall.add(bed_ne)
         bed_ne.add(self.DIR_NE, 24)
 
-        bed_nw = ComplexObj('Bed (NW/SE)', 29)
+        bed_nw = ComplexObj('Bed (NW/SE)', 29, 1)
         self.complex_obj_wall.add(bed_nw)
         bed_nw.add(self.DIR_SE, 30)
 
-        tent_nw = ComplexObj('Tent (NW/SE)', 79)
+        tent_nw = ComplexObj('Tent (NW/SE)', 79, 1)
         self.complex_obj_wall.add(tent_nw)
         tent_nw.add(self.DIR_E, 80)
 
-        tent_ne = ComplexObj('Tent (NE/SW)', 81)
+        tent_ne = ComplexObj('Tent (NE/SW)', 81, 1)
         self.complex_obj_wall.add(tent_ne)
         tent_ne.add(self.DIR_E, 82)
 
-        wagon = ComplexObj('Wagon', 83)
+        wagon = ComplexObj('Wagon', 83, 1)
         self.complex_obj_wall.add(wagon)
         wagon.add(self.DIR_NE, 84)
 
@@ -1406,32 +1409,32 @@ class B2SmartDraw(SmartDraw):
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
         
-        bed_ne = ComplexObj('Bed (NE/SW)', 1)
+        bed_ne = ComplexObj('Bed (NE/SW)', 1, 1)
         self.complex_obj_wall.add(bed_ne)
         bed_ne.add(self.DIR_NE, 2)
 
-        bed_nw = ComplexObj('Bed (NW/SE)', 3)
+        bed_nw = ComplexObj('Bed (NW/SE)', 3, 1)
         self.complex_obj_wall.add(bed_nw)
         bed_nw.add(self.DIR_SE, 4)
 
-        sickbed = ComplexObj('Sickbed', 122)
+        sickbed = ComplexObj('Sickbed', 122, 1)
         self.complex_obj_wall.add(sickbed)
         sickbed.add(self.DIR_SE, 123)
 
-        tent_nw = ComplexObj('Tent (NW/SE)', 83)
+        tent_nw = ComplexObj('Tent (NW/SE)', 83, 1)
         self.complex_obj_wall.add(tent_nw)
         tent_nw.add(self.DIR_E, 84)
 
-        tent_ne = ComplexObj('Tent (NE/SW)', 85)
+        tent_ne = ComplexObj('Tent (NE/SW)', 85, 1)
         self.complex_obj_wall.add(tent_ne)
         tent_ne.add(self.DIR_E, 86)
 
         self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
 
-        stairs_ne = ComplexObj('Stairs (NE/SW)', 134)
+        stairs_ne = ComplexObj('Stairs (NE/SW)', 134, 5)
         self.complex_obj_decal.add(stairs_ne)
         stairs_ne.add(self.DIR_SW, 150)
 
-        stairs_ne = ComplexObj('Stairs (NW/SE)', 151)
+        stairs_ne = ComplexObj('Stairs (NW/SE)', 151, 5)
         self.complex_obj_decal.add(stairs_ne)
         stairs_ne.add(self.DIR_SE, 152)
