@@ -416,7 +416,7 @@ class MapGUI(BaseGUI):
         self.updating_map_checkboxes = False
 
         # Blank pixbuf to use in the square editing window
-        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 52, 130)
+        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.square_width, self.gfx.square_height*5)
 
         # Load in our mouse map (to determine which square we're pointing at)
         self.mousemap = {}
@@ -493,6 +493,15 @@ class MapGUI(BaseGUI):
             store.append(['Snow', self.smartdraw.IDX_SNOW])
             store.append(['Lava', self.smartdraw.IDX_LAVA])
         self.get_widget('decalpref').set_active(0)
+
+        # Resize some images for Book 2 sizes
+        if c.book > 1:
+            self.get_widget('composite_area').set_size_request(64, 160)
+            self.get_widget('floorimg_image').set_size_request(64, 32)
+            self.get_widget('decalimg_image').set_size_request(64, 32)
+            self.get_widget('wallimg_image').set_size_request(64, 160)
+            self.get_widget('walldecalimg_image').set_size_request(64, 96)
+            self.get_widget('ent_square_img').set_size_request(128, 128)
 
         # ... initialize a couple of hidden spinboxes
         self.draw_floor_spin.set_value(1)
@@ -2983,50 +2992,106 @@ class MapGUI(BaseGUI):
                 self.guicache_ctx.paint()
 
     def update_composite(self):
+        """
+        Updates the composite image in the individual square-editing window.
+        This duplicates some code from draw_square() but there are some differences
+        I'd rather not have to deal with in there (ie: we're always fully-zoomed-in
+        here, we don't want to do any highlighting, entities won't actually get
+        drawn, etc, etc).
+        """
 
         # Grab our variables and clear out the pixbuf
         square = self.map.squares[self.sq_y][self.sq_x]
         comp_pixbuf = self.comp_pixbuf
         comp_pixbuf.fill(0)
 
+        # Sizing vars
+        width = self.gfx.square_width
+        width_x2 = width*2
+        height_x4 = width_x2
+        height = self.gfx.square_height
+        height_x2 = width
+        height_x3 = height*3
+
+        # These torch numbers are rather Magic.  They come from
+        # when we still had everything hardcoded (from Book 1, since it
+        # wasn't a problem then) and would just nudge things pixel-by-pixel.
+        # Here we're just computing the ratio based on if height_x4 was 104,
+        # and then scaling to the *actual* height_x4.  It's dumb, yeah.
+        torchbuf = self.gfx.get_flame(width, True)
+        torchwidth = torchbuf.get_property('width')
+        torchheight = torchbuf.get_property('height')
+        torchdecalyoff = int((88/104.0)*height_x4)
+        torchwallyoff = int((35/104.0)*height_x4)
+        torchwallyoff2 = int((30/104.0)*height_x4)
+        torchsconceyoff = int((58/104.0)*height_x4)
+        torchsconceyoff2 = int((30/104.0)*height_x4)
+        torchsconcexoff = int((29/52.0)*width)
+        torchsconcexoff2 = int((5/52.0)*width)
+
         # Now do all the actual compositing
         if (square.floorimg > 0):
-            pixbuf = self.gfx.get_floor(square.floorimg, 52, True)
+            pixbuf = self.gfx.get_floor(square.floorimg, width, True)
             if (pixbuf is not None):
-                pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(comp_pixbuf,
+                        0, height_x4,
+                        width, height,
+                        0, height_x4,
+                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.decalimg > 0):
-            pixbuf = self.gfx.get_decal(square.decalimg, 52, True)
+            pixbuf = self.gfx.get_decal(square.decalimg, width, True)
             if (pixbuf is not None):
-                pixbuf.composite(comp_pixbuf, 0, 104, 52, 26, 0, 104, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(comp_pixbuf,
+                        0, height_x4,
+                        width, height,
+                        0, height_x4,
+                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if ((self.req_book == 1 and square.decalimg == 52) or
                 (self.req_book == 2 and square.decalimg == 101)):
-                pixbuf = self.gfx.get_flame(52, True)
-                if (pixbuf is not None):
-                    pixbuf.composite(comp_pixbuf, 17, 88, 18, 30, 17, 88, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                if (torchbuf is not None):
+                    torchbuf.composite(comp_pixbuf,
+                            torchwidth-1, torchdecalyoff,
+                            torchwidth, torchheight,
+                            torchwidth-1, torchdecalyoff,
+                            1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.wallimg > 0):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(square.wallimg, 52, True, self.map.tree_set)
+            (pixbuf, pixheight, offset) = self.gfx.get_object(square.wallimg, width, True, self.map.tree_set)
             if (pixbuf is not None):
-                pixbuf.composite(comp_pixbuf, 0, 26*(4-pixheight), 52, 26*(pixheight+1), 0, 26*(4-pixheight), 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(comp_pixbuf,
+                        0, height*(4-pixheight),
+                        width, height*(pixheight+1),
+                        offset, height*(4-pixheight),
+                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
-                pixbuf = self.gfx.get_flame(52, True)
-                if (pixbuf is not None):
-                    pixbuf.composite(comp_pixbuf, 17, 35, 18, 30, 17, 35, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                if (torchbuf is not None):
+                    torchbuf.composite(comp_pixbuf,
+                            torchwidth-1, torchwallyoff,
+                            torchwidth, torchwallyoff2,
+                            torchwidth-1, torchwallyoff,
+                            1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (square.walldecalimg > 0):
-            pixbuf = self.gfx.get_object_decal(square.walldecalimg, 52, True)
+            pixbuf = self.gfx.get_object_decal(square.walldecalimg, width, True)
             if (pixbuf is not None):
-                pixbuf.composite(comp_pixbuf, 0, 52, 52, 78, 0, 52, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                pixbuf.composite(comp_pixbuf,
+                        0, height_x2,
+                        width, height_x3,
+                        0, height_x2,
+                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if ((self.req_book == 1 and (square.walldecalimg == 17 or square.walldecalimg == 18)) or
                 (self.req_book == 2 and (square.walldecalimg == 2 or square.walldecalimg == 4))):
-                pixbuf = self.gfx.get_flame(52, True)
-                if (pixbuf is not None):
-                    if (square.walldecalimg == 17):
-                        pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                    elif (square.walldecalimg == 18):
-                        pixbuf.composite(comp_pixbuf, 5, 58, 18, 30, 5, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                    elif (square.walldecalimg == 2):
-                        pixbuf.composite(comp_pixbuf, 29, 58, 18, 30, 29, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                    else:
-                        pixbuf.composite(comp_pixbuf, 5, 58, 18, 30, 5, 58, 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                if (torchbuf is not None):
+                    if (square.walldecalimg == 17 or square.walldecalimg == 2):
+                        torchbuf.composite(comp_pixbuf,
+                                torchsconcexoff, torchsconceyoff,
+                                torchwidth, torchsconceyoff2,
+                                torchsconcexoff, torchsconceyoff,
+                                1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                    elif (square.walldecalimg == 18 or square.walldecalimg == 4):
+                        torchbuf.composite(comp_pixbuf,
+                                torchsconcexoff2, torchsconceyoff,
+                                torchwidth, torchsconceyoff2,
+                                torchsconcexoff2, torchsconceyoff,
+                                1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)

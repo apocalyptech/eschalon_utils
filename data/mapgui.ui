@@ -1360,7 +1360,7 @@
   </object>
   <object class="GtkWindow" id="squarewindow">
     <property name="width_request">480</property>
-    <property name="height_request">700</property>
+    <property name="height_request">720</property>
     <property name="title" translatable="yes">Edit Item Details</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
@@ -1413,7 +1413,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkViewport" id="viewport3">
+                          <object class="GtkViewport" id="composite_viewport">
                             <property name="visible">True</property>
                             <property name="resize_mode">queue</property>
                             <child>
