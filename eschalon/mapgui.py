@@ -524,14 +524,18 @@ class MapGUI(BaseGUI):
             yoff = int(row['Yoff'])
             width = 64 + xoff
             height = 64 + yoff
-            c.entitytable[int(row['ID'])] = c.EntHelper(row['Name'],
+            name = row['Name']
+            if (int(row['Dirs']) == 1):
+                name = '%s *' % (name)
+            c.entitytable[int(row['ID'])] = c.EntHelper(name,
                 int(row['HP']),
                 '%s.png' % (row['file']),
                 int(row['Dirs']),
                 int(row['Align']),
                 width,
                 height,
-                int(row['Frame']))
+                int(row['Frame']),
+                int(row['Move']))
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -1020,6 +1024,10 @@ class MapGUI(BaseGUI):
             health = c.entitytable[entid].health
             button = self.get_widget('healthmaxbutton')
             button.set_label('Set to Max Health (%d)' % (health))
+            self.get_widget('health').set_value(health)
+            if c.book == 2:
+                self.get_widget('movement').set_value(c.entitytable[entid].movement)
+
         self.update_ent_square_img()
 
     def on_direction_changed(self, widget):

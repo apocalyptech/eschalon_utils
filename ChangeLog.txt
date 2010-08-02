@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   02 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Auto-fill max health on new Entities
+
    31 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Book 2 Lava smartdrawing seems to work
 
