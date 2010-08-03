@@ -131,11 +131,11 @@ class PremadeObject(object):
         self.do_script = True
         self.square.scriptid = scriptid
 
-    def create_scriptobj(self, initcontents=None):
+    def create_scriptobj(self, initcontents='random'):
         self.mapscript = Mapscript.new(c.book, True)
         self.mapscript.tozero(-1, -1)
         if initcontents is not None:
-            self.mapscript.items[0].item_name = 'random'
+            self.mapscript.items[0].item_name = initcontents
 
     def apply_to(self, map, square):
         if self.do_wall:
@@ -1533,11 +1533,11 @@ class B2SmartDraw(SmartDraw):
 
         # Doors!
         for (start, desc, text, cond) in [
-                (266, 'Wooden', 'A wooden door.', 450),
-                (282, 'Banded', 'A heavy, reinforced door.', 1100)
+                (266, 'Wooden', 'a wooden door.', 550),
+                (282, 'Banded', 'a heavy, reinforced door.', 1100)
                 ]:
             cur = start
-            for (decal, dir) in [
+            for (walldecal, dir) in [
                     (19, '/'),
                     (20, '\\')
                     ]:
@@ -1548,7 +1548,7 @@ class B2SmartDraw(SmartDraw):
                     obj = PremadeObject('Wooden Door %s - %s' % (dir, state))
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
-                    obj.set_walldecalimg(decal)
+                    obj.set_walldecalimg(walldecal)
                     obj.set_script(5)
                     obj.create_scriptobj('random')
                     obj.mapscript.description = text
@@ -1557,3 +1557,100 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.max_condition = cond
                     self.premade_objects.append(obj)
                     cur += 1
+
+        # Cabinets / Chests
+        for (start, desc, text, cond, contents) in [
+                (5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
+                (9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
+                (17, 'Chest', 'a basic oak chest.', 300, 'random'),
+                (21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
+                (91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
+                (124, 'Coffin', 'a pine coffin.', 150, 'empty'),
+                ]:
+            cur = start
+            for dir in [ '\\', '/' ]:
+                for (state, statenum) in [
+                        ('Closed', 1),
+                        ('Open', 2)
+                        ]:
+                    obj = PremadeObject('%s %s - %s' % (desc, dir, state))
+                    obj.set_wall(5)
+                    obj.set_wallimg(cur)
+                    obj.set_script(2)
+                    obj.create_scriptobj(contents)
+                    obj.mapscript.description = text
+                    obj.mapscript.state = statenum
+                    obj.mapscript.cur_condition = cond
+                    obj.mapscript.max_condition = cond
+                    self.premade_objects.append(obj)
+                    cur += 1
+
+        # Misc items
+        obj = PremadeObject('Powder Keg')
+        obj.set_wall(5)
+        obj.set_wallimg(32)
+        obj.set_script(15)
+        obj.create_scriptobj()
+        obj.mapscript.description = 'a keg of black powder.'
+        obj.mapscript.cur_condition = 5
+        obj.mapscript.max_condition = 5
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Open Barrel')
+        obj.set_wall(5)
+        obj.set_wallimg(13)
+        obj.set_script(1)
+        obj.create_scriptobj()
+        obj.mapscript.description = 'a sturdy oaken barrel.'
+        obj.mapscript.cur_condition = 80
+        obj.mapscript.max_condition = 80
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Sealed Barrel')
+        obj.set_wall(5)
+        obj.set_wallimg(14)
+        obj.set_script(11)
+        obj.create_scriptobj()
+        obj.mapscript.description = 'a sturdy oak sealed barrel.'
+        obj.mapscript.cur_condition = 90
+        obj.mapscript.max_condition = 90
+        self.premade_objects.append(obj)
+
+        obj = PremadeObject('Well')
+        obj.set_wall(1)
+        obj.set_wallimg(57)
+        obj.set_script(16)
+        obj.create_scriptobj()
+        obj.mapscript.description = 'a well.'
+        self.premade_objects.append(obj)
+
+        for (id, dir) in [(39, '\\'), (40, '/')]:
+            obj = PremadeObject('Archery Target %s' % (dir))
+            obj.set_wall(1)
+            obj.set_wallimg(id)
+            obj.set_script(17)
+            obj.create_scriptobj()
+            obj.mapscript.description = 'a target.'
+            self.premade_objects.append(obj)
+
+        for (id, dir) in [(2, '/'), (4, '\\')]:
+            obj = PremadeObject('Sconce %s' % (dir))
+            obj.set_walldecalimg(id)
+            obj.set_script(12)
+            obj.create_scriptobj()
+            obj.mapscript.description = 'a sconce.'
+            self.premade_objects.append(obj)
+
+        # Levers
+        cur = 65
+        for dir in ['\\', '/']:
+            for (text, toggle) in [('Up', 4), ('Toggled', 5)]:
+                obj = PremadeObject('Lever (%s) %s' % (text, dir))
+                obj.set_wall(5)
+                obj.set_wallimg(cur)
+                obj.set_script(7)
+                obj.create_scriptobj()
+                obj.mapscript.description = 'a wooden lever.'
+                obj.mapscript.state = toggle
+                self.premade_objects.append(obj)
+                cur += 1
