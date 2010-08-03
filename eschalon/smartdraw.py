@@ -1302,7 +1302,157 @@ class B1SmartDraw(SmartDraw):
         self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
 
         # Now premade objects
-        self.premade_objects = []
+        self.premade_objects = PremadeObjectCollection()
+
+        # Doors!
+        self.premade_objects.add_category('Doors')
+        for (start, desc, text) in [
+                (101, 'Wooden', 'a wooden door.'),
+                (105, 'Banded', 'a heavy, reinforced door.')
+                ]:
+            cur = start
+            for (walldecal, dir, decalimg, framedir, framedecal) in [
+                    (21, '/', 21, self.DIR_NE, 46),
+                    (22, '\\', 22, self.DIR_NW, 47)
+                    ]:
+                for (state, wall, statenum) in [
+                        ('Closed', 1, 1),
+                        ('Open', 0, 2)
+                        ]:
+                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
+                    obj.set_wall(wall)
+                    obj.set_decalimg(decalimg)
+                    obj.set_wallimg(cur)
+                    obj.set_walldecalimg(walldecal)
+                    obj.set_script(5)
+                    obj.create_scriptobj(None)
+                    obj.mapscript.description = text
+                    obj.mapscript.state = statenum
+                    obj.mapscript.flags = 0x40
+                    obj.mapscript.sturdiness = 89
+                    rel = obj.add_rel_square(framedir)
+                    rel.set_walldecalimg(framedecal)
+                    cur += 1
+
+        # Chests
+        self.premade_objects.add_category('Chests')
+        for (start, desc, text) in [
+                (7, 'Chest', 'a basic storage chest constructed of hardwood.'),
+                (11, 'Banded Chest', 'a heavy chest built of oak and banded copper.'),
+                (15, 'Metal Chest', 'an amazing chest of steel and gold trim, studded with gemstones.'),
+                ]:
+            cur = start
+            for dir in [ '\\', '/' ]:
+                for (state, statenum) in [
+                        ('Closed', 1),
+                        ('Open', 2)
+                        ]:
+                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
+                    obj.set_wall(5)
+                    obj.set_wallimg(cur)
+                    obj.set_script(3)
+                    obj.create_scriptobj('Random')
+                    obj.mapscript.description = text
+                    obj.mapscript.state = statenum
+                    obj.mapscript.flags = 0x40
+                    obj.mapscript.sturdiness = 89
+                    cur += 1
+
+        # Cabinets
+        self.premade_objects.add_category('Cabinets')
+        for (start, desc, text) in [
+                (27, 'Small Cabinet \\', 'a sturdy cedar cabinet.'),
+                (49, 'Large Cabinet /', 'a fine hardwood dresser.'),
+                ]:
+            cur = start
+            for (state, statenum) in [
+                    ('Closed', 1),
+                    ('Open', 2)
+                    ]:
+                obj = self.premade_objects.new('%s - %s' % (desc, state))
+                obj.set_wall(5)
+                obj.set_wallimg(cur)
+                obj.set_script(3)
+                obj.create_scriptobj('Random')
+                obj.mapscript.description = text
+                obj.mapscript.state = statenum
+                obj.mapscript.flags = 0x40
+                obj.mapscript.sturdiness = 89
+                cur += 1
+
+        # Other Containers
+        self.premade_objects.add_category('Other Containers')
+        for (wallimg, state, statenum) in [
+                (65, 'Closed', 1),
+                (66, 'Open', 2),
+                ]:
+            obj = self.premade_objects.new('Coffin \\ - %s' % (state))
+            obj.set_wall(1)
+            obj.set_wallimg(wallimg)
+            obj.set_script(3)
+            obj.create_scriptobj('Empty')
+            obj.mapscript.description = 'a coffin.'
+            obj.mapscript.state = statenum
+
+        # Coffins (still "other containers")
+        for (wallimg, name, text) in [
+                (64, 'Coffin /', 'a coffin.'),
+                (115, 'Upright Coffin', 'a coffin.'),
+                (62, 'Sarcophagus /', 'a stone sarcophagus.'),
+                (63, 'Sarcophagus \\', 'a stone sarcophagus.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_wall(1)
+            obj.set_wallimg(wallimg)
+            obj.set_script(1)
+            obj.create_scriptobj('Empty')
+            obj.mapscript.description = text
+
+        obj = self.premade_objects.new('Open Barrel')
+        obj.set_wall(1)
+        obj.set_wallimg(5)
+        obj.set_script(1)
+        obj.create_scriptobj('Random')
+        obj.mapscript.description = 'a storage barrel of decent quality.'
+        obj.mapscript.flags = 0x40
+        obj.mapscript.sturdiness = 89
+
+        obj = self.premade_objects.new('Sealed Barrel')
+        obj.set_wall(1)
+        obj.set_wallimg(3)
+        obj.set_script(11)
+        obj.create_scriptobj('Random')
+        obj.mapscript.description = 'a sealed storage barrel of decent quality.'
+        obj.mapscript.flags = 0x40
+        obj.mapscript.sturdiness = 89
+
+        # Signs
+        self.premade_objects.add_category('Signs')
+        for (name, wallimg, text) in [
+                ('Signpost SE', 112, 'a hanging sign.'),
+                ('Signpost NE', 113, 'a hanging sign.'),
+                ('Signpost NW', 114, 'a hanging sign.'),
+                ('Roadsign', 111, 'a signpost.'),
+                ('Small Sign /', 37, 'a wooden sign.'),
+                ('Small Sign \\', 53, 'a wooden sign.'),
+                ('Tombstone', 44, 'a granite tombstone.'),
+                ('Cross', 45, 'an old grave marker.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_wall(5)
+            obj.set_wallimg(wallimg)
+            obj.set_script(10)
+            obj.create_scriptobj()
+            obj.mapscript.description=text
+        for (name, walldecalimg, text) in [
+                ('Plaque \\', 37, 'a plaque affixed to the wall.'),
+                ('Plaque /', 38, 'a plaque affixed to the wall.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_walldecalimg(walldecalimg)
+            obj.set_script(9)
+            obj.create_scriptobj()
+            obj.mapscript.description=text
 
 class B2SmartDraw(SmartDraw):
     """
