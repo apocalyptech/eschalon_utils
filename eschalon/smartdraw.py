@@ -158,6 +158,32 @@ class PremadeObject(object):
                 square.scripts[0].x = square.x
                 square.scripts[0].y = square.y
 
+class PremadeObjectCollection(object):
+    """
+    A collection of PremadeObjects
+    """
+
+    def __init__(self):
+        self.cats = []
+        self.collection = {}
+
+    def add_category(self, text):
+        self.cats.append(text)
+        self.collection[text] = []
+
+    def new(self, name):
+        """
+        Creates a new PremadeObject and returns it
+        """
+        if len(self.cats) == 0:
+            raise Exception('Need to add a category first')
+        obj = PremadeObject(new)
+        self.collection[self.cats[-1]].append(obj)
+        return obj
+    
+    def get_all(self):
+        return self.collection
+
 class SmartDraw(object):
     """
     A class to deal with "smart" drawing functions.
@@ -1529,9 +1555,10 @@ class B2SmartDraw(SmartDraw):
         stairs_ne.add(self.DIR_SE, 152)
 
         # Now premade objects
-        self.premade_objects = []
+        self.premade_objects = PremadeObjectCollection()
 
         # Doors!
+        self.premade_objects.add_category('Doors')
         for (start, desc, text, cond) in [
                 (266, 'Wooden', 'a wooden door.', 550),
                 (282, 'Banded', 'a heavy, reinforced door.', 1100)
@@ -1545,7 +1572,7 @@ class B2SmartDraw(SmartDraw):
                         ('Closed', 1, 1),
                         ('Open', 0, 2)
                         ]:
-                    obj = PremadeObject('Wooden Door %s - %s' % (dir, state))
+                    obj = self.premade_objects.new('Wooden Door %s - %s' % (dir, state))
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
@@ -1555,10 +1582,10 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.cur_condition = cond
                     obj.mapscript.max_condition = cond
-                    self.premade_objects.append(obj)
                     cur += 1
 
         # Cabinets / Chests
+        self.premade_objects.add_category('Containers')
         for (start, desc, text, cond, contents) in [
                 (5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
                 (9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
@@ -1573,7 +1600,7 @@ class B2SmartDraw(SmartDraw):
                         ('Closed', 1),
                         ('Open', 2)
                         ]:
-                    obj = PremadeObject('%s %s - %s' % (desc, dir, state))
+                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
                     obj.set_script(2)
@@ -1582,11 +1609,12 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.cur_condition = cond
                     obj.mapscript.max_condition = cond
-                    self.premade_objects.append(obj)
                     cur += 1
 
         # Misc items
-        obj = PremadeObject('Powder Keg')
+        self.premade_objects.add_category('Misc Items')
+
+        obj = self.premade_objects.new('Powder Keg')
         obj.set_wall(5)
         obj.set_wallimg(32)
         obj.set_script(15)
@@ -1594,9 +1622,8 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a keg of black powder.'
         obj.mapscript.cur_condition = 5
         obj.mapscript.max_condition = 5
-        self.premade_objects.append(obj)
 
-        obj = PremadeObject('Open Barrel')
+        obj = self.premade_objects.new('Open Barrel')
         obj.set_wall(5)
         obj.set_wallimg(13)
         obj.set_script(1)
@@ -1604,9 +1631,8 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sturdy oaken barrel.'
         obj.mapscript.cur_condition = 80
         obj.mapscript.max_condition = 80
-        self.premade_objects.append(obj)
 
-        obj = PremadeObject('Sealed Barrel')
+        obj = self.premade_objects.new('Sealed Barrel')
         obj.set_wall(5)
         obj.set_wallimg(14)
         obj.set_script(11)
@@ -1614,43 +1640,38 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sturdy oak sealed barrel.'
         obj.mapscript.cur_condition = 90
         obj.mapscript.max_condition = 90
-        self.premade_objects.append(obj)
 
-        obj = PremadeObject('Well')
+        obj = self.premade_objects.new('Well')
         obj.set_wall(1)
         obj.set_wallimg(57)
         obj.set_script(16)
         obj.create_scriptobj()
         obj.mapscript.description = 'a well.'
-        self.premade_objects.append(obj)
 
         for (id, dir) in [(39, '\\'), (40, '/')]:
-            obj = PremadeObject('Archery Target %s' % (dir))
+            obj = self.premade_objects.new('Archery Target %s' % (dir))
             obj.set_wall(1)
             obj.set_wallimg(id)
             obj.set_script(17)
             obj.create_scriptobj()
             obj.mapscript.description = 'a target.'
-            self.premade_objects.append(obj)
 
         for (id, dir) in [(2, '/'), (4, '\\')]:
-            obj = PremadeObject('Sconce %s' % (dir))
+            obj = self.premade_objects.new('Sconce %s' % (dir))
             obj.set_walldecalimg(id)
             obj.set_script(12)
             obj.create_scriptobj()
             obj.mapscript.description = 'a sconce.'
-            self.premade_objects.append(obj)
 
         # Levers
         cur = 65
         for dir in ['\\', '/']:
             for (text, toggle) in [('Up', 4), ('Toggled', 5)]:
-                obj = PremadeObject('Lever (%s) %s' % (text, dir))
+                obj = self.premade_objects.new('Lever (%s) %s' % (text, dir))
                 obj.set_wall(5)
                 obj.set_wallimg(cur)
                 obj.set_script(7)
                 obj.create_scriptobj()
                 obj.mapscript.description = 'a wooden lever.'
                 obj.mapscript.state = toggle
-                self.premade_objects.append(obj)
                 cur += 1
