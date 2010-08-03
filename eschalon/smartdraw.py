@@ -93,8 +93,6 @@ class PremadeObject(object):
     editor.
     """
 
-    # TODO: combine Premade and Complex, eh?  Doors should have the
-    # frame adjacent, etc.
     def __init__(self, name):
         self.name = name
         self.square = Square.new(c.book, -1, -1)
@@ -106,6 +104,7 @@ class PremadeObject(object):
         self.do_wallimg = False
         self.do_walldecalimg = False
         self.do_script = False
+        self.rel_squares = {}
 
     def set_wall(self, wall):
         self.do_wall = True
@@ -137,7 +136,13 @@ class PremadeObject(object):
         if initcontents is not None:
             self.mapscript.items[0].item_name = initcontents
 
+    def add_rel_square(self, direction):
+        obj = PremadeObject('relative %d' % (direction))
+        self.rel_squares[direction] = obj
+        return obj
+
     def apply_to(self, map, square):
+        extra_affected = []
         if self.do_wall:
             square.wall = self.square.wall
         if self.do_floorimg:
@@ -157,6 +162,13 @@ class PremadeObject(object):
                 map.scripts.append(square.scripts[0])
                 square.scripts[0].x = square.x
                 square.scripts[0].y = square.y
+        for (dir, rel_obj) in self.rel_squares.items():
+            adjsquare = map.square_relative(square.x, square.y, dir)
+            if adjsquare:
+                rel_obj.apply_to(map, adjsquare)
+                extra_affected.append(adjsquare)
+        # TODO: interaction with Undo, here.
+        return extra_affected
 
 class PremadeObjectCollection(object):
     """
@@ -1577,9 +1589,9 @@ class B2SmartDraw(SmartDraw):
                 (282, 'Banded', 'a heavy, reinforced door.', 1100)
                 ]:
             cur = start
-            for (walldecal, dir) in [
-                    (19, '/'),
-                    (20, '\\')
+            for (walldecal, dir, framedir, framedecal) in [
+                    (19, '/', self.DIR_NE, 35),
+                    (20, '\\', self.DIR_NW, 36)
                     ]:
                 for (state, wall, statenum) in [
                         ('Closed', 1, 1),
@@ -1595,6 +1607,8 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.cur_condition = cond
                     obj.mapscript.max_condition = cond
+                    rel = obj.add_rel_square(framedir)
+                    rel.set_walldecalimg(framedecal)
                     cur += 1
 
         # Cabinets / Chests
