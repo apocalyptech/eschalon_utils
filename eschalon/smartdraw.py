@@ -1040,11 +1040,11 @@ class SmartDraw(object):
     def draw_smart_complex_decal(self, square, undo):
         return self.draw_smart_complex_obj(self.complex_obj_decal, square, undo)
 
-    def place_object(self, square, objcat, objidx):
+    def place_object(self, square, obj):
         """
         Places a premade object on a square
         """
-        self.premade_objects.get(objcat, objidx).apply_to(self.map, square)
+        obj.apply_to(self.map, square)
 
     @staticmethod
     def new(book):

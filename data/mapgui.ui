@@ -875,6 +875,7 @@
                           <object class="GtkComboBox" id="objectplace_combo">
                             <property name="visible">True</property>
                             <property name="model">objectplace_treestore</property>
+                            <signal name="changed" handler="update_activity_label"/>
                             <child>
                               <object class="GtkCellRendererText" id="objectplace_renderer"/>
                               <attributes>

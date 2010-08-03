@@ -2391,30 +2391,23 @@ class MapGUI(BaseGUI):
         self.load_objsel_vars(widget)
         self.imgsel_on_motion(widget, event)
 
-    def clear_action_frames(self, which):
+    def toggle_action_frames(self, which=''):
         for widgetname in ['draw_frame', 'erase_frame', 'object_frame']:
             if widgetname == which:
                 self.get_widget(widgetname).show()
             else:
                 self.get_widget(widgetname).hide()
 
-    def toggle_draw_frame(self):
-        self.clear_action_frames('draw_frame')
-
-    def toggle_erase_frame(self):
-        self.clear_action_frames('erase_frame')
-
-    def toggle_place_object_frame(self):
-        self.clear_action_frames('object_frame')
-
     def update_activity_label(self, widget=None):
         newlabel = ''
         if self.ctl_edit_toggle.get_active():
+            self.toggle_action_frames()
             newlabel = 'Editing Single Tiles'
         elif self.ctl_move_toggle.get_active():
+            self.toggle_action_frames()
             newlabel = 'Scrolling Map'
         elif self.ctl_draw_toggle.get_active():
-            self.toggle_draw_frame()
+            self.toggle_action_frames('draw_frame')
             elems = []
             if (self.draw_floor_checkbox.get_active()):
                 elems.append('Floors')
@@ -2431,7 +2424,7 @@ class MapGUI(BaseGUI):
             else:
                 newlabel = 'Drawing (no elements selected)'
         elif self.ctl_erase_toggle.get_active():
-            self.toggle_erase_frame()
+            self.toggle_action_frames('erase_frame')
             elems = []
             if (self.erase_floor_checkbox.get_active()):
                 elems.append('Floors')
@@ -2448,9 +2441,11 @@ class MapGUI(BaseGUI):
             else:
                 newlabel = 'Erasing (no elements selected)'
         elif self.ctl_object_toggle.get_active():
-            self.toggle_place_object_frame()
-            newlabel = 'Placing Objects'
+            self.toggle_action_frames('object_frame')
+            obj = self.get_cur_object_placement()
+            newlabel = 'Placing Object "%s"' % (obj.name)
         else:
+            self.toggle_action_frames()
             newlabel = '<i>Unknown</i>'
         self.activity_label.set_markup('Activity: %s' % (newlabel))
 
@@ -2709,24 +2704,31 @@ class MapGUI(BaseGUI):
             self.redraw_square(x, y)
             self.update_undo_gui()
 
-    def action_place_object_square(self, x, y):
-        """ What to do when we're told to place an object on a square on the map."""
-
-        # Make sure we know what we're drawing
+    def get_cur_object_placement(self):
+        """
+        Looks up our currently-selected premade object
+        """
         iter = self.get_widget('objectplace_combo').get_active_iter()
         model = self.get_widget('objectplace_combo').get_model()
         objidx = model.get_value(iter, 1)
         objcat = model.get_value(iter, 2)
+        return self.smartdraw.premade_objects.get(objcat, objidx)
+
+    def action_place_object_square(self, x, y):
+        """ What to do when we're told to place an object on a square on the map."""
+
+        # Make sure we know what we're drawing
+        obj = self.get_cur_object_placement()
 
         # Store our undo state
         self.undo.store(x, y)
-        self.undo.set_text('Place Object "%s"' % (self.smartdraw.premade_objects.get(objcat, objidx).name))
+        self.undo.set_text('Place Object "%s"' % (obj.name))
         
         # Grab our square object
         square = self.map.squares[y][x]
 
         # Let's just implement this in SmartDraw
-        self.smartdraw.place_object(square, objcat, objidx)
+        self.smartdraw.place_object(square, obj)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):
