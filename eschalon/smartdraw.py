@@ -1442,7 +1442,7 @@ class B1SmartDraw(SmartDraw):
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
             obj.set_script(10)
-            obj.create_scriptobj()
+            obj.create_scriptobj(None)
             obj.mapscript.description=text
         for (name, walldecalimg, text) in [
                 ('Plaque \\', 37, 'a plaque affixed to the wall.'),
@@ -1451,8 +1451,58 @@ class B1SmartDraw(SmartDraw):
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
             obj.set_script(9)
-            obj.create_scriptobj()
+            obj.create_scriptobj(None)
             obj.mapscript.description=text
+
+        # Misc items
+        self.premade_objects.add_category('Misc Items')
+
+        obj = self.premade_objects.new('Powder Keg')
+        obj.set_wall(1)
+        obj.set_wallimg(39)
+        obj.set_script(15)
+        obj.create_scriptobj(None)
+        obj.mapscript.description = 'a keg of blackpowder.'
+        obj.mapscript.flags = 0x40 
+        obj.mapscript.sturdiness = 89
+
+        obj = self.premade_objects.new('Well')
+        obj.set_wall(1)
+        obj.set_wallimg(43)
+        obj.set_script(7)
+        obj.create_scriptobj(None)
+        obj.mapscript.description = 'a well.'
+        obj.mapscript.script = 'condition (There is a rope going down the well. Pull it up?) (Yes) (No) ; message(Ah! Very refreshing!) ; Heal 1 0'
+
+        for (id, dir) in [(17, '/'), (18, '\\')]:
+            obj = self.premade_objects.new('Sconce %s' % (dir))
+            obj.set_walldecalimg(id)
+            obj.set_script(13)
+            obj.create_scriptobj()
+            obj.mapscript.description = 'a sconce.'
+
+        # Levers
+        cur = 19
+        for dir in ['/', '\\']:
+            for (text, toggle) in [('Up', 4), ('Toggled', 5)]:
+                obj = self.premade_objects.new('Lever (%s) %s' % (text, dir))
+                obj.set_wall(5)
+                obj.set_wallimg(cur)
+                obj.set_script(7)
+                obj.create_scriptobj()
+                obj.mapscript.description = 'a wooden lever.'
+                obj.mapscript.state = toggle
+                obj.mapscript.script = 'toggle_switch'
+                cur += 1
+
+        # Sound Generators
+        self.premade_objects.add_category('Sound/Light Generators')
+        obj = self.premade_objects.new('Light Source')
+        obj.set_script(25)
+        for (id, name) in c.objecttypetable.items():
+            if name[:16] == 'Sound Generator ':
+                obj = self.premade_objects.new(name)
+                obj.set_script(id)
 
 class B2SmartDraw(SmartDraw):
     """
@@ -1889,6 +1939,7 @@ class B2SmartDraw(SmartDraw):
                 obj.create_scriptobj()
                 obj.mapscript.description = 'a wooden lever.'
                 obj.mapscript.state = toggle
+                obj.mapscript.script = 'toggle_switch'
                 cur += 1
         
         # Zapper
