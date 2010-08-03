@@ -1056,7 +1056,7 @@ class SmartDraw(object):
         """
         Places a premade object on a square
         """
-        obj.apply_to(self.map, square)
+        return obj.apply_to(self.map, square)
 
     @staticmethod
     def new(book):

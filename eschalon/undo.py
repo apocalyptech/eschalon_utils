@@ -30,12 +30,20 @@ class Additional(object):
     attributes that we'll be modifying.
     """
 
+    # TODO: For now, nothing which uses this touches scripts.  Something
+    # may end up doing that in the future, though.  If so, make sure to
+    # update this.
+
     def __init__(self, square):
         self.x = square.x
         self.y = square.y
+        self.old_wall = square.wall
+        self.old_walldecalimg = square.walldecalimg
         self.old_decalimg = square.decalimg
         self.old_wallimg = square.wallimg
         self.old_floorimg = square.floorimg
+        self.new_wall = self.old_wall
+        self.new_walldecalimg = self.old_walldecalimg
         self.new_decalimg = self.old_decalimg
         self.new_wallimg = self.old_wallimg
         self.new_floorimg = self.old_floorimg
@@ -51,21 +59,24 @@ class Additional(object):
         reference to that object may become invalid later on
         due to outside undo/redo activity.
         """
-        # TODO: we're gonna start using this for our object
-        # placements, which will involve Scripts.  Undo should
-        # handle that stuff properly, but it won't right now.
+        self.new_wall = self.square.wall
         self.new_decalimg = self.square.decalimg
         self.new_wallimg = self.square.wallimg
         self.new_floorimg = self.square.floorimg
+        self.new_walldecalimg = self.square.walldecalimg
         self.square = None
-        return (self.new_decalimg != self.old_decalimg or
+        return (self.new_wall != self.old_wall or
+                self.new_decalimg != self.old_decalimg or
                 self.new_wallimg != self.old_wallimg or
-                self.new_floorimg != self.old_floorimg)
+                self.new_floorimg != self.old_floorimg or
+                self.new_walldecalimg != self.old_walldecalimg)
 
     def undo(self, square):
         """
         Process an undo action on this one square.
         """
+        square.wall = self.old_wall
+        square.walldecalimg = self.old_walldecalimg
         square.decalimg = self.old_decalimg
         square.wallimg = self.old_wallimg
         square.floorimg = self.old_floorimg
@@ -74,6 +85,8 @@ class Additional(object):
         """
         Process a redo action on this one square.
         """
+        square.wall = self.new_wall
+        square.walldecalimg = self.new_walldecalimg
         square.decalimg = self.new_decalimg
         square.wallimg = self.new_wallimg
         square.floorimg = self.new_floorimg

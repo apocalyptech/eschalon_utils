@@ -2723,12 +2723,21 @@ class MapGUI(BaseGUI):
         # Store our undo state
         self.undo.store(x, y)
         self.undo.set_text('Place Object "%s"' % (obj.name))
+
+        # It's possible that our object placement may touch adjacent squares, as well.
+        # Load those in now.
+        for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
+            self.undo.add_additional(self.map.square_relative(x, y, dir))
         
         # Grab our square object
         square = self.map.squares[y][x]
 
         # Let's just implement this in SmartDraw
-        self.smartdraw.place_object(square, obj)
+        additionals = self.smartdraw.place_object(square, obj)
+
+        # Redraw any additional squares here
+        for add_square in additionals:
+            self.redraw_square(add_square.x, add_square.y)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):
