@@ -75,7 +75,7 @@ class Mapscript(object):
         pass
 
     def replicate(self):
-        newmapscript = Mapscript()
+        newmapscript = Mapscript.new(self.book, self.savegame)
 
         # Simple Values
         newmapscript.savegame = self.savegame

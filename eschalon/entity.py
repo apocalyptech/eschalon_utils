@@ -67,7 +67,7 @@ class Entity(object):
         pass
 
     def replicate(self):
-        newentity = Entity()
+        newentity = Entity.new(self.book, self.savegame)
 
         # Simple Values
         newentity.savegame = self.savegame

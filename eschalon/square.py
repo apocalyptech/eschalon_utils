@@ -43,7 +43,7 @@ class Square(object):
         self.savegame = False
 
     def replicate(self):
-        newsquare = Square(self.x, self.y)
+        newsquare = Square.new(self.book, self.x, self.y)
 
         # Simple Values
         newsquare.wall = self.wall

@@ -102,6 +102,7 @@ class Map(object):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
+        # TODO: need to call the static Map.load() here
         newmap = Map(self.df.filename)
 
         # Single vals (no need to do actual replication)
