@@ -1821,11 +1821,7 @@ class MapGUI(BaseGUI):
         else:
             self.script_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
-        if c.book == 1:
-            locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
-        else:
-            locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
-        self.script_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
+        # Note that row 6 is lock level, but we're skipping it right here
 
         if c.book == 1:
             # Book 1-specific values
@@ -1869,6 +1865,14 @@ class MapGUI(BaseGUI):
             align.add(hbox)
             align.show_all()
             binput.attach(align, 1, 2, 9, 10)
+
+        # Lock Level, done here so that our signal doesn't get called before sliderloot is available,
+        # in book 2
+        if c.book == 1:
+            locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
+        else:
+            locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
+        self.script_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
 
         # Contents
         contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
