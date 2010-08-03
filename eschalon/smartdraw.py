@@ -1664,6 +1664,21 @@ class B2SmartDraw(SmartDraw):
             obj.set_script(10)
             obj.create_scriptobj()
             obj.mapscript.description=text
+        for (name, walldecalimg, text) in [
+                ('Plaque /', 61, 'a plaque affixed to the wall.'),
+                ('Plaque \\', 62, 'a plaque affixed to the wall.'),
+                ('Painting 1 /', 14, 'a painting.'),
+                ('Painting 2 /', 15, 'a painting.'),
+                ('Painting 3 /', 16, 'a painting.'),
+                ('Painting 1 \\', 30, 'a painting.'),
+                ('Painting 2 \\', 30, 'a painting.'),
+                ('Painting 3 \\', 30, 'a painting.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_walldecalimg(walldecalimg)
+            obj.set_script(9)
+            obj.create_scriptobj()
+            obj.mapscript.description=text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -1733,6 +1748,22 @@ class B2SmartDraw(SmartDraw):
                 obj.set_wall(wall)
             obj.set_wallimg(1000)
             obj.set_script(21)
-            obj.create_scriptobj()
+            obj.create_scriptobj(None)
             obj.mapscript.description = 'Big Graphic Object #0'
             obj.mapscript.extratext = image
+
+        # Light Sources
+        self.premade_objects.add_category('Light Sources')
+        for (id, name) in c.objecttypetable.items():
+            if name[:13] == 'Light Source ':
+                obj = self.premade_objects.new(name)
+                obj.set_script(id)
+                obj.create_scriptobj(None)
+
+        # Sound Generators
+        self.premade_objects.add_category('Sound Generators')
+        for (id, name) in c.objecttypetable.items():
+            if name[:16] == 'Sound Generator ':
+                obj = self.premade_objects.new(name)
+                obj.set_script(id)
+                obj.create_scriptobj(None)
