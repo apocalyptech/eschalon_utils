@@ -1598,15 +1598,16 @@ class B2SmartDraw(SmartDraw):
                     cur += 1
 
         # Cabinets / Chests
-        self.premade_objects.add_category('Containers')
-        for (start, desc, text, cond, contents) in [
-                (5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
-                (9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
-                (17, 'Chest', 'a basic oak chest.', 300, 'random'),
-                (21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
-                (91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
-                (124, 'Coffin', 'a pine coffin.', 150, 'empty'),
+        for (cat, start, desc, text, cond, contents) in [
+                ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
+                (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
+                ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'random'),
+                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
+                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
+                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'empty'),
                 ]:
+            if cat is not None:
+                self.premade_objects.add_category(cat)
             cur = start
             for dir in [ '\\', '/' ]:
                 for (state, statenum) in [
@@ -1624,18 +1625,7 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.max_condition = cond
                     cur += 1
 
-        # Misc items
-        self.premade_objects.add_category('Misc Items')
-
-        obj = self.premade_objects.new('Powder Keg')
-        obj.set_wall(5)
-        obj.set_wallimg(32)
-        obj.set_script(15)
-        obj.create_scriptobj()
-        obj.mapscript.description = 'a keg of black powder.'
-        obj.mapscript.cur_condition = 5
-        obj.mapscript.max_condition = 5
-
+        # Still in the "other containers" cat
         obj = self.premade_objects.new('Open Barrel')
         obj.set_wall(5)
         obj.set_wallimg(13)
@@ -1653,6 +1643,39 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sturdy oak sealed barrel.'
         obj.mapscript.cur_condition = 90
         obj.mapscript.max_condition = 90
+
+        # Signs
+        self.premade_objects.add_category('Signs')
+        for (name, wallimg, text) in [
+                ('Signpost SE', 316, 'a signpost.'),
+                ('Signpost SW', 317, 'a signpost.'),
+                ('Signpost NW', 318, 'a signpost.'),
+                ('Signpost NE', 319, 'a signpost.'),
+                ('Roadsign', 399, 'a roadsign.'),
+                ('Headstone \\', 108, 'a granite headstone.'),
+                ('Headstone /', 109, 'a granite headstone.'),
+                ('Monument', 110, 'a tall, marble grave monument.'),
+                ('Gravestone \\', 111, 'a simple stone grave marker.'),
+                ('Gravestone /', 112, 'a simple stone grave marker.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_wall(5)
+            obj.set_wallimg(wallimg)
+            obj.set_script(10)
+            obj.create_scriptobj()
+            obj.mapscript.description=text
+
+        # Misc items
+        self.premade_objects.add_category('Misc Items')
+
+        obj = self.premade_objects.new('Powder Keg')
+        obj.set_wall(5)
+        obj.set_wallimg(32)
+        obj.set_script(15)
+        obj.create_scriptobj()
+        obj.mapscript.description = 'a keg of black powder.'
+        obj.mapscript.cur_condition = 5
+        obj.mapscript.max_condition = 5
 
         obj = self.premade_objects.new('Well')
         obj.set_wall(1)
@@ -1688,3 +1711,28 @@ class B2SmartDraw(SmartDraw):
                 obj.mapscript.description = 'a wooden lever.'
                 obj.mapscript.state = toggle
                 cur += 1
+        
+        # Zapper
+        obj = self.premade_objects.new('Zapper')
+        obj.set_script(19)
+
+        # Large Graphics
+        self.premade_objects.add_category('Large Graphics')
+        for (wall, name, image) in [
+                (1, 'Hammerlorne Tower', 'hammerlorne.png'),
+                (1, 'Wagon', 'wagon.png'),
+                (None, 'Docked Ship #1', 'docked_ship_1.png'),
+                (None, 'Docked Ship #2', 'corsair.png'),
+                (None, 'Shipwreck', 'sunk_boat.png'),
+                (5, 'Draco Skeleton', 'draco.png'),
+                (1, 'Taurax Statue', 'taurax_statue.png'),
+                (1, 'Stone Head Doorway', 'head_dun.png'),
+                ]:
+            obj = self.premade_objects.new(name)
+            if wall is not None:
+                obj.set_wall(wall)
+            obj.set_wallimg(1000)
+            obj.set_script(21)
+            obj.create_scriptobj()
+            obj.mapscript.description = 'Big Graphic Object #0'
+            obj.mapscript.extratext = image
