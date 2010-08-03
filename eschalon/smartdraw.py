@@ -1531,98 +1531,29 @@ class B2SmartDraw(SmartDraw):
         # Now premade objects
         self.premade_objects = []
 
-        obj = PremadeObject('Closed Wooden Door /')
-        obj.set_wall(1)
-        obj.set_wallimg(266)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A wooden door.'
-        obj.mapscript.state = 1
-        obj.mapscript.cur_condition = 450
-        obj.mapscript.max_condition = 450
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Open Wooden Door /')
-        obj.set_wall(0)
-        obj.set_wallimg(267)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A wooden door.'
-        obj.mapscript.state = 2
-        obj.mapscript.cur_condition = 450
-        obj.mapscript.max_condition = 450
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Closed Wooden Door \\')
-        obj.set_wall(1)
-        obj.set_wallimg(268)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A wooden door.'
-        obj.mapscript.state = 1
-        obj.mapscript.cur_condition = 450
-        obj.mapscript.max_condition = 450
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Open Wooden Door \\')
-        obj.set_wall(0)
-        obj.set_wallimg(269)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A wooden door.'
-        obj.mapscript.state = 2
-        obj.mapscript.cur_condition = 450
-        obj.mapscript.max_condition = 450
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Closed Banded Door /')
-        obj.set_wall(1)
-        obj.set_wallimg(282)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A heavy, reinforced door.'
-        obj.mapscript.state = 1
-        obj.mapscript.cur_condition = 1100
-        obj.mapscript.max_condition = 1100
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Open Banded Door /')
-        obj.set_wall(0)
-        obj.set_wallimg(283)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A heavy, reinforced door.'
-        obj.mapscript.state = 2
-        obj.mapscript.cur_condition = 1100
-        obj.mapscript.max_condition = 1100
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Closed Banded Door \\')
-        obj.set_wall(1)
-        obj.set_wallimg(284)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A heavy, reinforced door.'
-        obj.mapscript.state = 1
-        obj.mapscript.cur_condition = 1100
-        obj.mapscript.max_condition = 1100
-        self.premade_objects.append(obj)
-
-        obj = PremadeObject('Open Banded Door \\')
-        obj.set_wall(0)
-        obj.set_wallimg(285)
-        obj.set_walldecalimg(19)
-        obj.set_script(5)
-        obj.create_scriptobj('random')
-        obj.mapscript.description = 'A heavy, reinforced door.'
-        obj.mapscript.state = 2
-        obj.mapscript.cur_condition = 1100
-        obj.mapscript.max_condition = 1100
-        self.premade_objects.append(obj)
+        # Doors!
+        for (start, desc, text, cond) in [
+                (266, 'Wooden', 'A wooden door.', 450),
+                (282, 'Banded', 'A heavy, reinforced door.', 1100)
+                ]:
+            cur = start
+            for (decal, dir) in [
+                    (19, '/'),
+                    (20, '\\')
+                    ]:
+                for (state, wall, statenum) in [
+                        ('Closed', 1, 1),
+                        ('Open', 0, 2)
+                        ]:
+                    obj = PremadeObject('Wooden Door %s - %s' % (dir, state))
+                    obj.set_wall(wall)
+                    obj.set_wallimg(cur)
+                    obj.set_walldecalimg(decal)
+                    obj.set_script(5)
+                    obj.create_scriptobj('random')
+                    obj.mapscript.description = text
+                    obj.mapscript.state = statenum
+                    obj.mapscript.cur_condition = cond
+                    obj.mapscript.max_condition = cond
+                    self.premade_objects.append(obj)
+                    cur += 1
