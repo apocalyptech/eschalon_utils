@@ -440,7 +440,7 @@ class B2Constants:
         }
 
     class EntHelper(object):
-        def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames, movement=1):
+        def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames, movement=1, entscript=''):
             self.name = name
             self.health = health
             self.gfxfile = gfxfile
@@ -450,6 +450,7 @@ class B2Constants:
             self.height = height
             self.frames = frames
             self.movement = movement
+            self.entscript = entscript
 
     # Entities
     entitytable = {}

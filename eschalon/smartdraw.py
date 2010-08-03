@@ -23,6 +23,7 @@ import random
 from eschalon import constants as c
 from eschalon.map import Map
 from eschalon.square import Square
+from eschalon.entity import Entity
 from eschalon.mapscript import Mapscript
 
 class ComplexObjStep(object):
@@ -98,12 +99,14 @@ class PremadeObject(object):
         self.square = Square.new(c.book, -1, -1)
         self.square.savegame = True
         self.mapscript = None
+        self.entity = None
         self.do_wall = False
         self.do_floorimg = False
         self.do_decalimg = False
         self.do_wallimg = False
         self.do_walldecalimg = False
         self.do_script = False
+        self.do_entity = False
         self.rel_squares = {}
 
     def set_wall(self, wall):
@@ -136,6 +139,11 @@ class PremadeObject(object):
         if initcontents is not None:
             self.mapscript.items[0].item_name = initcontents
 
+    def create_entity(self):
+        self.entity = Entity.new(c.book, True)
+        self.do_entity = True
+        return self.entity
+
     def add_rel_square(self, direction):
         obj = PremadeObject('relative %d' % (direction))
         self.rel_squares[direction] = obj
@@ -162,6 +170,15 @@ class PremadeObject(object):
                 map.scripts.append(square.scripts[0])
                 square.scripts[0].x = square.x
                 square.scripts[0].y = square.y
+        if self.do_entity:
+            if self.entity is not None:
+                if square.entity is not None:
+                    map.delentity(square.x, square.y)
+                square.entity = self.entity.replicate()
+                map.entities.append(square.entity)
+                square.entity.x = square.x
+                square.entity.y = square.y
+                square.entity.set_initial(square.x, square.y)
         for (dir, rel_obj) in self.rel_squares.items():
             adjsquare = map.square_relative(square.x, square.y, dir)
             if adjsquare:
@@ -1304,6 +1321,14 @@ class B1SmartDraw(SmartDraw):
         # Now premade objects
         self.premade_objects = PremadeObjectCollection()
 
+    def create_premade_objects(self):
+        """
+        We don't do this in __init__ because for Book 2, we want to load entities
+        into here, and those don't get load until we've already got a smartdraw
+        object.  This isn't an issue for Book 1, but for the sake of consistency
+        we'll do it here anyway.
+        """
+
         # Doors!
         self.premade_objects.add_category('Doors')
         for (start, desc, text) in [
@@ -1503,6 +1528,34 @@ class B1SmartDraw(SmartDraw):
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_script(id)
+
+        # TODO: code duplication from the main setup screen routine
+        monsters = {}
+        npcs = {}
+        for (key, item) in c.entitytable.iteritems():
+            if item.friendly == 0:
+                table = monsters
+            else:
+                table = npcs
+            table[item.name] = key
+        npckeys = npcs.keys()
+        npckeys.sort()
+
+        # Enemies
+        for (name, table) in [
+                ('Enemies', monsters),
+                ('NPCs', npcs)
+                ]:
+            self.premade_objects.add_category(name)
+            for name in sorted(table.keys()):
+                obj = self.premade_objects.new(name)
+                ent = obj.create_entity()
+                entid = table[name]
+                ent_entry = c.entitytable[entid]
+                ent.entid = entid
+                ent.direction = 1
+                ent.friendly = ent_entry.friendly
+                ent.health = ent_entry.health
 
 class B2SmartDraw(SmartDraw):
     """
@@ -1782,6 +1835,12 @@ class B2SmartDraw(SmartDraw):
         # Now premade objects
         self.premade_objects = PremadeObjectCollection()
 
+    def create_premade_objects(self):
+        """
+        We don't do this in __init__ because we want to load entities into here,
+        and those don't get load until we've already got a smartdraw object.
+        """
+
         # Doors!
         self.premade_objects.add_category('Doors')
         for (start, desc, text, cond) in [
@@ -1982,3 +2041,33 @@ class B2SmartDraw(SmartDraw):
                 obj = self.premade_objects.new(name)
                 obj.set_script(id)
                 obj.create_scriptobj(None)
+
+        # TODO: code duplication from the main setup screen routine
+        monsters = {}
+        npcs = {}
+        for (key, item) in c.entitytable.iteritems():
+            if item.friendly == 0:
+                table = monsters
+            else:
+                table = npcs
+            table[item.name] = key
+        npckeys = npcs.keys()
+        npckeys.sort()
+
+        # Enemies
+        for (name, table) in [
+                ('Enemies', monsters),
+                ('NPCs', npcs)
+                ]:
+            self.premade_objects.add_category(name)
+            for name in sorted(table.keys()):
+                obj = self.premade_objects.new(name)
+                ent = obj.create_entity()
+                entid = table[name]
+                ent_entry = c.entitytable[entid]
+                ent.entid = entid
+                ent.direction = 1
+                ent.friendly = ent_entry.friendly
+                ent.health = ent_entry.health
+                ent.movement = ent_entry.movement
+                ent.entscript = ent_entry.entscript

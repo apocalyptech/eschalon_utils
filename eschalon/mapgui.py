@@ -432,7 +432,7 @@ class MapGUI(BaseGUI):
         monsters = {}
         npcs = {}
         for (key, item) in c.entitytable.iteritems():
-            if (key < 51):
+            if (item.friendly == 0):
                 table = monsters
             else:
                 table = npcs
@@ -493,6 +493,7 @@ class MapGUI(BaseGUI):
         self.get_widget('decalpref').set_active(0)
 
         # Populate our object placement dropdown
+        self.smartdraw.create_premade_objects()
         store = self.get_widget('objectplace_treestore')
         renderer = self.get_widget('objectplace_renderer')
         self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
@@ -558,6 +559,8 @@ class MapGUI(BaseGUI):
             return
         reader = csv.DictReader(cStringIO.StringIO(self.gfx.readfile('entities.csv', 'data')))
         for row in reader:
+            if row['file'].strip() == '':
+                continue
             xoff = int(row['Xoff'])
             yoff = int(row['Yoff'])
             width = 64 + xoff
@@ -565,6 +568,9 @@ class MapGUI(BaseGUI):
             name = row['Name']
             if (int(row['Dirs']) == 1):
                 name = '%s *' % (name)
+            script = row['Script'].strip()
+            if script == '*':
+                script = ''
             c.entitytable[int(row['ID'])] = c.EntHelper(name,
                 int(row['HP']),
                 '%s.png' % (row['file']),
@@ -573,7 +579,8 @@ class MapGUI(BaseGUI):
                 width,
                 height,
                 int(row['Frame']),
-                int(row['Move']))
+                int(row['Move']),
+                script)
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
