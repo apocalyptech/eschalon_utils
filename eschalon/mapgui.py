@@ -493,10 +493,17 @@ class MapGUI(BaseGUI):
         self.get_widget('decalpref').set_active(0)
 
         # Populate our object placement dropdown
-        store = self.get_widget('objectplace_store')
-        for (idx, obj) in enumerate(self.smartdraw.premade_objects):
-            store.append([obj.name, idx])
-        self.get_widget('objectplace_combo').set_active(0)
+        store = self.get_widget('objectplace_treestore')
+        renderer = self.get_widget('objectplace_renderer')
+        self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
+        set_start = False
+        for (cat, objects) in self.smartdraw.premade_objects.get_all_sorted():
+            catiter = store.append(None, [cat, -1, cat])
+            for (idx, obj) in enumerate(objects):
+                iter = store.append(catiter, [obj.name, idx, cat])
+                if not set_start:
+                    set_start = True
+                    self.get_widget('objectplace_combo').set_active_iter(iter)
 
         # Resize some images for Book 2 sizes
         if c.book > 1:
@@ -526,6 +533,14 @@ class MapGUI(BaseGUI):
 
         # ... and get into the main gtk loop
         gtk.main()
+
+    def strip_tree_headers(self, layout, cell, model, iter, data):
+        """
+        A cell data function for use on ComboBoxes which use a TreeStore to
+        hold data, which will make categories nonclickable, and also get rid
+        of the headers in the submenu.
+        """
+        cell.set_property('sensitive', not model.iter_has_child(iter))
 
     def populate_entities(self):
         """
@@ -2701,16 +2716,17 @@ class MapGUI(BaseGUI):
         iter = self.get_widget('objectplace_combo').get_active_iter()
         model = self.get_widget('objectplace_combo').get_model()
         objidx = model.get_value(iter, 1)
+        objcat = model.get_value(iter, 2)
 
         # Store our undo state
         self.undo.store(x, y)
-        self.undo.set_text('Place Object "%s"' % (self.smartdraw.premade_objects[objidx].name))
+        self.undo.set_text('Place Object "%s"' % (self.smartdraw.premade_objects.get(objcat, objidx).name))
         
         # Grab our square object
         square = self.map.squares[y][x]
 
         # Let's just implement this in SmartDraw
-        self.smartdraw.place_object(square, objidx)
+        self.smartdraw.place_object(square, objcat, objidx)
 
         # And then close off our undo and redraw if needed
         if (self.undo.finish()):

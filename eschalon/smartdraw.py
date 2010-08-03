@@ -177,12 +177,28 @@ class PremadeObjectCollection(object):
         """
         if len(self.cats) == 0:
             raise Exception('Need to add a category first')
-        obj = PremadeObject(new)
+        obj = PremadeObject(name)
         self.collection[self.cats[-1]].append(obj)
         return obj
+
+    def get(self, cat, idx):
+        return self.collection[cat][idx]
     
     def get_all(self):
         return self.collection
+
+    def get_all_sorted(self):
+        retarr = []
+        for cat in self.cats:
+            retarr.append((cat, self.collection[cat]))
+        return retarr
+
+    def set_savegame(self, savegame):
+        for objects in self.collection.values():
+            for obj in objects:
+                obj.square.savegame = savegame
+                if obj.mapscript is not None:
+                    obj.mapscript.savegame = savegame
 
 class SmartDraw(object):
     """
@@ -283,10 +299,7 @@ class SmartDraw(object):
 
     def set_map(self, map):
         self.map = map
-        for obj in self.premade_objects:
-            obj.square.savegame = map.is_savegame()
-            if obj.mapscript is not None:
-                obj.mapscript.savegame = map.is_savegame()
+        self.premade_objects.set_savegame(map.is_savegame())
 
     def set_gui(self, gui):
         self.gui = gui
@@ -1027,11 +1040,11 @@ class SmartDraw(object):
     def draw_smart_complex_decal(self, square, undo):
         return self.draw_smart_complex_obj(self.complex_obj_decal, square, undo)
 
-    def place_object(self, square, objidx):
+    def place_object(self, square, objcat, objidx):
         """
         Places a premade object on a square
         """
-        self.premade_objects[objidx].apply_to(self.map, square)
+        self.premade_objects.get(objcat, objidx).apply_to(self.map, square)
 
     @staticmethod
     def new(book):
@@ -1572,7 +1585,7 @@ class B2SmartDraw(SmartDraw):
                         ('Closed', 1, 1),
                         ('Open', 0, 2)
                         ]:
-                    obj = self.premade_objects.new('Wooden Door %s - %s' % (dir, state))
+                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)

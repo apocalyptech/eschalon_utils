@@ -874,9 +874,9 @@
                         <child>
                           <object class="GtkComboBox" id="objectplace_combo">
                             <property name="visible">True</property>
-                            <property name="model">objectplace_store</property>
+                            <property name="model">objectplace_treestore</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext4"/>
+                              <object class="GtkCellRendererText" id="objectplace_renderer"/>
                               <attributes>
                                 <attribute name="text">0</attribute>
                               </attributes>
@@ -4788,12 +4788,14 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
       <column type="guint"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="objectplace_store">
+  <object class="GtkTreeStore" id="objectplace_treestore">
     <columns>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name idx -->
-      <column type="guint"/>
+      <column type="gint"/>
+      <!-- column-name catname -->
+      <column type="gchararray"/>
     </columns>
   </object>
 </interface>
