@@ -1335,6 +1335,9 @@ class MapGUI(BaseGUI):
 
         # Grab some local vars
         squares = self.map.squares
+        huge_gfx_rows = self.huge_gfx_rows
+        global_offset_x = global_x+1
+        global_offset_y = self.z_halfheight*(y-8)+1
 
         # Loop through and composite the new image area
         for i in range(10):
@@ -1346,6 +1349,10 @@ class MapGUI(BaseGUI):
                         (op_buf, offset) = self.draw_square(tier_x, tier_1_y, False, False)
                         over_ctx.set_source_surface(op_buf, ((-3+(2*tier_i))*self.z_halfwidth)-offset+self.z_halfwidth, yval)
                         over_ctx.paint()
+                # Redraw any "huge" graphics in this row
+                if c.book == 2:
+                    for gfx_x in huge_gfx_rows[tier_1_y]:
+                        self.draw_huge_gfx(squares[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             if (i < 9):
                 if (tier_2_y > -1 and tier_2_y < 200):
                     for (tier_i, tier_x) in enumerate(tier_2_x):
@@ -1353,13 +1360,23 @@ class MapGUI(BaseGUI):
                             (op_buf, offset) = self.draw_square(tier_x, tier_2_y, False, False)
                             over_ctx.set_source_surface(op_buf, ((-1+tier_i)*self.z_width)-offset+self.z_halfwidth, (i-4)*self.z_height)
                             over_ctx.paint()
+                # Redraw any "huge" graphics in this row
+                if c.book == 2:
+                    for gfx_x in huge_gfx_rows[tier_2_y]:
+                        self.draw_huge_gfx(squares[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             tier_1_y = tier_1_y + 2
             tier_2_y = tier_2_y + 2
 
+        # This is a bit overkill, but easier than trying to figure out how far up any
+        # big graphics go.
+        for yval in range(tier_1_y-1, 200):
+            for gfx_x in huge_gfx_rows[yval]:
+                self.draw_huge_gfx(squares[yval][gfx_x], over_ctx, global_offset_x, global_offset_y)
+
         # Now superimpose that onto our main map image
-        self.guicache_ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(y-8)+1)
+        self.guicache_ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
         self.guicache_ctx.paint()
-        self.ctx.set_source_surface(over_surf, global_x+1, self.z_halfheight*(y-8)+1)
+        self.ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
         self.ctx.paint()
         self.cleansquares.append((x, y))
         self.maparea.queue_draw()
@@ -3109,7 +3126,7 @@ class MapGUI(BaseGUI):
 
         return (op_surf, op_xoffset+self.z_squarebuf_offset)
 
-    def draw_huge_gfx(self, square):
+    def draw_huge_gfx(self, square, ctx=None, xoff=None, yoff=None):
         """
         Draws a "huge" graphic image on our map (like Hammerlorne, etc).
         Only used in Book 2.
@@ -3117,8 +3134,6 @@ class MapGUI(BaseGUI):
         if square.scriptid == 21 and len(square.scripts) > 0:
             img = self.gfx.get_huge_gfx(square.scripts[0].extratext, self.curzoom)
             if img:
-                #img.write_to_png('test_%s' % (square.scripts[0].extratext))
-
                 x = square.x
                 y = square.y
                 # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
@@ -3131,8 +3146,14 @@ class MapGUI(BaseGUI):
                 xstart = (x*self.z_width)+xpad - int(img.get_width()/2) + self.z_height
                 ystart = y*self.z_halfheight + self.z_height
 
-                self.guicache_ctx.set_source_surface(img, xstart, ystart-img.get_height())
-                self.guicache_ctx.paint()
+                if ctx is None:
+                    ctx = self.guicache_ctx
+                else:
+                    xstart -= xoff
+                    ystart -= yoff
+
+                ctx.set_source_surface(img, xstart, ystart-img.get_height())
+                ctx.paint()
 
     def update_composite(self):
         """
@@ -3336,6 +3357,11 @@ class MapGUI(BaseGUI):
         basic_ctx.fill()
 
         # Draw the squares
+        self.huge_gfx_rows = []
+        # TODO: for editing's sake, we may want to abstract this huge_gfx_rows maintenance
+        # to a helper func (with an _add and _remove or whatever)
+        for i in range(200):
+            self.huge_gfx_rows.append([])
         for y in range(len(self.map.squares)):
             huge_gfxes = []
             for x in range(len(self.map.squares[y])):
@@ -3345,6 +3371,7 @@ class MapGUI(BaseGUI):
             if self.req_book == 2 and self.huge_gfx_toggle.get_active():
                 for square in huge_gfxes:
                     self.draw_huge_gfx(square)
+                    self.huge_gfx_rows[y].append(square.x)
             self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
             while gtk.events_pending():
                 gtk.main_iteration()
