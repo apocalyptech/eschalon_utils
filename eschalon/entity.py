@@ -274,6 +274,7 @@ class B2Entity(Entity):
 
     book = 2
     form_elements = [
+            'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
             'openingscript_label', 'openingscript',
