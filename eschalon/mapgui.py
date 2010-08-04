@@ -868,6 +868,7 @@ class MapGUI(BaseGUI):
         # Load information from the character
         if (self.mapinit):
             self.draw_map()
+            self.update_wall_selection_image()
 
         # If we appear to be editing a global map file and haven't
         # been told otherwise, show a dialog warning the user
@@ -1047,7 +1048,19 @@ class MapGUI(BaseGUI):
         self.propswindow.hide()
         if (self.cur_tree_set != self.map.tree_set):
             self.draw_map()
+            self.update_wall_selection_image()
         return True
+
+    def update_wall_selection_image(self):
+        """
+        In Book 2, there are various circumstances under which our tree_set
+        may change (editing the property window, loading a new map, etc), and
+        if we have a tree currently selected on our drawing/editing tools,
+        that graphic won't get updated unless we do so manually.
+        """
+        if c.book == 2:
+            self.on_draw_wall_changed(self.get_widget('draw_wall_spin'))
+            self.on_wall_changed(self.get_widget('wallimg'))
 
     def on_colorsel_clicked(self, widget):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
