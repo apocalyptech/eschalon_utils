@@ -285,6 +285,9 @@ class MapGUI(BaseGUI):
         # Now that we're sure we have a data dir, load in our entities
         self.populate_entities()
 
+        # Create these objects as soon as we have our entity list
+        self.smartdraw.create_premade_objects()
+
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
                 'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
@@ -509,7 +512,6 @@ class MapGUI(BaseGUI):
         self.get_widget('decalpref').set_active(0)
 
         # Populate our object placement dropdown
-        self.smartdraw.create_premade_objects()
         store = self.get_widget('objectplace_treestore')
         renderer = self.get_widget('objectplace_renderer')
         self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
