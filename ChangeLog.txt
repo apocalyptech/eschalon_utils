@@ -1,10 +1,13 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   03 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Premade Objects can now be placed from a menu
+   Movement flag for Book 1 Entities
+
    02 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Auto-fill max health on new Entities
    Smartdraw decal preference is now a dropdown
    Complex object wall flags get updated properly now
-   Initial support for premade object placement
 
    31 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
    Book 2 Lava smartdrawing seems to work
