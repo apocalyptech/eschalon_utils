@@ -35,6 +35,7 @@ class Entity(object):
         self.y = -1
         self.direction = -1
         self.entscript = ''
+        self.movement = -1
 
         self.friendly = -1
         self.unknownc1 = -1
@@ -50,6 +51,7 @@ class Entity(object):
         self.direction = 1
         self.entscript = ''
         if (self.savegame):
+            self.movement = 1
             self.friendly = 0
             self.unknownc1 = 0
             self.health = 0
@@ -81,6 +83,7 @@ class Entity(object):
         newentity.health = self.health
         newentity.initial_loc = self.initial_loc
         newentity.ent_zero1 = self.ent_zero1
+        newentity.movement = self.movement
 
         # Call out to superclass replication
         self._sub_replicate(newentity)
@@ -111,7 +114,8 @@ class Entity(object):
                 self.unknownc1 == entity.unknownc1 and
                 self.health == entity.health and
                 self.initial_loc == entity.initial_loc and
-                self.ent_zero1 == entity.ent_zero1)
+                self.ent_zero1 == entity.ent_zero1 and
+                self.movement == entity.movement)
 
     def _sub_equals(self, entity):
         """
@@ -144,8 +148,8 @@ class Entity(object):
             ret.append("\tFriendly: %d" % (self.friendly))
             ret.append("\tHealth: %d" % (self.health))
             ret.append("\tInitial Tile: %d" % self.initial_loc)
+            ret.append("\tMovement Flag: %d" % (self.movement))
             if self.book == 2:
-                ret.append("\tMovement Flag: %d" % (self.movement))
                 for (i, status) in enumerate(self.statuses):
                     if status != 0:
                         if i in c.statustable:
@@ -154,9 +158,10 @@ class Entity(object):
                             statusstr = 'Unknown Status "%d"' % (i)
                         ret.append("\t%s: %d" % (statusstr, status))
             if (unknowns):
-                ret.append("\tUnknown value 1 (generally 1 or 2): %d" % self.unknownc1)
                 if self.book == 1:
-                    ret.append("\tUnknown value 2 (generally 0 or 1): %d" % self.unknownc2)
+                    ret.append("\tUnknown value 1 (generally 0 or 1): %d" % self.unknownc1)
+                else:
+                    ret.append("\tUnknown value 1: %d" % self.unknownc1)
                 ret.append("\tUsually Zero (1): %d" % self.ent_zero1)
                 if self.book == 1:
                     ret.append("\tUsually Zero (2): %d" % self.ent_zero2)
@@ -181,7 +186,7 @@ class B1Entity(Entity):
     """
 
     book = 1
-    form_elements = [ 'unknownc1_label', 'unknownc1',
+    form_elements = [
             'ent_zero2_label', 'ent_zero2',
             'wall_01_label', 'wall_01',
             'wall_04_label', 'wall_04',
@@ -201,29 +206,25 @@ class B1Entity(Entity):
         super(B1Entity, self).__init__(savegame)
 
         # B1-specific elements
-        self.unknownc2 = -1
         self.ent_zero2 = -1
 
     def _sub_tozero(self):
         """
         To-zero for B1 elements
         """
-        self.unknownc2 = 0
         self.ent_zero2 = 0
 
     def _sub_replicate(self, newentity):
         """
         Replication for B1 elements
         """
-        newentity.unknownc2 = self.unknownc2
         newentity.ent_zero2 = self.ent_zero2
 
     def _sub_equals(self, entity):
         """
         Equality function for B1
         """
-        return (self.unknownc2 == entity.unknownc2 and
-                self.ent_zero2 == entity.ent_zero2)
+        return (self.ent_zero2 == entity.ent_zero2)
 
     def read(self, df):
         """ Given a file descriptor, read in the entity. """
@@ -242,9 +243,9 @@ class B1Entity(Entity):
         self.entscript = df.readstr()
         if (self.savegame):
             self.friendly = df.readuchar()
-            self.unknownc1 = df.readuchar()
+            self.movement = df.readuchar()
             self.health = df.readint()
-            self.unknownc2 = df.readuchar()
+            self.unknownc1 = df.readuchar()
             self.initial_loc = df.readshort()
             self.ent_zero1 = df.readuchar()
             self.ent_zero2 = df.readuchar()
@@ -259,9 +260,9 @@ class B1Entity(Entity):
         df.writestr(self.entscript)
         if (self.savegame):
             df.writeuchar(self.friendly)
-            df.writeuchar(self.unknownc1)
+            df.writeuchar(self.movement)
             df.writeint(self.health)
-            df.writeuchar(self.unknownc2)
+            df.writeuchar(self.unknownc1)
             df.writeshort(self.initial_loc)
             df.writeuchar(self.ent_zero1)
             df.writeuchar(self.ent_zero2)
@@ -272,7 +273,7 @@ class B2Entity(Entity):
     """
 
     book = 2
-    form_elements = [ 'movement_label', 'movement',
+    form_elements = [
             'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
             'openingscript_label', 'openingscript',
@@ -284,14 +285,12 @@ class B2Entity(Entity):
         super(B2Entity, self).__init__(savegame)
 
         # B2-specific vars
-        self.movement = -1
         self.statuses = []
 
     def _sub_tozero(self):
         """
         To-zero for B1 elements
         """
-        self.movement = 0
         self.statuses = []
         for i in range(26):
             self.statuses.append(0)
@@ -300,7 +299,6 @@ class B2Entity(Entity):
         """
         Replication for B1 elements
         """
-        newentity.movement = self.movement
         newentity.statuses = []
         for status in self.statuses:
             newentity.statuses.append(status)
@@ -314,7 +312,7 @@ class B2Entity(Entity):
         for (mystatus, newstatus) in zip(self.statuses, entity.statuses):
             if mystatus != newstatus:
                 return False
-        return (self.movement == entity.movement)
+        return True
 
     def read(self, df):
         """ Given a file descriptor, read in the entity. """

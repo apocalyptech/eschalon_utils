@@ -1112,8 +1112,7 @@ class MapGUI(BaseGUI):
             button = self.get_widget('healthmaxbutton')
             button.set_label('Set to Max Health (%d)' % (health))
             self.get_widget('health').set_value(health)
-            if c.book == 2:
-                self.get_widget('movement').set_value(c.entitytable[entid].movement)
+            self.get_widget('movement').set_value(c.entitytable[entid].movement)
 
         self.update_ent_square_img()
 
@@ -2184,11 +2183,9 @@ class MapGUI(BaseGUI):
             self.get_widget('unknownc1').set_value(square.entity.unknownc1)
             self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
             self.get_widget('initial_loc').set_value(square.entity.initial_loc)
+            self.get_widget('movement').set_value(square.entity.movement)
             if c.book == 1:
-                self.get_widget('unknownc2').set_value(square.entity.unknownc2)
                 self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
-            else:
-                self.get_widget('movement').set_value(square.entity.movement)
 
     def update_object_note(self):
         """

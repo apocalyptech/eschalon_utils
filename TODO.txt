@@ -66,6 +66,7 @@ Map GUI
  * Option on Erase tool to get rid of scripts + entities
  * Big map graphic updates, somehow
  * tree set in prop window
+ * Hide "big graphic" option in view menu for b1
 
 Internal
 --------
