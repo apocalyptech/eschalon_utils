@@ -63,6 +63,9 @@ Map GUI
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
  * Click-and-drag seems choppy in Win
+ * Option on Erase tool to get rid of scripts + entities
+ * Big map graphic updates, somehow
+ * tree set in prop window
 
 Internal
 --------
