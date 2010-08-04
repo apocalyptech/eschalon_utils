@@ -775,7 +775,7 @@
                         <child>
                           <object class="GtkTable" id="table7">
                             <property name="visible">True</property>
-                            <property name="n_rows">5</property>
+                            <property name="n_rows">7</property>
                             <child>
                               <object class="GtkCheckButton" id="erase_floor_checkbox">
                                 <property name="label" translatable="yes">Floors</property>
@@ -841,6 +841,32 @@
                               <packing>
                                 <property name="top_attach">4</property>
                                 <property name="bottom_attach">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="erase_entity_checkbox">
+                                <property name="label" translatable="yes">Entities</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">5</property>
+                                <property name="bottom_attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="erase_object_checkbox">
+                                <property name="label" translatable="yes">Objects</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">6</property>
+                                <property name="bottom_attach">7</property>
                               </packing>
                             </child>
                           </object>

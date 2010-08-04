@@ -201,6 +201,8 @@ class MapGUI(BaseGUI):
         self.erase_wall_checkbox = self.get_widget('erase_wall_checkbox')
         self.erase_walldecal_checkbox = self.get_widget('erase_walldecal_checkbox')
         self.erase_barrier = self.get_widget('erase_barrier')
+        self.erase_entity_checkbox = self.get_widget('erase_entity_checkbox')
+        self.erase_object_checkbox = self.get_widget('erase_object_checkbox')
         self.smartdraw_check = self.get_widget('smartdraw_check')
         self.smartdraw_container = self.get_widget('smartdraw_container')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
@@ -2443,6 +2445,10 @@ class MapGUI(BaseGUI):
                 elems.append('Wall Decals')
             if (self.erase_barrier.get_active()):
                 elems.append('Barriers')
+            if (self.erase_entity_checkbox.get_active()):
+                elems.append('Entities')
+            if (self.erase_object_checkbox.get_active()):
+                elems.append('Objects')
             if (len(elems) > 0):
                 newlabel = 'Erasing %s' % (', '.join(elems))
             else:
@@ -2677,6 +2683,13 @@ class MapGUI(BaseGUI):
             square.wallimg = 0
         if (self.erase_walldecal_checkbox.get_active()):
             square.walldecalimg = 0
+        if (self.erase_entity_checkbox.get_active()):
+            self.map.delentity(x, y)
+        if (self.erase_object_checkbox.get_active()):
+            num = len(square.scripts)
+            for i in range(num):
+                self.map.delscript(x, y, 0)
+            square.scriptid = 0
 
         # Handle "smart" walls if requested
         if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
@@ -3259,6 +3272,19 @@ class MapGUI(BaseGUI):
             self.draw_barrier_seethrough.set_sensitive(False)
             self.draw_barrier_seethrough.set_active(False)
             self.erase_barrier.set_sensitive(False)
+            self.erase_barrier.set_active(False)
+
+        # ... and also for entities and objects
+        if (self.entity_hi_toggle.get_active()):
+            self.erase_entity_checkbox.set_sensitive(True)
+        else:
+            self.erase_entity_checkbox.set_sensitive(False)
+            self.erase_entity_checkbox.set_active(False)
+        if (self.script_hi_toggle.get_active()):
+            self.erase_object_checkbox.set_sensitive(True)
+        else:
+            self.erase_object_checkbox.set_sensitive(False)
+            self.erase_object_checkbox.set_active(False)
 
         # Set up a "blank" tile to draw everything else on top of
         self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)

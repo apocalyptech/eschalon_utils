@@ -3,6 +3,7 @@
    03 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Premade Objects can now be placed from a menu
    Movement flag for Book 1 Entities
+   Erase tool can erase objects and entities now
 
    02 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Auto-fill max health on new Entities
