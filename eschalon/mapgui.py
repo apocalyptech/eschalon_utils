@@ -2131,7 +2131,10 @@ class MapGUI(BaseGUI):
         self.get_widget('decalimg').set_value(square.decalimg)
         self.get_widget('wallimg').set_value(square.wallimg)
         self.get_widget('walldecalimg').set_value(square.walldecalimg)
-        self.get_widget('unknown5').set_value(square.unknown5)
+        if c.book == 1:
+            self.get_widget('unknown5').set_value(square.unknown5)
+        else:
+            self.get_widget('unknown_sq_i1').set_value(square.unknown_sq_i1)
 
         # Now entites, if needed
         if (square.entity is None):

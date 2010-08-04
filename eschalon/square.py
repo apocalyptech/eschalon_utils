@@ -34,7 +34,6 @@ class Square(object):
         self.floorimg = -1
         self.decalimg = -1
         self.wallimg = -1
-        self.unknown5 = -1
         self.walldecalimg = -1
         self.scriptid = -1
 
@@ -44,13 +43,13 @@ class Square(object):
 
     def replicate(self):
         newsquare = Square.new(self.book, self.x, self.y)
+        newsquare.savegame = self.savegame
 
         # Simple Values
         newsquare.wall = self.wall
         newsquare.floorimg = self.floorimg
         newsquare.decalimg = self.decalimg
         newsquare.wallimg = self.wallimg
-        newsquare.unknown5 = self.unknown5
         newsquare.walldecalimg = self.walldecalimg
         newsquare.scriptid = self.scriptid
 
@@ -62,8 +61,17 @@ class Square(object):
         if (self.entity is not None):
             newsquare.entity = self.entity.replicate()
 
+        # Call out to superclass replication
+        self._sub_replicate(newsquare)
+
         # ... aaand return our new object
         return newsquare
+
+    def _sub_replicate(self, newentity):
+        """
+        Stub for superclasses to override, to replicate specific vars
+        """
+        pass
 
     def equals(self, square):
         """
@@ -72,17 +80,23 @@ class Square(object):
         the same object.  Returns true for equality, false for inequality.
         """
         # TODO: We need to check entity and script indexes here, too.
-        return (self.x == square.x and
+        return (self._sub_equals(square) and
+                self.x == square.x and
                 self.y == square.y and
                 self.wall == square.wall and
                 self.floorimg == square.floorimg and
                 self.decalimg == square.decalimg and
                 self.wallimg == square.wallimg and
-                self.unknown5 == square.unknown5 and
                 self.walldecalimg == square.walldecalimg and
                 self.scriptid == square.scriptid and
                 self.entity_equals(square.entity) and
                 self.scripts_equal(square.scripts))
+
+    def _sub_equals(self, entity):
+        """
+        Stub for superclasses to override, to test specific vars
+        """
+        pass
 
     def entity_equals(self, entity):
         """
@@ -111,10 +125,14 @@ class Square(object):
 
     def hasdata(self):
         """ Do we have something other than zeroes? """
-        return (self.wall != 0 or self.floorimg != 0 or
+        return (self._sub_hasdata() or
+                self.wall != 0 or self.floorimg != 0 or
                 self.decalimg != 0 or self.wallimg != 0 or
-                self.unknown5 != 0 or self.walldecalimg != 0 or
-                self.scriptid != 0)
+                self.walldecalimg != 0 or self.scriptid != 0)
+
+    def _sub_hasdata(self):
+        """ Stub for superclasses to define. """
+        pass
     
     def addscript(self, script):
         """
@@ -156,7 +174,10 @@ class Square(object):
         else:
             ret.append("    Object Type: %d" % self.scriptid)
         if (unknowns):
-            ret.append("    Unknown 5: %d" % self.unknown5)
+            if self.book == 1:
+                ret.append("    Unknown 5: %d" % self.unknown5)
+            else:
+                ret.append("    Unknown Int 1: %d" % self.unknown_sq_i1)
 
         # Display any entities we may have
         if (self.entity is not None):
@@ -221,6 +242,24 @@ class B1Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
 
+    def _sub_replicate(self, newsquare):
+        """
+        Replication for B1 elements
+        """
+        newsquare.unknown5 = self.unknown5
+
+    def _sub_equals(self, square):
+        """
+        Equality function for B1
+        """
+        return (square.unknown5 == self.unknown5)
+
+    def _sub_hasdata(self):
+        """
+        Do we have data in our B1-specific elements?
+        """
+        return (self.unknown5 != 0)
+
 class B2Square(Square):
     """
     Square structure for Book 2
@@ -232,7 +271,7 @@ class B2Square(Square):
         super(B2Square, self).__init__(x, y)
 
         # Book 2 specific vars
-        self.unknowni1 = -1
+        self.unknown_sq_i1 = -1
 
     def read(self, df):
         """ Given a file descriptor, read in the square. """
@@ -244,7 +283,7 @@ class B2Square(Square):
         self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
         if self.savegame:
-            self.unknowni1 = df.readint()
+            self.unknown_sq_i1 = df.readint()
 
     def write(self, df):
         """ Write the square to the file. """
@@ -256,4 +295,22 @@ class B2Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
         if self.savegame:
-            df.writeint(self.unknowni1)
+            df.writeint(self.unknown_sq_i1)
+
+    def _sub_replicate(self, newsquare):
+        """
+        Replication for B2 elements
+        """
+        newsquare.unknown_sq_i1 = self.unknown_sq_i1
+
+    def _sub_equals(self, square):
+        """
+        Equality function for B2
+        """
+        return (square.unknown_sq_i1 == self.unknown_sq_i1)
+
+    def _sub_hasdata(self):
+        """
+        Do we have data in our B2-specific elements?
+        """
+        return (self.unknown_sq_i1 != 0)

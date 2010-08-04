@@ -115,7 +115,7 @@ class Entity(object):
 
     def _sub_equals(self, entity):
         """
-        Stub for superclasses to override, to replicate specific vars
+        Stub for superclasses to override, to test specific vars
         """
         pass
 
@@ -194,6 +194,7 @@ class B1Entity(Entity):
             'parallax_2_label', 'parallax_2',
             'clouds_label', 'clouds',
             'mapid_label', 'mapid',
+            'unknown5_label', 'unknown5',
             ]
 
     def __init__(self, savegame):
@@ -275,7 +276,8 @@ class B2Entity(Entity):
             'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
             'openingscript_label', 'openingscript',
-            'soundfile4_label', 'soundfile4_combo'
+            'soundfile4_label', 'soundfile4_combo',
+            'unknown_sq_i1_label', 'unknown_sq_i1'
             ]
 
     def __init__(self, savegame):
