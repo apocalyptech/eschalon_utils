@@ -64,6 +64,7 @@ Map GUI
    (overwriting non-grass/sand decals, etc)
  * Click-and-drag seems choppy in Win
  * Need to check rendering speed on older hardware + do general speedups
+ * split up key and IV
 
 Internal
 --------

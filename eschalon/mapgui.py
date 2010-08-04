@@ -46,6 +46,8 @@ try:
     import cairo
 except Exception, e:
     dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+    dialog.set_title('Error loading PyCairo')
+    dialog.set_property('skip-taskbar-hint', False)
     dialog.set_markup('PyCairo could not be loaded: %s' % (str(e)))
     dialog.run()
     dialog.destroy()
@@ -54,6 +56,8 @@ except Exception, e:
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
     dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK)
+    dialog.set_title('gtk+ Version Warning')
+    dialog.set_property('skip-taskbar-hint', False)
     dialog.set_markup('<b>Note:</b> The minimum required version of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some older versions.  You\'re welcome to continue, but know that you may encounter weird behavior.')
     dialog.run()
     dialog.destroy()
@@ -252,7 +256,16 @@ class MapGUI(BaseGUI):
         self.prefs_init(self.prefs)
         if (not self.require_gfx()):
             return
-        self.gfx = Gfx.new(self.req_book, self.prefs, self.datadir)
+        try:
+            self.gfx = Gfx.new(self.req_book, self.prefs, self.datadir)
+        except Exception, e:
+            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
+            dialog.set_title('Error Loading Graphics')
+            dialog.set_property('skip-taskbar-hint', False)
+            dialog.set_markup('Graphics could not be initialized: %s' % (str(e)))
+            dialog.run()
+            dialog.destroy()
+            sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
         if not self.gfx.fast_zipfile:
