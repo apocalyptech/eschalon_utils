@@ -320,6 +320,7 @@ class MapGUI(BaseGUI):
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
                 'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
                 'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
+                'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
                 'on_direction_changed': self.on_direction_changed,
                 'on_map_flag_changed': self.on_map_flag_changed,
                 'on_b2_walltype_changed': self.on_b2_walltype_changed,
@@ -1000,6 +1001,12 @@ class MapGUI(BaseGUI):
         self.get_widget('soundfile1').set_text(self.map.soundfile1)
         self.get_widget('soundfile2').set_text(self.map.soundfile2)
         self.get_widget('soundfile3').set_text(self.map.soundfile3)
+        if c.book == 2:
+            self.cur_tree_set = self.map.tree_set
+            for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
+                if row[1] == self.map.tree_set:
+                    self.get_widget('tree_set').set_active(idx)
+                    continue
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
@@ -1038,6 +1045,8 @@ class MapGUI(BaseGUI):
     def on_propswindow_close(self, widget, event=None):
         self.mapname_mainscreen_label.set_text(self.map.mapname)
         self.propswindow.hide()
+        if (self.cur_tree_set != self.map.tree_set):
+            self.draw_map()
         return True
 
     def on_colorsel_clicked(self, widget):
@@ -1148,6 +1157,14 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         map = self.map
         map.__dict__[wname] = widget.get_text()
+
+    def on_dropdown_idx_map_changed(self, widget):
+        """ Update the appropriate bit in memory. """
+        wname = widget.get_name()
+        iter = widget.get_active_iter()
+        model = widget.get_model()
+        val = model.get_value(iter, 1)
+        self.map.__dict__[wname] = val
 
     def on_singleval_square_changed_int(self, widget):
         """ Update the appropriate bit in memory. """

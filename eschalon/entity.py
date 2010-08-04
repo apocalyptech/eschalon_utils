@@ -279,7 +279,8 @@ class B2Entity(Entity):
             'b2_walltype_label', 'b2_walltype',
             'openingscript_label', 'openingscript',
             'soundfile4_label', 'soundfile4_combo',
-            'unknown_sq_i1_label', 'unknown_sq_i1'
+            'unknown_sq_i1_label', 'unknown_sq_i1',
+            'tree_set_label', 'tree_set',
             ]
 
     def __init__(self, savegame):

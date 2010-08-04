@@ -3203,7 +3203,7 @@ another direction, Eschalon will crash.</property>
                 <child>
                   <object class="GtkTable" id="table4">
                     <property name="visible">True</property>
-                    <property name="n_rows">10</property>
+                    <property name="n_rows">11</property>
                     <property name="n_columns">2</property>
                     <child>
                       <object class="GtkAlignment" id="alignment34">
@@ -3580,6 +3580,48 @@ another direction, Eschalon will crash.</property>
                         <property name="right_attach">2</property>
                         <property name="top_attach">3</property>
                         <property name="bottom_attach">4</property>
+                        <property name="x_options">GTK_FILL</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="tree_set_label">
+                        <property name="visible">True</property>
+                        <property name="xalign">1</property>
+                        <property name="xpad">5</property>
+                        <property name="label" translatable="yes">Tree Set:</property>
+                      </object>
+                      <packing>
+                        <property name="top_attach">10</property>
+                        <property name="bottom_attach">11</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment14">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0</property>
+                        <child>
+                          <object class="GtkComboBox" id="tree_set">
+                            <property name="visible">True</property>
+                            <property name="model">tree_set_store</property>
+                            <property name="active">0</property>
+                            <signal name="changed" handler="on_dropdown_idx_map_changed"/>
+                            <child>
+                              <object class="GtkCellRendererText" id="cellrenderertext4"/>
+                              <attributes>
+                                <attribute name="text">0</attribute>
+                              </attributes>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">10</property>
+                        <property name="bottom_attach">11</property>
                         <property name="x_options">GTK_FILL</property>
                         <property name="y_options">GTK_FILL</property>
                       </packing>
@@ -4828,5 +4870,27 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="tree_set_store">
+    <columns>
+      <!-- column-name text -->
+      <column type="gchararray"/>
+      <!-- column-name treeset -->
+      <column type="guint"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Deciduous</col>
+        <col id="1">0</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Evergreen</col>
+        <col id="1">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Snow-Covered</col>
+        <col id="1">2</col>
+      </row>
+    </data>
   </object>
 </interface>
