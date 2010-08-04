@@ -1274,8 +1274,14 @@ class MapGUI(BaseGUI):
         # ... update our GUI stuff for Undo
         self.update_undo_gui()
 
-        # Finally, close out the window
+        # Close out the window
         self.squarewindow.hide()
+
+        # Check for hugegfx changes
+        if c.book == 2:
+            if self.check_hugegfx_state(self.map.squares[self.sq_y][self.sq_x]):
+                self.draw_map()
+
         return True
 
     def redraw_square(self, x, y):
@@ -2546,6 +2552,8 @@ class MapGUI(BaseGUI):
         if (action == self.ACTION_EDIT):
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
+                    if c.book == 2:
+                        self.store_hugegfx_state(self.map.squares[self.sq_y][self.sq_x])
                     self.undo.store(self.sq_x, self.sq_y)
                     self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
                     self.get_widget('squarelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
@@ -2576,6 +2584,8 @@ class MapGUI(BaseGUI):
         try:
             # Grab our square object
             square = self.map.squares[y][x]
+            if c.book == 2:
+                self.store_hugegfx_state(square)
 
             # Now draw anything that the user's requesed
             if (self.draw_floor_checkbox.get_active()):
@@ -2671,6 +2681,11 @@ class MapGUI(BaseGUI):
                 self.redraw_square(x, y)
                 self.update_undo_gui()
 
+            # Check for hugegfx changes
+            if c.book == 2:
+                if self.check_hugegfx_state(square):
+                    self.draw_map()
+
         except Exception:
 
             # Report our Exception to the user (let it go to stderr as well)
@@ -2709,6 +2724,8 @@ class MapGUI(BaseGUI):
         
         # Grab our square object
         square = self.map.squares[y][x]
+        if c.book == 2:
+            self.store_hugegfx_state(square)
 
         # Now erase anything that the user's requesed
         if (self.erase_barrier.get_active()):
@@ -2771,6 +2788,11 @@ class MapGUI(BaseGUI):
             self.redraw_square(x, y)
             self.update_undo_gui()
 
+        # Check for hugegfx changes
+        if c.book == 2:
+            if self.check_hugegfx_state(square):
+                self.draw_map()
+
     def get_cur_object_placement(self):
         """
         Looks up our currently-selected premade object
@@ -2798,6 +2820,8 @@ class MapGUI(BaseGUI):
         
         # Grab our square object
         square = self.map.squares[y][x]
+        if c.book == 2:
+            self.store_hugegfx_state(square)
 
         # Let's just implement this in SmartDraw
         additionals = self.smartdraw.place_object(square, obj)
@@ -2810,6 +2834,11 @@ class MapGUI(BaseGUI):
         if (self.undo.finish()):
             self.redraw_square(x, y)
             self.update_undo_gui()
+
+        # Check our hugegfx state and redraw if need be
+        if c.book == 2:
+            if self.check_hugegfx_state(square):
+                self.draw_map()
 
     def map_toggle(self, widget):
         if not self.updating_map_checkboxes:
@@ -3277,6 +3306,39 @@ class MapGUI(BaseGUI):
         import sys
         sys.exit(0)
         return False
+
+    def store_hugegfx_state(self, square):
+        """
+        Stores whether or not there's a current hugegfx on the given square
+        (and stores the graphic name).  Used before a square is edited.
+        """
+        if (square.wallimg == 1000 and square.scriptid == 21 and len(square.scripts) != 0):
+            self.cur_hugegfx_state = square.scripts[0].extratext
+        else:
+            self.cur_hugegfx_state = None
+
+    def check_hugegfx_state(self, square):
+        """
+        Compares the current state of the given square versus our stored
+        hugegfx state (see store_hugegfx_state()).  Will return True if
+        a redraw of the map is needed.
+
+        Will also upkeep our self.huge_gfx_rows list
+        """
+        if (square.wallimg == 1000 and square.scriptid == 21 and len(square.scripts) != 0):
+            new_hugegfx_state = square.scripts[0].extratext
+        else:
+            new_hugegfx_state = None
+        if (new_hugegfx_state != self.cur_hugegfx_state):
+            if new_hugegfx_state is None:
+                self.huge_gfx_rows[square.y].remove(square.x)
+            elif self.cur_hugegfx_state is None:
+                if square.x not in self.huge_gfx_rows[square.y]:
+                    self.huge_gfx_rows[square.y].append(square.x)
+                    self.huge_gfx_rows[square.y].sort()
+            return True
+        else:
+            return False
 
     def draw_map(self):
         """

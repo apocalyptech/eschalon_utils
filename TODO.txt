@@ -63,7 +63,6 @@ Map GUI
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
  * Click-and-drag seems choppy in Win
- * Big map graphic updates, somehow
  * Need to check rendering speed on older hardware + do general speedups
 
 Internal
