@@ -141,6 +141,7 @@ class PremadeObject(object):
 
     def create_entity(self):
         self.entity = Entity.new(c.book, True)
+        self.entity.tozero(-1, -1)
         self.do_entity = True
         return self.entity
 
@@ -228,6 +229,8 @@ class PremadeObjectCollection(object):
                 obj.square.savegame = savegame
                 if obj.mapscript is not None:
                     obj.mapscript.savegame = savegame
+                if obj.entity is not None:
+                    obj.entity.savegame = savegame
 
 class SmartDraw(object):
     """
