@@ -188,7 +188,6 @@ class BaseGUI(object):
         ### Note that technically we don't need to do this dynamically, since
         ### these dropdowns only exist for Book 2.
         ###
-        # TODO: we should be able to do this all with a single listview, yeah?
         if book == 2:
             boxes = []
             for i in range(1, 4):

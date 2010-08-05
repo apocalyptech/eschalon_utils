@@ -12,7 +12,7 @@ from cx_Freeze import setup, Executable
 
 # Process the includes, excludes and packages first
 
-includes = ['cairo', 'gobject', 'gtk', 'pango', 'pangocairo']
+includes = ['cairo', 'gobject', 'gtk', 'pango', 'pangocairo', 'pycrypto', 'czipfile']
 excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
             'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl',
             'Tkconstants', 'Tkinter']
@@ -73,6 +73,20 @@ GUI2Exe_Target_3 = Executable(
     icon = None
     )
 
+GUI2Exe_Target_4 = Executable(
+    # what to build
+    script = "eschalon_b2_map.py",
+    initScript = None,
+    base = None,
+    targetDir = r"dist",
+    targetName = "eschalon_b2_map.exe",
+    compress = True,
+    copyDependentFiles = False,
+    appendScriptToExe = False,
+    appendScriptToLibrary = False,
+    icon = None
+    )
+
 
 # That's serious now: we have all (or almost all) the options cx_Freeze
 # supports. I put them all even if some of them are usually defaulted
@@ -80,10 +94,10 @@ GUI2Exe_Target_3 = Executable(
 
 setup(
     
-    version = "0.1",
-    description = "No Description",
-    author = "No Author",
-    name = "cx_Freeze Sample File",
+    version = "0.7,0",
+    description = "Eschalon Utilities",
+    author = "CJ Kucera",
+    name = "Eschalon Utilities",
     
     options = {"build_exe": {"includes": includes,
                              "excludes": excludes,
@@ -92,7 +106,7 @@ setup(
                              }
                },
                            
-    executables = [GUI2Exe_Target_1, GUI2Exe_Target_2, GUI2Exe_Target_3]
+    executables = [GUI2Exe_Target_1, GUI2Exe_Target_2, GUI2Exe_Target_3, GUI2Exe_Target_4]
     )
 
 # This is a place where any post-compile code may go.
