@@ -540,9 +540,8 @@ class B1Gfx(Gfx):
             flamedata = df.read()
             df.close()
             self.flamecache = B1GfxEntCache(flamedata, 1, 1)
-        # TODO: I don't like hardcoding "52" here
         if (size is None):
-            size = 52
+            size = self.square_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
@@ -554,9 +553,8 @@ class B1Gfx(Gfx):
             else:
                 self.entcache[entnum] = B1GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
-        # TODO: I don't like hardcoding "52" here...
         if (size is None):
-            size = 52
+            size = self.square_width
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
@@ -789,7 +787,7 @@ class B2Gfx(Gfx):
             if (objnum in self.treemap):
                 # note the size difference for Book 2 trees (50% wider)
                 if not size:
-                    size = 64
+                    size = self.square_width
                 offset = -int(size/4)
                 size = int(size * 1.5)
                 return (self.treecache[treeset].getimg(self.treemap[objnum], size, gdk), 4, offset)
@@ -816,9 +814,8 @@ class B2Gfx(Gfx):
             # TODO: This is, um, highly improper.
             self.flamecache = B1GfxEntCache(flamedata, 1, 1)
             #self.flamecache = SingleImageGfxCache(flamedata)
-        # TODO: I don't like hardcoding "64" here
         if (size is None):
-            size = 64
+            size = self.square_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_zapper(self, size=None, gdk=False):
@@ -830,9 +827,8 @@ class B2Gfx(Gfx):
             zapperdata = df.read()
             df.close()
             self.zappercache = SingleImageGfxCache(zapperdata)
-        # TODO: I don't like hardcoding "64" here
         if (size is None):
-            size = 64
+            size = self.square_width
         return self.zappercache.getimg(1, int(size*self.zappercache.size_scale), gdk)
 
     def get_huge_gfx(self, file, size=None, gdk=False):
@@ -845,9 +841,8 @@ class B2Gfx(Gfx):
             if (file.find('/') != -1 or file.find('..') != -1 or file.find('\\') != -1):
                 return None
             self.hugegfxcache[file] = SingleImageGfxCache(self.readfile(file))
-        # Not fond of hardcoding "64" here
         if (size is None):
-            size = 64
+            size = self.square_width
         return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
@@ -856,9 +851,8 @@ class B2Gfx(Gfx):
             filename = ent.gfxfile
             self.entcache[entnum] = B2GfxEntCache(ent, self.readfile(filename))
         cache = self.entcache[entnum]
-        # TODO: I don't like hardcoding "64" here...
         if (size is None):
-            size = 64
+            size = self.square_width
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
