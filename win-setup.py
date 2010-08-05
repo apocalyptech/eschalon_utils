@@ -12,7 +12,7 @@ from cx_Freeze import setup, Executable
 
 # Process the includes, excludes and packages first
 
-includes = ['cairo', 'gobject', 'gtk', 'pango', 'pangocairo', 'pycrypto', 'czipfile']
+includes = ['cairo', 'gobject', 'gtk', 'pango', 'pangocairo', 'Crypto.Cipher', 'czipfile']
 excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
             'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl',
             'Tkconstants', 'Tkinter']
