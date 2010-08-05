@@ -660,7 +660,7 @@ class B2Character(Character):
             'b2origin_label', 'b2origin',
             'b2axiom_label', 'b2axiom',
             'b2classname_label', 'b2classname',
-            'b2picid_label', 'b2picid',
+            'b2picid_label', 'b2picid', 'b2_picid_button',
             'hunger_label', 'hunger_hbox',
             'thirst_label', 'thirst_hbox',
             'b2_second_effect_var_label',

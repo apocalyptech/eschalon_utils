@@ -856,18 +856,18 @@ class B2Gfx(Gfx):
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
-        # TODO: fix custom pic logic here
-        if (avatarnum < 0 or avatarnum > 12):
-            return None
-        if (avatarnum not in self.avatarcache):
-            if (avatarnum == 0xFFFFFFFF):
-                if (os.path.exists(os.path.join(self.gamedir, 'mypic.png'))):
-                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.gamedir, 'mypic.png'))
+        if (avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12)):
+            if (avatarnum not in self.avatarcache):
+                if (avatarnum == 0xFFFFFFFF):
+                    if (os.path.exists(os.path.join(self.gamedir, 'mypic.png'))):
+                        self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.gamedir, 'mypic.png'))
+                    else:
+                        return None
                 else:
-                    return None
-            else:
-                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
-        return self.avatarcache[avatarnum]
+                    self.avatarcache[avatarnum] = GfxCache(self.readfile('port%d.png' % (avatarnum)), 64, 64, 1).pixbuf
+            return self.avatarcache[avatarnum]
+        else:
+            return None
 
     def initialread(self):
         plain = self.aes.decrypt(self.aesenc)

@@ -130,12 +130,20 @@ class MainGUI(BaseGUI):
         self.avatarsel_init = False
         self.avatarsel_clean = []
         self.avatarsel_area = self.get_widget('avatarsel_area')
-        self.avatarsel_x = 480
-        self.avatarsel_y = 60
-        self.avatarsel_cols = 8
+        if c.book == 1:
+            self.avatarsel_x = 480
+            self.avatarsel_y = 60
+            self.avatarsel_cols = 8
+            self.avatarsel_width = 60
+            self.avatarsel_height = 60
+        else:
+            self.avatarsel_x = 832
+            self.avatarsel_y = 64
+            self.avatarsel_cols = 13
+            self.avatarsel_width = 64
+            self.avatarsel_height = 64
+            self.avatarsel.set_size_request(842, 99)
         self.avatarsel_rows = 1
-        self.avatarsel_width = 60
-        self.avatarsel_height = 60
         self.avatarsel_mousex = -1
         self.avatarsel_mousey = -1
         self.avatarsel_mousex_prev = -1
@@ -206,7 +214,7 @@ class MainGUI(BaseGUI):
             self.get_widget('picid_button').show()
             self.get_widget('itemgui_picid_button').show()
         else:
-            self.get_widget('picid_button').hide()
+            self.get_widget('b2_picid_button').hide()
             self.get_widget('itemgui_picid_button').hide()
 
     def on_prefs(self, widget):
@@ -490,7 +498,7 @@ class MainGUI(BaseGUI):
                 if (pixbuf is None):
                     self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
                 else:
-                    self.get_widget('picid_image').set_from_pixbuf(self.gfx.get_avatar(widget.get_value_as_int()/256))
+                    self.get_widget('picid_image').set_from_pixbuf(pixbuf)
         else:
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
     
@@ -523,10 +531,19 @@ class MainGUI(BaseGUI):
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         if (widget.get_active() == 12):
-            obj.__dict__[objwname] = 0xFFFFFFFF
+            val = 0xFFFFFFFF
         else:
-            obj.__dict__[objwname] = widget.get_active() + 1
+            val = widget.get_active() + 1
+        obj.__dict__[objwname] = val
         self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
+        if (self.gfx is None):
+            self.get_widget('b2_picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+        else:
+            pixbuf = self.gfx.get_avatar(val)
+            if pixbuf is None:
+                self.get_widget('b2_picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+            else:
+                self.get_widget('b2_picid_image').set_from_pixbuf(pixbuf)
 
     def on_portal_loc_changed(self, widget):
         """ What to do when one of our bound-portal locations changes. """
@@ -1299,7 +1316,13 @@ class MainGUI(BaseGUI):
     def avatarsel_draw(self, x):
         if (x < 0 or x >= self.avatarsel_cols or self.gfx is None):
             return
-        pixbuf = self.gfx.get_avatar(x)
+        if c.book == 2:
+            if x == 12:
+                pixbuf = self.gfx.get_avatar(0xFFFFFFFF)
+            else:
+                pixbuf = self.gfx.get_avatar(x+1)
+        else:
+            pixbuf = self.gfx.get_avatar(x)
         if (pixbuf is None):
             return
         self.avatarsel_pixmap.draw_pixbuf(None, pixbuf, 0, 0, x*self.avatarsel_width, 0)
@@ -1330,10 +1353,13 @@ class MainGUI(BaseGUI):
             for x in self.avatarsel_clean:
                 self.avatarsel_draw(x)
         else:
-            if (self.get_widget('picid').get_value_as_int() % 256 == 0):
-                self.avatarsel_curx = self.get_widget('picid').get_value_as_int() / 256
+            if c.book == 1:
+                if (self.get_widget('picid').get_value_as_int() % 256 == 0):
+                    self.avatarsel_curx = self.get_widget('picid').get_value_as_int() / 256
+                else:
+                    self.avatarsel_curx = -1
             else:
-                self.avatarsel_curx = -1
+                self.avatarsel_curx = self.get_widget('b2picid').get_active()
             self.avatarsel_area.set_size_request(self.avatarsel_x, self.avatarsel_y)
             self.avatarsel_pixmap = gtk.gdk.Pixmap(self.avatarsel_area.window, self.avatarsel_x, self.avatarsel_y)
             self.gc_white = gtk.gdk.GC(self.avatarsel_area.window)
@@ -1352,6 +1378,9 @@ class MainGUI(BaseGUI):
 
     def avatarsel_on_clicked(self, widget, event):
         self.avatarsel_init = False
-        self.get_widget('picid').set_value(self.avatarsel_mousex * 256)
+        if c.book == 1:
+            self.get_widget('picid').set_value(self.avatarsel_mousex * 256)
+        else:
+            self.get_widget('b2picid').set_active(self.avatarsel_mousex)
         self.avatarsel_mousex = -1
         self.avatarsel.hide()
