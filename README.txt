@@ -19,6 +19,9 @@ Some icons in this program are Copyright Axialis Team, and released
 under a Creative Commons Attribution 2.5 Generic license.  See
 http://www.axialis.com/free/icons/ for details.
 
+The code in fzipfile.py comes mostly from Python itself, which is under
+the Python License at http://www.python.org/psf/license/
+
 ABOUT
 -----
 
@@ -28,15 +31,16 @@ the games Eschalon Book I and Book II, by Basilisk Games.
    http://basiliskgames.com/eschalon-book-i
    http://basiliskgames.com/eschalon-book-ii
 
-For Book I, there's a character editor and a map editor.  For Book II,
-there's currently just a character editor.  The Book I map editor can
-edit maps stored as part of your savegame, and the global maps included
-in Book I's "data" directory.
+There are four separate utilities: a character editor and a map editor
+for both Book I and Book II.  The map editor can edit maps stored as
+part of your savegame, and the global maps included in the game
+distribution, though for Book II there is no direct way to get at the
+global map files.
 
-Right now it supports just about everything you'd want to edit, though
-there's still plenty of values in the file of whose purpose I'm unaware.
-See the TODO file for information on what needs to be done with the app
-still, which is quite a bit.
+Right now the utilities support just about everything you'd want to edit,
+though there's still plenty of values in the file of whose purpose I'm
+unaware.  See the TODO file for information on what needs to be done with
+the app still, which is quite a bit.
 
 The app seems stable enough for me, but use your head and keep a backup of
 any file that you use this on.  Do let me know if it ends up eating your
@@ -58,13 +62,12 @@ I'll get going on it.
 INSTALLATION, GENERAL
 ---------------------
 
-The map editor component of this package requires that an Eschalon Book I
-install directory be present on your system.  The application will try to
-locate it on its own, but if the installation directory isn't found, you'll
-be prompted to provide the location.  The character editor for Book I can
-now use the Eschalon game directory to do image lookups of its own, but it
-doesn't actually require the directory to be present.  The Book II character
-editor doesn't yet read any graphics data from the game itself.
+The map editor component of this package requires that an Eschalon install
+directory be present on your system, to load the map graphics.  The application
+will try to locate it on its own, but if the installation directory isn't found,
+you'll be prompted to provide the location.  The character editor can also
+use the Eschalon game directory to do image lookups of its own, but it
+doesn't actually require the directory to be present.
 
 Both the map editor and the character editor have a preferences screen (which
 write to the same config file, so the same configuration applies to both
@@ -85,11 +88,31 @@ into somewhere in your $PATH (~/bin is probably the best location).  For example
    $ ln -s /path/to/eschalon_b1_char.py .
    $ ln -s /path/to/eschalon_b1_map.py .
    $ ln -s /path/to/eschalon_b2_char.py .
+   $ ln -s /path/to/eschalon_b2_map.py .
 
 At that point you should be able to just run "eschalon_b1_char.py" from the
 command prompt, for instance.  Setting up shortcuts through your window
 manager of choice should work fine, as well.  Failing that, just run them
 from the directory you untarred them into.
+
+NOTE ABOUT BOOK II MAP EDITING: To edit Book II map files, you'll need two
+other packages installed which may not be present on your system.  The first
+is PyCrypto: http://www.dlitz.net/software/pycrypto/  This tends to be
+packaged as "python-crypto" by most distributions.  Gentoo uses "pycrypto."
+The second package is czipfile, available here: http://pypi.python.org/pypi/czipfile
+This is probably not packaged by your distribution yet.  The easiest way to
+install it would be via either easy_install or pip:
+
+  # easy_install czipfile
+ or
+  # pip install czipfile
+
+If those methods don't work for you, you should be able to just download it
+from the above link.  Note that czipfile isn't ACTUALLY required to edit Book
+II maps, but without czipfile, loading maps can take an absurdly long time.
+Trust me, you will want to have it installed.  Note once again that this only
+affects Book II map editing.  The character editors, and the Book I map editor
+are not affected.
 
 As of 0.5.0, the minimum gtk+ required MIGHT be 2.18.0, though you may have
 success with earlier versions.  If there are problems with older versions,
@@ -111,8 +134,8 @@ far less tested than the Linux side.
 You're welcome to run the Python scripts directly (as the Linux folks do), if
 you want, in which case you will need a gtk+ runtime (I recommend a recent one
 directly from gtk.org), Python (2.6), and all three PyGTK components installed
-(PyCairo, PyGObject, and PyGTK).  Some direct links can be found on the
-website.
+(PyCairo, PyGObject, and PyGTK).  Additionally, to edit Book II maps, you'll
+want PyCrypto and czipfile.  Some direct links can be found on the website.
 
 INSTALLATION, OSX
 -----------------

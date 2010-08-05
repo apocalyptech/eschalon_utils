@@ -921,7 +921,6 @@ class BaseGUI(object):
         else:
             files = []
             for file in self.gfx.filelist():
-                # TODO: see how this goes in Windows, don't know how zipfile will report
                 (filedir, filename) = os.path.split(file)
                 if filedir == dir:
                     files.append(filename)
