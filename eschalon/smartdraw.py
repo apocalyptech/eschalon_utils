@@ -420,8 +420,11 @@ class SmartDraw(object):
         # TODO: this is duplicated in add_wall_connection...
         if (self.revindexes[self.IDX_WALL][connflags] == -1):
             square.wallimg = self.special
+            if c.book == 2:
+                square.wall = 2
         else:
             square.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
+            square.wall = 1
 
         # And lastly, return.
         return retarr
@@ -477,8 +480,11 @@ class SmartDraw(object):
         else:
             if (self.revindexes[self.IDX_WALL][newflags] == -1):
                 square.wallimg = self.special
+                if c.book == 2:
+                    square.wall = 2
             else:
                 square.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
+                square.wall = 1
             return True
 
     def draw_fence(self, square, fencestart):
