@@ -28,6 +28,7 @@ Character GUI
  * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * When copying items, the "condition"-changed indicator doesn't populate
    automatically
+ * Investigate duplicate skill_table and status_table widget creation
 
 Map GUI
 -------
@@ -61,6 +62,9 @@ Map GUI
  * Click-and-drag seems choppy in Win
  * Need to check rendering speed on older hardware + do general speedups
  * split up key and IV
+ * entity statuses on savegame files
+ * rename unknown values with prefixes to avoid collisions in the future
+ * Randomize scraggly trees in B1 (if they're not already)
 
 Internal
 --------
