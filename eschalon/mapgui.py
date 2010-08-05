@@ -606,7 +606,8 @@ class MapGUI(BaseGUI):
 
     def key_handler(self, widget, event):
         """ Handles keypresses, which we'll use to simplify selecting drawing stuff. """
-        # TODO: check for Bad Things if we change while dragging, etc
+        # Cancel any dragging action currently active
+        self.on_released()
         if (event.keyval < 256 and (event.state & self.keymask) == 0):
             key = chr(event.keyval).lower()
             if (key == 'm'):
