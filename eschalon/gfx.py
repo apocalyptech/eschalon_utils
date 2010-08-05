@@ -259,6 +259,7 @@ class Gfx(object):
     """ A class to hold graphics data. """
 
     wall_types = {}
+    wall_gfx_group = {}
     TYPE_NONE = -1
     TYPE_OBJ = 1
     TYPE_WALL = 2
@@ -340,6 +341,7 @@ class B1Gfx(Gfx):
 
     book = 1
     wall_types = {}
+    wall_gfx_group = {}
     squarebuf_mult = 1
     item_dim = 42
     item_cols = 10
@@ -373,14 +375,30 @@ class B1Gfx(Gfx):
     walldecal_cols = 6
     walldecal_rows = 10
 
+    GFX_SET_A = 1
+    GFX_SET_B = 2
+    GFX_SET_C = 3
+    GFX_SET_TREE = 4
+
     def __init__(self, prefs, datadir):
 
-        # Wall object types
-        for i in range(161):
-            self.wall_types[i] = self.TYPE_OBJ
+        # Wall graphic groupings
+        for i in range(101):
+            self.wall_gfx_group[i] = self.GFX_SET_A
+        for i in range(101, 161):
+            self.wall_gfx_group[i] = self.GFX_SET_B
         for i in range(161, 251):
-            self.wall_types[i] = self.TYPE_OBJ
+            self.wall_gfx_group[i] = self.GFX_SET_C
         for i in range(251, 256):
+            self.wall_gfx_group[i] = self.GFX_SET_TREE
+
+        # Wall object types
+        for i in (range(127) + range(132, 142) + range(143, 153) +
+                range(154, 161) + range(214, 251)):
+            self.wall_types[i] = self.TYPE_OBJ
+        for i in range(161, 214):
+            self.wall_types[i] = self.TYPE_WALL
+        for i in (range(251, 256) + range(127, 132) + [142, 153]):
             self.wall_types[i] = self.TYPE_TREE
 
         # Restricted entities (only one direction)
@@ -478,18 +496,21 @@ class B1Gfx(Gfx):
         """
         Note that we ignore the treeset flag in book 1
         """
-        # TODO: switch to using the wall_types stuff
         if (objnum == 0):
             return (None, 0, 0)
-        if (objnum < 101):
+        try:
+            gfxgroup = self.wall_gfx_group[objnum]
+        except KeyError:
+            return (None, 0, 0)
+        if gfxgroup == self.GFX_SET_A:
             if (self.objcache1 is None):
                 self.objcache1 = GfxCache(self.readfile('iso_tileset_obj_a.png'), 52, 52, 6)
             return (self.objcache1.getimg(objnum, size, gdk), 1, 0)
-        elif (objnum < 161):
+        elif gfxgroup == self.GFX_SET_B:
             if (self.objcache2 is None):
                 self.objcache2 = GfxCache(self.readfile('iso_tileset_obj_b.png'), 52, 78, 6)
             return (self.objcache2.getimg(objnum-100, size, gdk), 2, 0)
-        elif (objnum < 251):
+        elif gfxgroup == self.GFX_SET_C:
             if (self.objcache3 is None):
                 self.objcache3 = GfxCache(self.readfile('iso_tileset_obj_c.png'), 52, 78, 6)
             return (self.objcache3.getimg(objnum-160, size, gdk), 2, 0)
@@ -558,6 +579,7 @@ class B2Gfx(Gfx):
 
     book = 2
     wall_types = {}
+    wall_gfx_group = {}
     squarebuf_mult = 1.5
     item_dim = 50
     item_cols = 10
@@ -586,6 +608,10 @@ class B2Gfx(Gfx):
     walldecal_cols = 16
     walldecal_rows = 10
 
+    GFX_SET_OBJ = 1
+    GFX_SET_WALL = 2
+    GFX_SET_TREE = 3
+
     def __init__(self, prefs, datadir):
 
         # Import Crypto stuff
@@ -596,12 +622,25 @@ class B2Gfx(Gfx):
             raise Exception('Book 2 Graphics requires pycrypto, please install it: http://www.dlitz.net/software/pycrypto/')
         self.prep_crypt()
 
-        # Wall object types
+        # Wall graphic groups
         for i in range(251):
+            self.wall_gfx_group[i] = self.GFX_SET_OBJ
+        for i in range(251, 256):
+            self.wall_gfx_group[i] = self.GFX_SET_TREE
+        for i in range(256, 513):
+            self.wall_gfx_group[i] = self.GFX_SET_WALL
+
+        # Wall object types
+        for i in (range(251) + range(266, 272) + range(282, 286) +
+                range(314, 320) + range(330, 336) + range(346, 352) +
+                range(364, 368) + range(378, 384) + range(394, 402) +
+                range(403, 513)):
             self.wall_types[i] = self.TYPE_OBJ
         for i in range(251, 256):
             self.wall_types[i] = self.TYPE_TREE
-        for i in range(256, 513):
+        for i in (range(256, 266) + range(272, 282) + range(286, 314) +
+                range(320, 330) + range(336, 346) + range(352, 364) +
+                range(368, 378) + range(384, 394) + [402]):
             self.wall_types[i] = self.TYPE_WALL
 
         # Book 2 specific caches
@@ -733,18 +772,18 @@ class B2Gfx(Gfx):
         if (objnum == 0):
             return (None, 0, 0)
         try:
-            walltype = self.wall_types[objnum]
+            walltype = self.wall_gfx_group[objnum]
         except KeyError:
             return (None, 0, 0)
-        if (walltype == self.TYPE_OBJ):
+        if (walltype == self.GFX_SET_OBJ):
             if (self.objcache1 is None):
                 self.objcache1 = GfxCache(self.readfile('iso_obj.png'), 64, 64, 16)
             return (self.objcache1.getimg(objnum, size, gdk), 1, 0)
-        elif (walltype == self.TYPE_WALL):
+        elif (walltype == self.GFX_SET_WALL):
             if (self.objcache2 is None):
                 self.objcache2 = GfxCache(self.readfile('iso_walls.png'), 64, 96, 16)
             return (self.objcache2.getimg(objnum-255, size, gdk), 2, 0)
-        elif (walltype == self.TYPE_TREE):
+        elif (walltype == self.GFX_SET_TREE):
             if (self.treecache[treeset] is None):
                 self.treecache[treeset] = GfxCache(self.readfile('iso_trees%d.png' % (treeset)), 96, 160, 5)
             if (objnum in self.treemap):

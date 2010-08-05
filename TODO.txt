@@ -46,9 +46,6 @@ Map GUI
    partially munged using our current method.
  * Square rendering seems to be getting a bit slow; should see if
    there's anything to be done about that.
- * There are some Tree graphics stored in set B which don't get turned off
-   with our "Trees" toggle.  This is especially noticeable in, for instance,
-   41.map, where the "Trees" toggle basically does nothing.
  * Change background color, like we do for selection in the square window
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
  * Really test undo/redo - have to save out, etc. (in particular the maxlevel
