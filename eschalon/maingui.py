@@ -597,7 +597,8 @@ class MainGUI(BaseGUI):
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
-        # TODO: report the bug here - widget.get_value_as_int() returns a signed value...
+        # See https://bugzilla.gnome.org/show_bug.cgi?id=621400 - we can't
+        # actually use .get_value_as_int() here, reliably.
         obj.__dict__[shortname][arrnum] = int(widget.get_value())
         self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
 
@@ -1083,7 +1084,8 @@ class MainGUI(BaseGUI):
             
             align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
             table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            # TODO: limit is technically >255 on B1
+            # Note: limit is actually >255 on B1, but I don't think it's unreasonable
+            # to clamp it down to 255 in practice, here.
             adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
             spin = gtk.SpinButton(adjust)
             self.register_widget('skills_%d' % (idx+1), spin)
@@ -1174,7 +1176,6 @@ class MainGUI(BaseGUI):
         ###
         ### Spell dropdowns
         ###
-        # TODO: we should be able to do this all with a single listview, yeah?
         boxes = [self.get_widget('readied_spell_box')]
         for i in range(10):
             boxes.append(self.get_widget('readyslots_spell_%d_box' % (i)))

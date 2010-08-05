@@ -28,8 +28,6 @@ Character GUI
  * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * When copying items, the "condition"-changed indicator doesn't populate
    automatically
- * XP spinbutton should allow 0
- * Load avatar graphics for Book 2
 
 Map GUI
 -------
