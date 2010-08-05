@@ -7,4 +7,5 @@ find . -name .cvsignore -exec rm {} \;
 rm -rf ignore
 rm -f cvsrelease
 rm -f eb2_zipfile_crypt.py
+rm -f data/check_dup_ids.pl
 echo "... done"

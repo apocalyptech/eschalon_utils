@@ -2117,7 +2117,7 @@
                             <child>
                               <object class="GtkComboBox" id="direction">
                                 <property name="visible">True</property>
-                                <property name="model">liststore2</property>
+                                <property name="model">direction_list_store</property>
                                 <signal name="changed" handler="on_direction_changed"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext2"/>
@@ -4501,7 +4501,7 @@ filename</property>
     <property name="step_increment">1</property>
     <property name="page_increment">1</property>
   </object>
-  <object class="GtkListStore" id="liststore2">
+  <object class="GtkListStore" id="direction_list_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>

@@ -727,6 +727,7 @@ class MapGUI(BaseGUI):
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 3, 8)
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 4, 9)
+            # We're locking these down because they appear to function as savegame/global identifiers
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 5, 10, 'This should be zero for global maps', False)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 6, 11, 'This is often nonzero on savegames', False)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 7, 12, 'This is often nonzero on savegames', False)
