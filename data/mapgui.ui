@@ -1969,6 +1969,7 @@
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="invisible_char">&#x25CF;</property>
                             <property name="adjustment">unknown_sq_i1_adjust</property>
+                            <signal name="value_changed" handler="on_singleval_square_changed_int"/>
                           </object>
                         </child>
                       </object>
@@ -2389,7 +2390,7 @@ another direction, Eschalon will crash.</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <object class="GtkSpinButton" id="unknownc1">
+                                  <object class="GtkSpinButton" id="ent_unknownc1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -4867,7 +4868,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
     </columns>
   </object>
   <object class="GtkAdjustment" id="unknown_sq_i1_adjust">
-    <property name="upper">255</property>
+    <property name="upper">4294967295</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>

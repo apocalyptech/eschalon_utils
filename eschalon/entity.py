@@ -38,7 +38,7 @@ class Entity(object):
         self.movement = -1
 
         self.friendly = -1
-        self.unknownc1 = -1
+        self.ent_unknownc1 = -1
         self.health = -1
         self.initial_loc = -1
         self.ent_zero1 = -1
@@ -53,7 +53,7 @@ class Entity(object):
         if (self.savegame):
             self.movement = 1
             self.friendly = 0
-            self.unknownc1 = 0
+            self.ent_unknownc1 = 0
             self.health = 0
             self.initial_loc = 0
             self.ent_zero1 = 0
@@ -79,7 +79,7 @@ class Entity(object):
         newentity.direction = self.direction
         newentity.entscript = self.entscript
         newentity.friendly = self.friendly
-        newentity.unknownc1 = self.unknownc1
+        newentity.ent_unknownc1 = self.ent_unknownc1
         newentity.health = self.health
         newentity.initial_loc = self.initial_loc
         newentity.ent_zero1 = self.ent_zero1
@@ -111,7 +111,7 @@ class Entity(object):
                 self.entscript == entity.entscript and
                 self.savegame == entity.savegame and
                 self.friendly == entity.friendly and
-                self.unknownc1 == entity.unknownc1 and
+                self.ent_unknownc1 == entity.ent_unknownc1 and
                 self.health == entity.health and
                 self.initial_loc == entity.initial_loc and
                 self.ent_zero1 == entity.ent_zero1 and
@@ -159,9 +159,9 @@ class Entity(object):
                         ret.append("\t%s: %d" % (statusstr, status))
             if (unknowns):
                 if self.book == 1:
-                    ret.append("\tUnknown value 1 (generally 0 or 1): %d" % self.unknownc1)
+                    ret.append("\tUnknown value 1 (generally 0 or 1): %d" % self.ent_unknownc1)
                 else:
-                    ret.append("\tUnknown value 1: %d" % self.unknownc1)
+                    ret.append("\tUnknown value 1: %d" % self.ent_unknownc1)
                 ret.append("\tUsually Zero (1): %d" % self.ent_zero1)
                 if self.book == 1:
                     ret.append("\tUsually Zero (2): %d" % self.ent_zero2)
@@ -245,7 +245,7 @@ class B1Entity(Entity):
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
             self.health = df.readint()
-            self.unknownc1 = df.readuchar()
+            self.ent_unknownc1 = df.readuchar()
             self.initial_loc = df.readshort()
             self.ent_zero1 = df.readuchar()
             self.ent_zero2 = df.readuchar()
@@ -262,7 +262,7 @@ class B1Entity(Entity):
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)
-            df.writeuchar(self.unknownc1)
+            df.writeuchar(self.ent_unknownc1)
             df.writeshort(self.initial_loc)
             df.writeuchar(self.ent_zero1)
             df.writeuchar(self.ent_zero2)
@@ -335,7 +335,7 @@ class B2Entity(Entity):
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
             self.health = df.readint()
-            self.unknownc1 = df.readuchar()
+            self.ent_unknownc1 = df.readuchar()
             self.initial_loc = df.readshort()
             self.ent_zero1 = df.readshort()
             self.statuses = []
@@ -354,7 +354,7 @@ class B2Entity(Entity):
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)
-            df.writeuchar(self.unknownc1)
+            df.writeuchar(self.ent_unknownc1)
             df.writeshort(self.initial_loc)
             df.writeshort(self.ent_zero1)
             for status in self.statuses:

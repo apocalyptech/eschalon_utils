@@ -841,8 +841,11 @@ class MapGUI(BaseGUI):
         return True
 
     def register_widget(self, name, widget, doname=True):
+        # TODO: any reason not to have this in the base class?
         if doname:
             widget.set_name(name)
+        #if name in self.fullwidgetcache:
+        #    print 'WARNING: Created duplicate widget "%s"' % (name)
         self.fullwidgetcache[name] = widget
 
     def get_widget(self, name):
@@ -1200,7 +1203,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         square = self.map.squares[self.sq_y][self.sq_x]
-        square.__dict__[wname] = widget.get_value_as_int()
+        square.__dict__[wname] = int(widget.get_value())
 
     def on_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
@@ -2252,7 +2255,7 @@ class MapGUI(BaseGUI):
         if (self.map.is_savegame()):
             self.get_widget('friendly').set_value(square.entity.friendly)
             self.get_widget('health').set_value(square.entity.health)
-            self.get_widget('unknownc1').set_value(square.entity.unknownc1)
+            self.get_widget('ent_unknownc1').set_value(square.entity.ent_unknownc1)
             self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
             self.get_widget('initial_loc').set_value(square.entity.initial_loc)
             self.get_widget('movement').set_value(square.entity.movement)

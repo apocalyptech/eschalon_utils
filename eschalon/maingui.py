@@ -425,8 +425,11 @@ class MainGUI(BaseGUI):
         return (self.widgetcache[name], self.labelcache[name])
 
     def register_widget(self, name, widget, doname=True):
+        # TODO: any reason not to have this in the base class?
         if doname:
             widget.set_name(name)
+        #if name in self.fullwidgetcache:
+        #    print 'WARNING: Created duplicate widget "%s"' % (name)
         self.fullwidgetcache[name] = widget
 
     def get_widget(self, name):
