@@ -234,7 +234,7 @@ class SingleImageGfxCache(GfxCache):
     Class to take care of "huge" images, mostly, in which we just want to cache resized graphics.
     Only used for Book 2 at the moment, hence our "64" hardcode down below.
     """
-    def __init__(self, pngdata):
+    def __init__(self, pngdata, scale=64.0):
 
         # Read the data as usual, with junk for width and height
         super(SingleImageGfxCache, self).__init__(pngdata, -1, -1, 1)
@@ -242,7 +242,7 @@ class SingleImageGfxCache(GfxCache):
         # And now set the image dimensions appropriately
         self.width = self.surface.get_width()
         self.height = self.surface.get_height()
-        self.size_scale = self.width/64.0
+        self.size_scale = self.width/scale
 
 class PakIndex(object):
     """ A class to hold information on an individual file in the pak. """
@@ -811,9 +811,10 @@ class B2Gfx(Gfx):
             df = open(os.path.join(self.datadir, 'torch_single.png'), 'rb')
             flamedata = df.read()
             df.close()
-            # TODO: This is, um, highly improper.
-            self.flamecache = B1GfxEntCache(flamedata, 1, 1)
-            #self.flamecache = SingleImageGfxCache(flamedata)
+            # The torch image came from Book 1 and is scaled to 52 pixels, not
+            # 64, which is why we're passing that in here.  I figure there's not
+            # much point to having a separate Book 1 and Book 2 flame graphic.
+            self.flamecache = SingleImageGfxCache(flamedata, 52.0)
         if (size is None):
             size = self.square_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
@@ -836,7 +837,6 @@ class B2Gfx(Gfx):
         Grabs an arbitrary graphic file from our pool (used for the "huge" graphics like Hammerlorne,
         Corsair ships, etc, in Book 2)
         """
-        # TODO: get_flame should probably just call this
         if file not in self.hugegfxcache:
             if (file.find('/') != -1 or file.find('..') != -1 or file.find('\\') != -1):
                 return None
