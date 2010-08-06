@@ -52,26 +52,16 @@ class Map(object):
         self.mapname = ''
         self.soundfile1 = ''
         self.soundfile2 = ''
-        self.exit_north = ''
-        self.exit_east = ''
-        self.exit_south = ''
-        self.exit_west = ''
         self.skybox = ''
         self.soundfile3 = ''
         self.map_unknowni1 = -1
 
-        # This is pure supposition at this point, but it seems to fit
+        # Not entirely sure about the alpha channel, which
+        # is always zero, but it seems to make sense
         self.color_r = -1
         self.color_g = -1
         self.color_b = -1
         self.color_a = -1
-
-        self.parallax_1 = -1
-        self.parallax_2 = -1
-        self.clouds = -1
-        self.savegame_1 = -1
-        self.savegame_2 = -1
-        self.savegame_3 = -1
 
         self.extradata = ''
 
@@ -105,28 +95,16 @@ class Map(object):
         newmap = Map(self.df.filename)
 
         # Single vals (no need to do actual replication)
-        newmap.mapid = self.mapid
         newmap.mapname = self.mapname
         newmap.soundfile1 = self.soundfile1
         newmap.soundfile2 = self.soundfile2
-        newmap.exit_north = self.exit_north
-        newmap.exit_east = self.exit_east
-        newmap.exit_south = self.exit_south
-        newmap.exit_west = self.exit_west
         newmap.skybox = self.skybox
         newmap.soundfile3 = self.soundfile3
         newmap.map_unknowni1 = self.map_unknowni1
-        newmap.map_unknownh1 = self.map_unknownh1
         newmap.color_r = self.color_r
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
         newmap.color_a = self.color_a
-        newmap.parallax_1 = self.parallax_1
-        newmap.parallax_2 = self.parallax_2
-        newmap.clouds = self.clouds
-        newmap.savegame_1 = self.savegame_1
-        newmap.savegame_2 = self.savegame_2
-        newmap.savegame_3 = self.savegame_3
         newmap.extradata = self.extradata
         newmap.tree_set = self.tree_set
 
@@ -161,8 +139,17 @@ class Map(object):
                 else:
                     newmap.scripts.append(script.replicate())
 
+        # Call out to superclass replication
+        self._sub_replicate(newmap)
+
         # Now return our duplicated object
         return newmap
+
+    def _sub_replicate(self, newmap):
+        """
+        Stub for superclasses to override, to replicate specific vars
+        """
+        pass
 
     def set_square_savegame(self):
         """ Sets the savegame flag appropriately for all squares """
@@ -501,6 +488,23 @@ class B1Map(Map):
         # Savegames are... evil?  I guess?
         #return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
 
+    def _sub_replicate(self, newmap):
+        """
+        Replicate b1-specific vars
+        """
+        newmap.mapid = self.mapid
+        newmap.exit_north = self.exit_north
+        newmap.exit_east = self.exit_east
+        newmap.exit_south = self.exit_south
+        newmap.exit_west = self.exit_west
+        newmap.parallax_1 = self.parallax_1
+        newmap.parallax_2 = self.parallax_2
+        newmap.clouds = self.clouds
+        newmap.savegame_1 = self.savegame_1
+        newmap.savegame_2 = self.savegame_2
+        newmap.savegame_3 = self.savegame_3
+        newmap.map_unknownh1 = self.map_unknownh1
+
 class B2Map(Map):
     """
     Book 2 Map definitions
@@ -677,3 +681,26 @@ class B2Map(Map):
     def is_savegame(self):
         return not self.is_global()
         #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
+
+    def _sub_replicate(self, newmap):
+        """
+        Replicate b2-specific vars
+        """
+        newmap.openingscript = self.openingscript
+        newmap.map_unknownstr1 = self.map_unknownstr1
+        newmap.map_unknownstr2 = self.map_unknownstr2
+        newmap.soundfile4 = self.soundfile4
+        newmap.map_unknownc1 = self.map_unknownc1
+        newmap.map_unknownc2 = self.map_unknownc2
+        newmap.map_unknownc3 = self.map_unknownc3
+        newmap.map_unknownc4 = self.map_unknownc4
+        newmap.map_unknowni2 = self.map_unknowni2
+        newmap.map_unknowni3 = self.map_unknowni3
+        newmap.map_unknowni4 = self.map_unknowni4
+        newmap.map_unknownc5 = self.map_unknownc5
+        newmap.map_unknownc6 = self.map_unknownc6
+        newmap.map_unknownc7 = self.map_unknownc7
+        newmap.map_unknownc8 = self.map_unknownc8
+        newmap.map_unknownstr4 = self.map_unknownstr4
+        newmap.map_unknownstr5 = self.map_unknownstr5
+        newmap.map_unknownstr6 = self.map_unknownstr6
