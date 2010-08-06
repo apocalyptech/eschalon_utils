@@ -3665,7 +3665,7 @@ another direction, Eschalon will crash.</property>
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="unknowni1">
+                          <object class="GtkSpinButton" id="map_unknowni1">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -3689,7 +3689,7 @@ another direction, Eschalon will crash.</property>
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="unknownh1">
+                          <object class="GtkSpinButton" id="map_unknownh1">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x25CF;</property>
@@ -3706,7 +3706,7 @@ another direction, Eschalon will crash.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="unknowni1_label">
+                      <object class="GtkLabel" id="map_unknowni1_label">
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
@@ -3720,7 +3720,7 @@ another direction, Eschalon will crash.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="unknownh1_label">
+                      <object class="GtkLabel" id="map_unknownh1_label">
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>

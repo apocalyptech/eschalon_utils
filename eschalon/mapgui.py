@@ -723,8 +723,11 @@ class MapGUI(BaseGUI):
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
             self.prop_unknown_input_spin(self.input_int, 'i', table, 3, 4)
             self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Appears to be coordinates, under some circumstances')
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 1, 6)
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
+            # These two are *always* 1 in all of the map files that I've seen, and we're using them
+            # to identify whether the map file is book 1 or book 2.  So, we're going to omit allowing
+            # their edit.
+            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 1, 6)
+            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 3, 8)
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 4, 9)
             # We're locking these down because they appear to function as savegame/global identifiers
@@ -1031,7 +1034,7 @@ class MapGUI(BaseGUI):
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
-        self.get_widget('unknowni1').set_value(self.map.unknowni1)
+        self.get_widget('map_unknowni1').set_value(self.map.map_unknowni1)
         if c.book == 1:
             self.get_widget('mapid').set_text(self.map.mapid)
             self.get_widget('exit_north').set_text(self.map.exit_north)
@@ -1040,33 +1043,33 @@ class MapGUI(BaseGUI):
             self.get_widget('exit_west').set_text(self.map.exit_west)
             self.get_widget('parallax_1').set_value(self.map.parallax_1)
             self.get_widget('parallax_2').set_value(self.map.parallax_2)
-            self.get_widget('unknownh1').set_value(self.map.unknownh1)
+            self.get_widget('map_unknownh1').set_value(self.map.map_unknownh1)
             self.get_widget('clouds').set_value(self.map.clouds)
         else:
             self.get_widget('openingscript').set_text(self.map.openingscript)
             self.get_widget('soundfile4').set_text(self.map.soundfile4)
-            self.get_widget('unknowni2').set_value(self.map.unknowni2)
-            self.get_widget('unknowni3').set_value(self.map.unknowni3)
-            self.get_widget('unknowni4').set_value(self.map.unknowni4)
-            self.get_widget('unknownc1').set_value(self.map.unknownc1)
-            self.get_widget('unknownc2').set_value(self.map.unknownc2)
-            self.get_widget('unknownc3').set_value(self.map.unknownc3)
-            self.get_widget('unknownc4').set_value(self.map.unknownc4)
-            #self.get_widget('unknownc5').set_value(self.map.unknownc5)
-            #self.get_widget('unknownc6').set_value(self.map.unknownc6)
-            #self.get_widget('unknownc7').set_value(self.map.unknownc7)
-            self.get_widget('unknownc8').set_value(self.map.unknownc8)
-            self.get_widget('unknownstr1').set_text(self.map.unknownstr1)
-            self.get_widget('unknownstr2').set_text(self.map.unknownstr2)
-            self.get_widget('unknownstr4').set_text(self.map.unknownstr4)
-            self.get_widget('unknownstr5').set_text(self.map.unknownstr5)
-            self.get_widget('unknownstr6').set_text(self.map.unknownstr6)
+            self.get_widget('map_unknowni2').set_value(self.map.map_unknowni2)
+            self.get_widget('map_unknowni3').set_value(self.map.map_unknowni3)
+            self.get_widget('map_unknowni4').set_value(self.map.map_unknowni4)
+            #self.get_widget('map_unknownc1').set_value(self.map.map_unknownc1)
+            #self.get_widget('map_unknownc2').set_value(self.map.map_unknownc2)
+            self.get_widget('map_unknownc3').set_value(self.map.map_unknownc3)
+            self.get_widget('map_unknownc4').set_value(self.map.map_unknownc4)
+            #self.get_widget('map_unknownc5').set_value(self.map.map_unknownc5)
+            #self.get_widget('map_unknownc6').set_value(self.map.map_unknownc6)
+            #self.get_widget('map_unknownc7').set_value(self.map.map_unknownc7)
+            self.get_widget('map_unknownc8').set_value(self.map.map_unknownc8)
+            self.get_widget('map_unknownstr1').set_text(self.map.map_unknownstr1)
+            self.get_widget('map_unknownstr2').set_text(self.map.map_unknownstr2)
+            self.get_widget('map_unknownstr4').set_text(self.map.map_unknownstr4)
+            self.get_widget('map_unknownstr5').set_text(self.map.map_unknownstr5)
+            self.get_widget('map_unknownstr6').set_text(self.map.map_unknownstr6)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
         self.mapname_mainscreen_label.set_text(self.map.mapname)
         self.propswindow.hide()
-        if (self.cur_tree_set != self.map.tree_set):
+        if (c.book == 2 and self.cur_tree_set != self.map.tree_set):
             self.draw_map()
             self.update_wall_selection_image()
         return True
@@ -1655,7 +1658,7 @@ class MapGUI(BaseGUI):
         return entry
 
     def prop_unknown_input_text(self, table, num, row, tooltip=None):
-        varname = 'unknownstr%d' % (num)
+        varname = 'map_unknownstr%d' % (num)
         text = '<i>Unknown String %d</i>' % (num)
         return self.input_text(table, row, varname, text, tooltip, self.on_singleval_map_changed_str)
 
@@ -1703,7 +1706,7 @@ class MapGUI(BaseGUI):
                 'i': 'Int',
                 'c': 'Char',
                 }
-        varname = 'unknown%s%d' % (type, num)
+        varname = 'map_unknown%s%d' % (type, num)
         text = '<i>Unknown %s %d</i>' % (textdict.get(type, '?'), num)
         if signal is None:
             signal = self.on_singleval_map_changed_int

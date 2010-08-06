@@ -65,6 +65,8 @@ Map GUI
  * entity statuses on savegame files
  * rename unknown values with prefixes to avoid collisions in the future
  * Randomize scraggly trees in B1 (if they're not already)
+ * re-investigate b2 map savegame identifiers.  Four values?
+ * Try and find the can-Portal flag (and anything else, of course)
 
 Internal
 --------
@@ -81,3 +83,4 @@ Internal
    should probably move away from using that entirely.  See:
    https://bugzilla.gnome.org/show_bug.cgi?id=621400
  * Give the B2/B1 prefs a good testing before release
+ * Use decimal module for floats, internally?

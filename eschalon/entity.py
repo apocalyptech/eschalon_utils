@@ -194,7 +194,7 @@ class B1Entity(Entity):
             'exit_west_label', 'exit_west_combo',
             'exit_east_label', 'exit_east_combo',
             'exit_south_label', 'exit_south_combo',
-            'unknownh1_label', 'unknownh1',
+            'map_unknownh1_label', 'map_unknownh1',
             'parallax_1_label', 'parallax_1',
             'parallax_2_label', 'parallax_2',
             'clouds_label', 'clouds',

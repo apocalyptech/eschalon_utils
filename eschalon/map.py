@@ -58,8 +58,7 @@ class Map(object):
         self.exit_west = ''
         self.skybox = ''
         self.soundfile3 = ''
-        self.unknowni1 = -1
-        self.unknownh1 = -1
+        self.map_unknowni1 = -1
 
         # This is pure supposition at this point, but it seems to fit
         self.color_r = -1
@@ -116,8 +115,8 @@ class Map(object):
         newmap.exit_west = self.exit_west
         newmap.skybox = self.skybox
         newmap.soundfile3 = self.soundfile3
-        newmap.unknowni1 = self.unknowni1
-        newmap.unknownh1 = self.unknownh1
+        newmap.map_unknowni1 = self.map_unknowni1
+        newmap.map_unknownh1 = self.map_unknownh1
         newmap.color_r = self.color_r
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
@@ -355,13 +354,13 @@ class B1Map(Map):
         self.exit_east = ''
         self.exit_south = ''
         self.exit_west = ''
-        self.unknownh1 = -1
         self.parallax_1 = -1
         self.parallax_2 = -1
         self.clouds = -1
         self.savegame_1 = -1
         self.savegame_2 = -1
         self.savegame_3 = -1
+        self.map_unknownh1 = -1
 
         # Base class attributes
         super(B1Map, self).__init__(df)
@@ -385,8 +384,8 @@ class B1Map(Map):
             self.exit_west = self.df.readstr()
             self.skybox = self.df.readstr()
             self.soundfile3 = self.df.readstr()
-            self.unknowni1 = self.df.readint()
-            self.unknownh1 = self.df.readshort()
+            self.map_unknowni1 = self.df.readint()
+            self.map_unknownh1 = self.df.readshort()
 
             self.color_r = self.df.readuchar()
             self.color_g = self.df.readuchar()
@@ -452,8 +451,8 @@ class B1Map(Map):
         self.df.writestr(self.exit_west)
         self.df.writestr(self.skybox)
         self.df.writestr(self.soundfile3)
-        self.df.writeint(self.unknowni1)
-        self.df.writeshort(self.unknownh1)
+        self.df.writeint(self.map_unknowni1)
+        self.df.writeshort(self.map_unknownh1)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
@@ -511,23 +510,23 @@ class B2Map(Map):
 
         # Book 2 specific vars
         self.openingscript = ''
-        self.unknownstr1 = ''
-        self.unknownstr2 = ''
+        self.map_unknownstr1 = ''
+        self.map_unknownstr2 = ''
         self.soundfile4 = ''
-        self.unknownc1 = -1
-        self.unknownc2 = -1
-        self.unknownc3 = -1
-        self.unknownc4 = -1
-        self.unknowni2 = -1
-        self.unknowni3 = -1
-        self.unknowni4 = -1
-        self.unknownc5 = -1
-        self.unknownc6 = -1
-        self.unknownc7 = -1
-        self.unknownc8 = -1
-        self.unknownstr4 = ''
-        self.unknownstr5 = ''
-        self.unknownstr6 = ''
+        self.map_unknownc1 = -1
+        self.map_unknownc2 = -1
+        self.map_unknownc3 = -1
+        self.map_unknownc4 = -1
+        self.map_unknowni2 = -1
+        self.map_unknowni3 = -1
+        self.map_unknowni4 = -1
+        self.map_unknownc5 = -1
+        self.map_unknownc6 = -1
+        self.map_unknownc7 = -1
+        self.map_unknownc8 = -1
+        self.map_unknownstr4 = ''
+        self.map_unknownstr5 = ''
+        self.map_unknownstr6 = ''
 
         # Now the base attributes
         super(B2Map, self).__init__(df)
@@ -543,37 +542,37 @@ class B2Map(Map):
             # Start processing
             self.mapname = self.df.readstr()
             self.openingscript = self.df.readstr()
-            self.unknownstr1 = self.df.readstr()
-            self.unknownstr2 = self.df.readstr()
+            self.map_unknownstr1 = self.df.readstr()
+            self.map_unknownstr2 = self.df.readstr()
             self.skybox = self.df.readstr()
             self.soundfile1 = self.df.readstr()
             self.soundfile2 = self.df.readstr()
             self.soundfile3 = self.df.readstr()
             self.soundfile4 = self.df.readstr()
-            self.unknownc1 = self.df.readuchar()
-            self.unknownc2 = self.df.readuchar()
-            self.unknownc3 = self.df.readuchar()
-            self.unknownc4 = self.df.readuchar()
+            self.map_unknownc1 = self.df.readuchar()
+            self.map_unknownc2 = self.df.readuchar()
+            self.map_unknownc3 = self.df.readuchar()
+            self.map_unknownc4 = self.df.readuchar()
             self.color_r = self.df.readuchar()
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
-            # unknowni1 looks like it may contain parallax values
-            self.unknowni1 = self.df.readint()
-            self.unknowni2 = self.df.readint()
-            self.unknowni3 = self.df.readint()
-            self.unknowni4 = self.df.readint()
+            # map_unknowni1 looks like it may contain parallax values
+            self.map_unknowni1 = self.df.readint()
+            self.map_unknowni2 = self.df.readint()
+            self.map_unknowni3 = self.df.readint()
+            self.map_unknowni4 = self.df.readint()
             self.tree_set = self.df.readint()
 
             # These are all zero on the "global" map files
-            self.unknownc5 = self.df.readuchar()
-            self.unknownc6 = self.df.readuchar()
-            self.unknownc7 = self.df.readuchar()
-            self.unknownc8 = self.df.readuchar()
+            self.map_unknownc5 = self.df.readuchar()
+            self.map_unknownc6 = self.df.readuchar()
+            self.map_unknownc7 = self.df.readuchar()
+            self.map_unknownc8 = self.df.readuchar()
 
-            self.unknownstr4 = self.df.readstr()
-            self.unknownstr5 = self.df.readstr()
-            self.unknownstr6 = self.df.readstr()
+            self.map_unknownstr4 = self.df.readstr()
+            self.map_unknownstr5 = self.df.readstr()
+            self.map_unknownstr6 = self.df.readstr()
 
             # Squares
             self.set_square_savegame()
@@ -619,33 +618,33 @@ class B2Map(Map):
         # Start
         self.df.writestr(self.mapname)
         self.df.writestr(self.openingscript)
-        self.df.writestr(self.unknownstr1)
-        self.df.writestr(self.unknownstr2)
+        self.df.writestr(self.map_unknownstr1)
+        self.df.writestr(self.map_unknownstr2)
         self.df.writestr(self.skybox)
         self.df.writestr(self.soundfile1)
         self.df.writestr(self.soundfile2)
         self.df.writestr(self.soundfile3)
         self.df.writestr(self.soundfile4)
-        self.df.writeuchar(self.unknownc1)
-        self.df.writeuchar(self.unknownc2)
-        self.df.writeuchar(self.unknownc3)
-        self.df.writeuchar(self.unknownc4)
+        self.df.writeuchar(self.map_unknownc1)
+        self.df.writeuchar(self.map_unknownc2)
+        self.df.writeuchar(self.map_unknownc3)
+        self.df.writeuchar(self.map_unknownc4)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.unknowni1)
-        self.df.writeint(self.unknowni2)
-        self.df.writeint(self.unknowni3)
-        self.df.writeint(self.unknowni4)
+        self.df.writeint(self.map_unknowni1)
+        self.df.writeint(self.map_unknowni2)
+        self.df.writeint(self.map_unknowni3)
+        self.df.writeint(self.map_unknowni4)
         self.df.writeint(self.tree_set)
-        self.df.writeuchar(self.unknownc5)
-        self.df.writeuchar(self.unknownc6)
-        self.df.writeuchar(self.unknownc7)
-        self.df.writeuchar(self.unknownc8)
-        self.df.writestr(self.unknownstr4)
-        self.df.writestr(self.unknownstr5)
-        self.df.writestr(self.unknownstr6)
+        self.df.writeuchar(self.map_unknownc5)
+        self.df.writeuchar(self.map_unknownc6)
+        self.df.writeuchar(self.map_unknownc7)
+        self.df.writeuchar(self.map_unknownc8)
+        self.df.writestr(self.map_unknownstr4)
+        self.df.writestr(self.map_unknownstr5)
+        self.df.writestr(self.map_unknownstr6)
 
         # Squares
         for row in self.squares:
@@ -673,8 +672,8 @@ class B2Map(Map):
         self.df_ent.close()
 
     def is_global(self):
-        return (self.unknownc5 == 0 and self.unknownc6 == 0 and self.unknownc7 == 0)
+        return (self.map_unknownc5 == 0 and self.map_unknownc6 == 0 and self.map_unknownc7 == 0)
 
     def is_savegame(self):
         return not self.is_global()
-        #return (self.unknownc5 != 0 or self.unknownc6 != 0 or self.unknownc7 != 0)
+        #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
