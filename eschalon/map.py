@@ -88,11 +88,11 @@ class Map(object):
         self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
 
     def replicate(self):
-        # Note that this could, theoretically, lead to contention issues, since
-        # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
-        # guess.
-        # TODO: need to call the static Map.load() here
-        newmap = Map(self.df.filename)
+        
+        if self.book == 1:
+            newmap = B1Map(Savefile(self.df.filename))
+        else:
+            newmap = B2Map(Savefile(self.df.filename))
 
         # Single vals (no need to do actual replication)
         newmap.mapname = self.mapname
@@ -333,6 +333,8 @@ class B1Map(Map):
     Book 1 Map definitions
     """
 
+    book = 1
+
     def __init__(self, df):
 
         # Book 1-specific vars
@@ -509,6 +511,8 @@ class B2Map(Map):
     """
     Book 2 Map definitions
     """
+
+    book = 2
 
     def __init__(self, df):
 
