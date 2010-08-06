@@ -113,6 +113,8 @@ class Character(object):
         # Note that this could, theoretically, lead to contention issues, since
         # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
         # guess.
+        # TODO: replicate this similar to how we do maps now, so that we're not
+        # reading out to disk first.  should be a simple switch on self.book...
         newchar = Character.load(self.df.filename, self.book)
 
         # Single vals (no need to do actual replication)
