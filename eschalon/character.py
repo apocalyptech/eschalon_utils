@@ -110,12 +110,12 @@ class Character(object):
         self.ready_cols = ready_cols
 
     def replicate(self):
-        # Note that this could, theoretically, lead to contention issues, since
-        # Savefile doesn't as yet lock the file.  So, er, be careful for now, I
-        # guess.
-        # TODO: replicate this similar to how we do maps now, so that we're not
-        # reading out to disk first.  should be a simple switch on self.book...
         newchar = Character.load(self.df.filename, self.book)
+
+        if self.book == 1:
+            newchar = B1Character(Savefile(self.df.filename))
+        else:
+            newchar = B2Character(Savefile(self.df.filename))
 
         # Single vals (no need to do actual replication)
         #newchar.book = self.book
