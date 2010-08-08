@@ -79,7 +79,6 @@ class Square(object):
         checking if our values are the same, NOT if we're *actually*
         the same object.  Returns true for equality, false for inequality.
         """
-        # TODO: We need to check entity and script indexes here, too.
         return (self._sub_equals(square) and
                 self.x == square.x and
                 self.y == square.y and
