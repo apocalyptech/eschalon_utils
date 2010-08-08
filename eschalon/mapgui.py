@@ -1617,6 +1617,9 @@ class MapGUI(BaseGUI):
         table.attach(label, 0, 1, row, row+1, gtk.FILL, gtk.FILL)
         return label
 
+    def script_input_label(self, page, table, row, name, text):
+        self.input_label(table, row, '%s_%d' % (name, page), text)
+
     def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None):
         self.input_label(table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
@@ -1924,7 +1927,7 @@ class MapGUI(BaseGUI):
 
             # Condition is special, we're using an hbox here
             scr = self.map.squares[self.sq_y][self.sq_x].scripts[curpages]
-            self.input_label(binput, 9, 'cur_condition_%s' % (curpages), 'Condition')
+            self.script_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
             self.register_widget('cur_condition_%d' % (curpages), curentry)
@@ -1971,8 +1974,7 @@ class MapGUI(BaseGUI):
         # Contents Inputs (varies based on savefile status)
         if (square.scripts[curpages].savegame):
             for num in range(8):
-                # TODO: widget name is unchanged here, after genericizing-edits
-                self.input_label(cinput, num, 'item_%d_%d' % (num, curpages), 'Item %d' % (num+1))
+                self.script_input_label(curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num+1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
                         2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND)
                 self.populate_mapitem_button(num, curpages)
