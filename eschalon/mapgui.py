@@ -339,7 +339,7 @@ class MapGUI(BaseGUI):
                 'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
                 'on_direction_changed': self.on_direction_changed,
                 'on_map_flag_changed': self.on_map_flag_changed,
-                'on_b2_walltype_changed': self.on_b2_walltype_changed,
+                'on_walltype_changed': self.on_walltype_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
@@ -678,6 +678,9 @@ class MapGUI(BaseGUI):
         just construct some things here.
         """
 
+        # TODO: an awful lot of the main __init__ loop (or run()? is acutally doing this
+        # kind of stuff; should fold it into here.
+
         # Draw our control box
         ctlbox = self.get_widget('control_alignment')
         vbox = gtk.VBox()
@@ -717,6 +720,7 @@ class MapGUI(BaseGUI):
         self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
 
+        # Unknown map properties
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
@@ -739,6 +743,17 @@ class MapGUI(BaseGUI):
             self.prop_unknown_input_text(table, 4, 16)
             self.prop_unknown_input_text(table, 5, 17)
             self.prop_unknown_input_text(table, 6, 18)
+
+        # Populate our wall type dropdown
+        store = self.get_widget('walltype_store')
+        store.append(['None', 0])
+        store.append(['Normal Wall', 1])
+        if c.book == 1:
+            self.wallvals = (0, 1, 5)
+        else:
+            self.wallvals = (0, 1, 2, 5)
+            store.append(['Restrict Movement', 2])
+        store.append(['See-Through', 5])
 
     def on_prefs(self, widget=None):
         """ Override on_prefs a bit. """
@@ -1193,6 +1208,9 @@ class MapGUI(BaseGUI):
         map = self.map
         map.__dict__[wname] = widget.get_text()
 
+    def on_dropdown_idx_changed(self, widget, object):
+        """ NOT appropriate for use as a handler, needs an object passed in. """
+
     def on_dropdown_idx_map_changed(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
@@ -1200,6 +1218,9 @@ class MapGUI(BaseGUI):
         model = widget.get_model()
         val = model.get_value(iter, 1)
         self.map.__dict__[wname] = val
+
+    def on_dropdown_idx_square_changed(self, widget):
+        """ Update the appropriate bit in memory. """
 
     def on_singleval_square_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
@@ -1752,7 +1773,11 @@ class MapGUI(BaseGUI):
     def on_map_flag_changed(self, widget):
         """
         What to do whan a bit field changes.  Currently just the
-        destructible flag.
+        destructible flag.  NOTE: Currently unused.  This used to handle
+        wall types in the square editing screen, but with Book 2, it
+        turned out that they weren't really flags at all, or at least
+        processing them as flags would be confusing from a usability
+        standpoint.
         """
         wname = widget.get_name()
         (name, flagval) = wname.rsplit('_', 1)
@@ -1770,9 +1795,9 @@ class MapGUI(BaseGUI):
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         self.on_flag_changed(name, flagval, widget, script)
 
-    def on_b2_walltype_changed(self, widget):
+    def on_walltype_changed(self, widget):
         """
-        What to do when our Book 2 walltype dropdown is changed.
+        What to do when our walltype dropdown is changed.
         """
         model = widget.get_model()
         self.map.squares[self.sq_y][self.sq_x].wall = model[widget.get_active()][1]
@@ -2147,47 +2172,22 @@ class MapGUI(BaseGUI):
         self.get_widget('square_notebook').set_current_page(0)
 
         # First the main items.  Wall stuff first.
-        # Note that we're handling B1 and B2 walls differently.  Should
-        # maybe just change everything to be the dropdown like in B2...
-        # TODO: ^
-        if c.book == 1:
-            wallflags = ( 0x01, 0x04 )
-            flagstotal = sum(map(int, wallflags))
-            if (square.wall & ~flagstotal == 0):
-                self.get_widget('wall_label').hide()
-                self.get_widget('wall').hide()
-                for flag in wallflags:
-                    self.get_widget('wall_%02X_label' % flag).show()
-                    self.get_widget('wall_%02X' % flag).show()
-                    if (square.wall & flag == flag):
-                        self.get_widget('wall_%02X' % flag).set_active(True)
-                    else:
-                        self.get_widget('wall_%02X' % flag).set_active(False)
-            else:
-                self.get_widget('wall_label').show()
-                self.get_widget('wall').show()
-                for flag in wallflags:
-                    self.get_widget('wall_%02X_label' % flag).hide()
-                    self.get_widget('wall_%02X' % flag).hide()
-                self.get_widget('wall').set_value(square.wall)
+        if square.wall in self.wallvals:
+            self.get_widget('wall_label').hide()
+            self.get_widget('wall').hide()
+            self.get_widget('walltype_label').show()
+            self.get_widget('walltype').show()
+            model = self.get_widget('walltype').get_model()
+            for (idx, row) in enumerate(model):
+                if (row[1] == square.wall):
+                    self.get_widget('walltype').set_active(idx)
+                    break
         else:
-            wallvals = (0, 1, 2, 5)
-            if square.wall in wallvals:
-                self.get_widget('wall_label').hide()
-                self.get_widget('wall').hide()
-                self.get_widget('b2_walltype_label').show()
-                self.get_widget('b2_walltype').show()
-                model = self.get_widget('b2_walltype').get_model()
-                for (idx, row) in enumerate(model):
-                    if (row[1] == square.wall):
-                        self.get_widget('b2_walltype').set_active(idx)
-                        break
-            else:
-                self.get_widget('b2_walltype_label').hide()
-                self.get_widget('b2_walltype').hide()
-                self.get_widget('wall_label').show()
-                self.get_widget('wall').show()
-                self.get_widget('wall').set_value(square.wall)
+            self.get_widget('walltype_label').hide()
+            self.get_widget('walltype').hide()
+            self.get_widget('wall_label').show()
+            self.get_widget('wall').show()
+            self.get_widget('wall').set_value(square.wall)
 
         # ... and now the rest
         self.get_widget('floorimg').set_value(square.floorimg)

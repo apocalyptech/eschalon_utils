@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   07 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Book 1 barrier flag is now a dropdown, to match Book 2
+
    05 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Cleaned up Tree drawing toggle for Book 1 Maps
 
