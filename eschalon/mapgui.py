@@ -3323,9 +3323,11 @@ class MapGUI(BaseGUI):
 
     def export_map_pngs(self):
         """
-        A little sub to loop through and write out a PNG of each mapname
+        A little sub to loop through and write out a PNG of each mapname.
+        This is never called in the actual code, though it's trivial to hook it
+        in so that it'll write out PNGs for every single map specified on
+        the commandline.
         """
-        # TODO: keep?  throw away?
         self.mapinit = True
         self.set_zoom_vars(1)
         print self.options
