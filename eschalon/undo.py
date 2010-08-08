@@ -340,11 +340,12 @@ class Undo(object):
         for (i, idx) in enumerate(to_scriptidx):
             self.map.scripts.insert(idx, self.map.squares[y][x].scripts[i])
 
-    # TODO: Delete this before release
     def report(self):
         """
         This just prints out some text to the console, used for making sure
-        that stuff is working how it should.
+        that stuff is working how it should.  Note that this isn't really maintained
+        at all since I just used it for debugging while figuring things out, so it
+        may very well fail right now.  Nothing in the code actually calls this.
         """
         print '%d total scripts in map' % (len(self.map.scripts))
         scriptcounters = {}
