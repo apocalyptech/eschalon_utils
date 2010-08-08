@@ -717,7 +717,6 @@ class MapGUI(BaseGUI):
         self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
 
-        # TODO: doublecheck for name collisions on these unknowns
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
@@ -1287,8 +1286,6 @@ class MapGUI(BaseGUI):
         we're just doing some housekeeping mostly.
         """
         # Populate our undo object with the new square
-        # TODO: Note that we should really check for changes here so we're not storing empty
-        # undo histories...
         self.undo.finish()
 
         # All the "fun" stuff ends up happening in here.
@@ -1455,7 +1452,6 @@ class MapGUI(BaseGUI):
         """ Handle what to do when our scollwindow detects a change in dimensions. """
         if (self.prev_scroll_h_cur != -1):
             newval = int((self.prev_scroll_h_cur*widget.upper)/self.prev_scroll_h_max)
-            # TODO: check for corner cases here, and in the v_changed as well
             if (widget.upper >= (newval + widget.page_size)):
                 widget.set_value(newval)
         self.prev_scroll_h_max = widget.upper
@@ -1472,8 +1468,6 @@ class MapGUI(BaseGUI):
         """ Take care of everything that needs to be done when we change zoom levels. """
         hadjust = self.mainscroll.get_hadjustment()
         vadjust = self.mainscroll.get_vadjustment()
-        # TODO: This works for zooming-in, mostly...  Less good for zooming out.
-        # I should figure out exactly what's going on.
         self.prev_scroll_h_cur = (hadjust.page_size/4)+hadjust.value
         self.prev_scroll_v_cur = (vadjust.page_size/4)+vadjust.value
         self.set_zoom_vars(level)
@@ -1643,10 +1637,6 @@ class MapGUI(BaseGUI):
     def script_input_text(self, page, table, row, name, text, tooltip=None):
         varname = '%s_%d' % (name, page)
         entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250)
-        # TODO: previously, these values were set *before* connecting to the
-        # signal handler...  Because we've moved the assignment out here, the
-        # signal handler's already attached.  Make sure that doesn't cause
-        # problems...
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (name[:9] == 'item_name'):
@@ -1693,10 +1683,6 @@ class MapGUI(BaseGUI):
         if signal is None:
             signal = self.on_script_int_changed
         entry = func(table, row, varname, text, tooltip, signal)
-        # TODO: previously, these values were set *before* connecting to the
-        # signal handler...  Because we've moved the assignment out here, the
-        # signal handler's already attached.  Make sure that doesn't cause
-        # problems...
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             entry.set_value(script.__dict__[name])
@@ -1898,8 +1884,6 @@ class MapGUI(BaseGUI):
         align.add(binput)
         align.show()
         basic_box.pack_start(align, False, False)
-
-        # TODO: the input_* functions were just modified rather heavily; TEST TEST TEST
 
         # Basic Inputs
         self.script_input_text(curpages, binput, 0, 'description', '(to update)',
