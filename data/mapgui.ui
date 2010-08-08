@@ -4189,7 +4189,7 @@ filename</property>
                   <object class="GtkLabel" id="label5">
                     <property name="visible">True</property>
                     <property name="ypad">6</property>
-                    <property name="label" translatable="yes">&lt;b&gt;Error Drawing On Map&lt;/b&gt;</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Error While Updating Map&lt;/b&gt;</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -4202,7 +4202,7 @@ filename</property>
                     <property name="width_request">400</property>
                     <property name="visible">True</property>
                     <property name="ypad">7</property>
-                    <property name="label" translatable="yes">The map editor encountered an exception while drawing.  This should basically never happen.  The exception text is below:</property>
+                    <property name="label" translatable="yes">The map editor encountered an exception while drawing.  This should basically never happen.  Note that Undo and Redo will not know about the action you just tried.  The exception text is below:</property>
                     <property name="wrap">True</property>
                   </object>
                   <packing>
