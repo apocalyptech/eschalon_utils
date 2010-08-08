@@ -840,7 +840,10 @@ class B2Gfx(Gfx):
         if file not in self.hugegfxcache:
             if (file.find('/') != -1 or file.find('..') != -1 or file.find('\\') != -1):
                 return None
-            self.hugegfxcache[file] = SingleImageGfxCache(self.readfile(file))
+            try:
+                self.hugegfxcache[file] = SingleImageGfxCache(self.readfile(file))
+            except LoadException:
+                return None
         if (size is None):
             size = self.square_width
         return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
