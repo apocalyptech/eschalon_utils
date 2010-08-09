@@ -2193,13 +2193,15 @@ class MapGUI(BaseGUI):
                 idx = self.entitykeys.index(c.entitytable[square.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
-                # TODO: Warning/exit on here
-                print "Not in keys"
-                pass
+                self.errordialog('Entity Error', 'The application encountered an entity '
+                        'type that we don\'t know anything about.  The values on the entity '
+                        'tab may not be accurate', self.squarewindow)
+                self.get_widget('entid').set_active(0)
         else:
-            # TODO: Warning/exit on here
-            print "Not in table"
-            pass
+            self.errordialog('Entity Error', 'The application encountered an entity '
+                    'type that we don\'t know anything about.  The values on the entity '
+                    'tab may not be accurate', self.squarewindow)
+            self.get_widget('entid').set_active(0)
         self.get_widget('direction').set_active(square.entity.direction-1)
         self.get_widget('entscript').set_text(square.entity.entscript)
         if (self.map.is_savegame()):

@@ -849,7 +849,10 @@ class B2Gfx(Gfx):
         return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
-        ent = c.entitytable[entnum]
+        try:
+            ent = c.entitytable[entnum]
+        except KeyError:
+            return None
         if (entnum not in self.entcache):
             filename = ent.gfxfile
             self.entcache[entnum] = B2GfxEntCache(ent, self.readfile(filename))
