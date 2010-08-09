@@ -272,97 +272,8 @@ class MapGUI(BaseGUI):
         # Create these objects as soon as we have our entity list
         self.smartdraw.create_premade_objects()
 
-        # Register ComboBoxEntry child objects since the new Glade doesn't
-        comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
-                'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
-        for var in comboboxentries:
-            self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
-            self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
-
-        # Finish populating Item windows (dependent on Book)
-        self.window.set_title('Eschalon Book %d Map Editor' % (c.book))
-        self.item_gui_finish(c.book)
-
-        # Now show or hide form elements depending on the book version
-        for item_class in (B1Item, B2Item, B1Entity, B2Entity):
-            self.set_book_elem_visibility(item_class, item_class.book == c.book)
-
         # ... and while we're at it, finish building some GUI elements
         self.map_gui_finish()
-
-        # Dictionary of signals.
-        dic = { 'gtk_main_quit': self.gtk_main_quit,
-                'on_load': self.on_load,
-                'on_revert': self.on_revert,
-                'on_about': self.on_about,
-                'on_save': self.on_save,
-                'on_save_as': self.on_save_as,
-                'on_export_clicked': self.on_export_clicked,
-                'on_undo': self.on_undo,
-                'on_redo': self.on_redo,
-                'on_clicked': self.on_clicked,
-                'on_released': self.on_released,
-                'on_control_toggle': self.on_control_toggle,
-                'key_handler': self.key_handler,
-                'zoom_in': self.zoom_in,
-                'zoom_out': self.zoom_out,
-                'format_zoomlevel': self.format_zoomlevel,
-                'on_mouse_changed': self.on_mouse_changed,
-                'expose_map': self.expose_map,
-                'map_toggle': self.map_toggle,
-                'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
-                'on_setinitial_clicked': self.on_setinitial_clicked,
-                'on_entid_changed': self.on_entid_changed,
-                'on_scriptid_changed': self.on_scriptid_changed,
-                'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
-                'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
-                'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
-                'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
-                'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
-                'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
-                'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
-                'on_direction_changed': self.on_direction_changed,
-                'on_map_flag_changed': self.on_map_flag_changed,
-                'on_walltype_changed': self.on_walltype_changed,
-                'on_entity_toggle': self.on_entity_toggle,
-                'on_script_add': self.on_script_add,
-                'on_floor_changed': self.on_floor_changed,
-                'on_draw_floor_changed': self.on_draw_floor_changed,
-                'on_decal_changed': self.on_decal_changed,
-                'on_draw_decal_changed': self.on_draw_decal_changed,
-                'on_wall_changed': self.on_wall_changed,
-                'on_draw_wall_changed': self.on_draw_wall_changed,
-                'on_walldecal_changed': self.on_walldecal_changed,
-                'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
-                'on_colorsel_clicked': self.on_colorsel_clicked,
-                'on_squarewindow_close': self.on_squarewindow_close,
-                'on_prop_button_clicked': self.on_prop_button_clicked,
-                'on_propswindow_close': self.on_propswindow_close,
-                'on_prefs': self.on_prefs,
-                'on_abort_render': self.on_abort_render,
-                'open_floorsel': self.open_floorsel,
-                'open_draw_floorsel': self.open_draw_floorsel,
-                'open_decalsel': self.open_decalsel,
-                'open_draw_decalsel': self.open_draw_decalsel,
-                'open_walldecalsel': self.open_walldecalsel,
-                'open_draw_walldecalsel': self.open_draw_walldecalsel,
-                'open_draw_objsel': self.open_draw_objsel,
-                'open_objsel': self.open_objsel,
-                'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
-                'objsel_on_motion': self.objsel_on_motion,
-                'objsel_on_expose': self.objsel_on_expose,
-                'objsel_on_clicked': self.objsel_on_clicked,
-                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
-                'draw_check_all': self.draw_check_all,
-                'draw_uncheck_all': self.draw_uncheck_all,
-                'highlight_check_all': self.highlight_check_all,
-                'highlight_uncheck_all': self.highlight_uncheck_all,
-                'update_activity_label': self.update_activity_label
-                }
-        dic.update(self.item_signals())
-        # Really we should only attach the signals that will actually be sent, but this
-        # should be fine here, anyway.
-        self.builder.connect_signals(dic)
 
         # Event mask for processing hotkeys
         # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
@@ -428,94 +339,6 @@ class MapGUI(BaseGUI):
                 self.mousemap[zoom] = mapbuf.get_pixels_array()
             except (RuntimeError, ImportError):
                 self.mousemap[zoom] = self.stupid_pixels_array(mapbuf)
-
-        # Process our entity list, for use in the entity type dropdown
-        # This is.... Not the greatest.  Ah well.  Keeping the monsters
-        # and NPCs sorted separately seems worth it
-        monsters = {}
-        npcs = {}
-        for (key, item) in c.entitytable.iteritems():
-            if (item.friendly == 0):
-                table = monsters
-            else:
-                table = npcs
-            table[item.name] = key
-        monsterkeys = monsters.keys()
-        monsterkeys.sort()
-        npckeys = npcs.keys()
-        npckeys.sort()
-        self.entitykeys = monsterkeys
-        self.entitykeys.extend(npckeys)
-        self.entityrev = monsters
-        self.entityrev.update(npcs)
-        box = self.get_widget('entid')
-        self.useful_combobox(box)
-        for key in self.entitykeys:
-            box.append_text(key)
-
-        # Grab some lists of files
-        # Note that maplist will be empty for B2, but that's okay since B2 won't
-        # end up using it.
-        maplist = self.get_gamedir_filelist('data', 'map', False)
-        ogglist = self.get_gamedir_filelist('music', 'ogg')
-        wavlist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
-        if c.book == 1:
-            skyboxlist = ['back1.png', 'back2.png', 'back3.png']
-        else:
-            skyboxlist = ['shear_wall.png']
-
-        # Populate the dropdowns on our global properties window
-        self.populate_comboboxentry('exit_north_combo', maplist)
-        self.populate_comboboxentry('exit_east_combo', maplist)
-        self.populate_comboboxentry('exit_south_combo', maplist)
-        self.populate_comboboxentry('exit_west_combo', maplist)
-        self.populate_comboboxentry('soundfile1_combo', ogglist)
-        self.populate_comboboxentry('soundfile2_combo', ogglist)
-        self.populate_comboboxentry('soundfile3_combo', wavlist)
-        self.populate_comboboxentry('soundfile4_combo', wavlist)
-        self.populate_comboboxentry('skybox_combo', skyboxlist)
-
-        # And populate our object/script type dropdown as well
-        self.object_type_list = {}
-        self.object_type_list_rev = {}
-        typebox = self.get_widget('scriptid_dd')
-        self.useful_combobox(typebox)
-        for (typeidx, (val, text)) in enumerate(c.objecttypetable.items()):
-            typebox.append_text('%d - %s' % (val, text))
-            self.object_type_list[val] = typeidx
-            self.object_type_list_rev[typeidx] = val
-
-        # Populate our smartdraw decal preference dropdown
-        store = self.get_widget('decalpref_store')
-        store.append(['Grass', self.smartdraw.IDX_GRASS])
-        store.append(['Sand', self.smartdraw.IDX_SAND])
-        store.append(['Beach', self.smartdraw.IDX_BEACH])
-        if c.book > 1:
-            store.append(['Snow', self.smartdraw.IDX_SNOW])
-            store.append(['Lava', self.smartdraw.IDX_LAVA])
-        self.get_widget('decalpref').set_active(0)
-
-        # Populate our object placement dropdown
-        store = self.get_widget('objectplace_treestore')
-        renderer = self.get_widget('objectplace_renderer')
-        self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
-        set_start = False
-        for (cat, objects) in self.smartdraw.premade_objects.get_all_sorted():
-            catiter = store.append(None, [cat, -1, cat])
-            for (idx, obj) in enumerate(objects):
-                iter = store.append(catiter, [obj.name, idx, cat])
-                if not set_start:
-                    set_start = True
-                    self.get_widget('objectplace_combo').set_active_iter(iter)
-
-        # Resize some images for Book 2 sizes
-        if c.book > 1:
-            self.get_widget('composite_area').set_size_request(64, 160)
-            self.get_widget('floorimg_image').set_size_request(64, 32)
-            self.get_widget('decalimg_image').set_size_request(64, 32)
-            self.get_widget('wallimg_image').set_size_request(64, 160)
-            self.get_widget('walldecalimg_image').set_size_request(64, 96)
-            self.get_widget('ent_square_img').set_size_request(128, 128)
 
         # ... initialize a couple of hidden spinboxes
         self.draw_floor_spin.set_value(1)
@@ -655,15 +478,28 @@ class MapGUI(BaseGUI):
 
     def map_gui_finish(self):
         """
-        The current state of Glade (3.6.7 as of this writing) has some really annoying
-        behavior with regards to SpinButtons and Adjustments, in addition to other
-        frustrating issues which make editing problematic.  It's a shame.  Given that I've been
-        considering ditching Glade/GTKBuilder anyway, rather than fight through it, I'll
-        just construct some things here.
+        This function is designed to finish drawing the base GUI, to either make up for
+        shortcomings in Glade, or just because it's easier in code.  There's a nontrivial
+        amount of overlap between this and what happens inside run(), but the philosophical
+        difference I'm shooting for is that this function is creating actual GUI elements,
+        whereas the stuff in run() should primarily just be initializing variables,
+        assigning default values, etc.  It's a pretty fuzzy boundary regardless.
         """
 
-        # TODO: an awful lot of the main __init__ loop (or run()? is acutally doing this
-        # kind of stuff; should fold it into here.
+        # Register ComboBoxEntry child objects since the new Glade doesn't
+        comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
+                'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
+        for var in comboboxentries:
+            self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
+            self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
+
+        # Finish populating Item windows (dependent on Book)
+        self.window.set_title('Eschalon Book %d Map Editor' % (c.book))
+        self.item_gui_finish(c.book)
+
+        # Now show or hide form elements depending on the book version
+        for item_class in (B1Item, B2Item, B1Entity, B2Entity):
+            self.set_book_elem_visibility(item_class, item_class.book == c.book)
 
         # Draw our control box
         ctlbox = self.get_widget('control_alignment')
@@ -738,6 +574,168 @@ class MapGUI(BaseGUI):
             self.wallvals = (0, 1, 2, 5)
             store.append(['Restrict Movement', 2])
         store.append(['See-Through', 5])
+
+        # Process our entity list, for use in the entity type dropdown
+        # This is.... Not the greatest.  Ah well.  Keeping the monsters
+        # and NPCs sorted separately seems worth it
+        monsters = {}
+        npcs = {}
+        for (key, item) in c.entitytable.iteritems():
+            if (item.friendly == 0):
+                table = monsters
+            else:
+                table = npcs
+            table[item.name] = key
+        monsterkeys = monsters.keys()
+        monsterkeys.sort()
+        npckeys = npcs.keys()
+        npckeys.sort()
+        self.entitykeys = monsterkeys
+        self.entitykeys.extend(npckeys)
+        self.entityrev = monsters
+        self.entityrev.update(npcs)
+        box = self.get_widget('entid')
+        self.useful_combobox(box)
+        for key in self.entitykeys:
+            box.append_text(key)
+
+        # Grab some lists of files
+        # Note that maplist will be empty for B2, but that's okay since B2 won't
+        # end up using it.
+        maplist = self.get_gamedir_filelist('data', 'map', False)
+        ogglist = self.get_gamedir_filelist('music', 'ogg')
+        wavlist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
+        if c.book == 1:
+            skyboxlist = ['back1.png', 'back2.png', 'back3.png']
+        else:
+            skyboxlist = ['shear_wall.png']
+
+        # Populate the dropdowns on our global properties window
+        self.populate_comboboxentry('exit_north_combo', maplist)
+        self.populate_comboboxentry('exit_east_combo', maplist)
+        self.populate_comboboxentry('exit_south_combo', maplist)
+        self.populate_comboboxentry('exit_west_combo', maplist)
+        self.populate_comboboxentry('soundfile1_combo', ogglist)
+        self.populate_comboboxentry('soundfile2_combo', ogglist)
+        self.populate_comboboxentry('soundfile3_combo', wavlist)
+        self.populate_comboboxentry('soundfile4_combo', wavlist)
+        self.populate_comboboxentry('skybox_combo', skyboxlist)
+
+        # And populate our object/script type dropdown as well
+        self.object_type_list = {}
+        self.object_type_list_rev = {}
+        typebox = self.get_widget('scriptid_dd')
+        self.useful_combobox(typebox)
+        for (typeidx, (val, text)) in enumerate(c.objecttypetable.items()):
+            typebox.append_text('%d - %s' % (val, text))
+            self.object_type_list[val] = typeidx
+            self.object_type_list_rev[typeidx] = val
+
+        # Populate our smartdraw decal preference dropdown
+        store = self.get_widget('decalpref_store')
+        store.append(['Grass', self.smartdraw.IDX_GRASS])
+        store.append(['Sand', self.smartdraw.IDX_SAND])
+        store.append(['Beach', self.smartdraw.IDX_BEACH])
+        if c.book > 1:
+            store.append(['Snow', self.smartdraw.IDX_SNOW])
+            store.append(['Lava', self.smartdraw.IDX_LAVA])
+        self.get_widget('decalpref').set_active(0)
+
+        # Populate our object placement dropdown
+        store = self.get_widget('objectplace_treestore')
+        renderer = self.get_widget('objectplace_renderer')
+        self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
+        set_start = False
+        for (cat, objects) in self.smartdraw.premade_objects.get_all_sorted():
+            catiter = store.append(None, [cat, -1, cat])
+            for (idx, obj) in enumerate(objects):
+                iter = store.append(catiter, [obj.name, idx, cat])
+                if not set_start:
+                    set_start = True
+                    self.get_widget('objectplace_combo').set_active_iter(iter)
+
+        # Resize some images for Book 2 sizes
+        if c.book > 1:
+            self.get_widget('composite_area').set_size_request(64, 160)
+            self.get_widget('floorimg_image').set_size_request(64, 32)
+            self.get_widget('decalimg_image').set_size_request(64, 32)
+            self.get_widget('wallimg_image').set_size_request(64, 160)
+            self.get_widget('walldecalimg_image').set_size_request(64, 96)
+            self.get_widget('ent_square_img').set_size_request(128, 128)
+
+        # Dictionary of signals.
+        dic = { 'gtk_main_quit': self.gtk_main_quit,
+                'on_load': self.on_load,
+                'on_revert': self.on_revert,
+                'on_about': self.on_about,
+                'on_save': self.on_save,
+                'on_save_as': self.on_save_as,
+                'on_export_clicked': self.on_export_clicked,
+                'on_undo': self.on_undo,
+                'on_redo': self.on_redo,
+                'on_clicked': self.on_clicked,
+                'on_released': self.on_released,
+                'on_control_toggle': self.on_control_toggle,
+                'key_handler': self.key_handler,
+                'zoom_in': self.zoom_in,
+                'zoom_out': self.zoom_out,
+                'format_zoomlevel': self.format_zoomlevel,
+                'on_mouse_changed': self.on_mouse_changed,
+                'expose_map': self.expose_map,
+                'map_toggle': self.map_toggle,
+                'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
+                'on_setinitial_clicked': self.on_setinitial_clicked,
+                'on_entid_changed': self.on_entid_changed,
+                'on_scriptid_changed': self.on_scriptid_changed,
+                'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
+                'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
+                'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
+                'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
+                'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
+                'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
+                'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
+                'on_direction_changed': self.on_direction_changed,
+                'on_map_flag_changed': self.on_map_flag_changed,
+                'on_walltype_changed': self.on_walltype_changed,
+                'on_entity_toggle': self.on_entity_toggle,
+                'on_script_add': self.on_script_add,
+                'on_floor_changed': self.on_floor_changed,
+                'on_draw_floor_changed': self.on_draw_floor_changed,
+                'on_decal_changed': self.on_decal_changed,
+                'on_draw_decal_changed': self.on_draw_decal_changed,
+                'on_wall_changed': self.on_wall_changed,
+                'on_draw_wall_changed': self.on_draw_wall_changed,
+                'on_walldecal_changed': self.on_walldecal_changed,
+                'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
+                'on_colorsel_clicked': self.on_colorsel_clicked,
+                'on_squarewindow_close': self.on_squarewindow_close,
+                'on_prop_button_clicked': self.on_prop_button_clicked,
+                'on_propswindow_close': self.on_propswindow_close,
+                'on_prefs': self.on_prefs,
+                'on_abort_render': self.on_abort_render,
+                'open_floorsel': self.open_floorsel,
+                'open_draw_floorsel': self.open_draw_floorsel,
+                'open_decalsel': self.open_decalsel,
+                'open_draw_decalsel': self.open_draw_decalsel,
+                'open_walldecalsel': self.open_walldecalsel,
+                'open_draw_walldecalsel': self.open_draw_walldecalsel,
+                'open_draw_objsel': self.open_draw_objsel,
+                'open_objsel': self.open_objsel,
+                'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
+                'objsel_on_motion': self.objsel_on_motion,
+                'objsel_on_expose': self.objsel_on_expose,
+                'objsel_on_clicked': self.objsel_on_clicked,
+                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
+                'draw_check_all': self.draw_check_all,
+                'draw_uncheck_all': self.draw_uncheck_all,
+                'highlight_check_all': self.highlight_check_all,
+                'highlight_uncheck_all': self.highlight_uncheck_all,
+                'update_activity_label': self.update_activity_label
+                }
+        dic.update(self.item_signals())
+        # Really we should only attach the signals that will actually be sent, but this
+        # should be fine here, anyway.
+        self.builder.connect_signals(dic)
 
     def on_prefs(self, widget=None):
         """ Override on_prefs a bit. """
@@ -3046,7 +3044,6 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                 sq_ctx.paint()
                 drawn = True
-                # TODO: this object should really be a TYPE_OBJ instead...
                 if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
@@ -3126,8 +3123,6 @@ class MapGUI(BaseGUI):
             sq_ctx.paint()
 
         # Draw Barrier Highlights
-        # TODO: Drawing barriers on water is pretty lame; don't do that.
-        # (perhaps unless asked to)
         if (drawbarrier):
             self.composite_simple(op_ctx, op_surf, barrier)
 
