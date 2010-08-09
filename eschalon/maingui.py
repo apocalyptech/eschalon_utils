@@ -70,17 +70,12 @@ class MainGUI(BaseGUI):
         self.req_book = req_book
         c.switch_to_book(req_book)
 
+        # Call out to the base initialization
+        self.base_init()
+
     def run(self):
 
-        # Some vars we need regardless of whether we have a file or not
-        self.widgetcache = {}
-
-        # We need this because Not Everything's in Glade anymore
-        # Note that we have a couple of widget caches now, so those should
-        # be consolidated
-        self.fullwidgetcache = {}
-
-        # Let's make sure that char exists, too
+        # Let's make sure that the character var exists
         self.char = None
 
         # Start up our GUI
@@ -386,7 +381,6 @@ class MainGUI(BaseGUI):
         # Basic vars
         self.origchar = char
         self.char = char.replicate()
-        self.labelcache = {}
         self.changed = {}
 
         # Support for our item screens
@@ -415,28 +409,6 @@ class MainGUI(BaseGUI):
     def putstatus(self, text):
         """ Pushes a message to the status bar """
         self.statusbar.push(self.sbcontext, text)
-
-    def get_label_cache(self, name):
-        """ Returns a widget and the proper label for the widget (to save on processing) """
-        if (not self.labelcache.has_key(name)):
-            widget = self.get_widget(name + '_label')
-            self.widgetcache[name] = widget
-            self.labelcache[name] = widget.get_label()
-        return (self.widgetcache[name], self.labelcache[name])
-
-    def register_widget(self, name, widget, doname=True):
-        # TODO: any reason not to have this in the base class?
-        if doname:
-            widget.set_name(name)
-        #if name in self.fullwidgetcache:
-        #    print 'WARNING: Created duplicate widget "%s"' % (name)
-        self.fullwidgetcache[name] = widget
-
-    def get_widget(self, name):
-        """ Returns a widget from our cache, or from builder obj if it's not present in the cache. """
-        if (not self.fullwidgetcache.has_key(name)):
-            self.register_widget(name, self.builder.get_object(name), False)
-        return self.fullwidgetcache[name]
 
     def check_item_changed(self):
         """

@@ -29,6 +29,9 @@ Character GUI
  * When copying items, the "condition"-changed indicator doesn't populate
    automatically
  * Investigate duplicate skill_table and status_table widget creation
+ * Figure out if B2 X/Y pos actually does change, and doublecheck that
+   it doesn't in B1.  Update label(s) appropriately.
+ * "Enter" to close dialogs (item screens, etc) - applicable to Map GUI too
 
 Map GUI
 -------
@@ -67,13 +70,11 @@ Map GUI
  * Randomize scraggly trees in B1 (if they're not already)
  * re-investigate b2 map savegame identifiers.  Four values?
  * Try and find the can-Portal flag (and anything else, of course)
+ * Make sure that mapscript object labels are showing properly for B2
 
 Internal
 --------
- * We're doubly-caching some widgets in the character GUI code, which is
-   stupid.  Should consolidate those.
- * Speaking of, I'd actually like to move a lot of that into basegui where
-   it belongs, too, though the map GUI doesn't really need most of it.
+ * Figure out what can be consolidated to BaseGUI from the char and map parts.
  * A whole lot of code-cleaning should really be done, it's pretty spaghetti
    in there.
  * Square class now holds (x, y) information - can probably switch some stuff

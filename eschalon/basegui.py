@@ -45,19 +45,15 @@ class BaseGUI(object):
         """
         Performs any options we'll need for a GUI
         """
-        # We're not actually doing *anything* in here anymore.  Let's
-        # try to lock this down once and for all.
 
-        # Some behavior depends on our gtk+ version
-        # ... actually, we're gonna try to just deal with Numeric for now
-        #if (gtk.check_version(2, 16, 0) is None):
-        #    self.have_gtk_2_16 = True
-        #else:
-        #    self.have_gtk_2_16 = False
+        # This may be kind of silly actually, but it's rather entrenched now.
+        # Anyway, we're caching GUI elements here, by name.
+        self.widgetcache = {}
 
-        # Assume, for now, that we have get_pixels_array()
-        # (ie: that PyGTK was compiled with Numeric)
-        #self.have_get_pixels_array = True
+        # This is actually only used on the character editor, but whatever.
+        # Stores the vanilla labels which "should" be in place for an unmodified
+        # variable.
+        self.labelcache = {}
 
     def datafile(self, file):
         return os.path.join(self.datadir, file)
@@ -148,6 +144,31 @@ class BaseGUI(object):
                 'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
                 'bypass_delete': self.bypass_delete
                 }
+
+    def register_widget(self, name, widget, doname=True):
+        if doname:
+            widget.set_name(name)
+        #if name in self.widgetcache:
+        #    print 'WARNING: Created duplicate widget "%s"' % (name)
+        self.widgetcache[name] = widget
+
+    def get_widget(self, name):
+        """ Returns a widget from our cache, or from builder obj if it's not present in the cache. """
+        try:
+            return self.widgetcache[name]
+        except KeyError:
+            self.register_widget(name, self.builder.get_object(name), False)
+            return self.widgetcache[name]
+
+    def get_label_cache(self, name):
+        """ Returns a widget and the proper label for the widget (to save on processing) """
+        labelname = '%s_label' % (name)
+        try:
+            return (self.get_widget(labelname), self.labelcache[labelname])
+        except KeyError:
+            widget = self.get_widget(labelname)
+            self.labelcache[labelname] = widget.get_label()
+            return (widget, self.labelcache[labelname])
 
     def set_book_elem_visibility(self, classname, show):
         """

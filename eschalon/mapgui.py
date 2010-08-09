@@ -135,11 +135,6 @@ class MapGUI(BaseGUI):
 
     def run(self):
 
-        # We need this because Not Everything's in Glade anymore
-        # Note that we have a couple of widget caches now, so those should
-        # be consolidated
-        self.fullwidgetcache = {}
-
         # Let's make sure our map object exists
         self.map = None
 
@@ -856,20 +851,6 @@ class MapGUI(BaseGUI):
         #self.mainbook.set_sensitive(True)
 
         return True
-
-    def register_widget(self, name, widget, doname=True):
-        # TODO: any reason not to have this in the base class?
-        if doname:
-            widget.set_name(name)
-        #if name in self.fullwidgetcache:
-        #    print 'WARNING: Created duplicate widget "%s"' % (name)
-        self.fullwidgetcache[name] = widget
-
-    def get_widget(self, name):
-        """ Returns a widget from our cache, or from builder obj if it's not present in the cache. """
-        if (not self.fullwidgetcache.has_key(name)):
-            self.register_widget(name, self.builder.get_object(name), False)
-        return self.fullwidgetcache[name]
 
     # Use this to load in a map from a file
     def load_from_file(self, filename):
