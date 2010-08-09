@@ -185,7 +185,6 @@ class PremadeObject(object):
             if adjsquare:
                 rel_obj.apply_to(map, adjsquare)
                 extra_affected.append(adjsquare)
-        # TODO: interaction with Undo, here.
         return extra_affected
 
 class PremadeObjectCollection(object):
@@ -417,7 +416,6 @@ class SmartDraw(object):
             else:
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
-        # TODO: this is duplicated in add_wall_connection...
         if (self.revindexes[self.IDX_WALL][connflags] == -1):
             square.wallimg = self.special
             if c.book == 2:
@@ -649,11 +647,6 @@ class SmartDraw(object):
         non-straight paths.
         """
 
-        # TODO: We probably only want to overwrite decals that we would
-        # have put in place; not other decals
-        # TODO: Single squares of water in the middle of other terrain
-        # should be not a wall
-
         # Go elsewhere if we're drawing beach stuffs
         iter = self.gui.get_widget('decalpref').get_active_iter()
         model = self.gui.get_widget('decalpref').get_model()
@@ -669,7 +662,6 @@ class SmartDraw(object):
         curfloor = square.floorimg
 
         # If recursing, load in all the squares we'll need, first
-        # TODO: should just provide a function to get this, in Map
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
@@ -692,12 +684,7 @@ class SmartDraw(object):
             for inner_idx in full_idx_list:
                 if idx != inner_idx:
                     decalpref_blacklists[idx].append(inner_idx)
-        if idxtype in decalpref_blacklists:
-            blacklist = decalpref_blacklists[idxtype]
-        else:
-            # TODO: We should probably raise an exception or something here,
-            # instead...
-            return
+        blacklist = decalpref_blacklists[idxtype]
 
         # First find out more-typical adjacent squares
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
@@ -712,24 +699,16 @@ class SmartDraw(object):
 
             # Process adjacent squares if we're supposed to
             if (recurse):
-                # TODO: commented this out when I switched over to controlling idxtype
-                # via the GUI; leaving it here for now in case I notice weird behavior.
-                # Anyway, take this note out once it's been in-place for awhile.  Ditto
-                # for the block below...
-                #if (adjsquare.floorimg not in self.tilesets[idxtype]):
                 if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                     affected.append(adjsquare)
 
         # If we're recursing, we'll need to check the cardinal directions as
         # well, to clear out errant corner-connection decals
-        # TODO: We should really just grab all these at the beginning and
-        # cache them.
         if (recurse):
             for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                 adjsquare = self.get_rel(square, known, testdir)
                 if (not adjsquare):
                     continue
-                #if (adjsquare.floorimg not in self.tilesets[idxtype]):
                 if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
                     affected.append(adjsquare)
 
@@ -782,7 +761,6 @@ class SmartDraw(object):
                                 if (not adjsquare):
                                     continue
                                 if (adjsquare.floorimg in self.tilesets[idxtype]):
-                                    # TODO: should check for non-grass decals here (sand, etc)
                                     found_adj_same = True
                                     break
                                 elif (adjsquare.decalimg in self.indexes[idxtype]):
@@ -923,7 +901,6 @@ class SmartDraw(object):
             drawing_water = True
 
         # If recursing, load in all the squares we'll need, first
-        # TODO: should just provide a function to get this, in Map
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
