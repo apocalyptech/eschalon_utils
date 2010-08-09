@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   09 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Smartdraw supports more than one kind of "big" fence
+
    07 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Book 1 barrier flag is now a dropdown, to match Book 2
 
