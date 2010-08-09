@@ -457,11 +457,11 @@ class MainGUI(BaseGUI):
     def on_singleval_changed_int_avatar(self, widget):
         """ Special-case to handle changing the avatar picture properly. """
         self.on_singleval_changed_int(widget)
-        if (self.get_widget('picid').get_value_as_int() % 256 == 0):
+        if (int(self.get_widget('picid').get_value()) % 256 == 0):
             if (self.gfx is None):
                 self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
             else:
-                pixbuf = self.gfx.get_avatar(widget.get_value_as_int()/256)
+                pixbuf = self.gfx.get_avatar(int(widget.get_value())/256)
                 if (pixbuf is None):
                     self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
                 else:
@@ -564,8 +564,6 @@ class MainGUI(BaseGUI):
         arrnum = int(arrnum)
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
-        # See https://bugzilla.gnome.org/show_bug.cgi?id=621400 - we can't
-        # actually use .get_value_as_int() here, reliably.
         obj.__dict__[shortname][arrnum] = int(widget.get_value())
         self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
 
@@ -590,7 +588,7 @@ class MainGUI(BaseGUI):
             return
         (labelwidget, label) = self.get_label_cache('readied_spell')
         obj.readied_spell = self.get_widget('readied_spell').get_text()
-        obj.readied_spell_lvl = self.get_widget('readied_spell_lvl').get_value_as_int()
+        obj.readied_spell_lvl = int(self.get_widget('readied_spell_lvl').get_value())
         self.set_changed_widget((origobj.readied_spell == obj.readied_spell) and
             (origobj.readied_spell_lvl == obj.readied_spell_lvl), 'readied_spell', labelwidget, label)
 
@@ -600,7 +598,7 @@ class MainGUI(BaseGUI):
         (foo, slotnum) = wname.rsplit('_', 1)
         slotnum = int(slotnum)
         spell = self.get_widget('readyslots_spell_%d' % (slotnum)).get_text()
-        level = self.get_widget('readyslots_level_%d' % (slotnum)).get_value_as_int()
+        level = int(self.get_widget('readyslots_level_%d' % (slotnum)).get_value())
         shortname = 'readyslots_%d' % (slotnum)
         (labelwidget, label) = self.get_label_cache(shortname)
         (obj, origobj) = self.get_comp_objects()
@@ -765,10 +763,10 @@ class MainGUI(BaseGUI):
         if self.char.book != 1:
             return
         textwidget = self.get_widget('fxblock_text')
-        fx0 = self.get_widget('fxblock_0').get_value_as_int()
-        fx1 = self.get_widget('fxblock_1').get_value_as_int()
-        fx2 = self.get_widget('fxblock_2').get_value_as_int()
-        fx3 = self.get_widget('fxblock_3').get_value_as_int()
+        fx0 = int(self.get_widget('fxblock_0').get_value())
+        fx1 = int(self.get_widget('fxblock_1').get_value())
+        fx2 = int(self.get_widget('fxblock_2').get_value())
+        fx3 = int(self.get_widget('fxblock_3').get_value())
         fxstr = '(unknown)'
         if (fx0 == 1073741824 and
             fx1 == 2111 and
@@ -1322,8 +1320,8 @@ class MainGUI(BaseGUI):
                 self.avatarsel_draw(x)
         else:
             if c.book == 1:
-                if (self.get_widget('picid').get_value_as_int() % 256 == 0):
-                    self.avatarsel_curx = self.get_widget('picid').get_value_as_int() / 256
+                if (int(self.get_widget('picid').get_value()) % 256 == 0):
+                    self.avatarsel_curx = int(self.get_widget('picid').get_value()) / 256
                 else:
                     self.avatarsel_curx = -1
             else:

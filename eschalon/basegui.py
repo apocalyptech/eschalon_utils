@@ -374,7 +374,7 @@ class BaseGUI(object):
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
-            self.prefsobj.set_int('mapgui', 'default_zoom', self.prefs_default_zoom.get_value_as_int())
+            self.prefsobj.set_int('mapgui', 'default_zoom', int(self.prefs_default_zoom.get_value()))
             self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
             self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
             if c.book == 1:
@@ -459,7 +459,6 @@ class BaseGUI(object):
         if (self.gfx is not None):
             (obj, origobj) = self.get_comp_objects()
             self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(obj))
-            #self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(widget.get_value_as_int()))
 
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
@@ -518,7 +517,7 @@ class BaseGUI(object):
         (which, type) = wname.rsplit('_', 1)
         modifiertext = '%s_modifier' % (which)
         modifiedtext = '%s_modified' % (which)
-        modifier = self.get_widget(modifiertext).get_value_as_int()
+        modifier = int(self.get_widget(modifiertext).get_value())
         modified = self.get_widget(modifiedtext).get_active()
         (obj, origobj) = self.get_comp_objects()
         if (wname == modifiertext):
@@ -538,7 +537,7 @@ class BaseGUI(object):
         num = int(wname.split('_')[-1])
         modifiertext = 'attr_modifier_%d' % (num)
         modifiedtext = 'attr_modified_%d' % (num)
-        modifier = self.get_widget(modifiertext).get_value_as_int()
+        modifier = int(self.get_widget(modifiertext).get_value())
         modified = self.get_widget(modifiedtext).get_active()
         (obj, origobj) = self.get_comp_objects()
         if (wname == modifiertext):
@@ -930,12 +929,12 @@ class BaseGUI(object):
             for (x, y) in self.imgsel_clean:
                 self.imgsel_draw(x, y)
         else:
-            if (self.imgsel_widget.get_value_as_int()-self.imgsel_offset < 0):
+            if (int(self.imgsel_widget.get_value())-self.imgsel_offset < 0):
                 self.imgsel_curx = -1
                 self.imgsel_cury = -1
             else:
-                self.imgsel_curx = (self.imgsel_widget.get_value_as_int()-self.imgsel_offset) % self.imgsel_cols
-                self.imgsel_cury = int((self.imgsel_widget.get_value_as_int()-self.imgsel_offset) / self.imgsel_cols)
+                self.imgsel_curx = (int(self.imgsel_widget.get_value())-self.imgsel_offset) % self.imgsel_cols
+                self.imgsel_cury = int((int(self.imgsel_widget.get_value())-self.imgsel_offset) / self.imgsel_cols)
             self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
             self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
             self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)

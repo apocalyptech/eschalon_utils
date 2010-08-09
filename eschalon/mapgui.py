@@ -1093,7 +1093,7 @@ class MapGUI(BaseGUI):
         page = int(page)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
-            script.__dict__[labelname] = widget.get_value_as_int()
+            script.__dict__[labelname] = int(widget.get_value())
 
     def on_locklevel_changed(self, widget):
         """ When our lock level changes. """
@@ -1102,13 +1102,13 @@ class MapGUI(BaseGUI):
         (labelname, page) = wname.rsplit('_', 1)
         if c.book == 1:
             otherlabel = self.get_widget('other_%d_label' % (int(page)))
-            if (widget.get_value_as_int() == 99):
+            if (int(widget.get_value()) == 99):
                 otherlabel.set_text('Slider Combination:')
             else:
                 otherlabel.set_markup('<i>Other Value (0-3):</i>')
         else:
             sliderloot = self.get_widget('slider_loot_%d_label' % (int(page)))
-            if (widget.get_value_as_int() == 12):
+            if (int(widget.get_value()) == 12):
                 sliderloot.set_text('Slider Combination:')
             else:
                 sliderloot.set_markup('Loot Level (0-10):')
@@ -1147,7 +1147,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         ent = self.map.squares[self.sq_y][self.sq_x].entity
-        ent.__dict__[wname] = widget.get_value_as_int()
+        ent.__dict__[wname] = int(widget.get_value())
 
     def on_singleval_ent_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
@@ -1159,7 +1159,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
         map = self.map
-        map.__dict__[wname] = widget.get_value_as_int()
+        map.__dict__[wname] = int(widget.get_value())
 
     def on_singleval_map_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
@@ -1190,7 +1190,7 @@ class MapGUI(BaseGUI):
     def on_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        pixbuf = self.gfx.get_floor(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1199,7 +1199,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        pixbuf = self.gfx.get_floor(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('draw_floor_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1208,7 +1208,7 @@ class MapGUI(BaseGUI):
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        pixbuf = self.gfx.get_decal(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1217,7 +1217,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        pixbuf = self.gfx.get_decal(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('draw_decal_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1226,7 +1226,7 @@ class MapGUI(BaseGUI):
     def on_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
         self.on_singleval_square_changed_int(widget)
-        (pixbuf, height, offset) = self.gfx.get_object(widget.get_value_as_int(), None, True, self.map.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1235,7 +1235,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        (pixbuf, height, offset) = self.gfx.get_object(widget.get_value_as_int(), None, True, self.map.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1244,7 +1244,7 @@ class MapGUI(BaseGUI):
     def on_walldecal_changed(self, widget):
         self.on_singleval_square_changed_int(widget)
         """ Update the appropriate image when necessary. """
-        pixbuf = self.gfx.get_object_decal(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('walldecalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -1253,7 +1253,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_walldecal_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        pixbuf = self.gfx.get_object_decal(widget.get_value_as_int(), None, True)
+        pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('draw_walldecal_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -2387,7 +2387,7 @@ class MapGUI(BaseGUI):
         # Set initial page
         curpage = 0
         for letter in letters:
-            if (self.imgsel_widget.get_value_as_int() >= self.objsel_panes[letter]['offset']):
+            if (int(self.imgsel_widget.get_value()) >= self.objsel_panes[letter]['offset']):
                 curpage = self.objsel_panes[letter]['page']
                 break
         self.objsel_book.set_current_page(curpage)
@@ -2594,13 +2594,13 @@ class MapGUI(BaseGUI):
 
             # Now draw anything that the user's requesed
             if (self.draw_floor_checkbox.get_active()):
-                square.floorimg = self.draw_floor_spin.get_value_as_int()
+                square.floorimg = int(self.draw_floor_spin.get_value())
             if (self.draw_decal_checkbox.get_active()):
-                square.decalimg = self.draw_decal_spin.get_value_as_int()
+                square.decalimg = int(self.draw_decal_spin.get_value())
             if (self.draw_wall_checkbox.get_active()):
-                square.wallimg = self.draw_wall_spin.get_value_as_int()
+                square.wallimg = int(self.draw_wall_spin.get_value())
             if (self.draw_walldecal_checkbox.get_active()):
-                square.walldecalimg = self.draw_walldecal_spin.get_value_as_int()
+                square.walldecalimg = int(self.draw_walldecal_spin.get_value())
 
             # Check to see if we should change the "wall" flag
             if (self.draw_barrier.get_active()):

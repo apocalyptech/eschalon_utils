@@ -82,8 +82,7 @@ Internal
  * Square class now holds (x, y) information - can probably switch some stuff
    around to take advantage of that.  Also, that change could use some more
    testing.
- * SpinButton get_value_as_int() returns signed values when it shouldn't,
-   should probably move away from using that entirely.  See:
-   https://bugzilla.gnome.org/show_bug.cgi?id=621400
  * Give the B2/B1 prefs a good testing before release
  * Use decimal module for floats, internally?
+ * Using @staticmethod is kind of discouraged, and it would probably make
+   sense to have those be functions instead.
