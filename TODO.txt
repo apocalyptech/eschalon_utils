@@ -32,6 +32,8 @@ Character GUI
  * Figure out if B2 X/Y pos actually does change, and doublecheck that
    it doesn't in B1.  Update label(s) appropriately.
  * "Enter" to close dialogs (item screens, etc) - applicable to Map GUI too
+ * "Error creating directory: File exists" when changing gfx pref to the
+   same dir?
 
 Map GUI
 -------

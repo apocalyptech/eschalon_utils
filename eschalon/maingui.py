@@ -31,26 +31,21 @@ except Exception, e:
     sys.stdin.readline()
     sys.exit(1)
 
+from eschalon.basegui import BaseGUI
+
 # Load in our Cairo dep
 try:
     import cairo
 except Exception, e:
-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
-    dialog.set_title('Error loading PyCairo')
-    dialog.set_property('skip-taskbar-hint', False)
-    dialog.set_markup('PyCairo could not be loaded: %s' % (str(e)))
-    dialog.run()
-    dialog.destroy()
+    BaseGUI.errordialog('Error loading PyCairo', 'PyCairo could not be loaded: %s' % (str(e)))
     sys.exit(1)
 
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK)
-    dialog.set_title('gtk+ Version Warning')
-    dialog.set_property('skip-taskbar-hint', False)
-    dialog.set_markup('<b>Note:</b> The minimum required version of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some older versions.  You\'re welcome to continue, but know that you may encounter weird behavior.')
-    dialog.run()
-    dialog.destroy()
+    BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
+            'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
+            'older versions.  You\'re welcome to continue, but know that you may encounter '
+            'weird behavior.')
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx
@@ -216,12 +211,9 @@ class MainGUI(BaseGUI):
         """ Override on_prefs a bit. """
         (changed, alert_changed) = super(MainGUI, self).on_prefs(widget)
         if (changed and alert_changed):
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
-            dialog.set_transient_for(self.window)
-            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-            dialog.set_markup('<b>Note:</b> Changes to graphics may not immediately update upon changing.  To ensure that your new settings are completely enabled, please quit and restart the application.')
-            dialog.run()
-            dialog.destroy()
+            self.infodialog('Preferences Change Info', '<b>Note:</b> Changes to graphics may '
+                    'not immediately update upon changing.  To ensure that your new settings '
+                    'are completely enabled, please quit and restart the application.', self.window)
         self.assert_gfx_buttons()
         if (changed and self.gamedir_set()):
             self.gfx = Gfx(self.prefs, self.datadir)

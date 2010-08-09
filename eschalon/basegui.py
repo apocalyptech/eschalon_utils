@@ -25,11 +25,13 @@ from struct import unpack
 
 try:
     import gtk
+    import gobject
 except:
-    print 'Python GTK Modules not found'
+    print 'Python GTK Modules not found: %s' % (str(e))
+    print 'Hit enter to exit...'
+    sys.stdin.readline()
     sys.exit(1)
 
-import gobject
 from eschalon import constants as c
 
 class BaseGUI(object):
@@ -169,6 +171,39 @@ class BaseGUI(object):
             widget = self.get_widget(labelname)
             self.labelcache[labelname] = widget.get_label()
             return (widget, self.labelcache[labelname])
+
+    @staticmethod
+    def userdialog(type, buttons, title, markup, parent=None):
+        """
+        Shows a dialog for the user, with the given attributes.
+        """
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
+                type, buttons)
+        if parent:
+            dialog.set_transient_for(parent)
+            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        dialog.set_title(title)
+        dialog.set_property('skip-taskbar-hint', False)
+        dialog.set_markup(markup)
+        result = dialog.run()
+        dialog.destroy()
+        return result
+
+    @staticmethod
+    def infodialog(title, markup, parent=None):
+        return BaseGUI.userdialog(gtk.MESSAGE_INFO, gtk.BUTTONS_OK, title, markup, parent)
+
+    @staticmethod
+    def warningdialog(title, markup, parent=None):
+        return BaseGUI.userdialog(gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, title, markup, parent)
+
+    @staticmethod
+    def errordialog(title, markup, parent=None):
+        return BaseGUI.userdialog(gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, title, markup, parent)
+
+    @staticmethod
+    def confirmdialog(title, markup, parent=None):
+        return BaseGUI.userdialog(gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, title, markup, parent)
 
     def set_book_elem_visibility(self, classname, show):
         """

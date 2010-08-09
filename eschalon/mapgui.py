@@ -30,6 +30,7 @@ from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item
 from eschalon.entity import B1Entity, B2Entity
+from eschalon.basegui import BaseGUI
 
 # Load our GTK modules
 try:
@@ -45,22 +46,15 @@ except Exception, e:
 try:
     import cairo
 except Exception, e:
-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
-    dialog.set_title('Error loading PyCairo')
-    dialog.set_property('skip-taskbar-hint', False)
-    dialog.set_markup('PyCairo could not be loaded: %s' % (str(e)))
-    dialog.run()
-    dialog.destroy()
+    BaseGUI.errordialog('Error loading PyCairo', 'PyCairo could not be loaded: %s' % (str(e)))
     sys.exit(1)
 
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
-    dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK)
-    dialog.set_title('gtk+ Version Warning')
-    dialog.set_property('skip-taskbar-hint', False)
-    dialog.set_markup('<b>Note:</b> The minimum required version of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some older versions.  You\'re welcome to continue, but know that you may encounter weird behavior.')
-    dialog.run()
-    dialog.destroy()
+    BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
+            'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
+            'older versions.  You\'re welcome to continue, but know that you may encounter '
+            'weird behavior.')
 
 from eschalon.map import Map
 from eschalon.item import Item
@@ -254,12 +248,7 @@ class MapGUI(BaseGUI):
         try:
             self.gfx = Gfx.new(self.req_book, self.prefs, self.datadir)
         except Exception, e:
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK)
-            dialog.set_title('Error Loading Graphics')
-            dialog.set_property('skip-taskbar-hint', False)
-            dialog.set_markup('Graphics could not be initialized: %s' % (str(e)))
-            dialog.run()
-            dialog.destroy()
+            self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
@@ -754,12 +743,8 @@ class MapGUI(BaseGUI):
         """ Override on_prefs a bit. """
         (changed, alert_changed) = super(MapGUI, self).on_prefs(widget)
         if (changed and alert_changed):
-            dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, gtk.BUTTONS_OK)
-            dialog.set_transient_for(self.window)
-            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-            dialog.set_markup('<b>Note:</b> You must restart the application for the preferences change to take effect.')
-            dialog.run()
-            dialog.destroy()
+            self.infodialog('Preference Change Notification', '<b>Note:</b> You must '
+                'restart the application for the preferences change to take effect.', self.window)
 
     def on_export_clicked(self, widget=None):
         """ Used to export a PNG of the current map image to disk. """
@@ -913,13 +898,8 @@ class MapGUI(BaseGUI):
 
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK_CANCEL)
-        dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        dialog.set_markup('Unsaved changes will be lost!  Continue?')
-        response = dialog.run()
-        dialog.destroy()
-        if (response == gtk.RESPONSE_OK):
+        response = self.confirmdialog('Continue with Quit?', 'Unsaved changes will be lost!  Really quit?', self.window)
+        if (response == gtk.RESPONSE_YES):
             gtk.main_quit()
         else:
             return True
@@ -2519,8 +2499,11 @@ class MapGUI(BaseGUI):
             elif (clicked == 'ctl_object_toggle'):
                 self.edit_mode = self.MODE_OBJECT
             else:
-                # TODO: Except here or something
+                # Should maybe throw an exception here, but instead we'll
+                # just spit something on the console and return.  No need to
+                # get all huffy about it.
                 print "Unknown control toggled, should never get here"
+                return
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
             self.update_activity_label()
 
