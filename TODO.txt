@@ -70,7 +70,6 @@ Map GUI
  * rename unknown values with prefixes to avoid collisions in the future
  * Randomize scraggly trees in B1 (if they're not already)
  * re-investigate b2 map savegame identifiers.  Four values?
- * Try and find the can-Portal flag (and anything else, of course)
  * Make sure that mapscript object labels are showing properly for B2
 
 Internal

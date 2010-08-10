@@ -526,7 +526,7 @@ class B2Map(Map):
         self.map_unknownc3 = -1
         self.map_unknownc4 = -1
         self.map_unknowni2 = -1
-        self.map_unknowni3 = -1
+        self.map_flags = -1
         self.map_unknowni4 = -1
         self.map_unknownc5 = -1
         self.map_unknownc6 = -1
@@ -568,7 +568,7 @@ class B2Map(Map):
             # map_unknowni1 looks like it may contain parallax values
             self.map_unknowni1 = self.df.readint()
             self.map_unknowni2 = self.df.readint()
-            self.map_unknowni3 = self.df.readint()
+            self.map_flags = self.df.readint()
             self.map_unknowni4 = self.df.readint()
             self.tree_set = self.df.readint()
 
@@ -643,7 +643,7 @@ class B2Map(Map):
         self.df.writeuchar(self.color_a)
         self.df.writeint(self.map_unknowni1)
         self.df.writeint(self.map_unknowni2)
-        self.df.writeint(self.map_unknowni3)
+        self.df.writeint(self.map_flags)
         self.df.writeint(self.map_unknowni4)
         self.df.writeint(self.tree_set)
         self.df.writeuchar(self.map_unknownc5)
@@ -699,7 +699,7 @@ class B2Map(Map):
         newmap.map_unknownc3 = self.map_unknownc3
         newmap.map_unknownc4 = self.map_unknownc4
         newmap.map_unknowni2 = self.map_unknowni2
-        newmap.map_unknowni3 = self.map_unknowni3
+        newmap.map_flags = self.map_flags
         newmap.map_unknowni4 = self.map_unknowni4
         newmap.map_unknownc5 = self.map_unknownc5
         newmap.map_unknownc6 = self.map_unknownc6

@@ -544,7 +544,6 @@ class MapGUI(BaseGUI):
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
-            self.prop_unknown_input_spin(self.input_int, 'i', table, 3, 4)
             self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Appears to be coordinates, under some circumstances')
             # These two are *always* 1 in all of the map files that I've seen, and we're using them
             # to identify whether the map file is book 1 or book 2.  So, we're going to omit allowing
@@ -662,7 +661,7 @@ class MapGUI(BaseGUI):
             self.get_widget('wallimg_image').set_size_request(64, 160)
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
             self.get_widget('ent_square_img').set_size_request(128, 128)
-            self.propswindow.set_size_request(350, 700)
+            self.propswindow.set_size_request(390, 760)
 
         # Create our entity status values box
         if c.book > 1:
@@ -1045,6 +1044,8 @@ class MapGUI(BaseGUI):
                 if row[1] == self.map.tree_set:
                     self.get_widget('tree_set').set_active(idx)
                     continue
+            for flag in [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]:
+                self.get_widget('map_flags_%02X' % (flag)).set_active(((self.map.map_flags & flag) == flag))
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
@@ -1063,7 +1064,6 @@ class MapGUI(BaseGUI):
             self.get_widget('openingscript').set_text(self.map.openingscript)
             self.get_widget('soundfile4').set_text(self.map.soundfile4)
             self.get_widget('map_unknowni2').set_value(self.map.map_unknowni2)
-            self.get_widget('map_unknowni3').set_value(self.map.map_unknowni3)
             self.get_widget('map_unknowni4').set_value(self.map.map_unknowni4)
             #self.get_widget('map_unknownc1').set_value(self.map.map_unknownc1)
             #self.get_widget('map_unknownc2').set_value(self.map.map_unknownc2)
@@ -1783,17 +1783,11 @@ class MapGUI(BaseGUI):
 
     def on_map_flag_changed(self, widget):
         """
-        What to do whan a bit field changes.  Currently just the
-        destructible flag.  NOTE: Currently unused.  This used to handle
-        wall types in the square editing screen, but with Book 2, it
-        turned out that they weren't really flags at all, or at least
-        processing them as flags would be confusing from a usability
-        standpoint.
+        What to do whan a bit field changes.
         """
         wname = widget.get_name()
         (name, flagval) = wname.rsplit('_', 1)
-        square = self.map.squares[self.sq_y][self.sq_x]
-        self.on_flag_changed(name, flagval, widget, square)
+        self.on_flag_changed(name, flagval, widget, self.map)
 
     def on_script_flag_changed(self, widget):
         """
