@@ -82,7 +82,6 @@ Internal
  * Square class now holds (x, y) information - can probably switch some stuff
    around to take advantage of that.  Also, that change could use some more
    testing.
- * Give the B2/B1 prefs a good testing before release
  * Use decimal module for floats, internally?
  * Using @staticmethod is kind of discouraged, and it would probably make
    sense to have those be functions instead.
