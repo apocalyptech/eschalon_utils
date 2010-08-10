@@ -318,7 +318,9 @@ class B1Character(Character):
             'disease_label', 'disease_table',
             'gfx_preset_vbox',
             'weap_alt_label', 'weap_alt_container',
-            'b1_gold_note'
+            'b1_gold_note',
+            'b1_xypos_warning_label',
+            'b1_xypos_warning_spacer',
             ]
 
     def __init__(self, df):

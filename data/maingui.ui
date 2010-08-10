@@ -1292,7 +1292,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label72">
+                                      <object class="GtkLabel" id="b1_xypos_warning_spacer">
                                         <property name="visible">True</property>
                                       </object>
                                       <packing>
@@ -1301,7 +1301,7 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="label73">
+                                      <object class="GtkLabel" id="b1_xypos_warning_label">
                                         <property name="visible">True</property>
                                         <property name="xalign">0</property>
                                         <property name="label" translatable="yes">&lt;i&gt;(Note: Changing the X Position and Y Position
