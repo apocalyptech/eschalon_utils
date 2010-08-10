@@ -125,6 +125,28 @@ class BaseGUI(object):
         pixbuf = self.prefswindow.render_icon(gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'Map Editor', 2, 1)
 
+        # Update the text on our graphics popups
+        if c.book == 1:
+            gfxfile = 'gfx.pak'
+        else:
+            gfxfile = 'datapak'
+        opt_label = self.prefsbuilder.get_object('gfx_opt_window_mainlabel')
+        opt_label.set_markup('We couldn\'t locate the file "%s," which can be used by '
+            'this program to enhance the GUI.  It\'s not required, but it does look '
+            'nicer.'
+            "\n\n"
+            '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
+            'bring up the preferences screen, where you can browse to the installation '
+            'folder and continue.  Alternately, hit Cancel to continue.' % (gfxfile, gfxfile, c.book))
+        req_label = self.prefsbuilder.get_object('gfx_req_window_mainlabel')
+        req_label.set_markup('We couldn\'t locate the file "%s," which this program needs '
+                'to operate.'
+                "\n\n"
+                '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
+                'bring up the preferences screen, where you can browse to the installation '
+                'folder and continue.  Alternately, hit Cancel to exit this program.' % (
+                    gfxfile, gfxfile, c.book))
+
     def item_signals(self):
         """ Returns the signals that need to be attached for items. """
         return {
@@ -308,23 +330,29 @@ class BaseGUI(object):
             else:
                 return self.gamedir_set_b2()
 
+    def get_savegame_dir_key(self):
+        if c.book == 1:
+            return 'savegames'
+        else:
+            return 'savegames_b2'
+
+    def get_gamedir_key(self):
+        if c.book == 1:
+            return 'gamedir'
+        else:
+            return 'gamedir_b2'
+
     def get_current_savegame_dir(self):
         """
         Returns the appropriate savegame dir, depending on if we're book 1 or 2
         """
-        if c.book == 1:
-            return self.prefsobj.get_str('paths', 'savegames')
-        else:
-            return self.prefsobj.get_str('paths', 'savegames_b2')
+        return self.prefsobj.get_str('paths', self.get_savegame_dir_key())
 
     def get_current_gamedir(self):
         """
         Returns the appropriate gamedir, depending on if we're book 1 or 2
         """
-        if c.book == 1:
-            return self.prefsobj.get_str('paths', 'gamedir')
-        else:
-            return self.prefsobj.get_str('paths', 'gamedir_b2')
+        return self.prefsobj.get_str('paths', self.get_gamedir_key())
 
     def optional_gfx(self):
         if (not self.gamedir_set()):
@@ -351,22 +379,32 @@ class BaseGUI(object):
             alert_changed = False
         if (self.prefsobj.get_int('mapgui', 'default_zoom')):
             self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
+        cur_gamedir = self.get_current_gamedir()
+        cur_savegamedir = self.get_current_savegame_dir()
         if c.book == 1:
-            curdir = self.prefsobj.get_str('paths', 'gamedir')
             self.prefsbuilder.get_object('b1_dir_tab').show()
             self.prefsbuilder.get_object('b2_dir_tab').hide()
-            if (self.prefsobj.get_str('paths', 'savegames') != ''):
-                self.prefs_savegame.set_current_folder(self.prefsobj.get_str('paths', 'savegames'))
-            if (self.prefsobj.get_str('paths', 'gamedir') != ''):
-                self.prefs_gamedir.set_current_folder(self.prefsobj.get_str('paths', 'gamedir'))
+            gui_gamedir = self.prefs_gamedir
+            gui_savegamedir = self.prefs_savegame
+            look_for = 'gfx.pak'
         else:
-            curdir = self.prefsobj.get_str('paths', 'gamedir_b2')
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').show()
-            if (self.prefsobj.get_str('paths', 'savegames_b2') != ''):
-                self.prefs_savegame_b2.set_current_folder(self.prefsobj.get_str('paths', 'savegames_b2'))
-            if (self.prefsobj.get_str('paths', 'gamedir_b2') != ''):
-                self.prefs_gamedir_b2.set_current_folder(self.prefsobj.get_str('paths', 'gamedir_b2'))
+            gui_gamedir = self.prefs_gamedir_b2
+            gui_savegamedir = self.prefs_savegame_b2
+            look_for = 'datapak'
+
+        # In case we have a blank value stored in the prefs file, re-attempt to set it
+        # from the default (should theoretically return '' anyway if we can't)
+        if cur_gamedir == '':
+            cur_gamedir = self.prefsobj.default('paths', self.get_gamedir_key())
+        if cur_savegamedir == '':
+            cur_savegamedir = self.prefsobj.default('paths', self.get_savegame_dir_key())
+
+        if cur_gamedir != '':
+            gui_gamedir.set_current_folder(cur_gamedir)
+        if cur_savegamedir != '':
+            gui_savegamedir.set_current_folder(cur_savegamedir)
         self.prefs_warn_global.set_active(self.prefsobj.get_bool('mapgui', 'warn_global_map'))
         self.prefs_warn_slowzip.set_active(self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
         #self.prefsnotebook.set_current_page(0)
@@ -377,18 +415,27 @@ class BaseGUI(object):
             self.prefsobj.set_int('mapgui', 'default_zoom', int(self.prefs_default_zoom.get_value()))
             self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
             self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
-            if c.book == 1:
-                self.prefsobj.set_str('paths', 'savegames', self.prefs_savegame.get_filename())
-                self.prefsobj.set_str('paths', 'gamedir', self.prefs_gamedir.get_filename())
-                # TODO: Should check for valid dirs here?
-                if (curdir != self.prefsobj.get_str('paths', 'gamedir')):
+
+            # Save our new game directory.  We actually only want to save under two conditions:
+            #   1) We had a previous game directory set already
+            # -or-
+            #   2) We can actually find the gfx.pak or datapak (as the case may be)
+            #
+            # We check for these because our FileChooserDialogs will *always* return a filename for
+            # us, but will just be the current directory if there wasn't anything in there previously.
+            # So if our old value was blank, we'll assume that the dialog was just defaulting to
+            # the current dir, if the graphics pack wasn't found.
+            new_gamedir = gui_gamedir.get_filename()
+            if (cur_gamedir != '' or os.path.exists(os.path.join(new_gamedir, look_for))):
+                self.prefsobj.set_str('paths', self.get_gamedir_key(), new_gamedir)
+                if cur_gamedir != new_gamedir:
                     changed = True
-            else:
-                self.prefsobj.set_str('paths', 'savegames_b2', self.prefs_savegame_b2.get_filename())
-                self.prefsobj.set_str('paths', 'gamedir_b2', self.prefs_gamedir_b2.get_filename())
-                # TODO: Should check for valid dirs here?
-                if (curdir != self.prefsobj.get_str('paths', 'gamedir_b2')):
-                    changed = True
+
+            # Similar logic applies to the savegame directory
+            new_savegamedir = gui_savegamedir.get_filename()
+            if (cur_savegamedir != '' or os.path.exists(os.path.join(new_savegamedir, 'slot1'))):
+                self.prefsobj.set_str('paths', self.get_savegame_dir_key(), new_savegamedir)
+
             self.prefsobj.save()
         return (changed, alert_changed)
 

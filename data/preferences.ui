@@ -33,11 +33,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label6">
+              <object class="GtkLabel" id="gfx_req_window_mainlabel">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">We couldn't locate the file "gfx.pak," which this program needs to operate.
-
-gfx.pak can be found in the Eschalon Book 1 installation folder.  Hit OK to bring up the preferences screen, where you can browse to the installation folder and continue.  Alternately, hit Cancel to exit this program.</property>
+                <property name="label" translatable="yes">(populated in code)</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -521,11 +519,9 @@ gfx.pak can be found in the Eschalon Book 1 installation folder.  Hit OK to brin
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="label1">
+              <object class="GtkLabel" id="gfx_opt_window_mainlabel">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">We couldn't locate the file "gfx.pak," which can be used by this program to enhance the GUI.  It's not required, but it does look nicer.
-
-gfx.pak can be found in the Eschalon Book 1 installation folder.  Hit OK to bring up the preferences screen, where you can browse to the installation folder and continue.  Alternately, hit Cancel to continue.</property>
+                <property name="label" translatable="yes">(populated in code)</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
