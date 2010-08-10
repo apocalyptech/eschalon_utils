@@ -666,7 +666,7 @@ class MapGUI(BaseGUI):
             self.get_widget('wallimg_image').set_size_request(64, 160)
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
             self.get_widget('ent_square_img').set_size_request(128, 128)
-            self.propswindow.set_size_request(390, 760)
+            self.propswindow.set_size_request(410, 760)
 
         # Create our entity status values box
         if c.book > 1:
