@@ -662,6 +662,47 @@ class MapGUI(BaseGUI):
             self.get_widget('wallimg_image').set_size_request(64, 160)
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
             self.get_widget('ent_square_img').set_size_request(128, 128)
+            self.propswindow.set_size_request(350, 700)
+
+        # Create our entity status values box
+        if c.book > 1:
+            container = self.get_widget('entity_data_main_vbox')
+            
+            vbox = gtk.VBox()
+            self.register_widget('entity_status_box', vbox)
+            container.pack_start(vbox, False, False)
+
+            label = gtk.Label()
+            label.set_markup('<b>Effects</b>')
+            label.set_alignment(0, .5)
+            label.set_padding(10, 7)
+            vbox.add(label)
+
+            align = gtk.Alignment()
+            align.set_padding(0, 0, 40, 0)
+            vbox.add(align)
+
+            statvbox = gtk.VBox()
+            align.add(statvbox)
+
+            notelabel = gtk.Label()
+            notelabel.set_alignment(0, .5)
+            notelabel.set_markup('<b>Note:</b> Many of these don\'t actually affect the entity, '
+                    'but they\'re all present in the datafile.')
+            notelabel.set_line_wrap(True)
+            statvbox.add(notelabel)
+
+            table = gtk.Table(len(c.statustable), 2)
+            statvbox.add(table)
+
+            # Now add the statuses to table
+            status_inv = dict([v,k] for k,v in c.statustable.items())
+            for (idx, key) in enumerate(sorted(status_inv.keys())):
+                name = 'ent_status_%d' % (status_inv[key])
+                self.input_short(table, idx, name, key, None, self.on_ent_status_changed)
+
+            # Don't forget to show everything
+            container.show_all()
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
@@ -1134,6 +1175,14 @@ class MapGUI(BaseGUI):
             self.get_widget('health').set_value(health)
             self.get_widget('movement').set_value(c.entitytable[entid].movement)
 
+    def on_ent_status_changed(self, widget):
+        """ What to do when an entity status value changes. """
+        wname = widget.get_name()
+        (shortname, idx) = wname.rsplit('_', 1)
+        idx = int(idx)
+        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent.statuses[idx] = int(widget.get_value())
+
         self.update_ent_square_img()
 
     def on_direction_changed(self, widget):
@@ -1573,16 +1622,19 @@ class MapGUI(BaseGUI):
         if (show_add):
             image = gtk.STOCK_ADD
             text = 'Add Entity'
-            self.get_widget('entity_basic_box').hide()
-            self.get_widget('entity_extra_box').hide()
+            self.get_widget('entity_scroll').hide()
         else:
             image = gtk.STOCK_REMOVE
             text = 'Remove Entity'
-            self.get_widget('entity_basic_box').show()
+            self.get_widget('entity_scroll').show()
             if (self.map.is_savegame()):
                 self.get_widget('entity_extra_box').show()
+                if c.book > 1:
+                    self.get_widget('entity_status_box').show()
             else:
                 self.get_widget('entity_extra_box').hide()
+                if c.book > 1:
+                    self.get_widget('entity_status_box').hide()
         self.get_widget('entity_toggle_img').set_from_stock(image, 4)
         self.get_widget('entity_toggle_text').set_text(text)
 
@@ -2211,6 +2263,10 @@ class MapGUI(BaseGUI):
             self.get_widget('movement').set_value(square.entity.movement)
             if c.book == 1:
                 self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
+            else:
+                for (idx, val) in enumerate(square.entity.statuses):
+                    self.get_widget('ent_status_%d' % (idx)).set_value(val)
+            self.get_widget('entity_scroll').get_vadjustment().set_value(0)
 
     def update_object_note(self):
         """
