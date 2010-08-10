@@ -545,17 +545,18 @@ class MapGUI(BaseGUI):
             table = self.get_widget('map_prop_unknown_table')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
             self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Appears to be coordinates, under some circumstances')
+
             # These two are *always* 1 in all of the map files that I've seen, and we're using them
             # to identify whether the map file is book 1 or book 2.  So, we're going to omit allowing
             # their edit.
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 1, 6)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 3, 8)
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 4, 9)
+
             # We're locking these down because they appear to function as savegame/global identifiers
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 5, 10, 'This should be zero for global maps', False)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 6, 11, 'This is often nonzero on savegames', False)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 7, 12, 'This is often nonzero on savegames', False)
+
             self.prop_unknown_input_spin(self.input_uchar, 'c', table, 8, 13)
             self.prop_unknown_input_text(table, 1, 14)
             self.prop_unknown_input_text(table, 2, 15)
@@ -577,6 +578,8 @@ class MapGUI(BaseGUI):
         # Process our entity list, for use in the entity type dropdown
         # This is.... Not the greatest.  Ah well.  Keeping the monsters
         # and NPCs sorted separately seems worth it
+        globalstore = self.get_widget('random_entity_store')
+        globalstore.append(['(none)', 0])
         monsters = {}
         npcs = {}
         for (key, item) in c.entitytable.iteritems():
@@ -587,6 +590,8 @@ class MapGUI(BaseGUI):
             table[item.name] = key
         monsterkeys = monsters.keys()
         monsterkeys.sort()
+        for key in monsterkeys:
+            globalstore.append([key, monsters[key]])
         npckeys = npcs.keys()
         npckeys.sort()
         self.entitykeys = monsterkeys
@@ -1046,6 +1051,16 @@ class MapGUI(BaseGUI):
                     continue
             for flag in [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]:
                 self.get_widget('map_flags_%02X' % (flag)).set_active(((self.map.map_flags & flag) == flag))
+            ent_store = self.get_widget('random_entity_store')
+            for (widget, entid) in [
+                    (self.get_widget('random_entity_1'), self.map.random_entity_1),
+                    (self.get_widget('random_entity_2'), self.map.random_entity_2)]:
+                iter = ent_store.get_iter_first()
+                while iter is not None:
+                    if ent_store.get_value(iter, 1) == entid:
+                        widget.set_active_iter(iter)
+                        break
+                    iter = ent_store.iter_next(iter)
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
@@ -1067,8 +1082,6 @@ class MapGUI(BaseGUI):
             self.get_widget('map_unknowni4').set_value(self.map.map_unknowni4)
             #self.get_widget('map_unknownc1').set_value(self.map.map_unknownc1)
             #self.get_widget('map_unknownc2').set_value(self.map.map_unknownc2)
-            self.get_widget('map_unknownc3').set_value(self.map.map_unknownc3)
-            self.get_widget('map_unknownc4').set_value(self.map.map_unknownc4)
             #self.get_widget('map_unknownc5').set_value(self.map.map_unknownc5)
             #self.get_widget('map_unknownc6').set_value(self.map.map_unknownc6)
             #self.get_widget('map_unknownc7').set_value(self.map.map_unknownc7)

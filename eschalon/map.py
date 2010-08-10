@@ -523,8 +523,8 @@ class B2Map(Map):
         self.soundfile4 = ''
         self.map_unknownc1 = -1
         self.map_unknownc2 = -1
-        self.map_unknownc3 = -1
-        self.map_unknownc4 = -1
+        self.random_entity_1 = -1
+        self.random_entity_2 = -1
         self.map_unknowni2 = -1
         self.map_flags = -1
         self.map_unknowni4 = -1
@@ -559,8 +559,8 @@ class B2Map(Map):
             self.soundfile4 = self.df.readstr()
             self.map_unknownc1 = self.df.readuchar()
             self.map_unknownc2 = self.df.readuchar()
-            self.map_unknownc3 = self.df.readuchar()
-            self.map_unknownc4 = self.df.readuchar()
+            self.random_entity_1 = self.df.readuchar()
+            self.random_entity_2 = self.df.readuchar()
             self.color_r = self.df.readuchar()
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
@@ -635,8 +635,8 @@ class B2Map(Map):
         self.df.writestr(self.soundfile4)
         self.df.writeuchar(self.map_unknownc1)
         self.df.writeuchar(self.map_unknownc2)
-        self.df.writeuchar(self.map_unknownc3)
-        self.df.writeuchar(self.map_unknownc4)
+        self.df.writeuchar(self.random_entity_1)
+        self.df.writeuchar(self.random_entity_2)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
@@ -696,8 +696,8 @@ class B2Map(Map):
         newmap.soundfile4 = self.soundfile4
         newmap.map_unknownc1 = self.map_unknownc1
         newmap.map_unknownc2 = self.map_unknownc2
-        newmap.map_unknownc3 = self.map_unknownc3
-        newmap.map_unknownc4 = self.map_unknownc4
+        newmap.random_entity_1 = self.random_entity_1
+        newmap.random_entity_2 = self.random_entity_2
         newmap.map_unknowni2 = self.map_unknowni2
         newmap.map_flags = self.map_flags
         newmap.map_unknowni4 = self.map_unknowni4

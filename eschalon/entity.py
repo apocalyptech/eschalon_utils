@@ -281,7 +281,9 @@ class B2Entity(Entity):
             'soundfile4_label', 'soundfile4_combo',
             'unknown_sq_i1_label', 'unknown_sq_i1',
             'tree_set_label', 'tree_set',
-            'map_flags_label', 'map_flags_table'
+            'map_flags_label', 'map_flags_table',
+            'random_entity_1_label', 'random_entity_1',
+            'random_entity_2_label', 'random_entity_2',
             ]
 
     def __init__(self, savegame):
