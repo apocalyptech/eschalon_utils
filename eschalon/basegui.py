@@ -553,7 +553,7 @@ class BaseGUI(object):
         if (ischecked):
             obj.__dict__[shortname] = obj.__dict__[shortname] | mask
         else:
-            obj.__dict__[shortname] = obj.__dict__[shortname] ^ mask
+            obj.__dict__[shortname] = obj.__dict__[shortname] & ~mask
         if (self.curitemtype != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[shortname] & mask), wname, labelwidget, label)

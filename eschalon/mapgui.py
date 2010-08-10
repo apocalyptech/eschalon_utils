@@ -1792,7 +1792,7 @@ class MapGUI(BaseGUI):
             if (widget.get_active()):
                 object.__dict__[name] = object.__dict__[name] | flagval
             else:
-                object.__dict__[name] = object.__dict__[name] ^ flagval
+                object.__dict__[name] = object.__dict__[name] & ~flagval
 
     def on_map_flag_changed(self, widget):
         """
@@ -1957,7 +1957,7 @@ class MapGUI(BaseGUI):
             self.script_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
             # If we ever get more flags, this'll have to change
-            if (square.scripts[curpages].flags ^ 0x40 == 0):
+            if (square.scripts[curpages].flags & ~0x40 == 0):
                 self.script_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
                 self.script_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
