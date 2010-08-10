@@ -28,7 +28,6 @@ Character GUI
  * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * When copying items, the "condition"-changed indicator doesn't populate
    automatically
- * Investigate duplicate skill_table and status_table widget creation
  * "Enter" to close dialogs (item screens, etc) - applicable to Map GUI too
  * "Error creating directory: File exists" when changing gfx pref to the
    same dir?

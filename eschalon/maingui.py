@@ -1018,9 +1018,6 @@ class MainGUI(BaseGUI):
         ### Front-screen skill table
         ###
         vbox = self.get_widget('charinfo_vbox')
-        table = self.get_widget('skill_table')
-        if table:
-            vbox.remove(table)
 
         numrows = len(c.skilltable)/2
         if (len(c.skilltable) % 2 == 1):
@@ -1064,9 +1061,6 @@ class MainGUI(BaseGUI):
         ### Character Effects (non-permanent)
         ###
         cont = self.get_widget('status_alignment')
-        table = self.get_widget('status_table')
-        if table:
-            cont.remove(table)
 
         numrows = len(c.statustable)/2
         if (len(c.statustable) % 2 == 1):
