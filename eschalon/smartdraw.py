@@ -751,7 +751,7 @@ class SmartDraw(object):
                     if (not adjsquare):
                         continue
                     if (adjsquare.floorimg not in self.tilesets[idxtype]):
-                        curflags = (curflags & ~testdir)
+                        curflags = (curflags ^ testdir)
                 if (curflags in self.revindexes[idxtype]):
                     square.decalimg = self.revindexes[idxtype][curflags]
             else:
@@ -979,7 +979,7 @@ class SmartDraw(object):
                 # there's one that matches better than the other.
                 for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
                     if ((connflags & dir) == dir):
-                        connflags = connflags & ~dir
+                        connflags = connflags ^ dir
                         square.floorimg = self.beach_revindex[connflags]
                         break
             else:

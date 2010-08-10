@@ -71,6 +71,7 @@ Map GUI
  * Randomize scraggly trees in B1 (if they're not already)
  * re-investigate b2 map savegame identifiers.  Four values?
  * Make sure that mapscript object labels are showing properly for B2
+ * Should see about window sizes on windows
 
 Internal
 --------
