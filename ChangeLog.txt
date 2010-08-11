@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   11 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a bug where a missing numpy could crash the app
+
    10 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    GUI will no longer let you add more than one Object to a
       tile

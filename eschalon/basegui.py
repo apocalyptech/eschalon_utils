@@ -57,6 +57,17 @@ class BaseGUI(object):
         # variable.
         self.labelcache = {}
 
+        # Find out if we have NumPy installed.  There's a bug in pygtk (or,
+        # at least, a bug SOMEWHERE) where if numpy isn't installed, a call
+        # to gtk.gdk.Pixbuf.get_pixels_array() will segfault Python, which
+        # isn't catchable.  So instead of letting that happen, we'll just find
+        # out here.  The bug: https://bugzilla.gnome.org/show_bug.cgi?id=626683
+        try:
+            import numpy
+            self.have_numpy = True
+        except ImportError, e:
+            self.have_numpy = False
+
     def datafile(self, file):
         return os.path.join(self.datadir, file)
 
@@ -1007,9 +1018,12 @@ class BaseGUI(object):
         self.imgsel_window.hide()
 
     def on_bgcolor_img_clicked(self, widget, event):
-        try:
-            pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
-        except (RuntimeError, ImportError):
+        if self.have_numpy:
+            try:
+                pixels = self.imgsel_bgcolor_pixbuf.get_pixels_array()
+            except (RuntimeError, ImportError):
+                pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
+        else:
             pixels = self.stupid_pixels_array(self.imgsel_bgcolor_pixbuf)
         color = pixels[int(event.y)][int(event.x)][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)

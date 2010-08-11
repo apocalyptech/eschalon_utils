@@ -335,9 +335,12 @@ class MapGUI(BaseGUI):
         for zoom in self.zoom_levels:
             mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
             mapbuf = gtk.gdk.pixbuf_new_from_file(mapfile)
-            try:
-                self.mousemap[zoom] = mapbuf.get_pixels_array()
-            except (RuntimeError, ImportError):
+            if self.have_numpy:
+                try:
+                    self.mousemap[zoom] = mapbuf.get_pixels_array()
+                except (RuntimeError, ImportError):
+                    self.mousemap[zoom] = self.stupid_pixels_array(mapbuf)
+            else:
                 self.mousemap[zoom] = self.stupid_pixels_array(mapbuf)
 
         # ... initialize a couple of hidden spinboxes
