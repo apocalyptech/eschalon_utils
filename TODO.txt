@@ -6,14 +6,10 @@ Packaging
 Data
 ----
  * Figure out the rest of our unknown values
- * Figure out our unknown item types
- * Figure out what other bit flags there might be ("visibility" probably
-   isn't just an int)
  * Figure out details of the visual effects values (some of that is
    probably bit flags as well)
  * Decode "savename" file format (this is where current-map and actual
    position information is kept, and also quest status, I suspect)
- * A lot of values for maps remain unknown to me.
 
 Character GUI
 -------------
@@ -21,54 +17,33 @@ Character GUI
  * Highlight the Inventory Notebook labels when there's a change in one
    of them
  * Mouseover notification of previous values (for changed values)
- * (and CLI, actually) - show some more useful messages when a file can't
-   be loaded
  * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * "Enter" to close dialogs (item screens, etc) - applicable to Map GUI too
 
 Map GUI
 -------
- * Separate thread to pre-cache tiles in map editor, for "instantaneous" state
-   flips?
  * Actually track changes, for confirmation-of-close?  (also could support
-   confirmation on new loads if we did this)
- * Warning/abort if trying to edit square with an unknown entity
+   confirmation on new loads if we did this).
  * Implement a 'question mark' or something for invalid tiles/entities
- * Should the 'friendly' field just be a checkbox?  Ditto for cloud overlay.
  * It turns out that technically we need to draw the map in multiple
    passes - first ground, then objects, etc (apparently including entities
    in with objects, not separately)  Tent graphics, for instance, get
    partially munged using our current method.
- * Square rendering seems to be getting a bit slow; should see if
-   there's anything to be done about that.
  * Change background color, like we do for selection in the square window
  * "Little" map, a la the Eschalon Map?  Showing currently-viewed-area?
- * Really test undo/redo - have to save out, etc. (in particular the maxlevel
-   hasn't been tested at all)
  * Edits to map properties need to get hooked into the undo system
- * "scripts" on main screen needs to be called "objects" instead
  * Optionally allow "smart" walls to connect between groups?
- * Add in "special" tile stuff to smart walls
- * Exception handling when we're drawing the map (shouldn't really happen, but
-   we should handle it if it does, regardless)
  * Erasing should re-smart-draw stuff around it, perhaps?
- * Erasing should also re-do barriers if wanted, perhaps?
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
- * Click-and-drag seems choppy in Win
+ * Click-and-drag seems choppy in Win (maybe just in my VM, though)
  * Need to check rendering speed on older hardware + do general speedups
- * split up key and IV
  * re-investigate b2 map savegame identifiers.  Four values?
  * Should see about window sizes on windows
 
 Internal
 --------
- * Figure out what can be consolidated to BaseGUI from the char and map parts.
- * A whole lot of code-cleaning should really be done, it's pretty spaghetti
-   in there.
- * Square class now holds (x, y) information - can probably switch some stuff
-   around to take advantage of that.  Also, that change could use some more
-   testing.
+ * The code is kind of a mess.  Sorry!
  * Use decimal module for floats, internally?
  * Using @staticmethod is kind of discouraged, and it would probably make
    sense to have those be functions instead.
