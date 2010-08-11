@@ -39,6 +39,9 @@ Map GUI
  * Click-and-drag seems choppy in Win (maybe just in my VM, though)
  * Need to check rendering speed on older hardware + do general speedups
  * Should see about window sizes on windows
+ * Click-and-drag is horribly slow on my test F13 install
+ * numpy or python-numeric required on F13?
+ * Update pycrypto dialog to include info about the package name
 
 Internal
 --------
