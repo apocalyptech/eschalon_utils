@@ -38,7 +38,6 @@ Map GUI
    (overwriting non-grass/sand decals, etc)
  * Click-and-drag seems choppy in Win (maybe just in my VM, though)
  * Need to check rendering speed on older hardware + do general speedups
- * re-investigate b2 map savegame identifiers.  Four values?
  * Should see about window sizes on windows
 
 Internal

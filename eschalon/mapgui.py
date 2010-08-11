@@ -543,8 +543,8 @@ class MapGUI(BaseGUI):
         # Unknown map properties
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
-            self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3)
-            self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Appears to be coordinates, under some circumstances')
+            self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3, 'Always zero')
+            self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Typically the last coordinates the user was seen in, though sometimes it\'s not.')
 
             # These two are *always* 1 in all of the map files that I've seen, and we're using them
             # to identify whether the map file is book 1 or book 2.  So, we're going to omit allowing
@@ -557,12 +557,12 @@ class MapGUI(BaseGUI):
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 6, 11, 'This is often nonzero on savegames', False)
             #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 7, 12, 'This is often nonzero on savegames', False)
 
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 8, 13)
-            self.prop_unknown_input_text(table, 1, 14)
-            self.prop_unknown_input_text(table, 2, 15)
-            self.prop_unknown_input_text(table, 4, 16)
-            self.prop_unknown_input_text(table, 5, 17)
-            self.prop_unknown_input_text(table, 6, 18)
+            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 8, 13, 'Always zero')
+            self.prop_unknown_input_text(table, 1, 14, 'Always empty')
+            self.prop_unknown_input_text(table, 2, 15, 'Always empty')
+            self.prop_unknown_input_text(table, 4, 16, 'Always empty')
+            self.prop_unknown_input_text(table, 5, 17, 'Always empty')
+            self.prop_unknown_input_text(table, 6, 18, 'Always empty')
 
         # Populate our wall type dropdown
         store = self.get_widget('walltype_store')
