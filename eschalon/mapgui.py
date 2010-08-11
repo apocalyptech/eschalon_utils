@@ -252,7 +252,7 @@ class MapGUI(BaseGUI):
             sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
-        if not self.gfx.fast_zipfile:
+        if c.book == 2 and not self.gfx.fast_zipfile:
             self.get_widget('render_slowzip_warning').show()
             self.drawstatuswindow.set_size_request(350, 200)
             warn = self.prefs.get_bool('mapgui', 'warn_slow_zip')
