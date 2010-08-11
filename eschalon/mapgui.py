@@ -2237,10 +2237,12 @@ class MapGUI(BaseGUI):
         # ... now the scripts themselves.
         self.clear_script_notebook()
         if (len(square.scripts) > 0):
+            self.get_widget('script_add_button').hide()
             for script in square.scripts:
                 self.append_script_notebook(script)
             self.script_notebook.show()
         else:
+            self.get_widget('script_add_button').show()
             self.script_notebook.hide()
 
     def populate_entity_tab(self, square):
@@ -2278,22 +2280,41 @@ class MapGUI(BaseGUI):
     def update_object_note(self):
         """
         Updates our object note, to let the user know if there should
-        be an object or not.
+        be an object or not.  Also shows or hides the "Add Object" button
+        as needed.
         """
         square = self.map.squares[self.sq_y][self.sq_x]
         note = self.get_widget('object_note')
+
+        # First the button
+        if (len(square.scripts) > 0):
+            self.get_widget('script_add_button').hide()
+        else:
+            self.get_widget('script_add_button').show()
+
+        # Now the actual note
         if (len(square.scripts) > 1):
             note.set_markup('<b>Warning:</b> There are three instances in the master map files where more than one object is defined for a tile, but doing so is discouraged.  Only one of the objects will actually be used by the game engine.')
             note.show()
-        elif (square.scriptid > 0 and square.scriptid < 25):
-            if (len(square.scripts) > 0):
-                note.hide()
+        elif c.book == 1:
+            if (square.scriptid > 0 and square.scriptid < 25):
+                if (len(square.scripts) > 0):
+                    note.hide()
+                else:
+                    note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
+                    note.show()
             else:
-                note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
-                note.show()
+                if (len(square.scripts) > 0):
+                    note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
+                    note.show()
+                else:
+                    note.hide()
         else:
-            if (len(square.scripts) > 0):
+            if square.scriptid == 0 and len(square.scripts) > 0:
                 note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
+                note.show()
+            elif square.scriptid != 19 and square.scriptid != 0 and len(square.scripts) == 0:
+                note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                 note.show()
             else:
                 note.hide()

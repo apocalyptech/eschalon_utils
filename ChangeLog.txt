@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   10 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   GUI will no longer let you add more than one Object to a
+      tile
+
    09 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Smartdraw supports more than one kind of "big" fence
 
