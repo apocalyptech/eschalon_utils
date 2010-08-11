@@ -2996,13 +2996,25 @@ class MapGUI(BaseGUI):
                 else:
                     entity = (1, 0, 0, 0.5)
 
-        if (square.scriptid != 0 and len(square.scripts) > 0):
-            script = (1, 1, 0, 0.5)
-        elif (square.scriptid != 0 and len(square.scripts) == 0):
-            script = (0, .784, .784, 0.5)
-        elif (square.scriptid == 0 and len(square.scripts) > 0):
-            # afaik, this doesn't happen.  should use something other than red here, though
-            script = (1, 0, 0, 0.5)
+        if c.book == 1:
+            if (square.scriptid != 0 and len(square.scripts) > 0):
+                script = (1, 1, 0, 0.5)
+            elif (square.scriptid != 0 and len(square.scripts) == 0):
+                script = (0, .784, .784, 0.5)
+            elif (square.scriptid == 0 and len(square.scripts) > 0):
+                # afaik, this doesn't happen.  should use something other than red here, though
+                script = (1, 0, 0, 0.5)
+        else:
+            if (square.scriptid == 0 and len(square.scripts) > 0):
+                # afaik, this doesn't happen.  should use something other than red here, though
+                script = (1, 0, 0, 0.5)
+            elif (square.scriptid >= 25 and square.scriptid < 50):
+                script = (0, .784, .784, 0.5)
+            elif (square.scriptid > 0 and len(square.scripts) == 0):
+                # This shouldn't happen either
+                script = (1, 0, 0, 0.5)
+            elif square.scriptid > 0:
+                script = (1, 1, 0, 0.5)
 
         if (square.wall == 1):
             barrier = (.784, .784, .784, 0.5)
