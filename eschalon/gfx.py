@@ -617,7 +617,11 @@ class B2Gfx(Gfx):
             from Crypto.Cipher import AES
             self.aesc = AES
         except:
-            raise Exception('Book 2 Graphics requires pycrypto, please install it: http://www.dlitz.net/software/pycrypto/')
+            raise Exception('Book 2 Graphics requires pycrypto, please install it:'
+                "\n\n\t"
+                'http://www.dlitz.net/software/pycrypto/'
+                "\n\n"
+                'For most Linux distributions, the package name is "python-crypto"')
         self.prep_crypt()
 
         # Wall graphic groups

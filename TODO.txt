@@ -40,7 +40,6 @@ Map GUI
  * Need to check rendering speed on older hardware + do general speedups
  * Should see about window sizes on windows
  * Click-and-drag is horribly slow on my test F13 install
- * Update pycrypto dialog to include info about the package name
  * Prefs default zoom should go to 7 (and make sure it fails gracefully in B1)
 
 Internal
