@@ -40,6 +40,8 @@ Map GUI
  * Need to check rendering speed on older hardware + do general speedups
  * Should see about window sizes on windows
  * Click-and-drag is horribly slow on my test F13 install
+ * Make sure that entity graphic changes when we change type (tried
+   town guard in 35.map, didn't change until I also changed direction)
 
 Internal
 --------
