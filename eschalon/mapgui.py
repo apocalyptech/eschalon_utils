@@ -309,7 +309,7 @@ class MapGUI(BaseGUI):
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
         if self.req_book == 2:
             self.zoom_levels.append(64)
-        self.get_widget('map_zoom_adj').set_upper(len(self.zoom_levels)-1)
+        self.get_widget('map_zoom_adj').set_property('upper', len(self.zoom_levels)-1)
         default_zoom = self.prefs.get_int('mapgui', 'default_zoom')-1
         if (default_zoom >= len(self.zoom_levels)):
             default_zoom = len(self.zoom_levels)-1
