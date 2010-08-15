@@ -1207,6 +1207,7 @@
                             <signal name="expose_event" handler="expose_map"/>
                             <signal name="button_press_event" handler="on_clicked"/>
                             <signal name="motion_notify_event" handler="on_mouse_changed"/>
+                            <signal name="realize" handler="draw_map"/>
                             <signal name="button_release_event" handler="on_released"/>
                           </object>
                         </child>

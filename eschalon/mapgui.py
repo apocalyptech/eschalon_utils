@@ -355,11 +355,6 @@ class MapGUI(BaseGUI):
         # Now show our window
         self.window.show()
 
-        # Now add an idle_timeout to initialize the map - this is how our
-        # initial load happens
-        #gobject.idle_add(self.export_map_pngs)
-        gobject.idle_add(self.draw_map)
-
         # ... and get into the main gtk loop
         gtk.main()
 
@@ -778,7 +773,8 @@ class MapGUI(BaseGUI):
                 'draw_uncheck_all': self.draw_uncheck_all,
                 'highlight_check_all': self.highlight_check_all,
                 'highlight_uncheck_all': self.highlight_uncheck_all,
-                'update_activity_label': self.update_activity_label
+                'update_activity_label': self.update_activity_label,
+                'draw_map': self.draw_map,
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -3434,7 +3430,7 @@ class MapGUI(BaseGUI):
         else:
             return False
 
-    def draw_map(self):
+    def draw_map(self, widget=None):
         """
         This is the routine which sets up our initial map.  This used to be
         a part of expose_map, but this way we can throw up a progress dialog
@@ -3443,6 +3439,8 @@ class MapGUI(BaseGUI):
         Note that we're drawing to the main window HERE instead of in the
         setup areas of expose_map, so that the old map image stays onscreen
         for as long as possible.
+
+        One further note: this is kicked off from maparea's 'realize' signal
         """
 
         # Timing, and statusbar
@@ -3537,7 +3535,11 @@ class MapGUI(BaseGUI):
         self.ctx.paint()
         
         # ... and draw onto our main area (this is duplicated below, in expose_map)
-        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
+                self.pixmap,
+                0, 0,
+                0, 0,
+                self.z_mapsize_x, self.z_mapsize_y)
 
         # Clean up our statusbar
         self.drawstatuswindow.hide()
@@ -3562,7 +3564,12 @@ class MapGUI(BaseGUI):
                 self.draw_square(x, y, True)
 
             # Render to the window (this is duplicated above, in draw_map)
-            self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL], self.pixmap, 0, 0, 0, 0, self.z_mapsize_x, self.z_mapsize_y)
+            self.maparea.window.draw_drawable(
+                    self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
+                    self.pixmap,
+                    0, 0,
+                    0, 0,
+                    self.z_mapsize_x, self.z_mapsize_y)
 
             # Make sure our to-clean list is empty
             self.cleansquares = []
