@@ -1538,6 +1538,14 @@ class MapGUI(BaseGUI):
         """ Keep track of where the mouse is """
 
         if (self.dragging):
+            if gtk.events_pending():
+                # A default Fedora 13 install on my old development
+                # machine performs horribly slowly on click-and-drag
+                # for some reason.  This is a pretty simple way to
+                # let the program remain responsive, which doesn't
+                # seem to create problems.  For more info, see:
+                # http://forums.fedoraforum.org/showthread.php?t=250036
+                return
             diff_x = self.hold_x - event.x_root
             diff_y = self.hold_y - event.y_root
             if (diff_x != 0):

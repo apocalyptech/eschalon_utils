@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   15 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Bypass a potential click-and-drag performance issue on
+      slow machines
+
    11 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug where a missing numpy could crash the app
 
