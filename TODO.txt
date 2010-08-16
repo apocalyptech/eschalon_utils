@@ -17,7 +17,6 @@ Character GUI
  * Highlight the Inventory Notebook labels when there's a change in one
    of them
  * Mouseover notification of previous values (for changed values)
- * Need to enlarge the GUI windows a bit; on my laptop they're too small
  * "Enter" to close dialogs (item screens, etc) - applicable to Map GUI too
 
 Map GUI
@@ -36,7 +35,6 @@ Map GUI
  * Erasing should re-smart-draw stuff around it, perhaps?
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
- * Should see about window sizes on windows
 
 Internal
 --------
