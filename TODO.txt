@@ -37,7 +37,6 @@ Map GUI
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
  * Should see about window sizes on windows
- * Modifier values for Reagents
 
 Internal
 --------

@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   16 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Book 2 Reagent modifier values added to item screen, and
+      Nimbleness potion added to the list
+
    15 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Bypass a potential click-and-drag performance issue on
       slow machines

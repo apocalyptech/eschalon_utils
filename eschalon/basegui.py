@@ -247,7 +247,8 @@ class BaseGUI(object):
                 'imgsel_on_expose': self.imgsel_on_expose,
                 'imgsel_on_clicked': self.imgsel_on_clicked,
                 'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
-                'bypass_delete': self.bypass_delete
+                'bypass_delete': self.bypass_delete,
+                'on_b2_item_attr3_treeview_clicked': self.on_b2_item_attr3_treeview_clicked,
                 }
 
     def register_widget(self, name, widget, doname=True):
@@ -362,9 +363,8 @@ class BaseGUI(object):
             align = self.get_widget('b2_modifier_3_infoalign')
             label = WrapLabel('The third modifier is the only one which can '
                     'have a negative value, and uses four bytes instead of '
-                    'one (as the other modifiers do).  For potions (and '
-                    'potions used as thrown weapons), though, some of the '
-                    'bits in here seem to be used as flags of some sort:')
+                    'one.  Potions and reagents use a flag system (R+R=P).  '
+                    'Double-click to set one of those values, if you want.')
             label.show()
             align.add(label)
 
@@ -401,6 +401,19 @@ class BaseGUI(object):
         col.set_clickable(True)
         col.set_sort_column_id(1)
         self.get_widget('b2_potion_magic_treeview').append_column(col)
+
+        col = gtk.TreeViewColumn('Reagent', gtk.CellRendererText(), text = 0)
+        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col.set_fixed_width(150)
+        col.set_clickable(True)
+        col.set_sort_column_id(0)
+        self.get_widget('b2_reagent_magic_treeview').append_column(col)
+        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text = 1)
+        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col.set_fixed_width(150)
+        col.set_clickable(True)
+        col.set_sort_column_id(1)
+        self.get_widget('b2_reagent_magic_treeview').append_column(col)
 
     def bypass_delete(self, widget, event):
         """
@@ -1186,3 +1199,13 @@ class BaseGUI(object):
                     #retarr[y][x].append((color, 0))
                 idx += channels
         return retarr
+
+    def on_b2_item_attr3_treeview_clicked(self, widget, event):
+        """
+        For Book 2, we provide a TreeView showing various possible values
+        for potions and reagents.  Double-clicking on an item will populate
+        the value in the GUI; this handler takes care of that.
+        """
+        if event.type == gtk.gdk._2BUTTON_PRESS:
+            (model, iter) = widget.get_selection().get_selected()
+            self.get_widget('attr_modifier_3').set_value(model.get_value(iter, 1))
