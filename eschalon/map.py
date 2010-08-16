@@ -84,6 +84,14 @@ class Map(object):
         self.df = df
         self.set_df_ent()
 
+    def check_map_extension(self):
+        """
+        Force the map to have a .map extension.  Note that our "Save As" logic
+        might not warn on overwriting, now, because of this.
+        """
+        if self.df.filename[-4:].lower() != '.map':
+            self.df.filename = '%s.map' % (self.df.filename)
+
     def set_df_ent(self):
         self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
 
@@ -425,7 +433,10 @@ class B1Map(Map):
 
     def write(self):
         """ Writes out the map to the file descriptor. """
-        
+
+        # We require a '.map' extension
+        self.check_map_extension()
+
         # Open the file
         self.df.open_w()
 
@@ -619,6 +630,9 @@ class B2Map(Map):
 
     def write(self):
         """ Writes out the map to the file descriptor. """
+
+        # We require a '.map' extension
+        self.check_map_extension()
         
         # Open the file
         self.df.open_w()

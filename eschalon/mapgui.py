@@ -463,13 +463,30 @@ class MapGUI(BaseGUI):
         dialog.add_filter(filter)
 
         # Run the dialog and process its return values
-        response = dialog.run()
-        if response == gtk.RESPONSE_OK:
-            self.map.df.filename = dialog.get_filename()
-            self.on_save()
-            self.putstatus('Saved as %s' % (self.map.df.filename))
-            self.get_widget('saveaswindow').run()
-            self.get_widget('saveaswindow').hide()
+        loop = True
+        while loop:
+            response = dialog.run()
+            if response == gtk.RESPONSE_OK:
+
+                if dialog.get_filename()[-4:].lower() != '.map':
+                    new_filename = '%s.map' % (dialog.get_filename())
+                    if os.path.exists(new_filename):
+                        new_resp = self.confirmdialog('File Already Exists', 'A file named '
+                                '"%s" already exists.  Do you want to replace it?' % (new_filename),
+                                dialog)
+                        if new_resp != gtk.RESPONSE_YES:
+                            continue
+                else:
+                    new_filename = dialog.get_filename()
+
+                loop = False
+                self.map.df.filename = new_filename
+                self.on_save()
+                self.putstatus('Saved as %s' % (self.map.df.filename))
+                self.get_widget('saveaswindow').run()
+                self.get_widget('saveaswindow').hide()
+            else:
+                loop = False
 
         # Clean up
         dialog.destroy()
