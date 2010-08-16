@@ -3,6 +3,7 @@
    15 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Bypass a potential click-and-drag performance issue on
       slow machines
+   Improvements to map rendering speed
 
    11 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug where a missing numpy could crash the app

@@ -3089,7 +3089,7 @@ class MapGUI(BaseGUI):
         drawn = False
 
         # Draw the floor tile
-        if (self.floor_toggle.get_active()):
+        if (square.floorimg > 0 and self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
@@ -3097,7 +3097,7 @@ class MapGUI(BaseGUI):
                 drawn = True
 
         # Draw the floor decal
-        if (self.decal_toggle.get_active()):
+        if (square.decalimg > 0 and self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
@@ -3115,24 +3115,49 @@ class MapGUI(BaseGUI):
                         sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
                         sq_ctx.paint()
 
+        # Draw "walls," though only if we should
         wallid = square.wallimg
-        try:
-            walltype = self.gfx.wall_types[wallid]
-        except KeyError:
-            # This should only happen for Book 2 maps, and should only
-            # denote that it's one of the gigantic graphic maps.
-            walltype = self.gfx.TYPE_NONE
+        if wallid > 0:
+            try:
+                walltype = self.gfx.wall_types[wallid]
+            except KeyError:
+                # This should only happen for Book 2 maps, and should only
+                # denote that it's one of the gigantic graphic maps.
+                walltype = self.gfx.TYPE_NONE
 
-        # Draw the object
-        if (self.object_toggle.get_active() and walltype == self.gfx.TYPE_OBJ):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-                drawn = True
+            # Draw the object
+            if (walltype == self.gfx.TYPE_OBJ and self.object_toggle.get_active()):
+                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
+                if (pixbuf is not None):
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.paint()
+                    drawn = True
+
+            # Draw walls
+            elif (walltype == self.gfx.TYPE_WALL and self.wall_toggle.get_active()):
+                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
+                if (pixbuf is not None):
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.paint()
+                    drawn = True
+                    if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+                        pixbuf = self.gfx.get_flame(self.curzoom)
+                        if (pixbuf is not None):
+                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
+                            yoffset = int(self.z_height*0.3)
+                            sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
+                            sq_ctx.paint()
+
+            # Draw trees
+            elif (walltype == self.gfx.TYPE_TREE and self.tree_toggle.get_active()):
+                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.map.tree_set)
+                if (pixbuf is not None):
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.paint()
+                    drawn = True
 
         # Draw a zapper
-        if (self.req_book == 2 and self.object_toggle.get_active() and square.scriptid == 19):
+        if (self.req_book == 2 and square.scriptid == 19 and self.object_toggle.get_active()):
             pixbuf = self.gfx.get_zapper(self.curzoom)
             if pixbuf is not None:
                 xoffset = self.z_squarebuf_offset
@@ -3140,31 +3165,8 @@ class MapGUI(BaseGUI):
                 sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
                 sq_ctx.paint()
 
-        # Draw walls
-        if (self.wall_toggle.get_active() and walltype == self.gfx.TYPE_WALL):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-                drawn = True
-                if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
-                    pixbuf = self.gfx.get_flame(self.curzoom)
-                    if (pixbuf is not None):
-                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
-                        yoffset = int(self.z_height*0.3)
-                        sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
-                        sq_ctx.paint()
-
-        # Draw trees
-        if (self.tree_toggle.get_active() and walltype == self.gfx.TYPE_TREE):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.map.tree_set)
-            if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
-                sq_ctx.paint()
-                drawn = True
-
         # Draw the object decal
-        if (self.objectdecal_toggle.get_active()):
+        if (square.walldecalimg > 0 and self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
             if (pixbuf is not None):
                 sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_2xheight)
@@ -3522,6 +3524,7 @@ class MapGUI(BaseGUI):
         self.huge_gfx_rows = []
         # TODO: for editing's sake, we may want to abstract this huge_gfx_rows maintenance
         # to a helper func (with an _add and _remove or whatever)
+        #time_c = time.time()
         for i in range(200):
             self.huge_gfx_rows.append([])
         for y in range(len(self.map.squares)):
@@ -3534,9 +3537,12 @@ class MapGUI(BaseGUI):
                 for square in huge_gfxes:
                     self.draw_huge_gfx(square)
                     self.huge_gfx_rows[y].append(square.x)
-            self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
-            while gtk.events_pending():
-                gtk.main_iteration()
+            if (y % 10 == 0):
+                self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
+                while gtk.events_pending():
+                    gtk.main_iteration()
+        #time_d = time.time()
+        #print 'Inner loop: %0.2f' % (time_d-time_c)
 
         # Finish drawing
         self.ctx.set_source_surface(self.guicache, 0, 0)
@@ -3554,13 +3560,14 @@ class MapGUI(BaseGUI):
 
         # Report timing
         time_b = time.time()
-        print "Map rendered in %d seconds" % (int(time_b-time_a))
+        print "Map rendered in %0.2f seconds" % (time_b-time_a)
 
         # From now on, our map's considered initialized
         self.mapinit = True
 
         # Make sure we only do this once, when called from idle_add initially
         return False
+
 
     def expose_map(self, widget, event):
 
