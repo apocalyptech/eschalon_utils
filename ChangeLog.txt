@@ -1,5 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.7.0 (16 Aug 2010)
+
    16 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Book 2 Reagent modifier values added to item screen, and
       Nimbleness potion added to the list
@@ -37,40 +39,8 @@
    Smartdraw decal preference is now a dropdown
    Complex object wall flags get updated properly now
 
-   31 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-   Book 2 Lava smartdrawing seems to work
-
-   29 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-   Fixed Book 2 Fence smartdrawing
-   Floor decal randomization
-
    28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-   Some work on Book 2 Smartdraw constants
-   Merged Book 2 Map Branch :
-
-      28 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-      Integration with czipfile and cleanup of Book 2 preferences
-
-      11 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-      Book 2 Map element lookup screens populate properly
-      Torches and Zappers display in Book 2 maps
-
-      10 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-      Item images populate in the GUI for book 2
-
-      09 Jul 2010; CJ Kucera <pez@apocalyptech.com> :
-      Book 2 mapscripts now populate in the GUI
-      Book 2 entities now populate in the GUI
-      Saving of Book 2 maps is supported now
-
-      24 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
-      Book 2 Entities get drawn in map GUI
-
-      21 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
-      Initial Book 2 Map GUI integration
-
-      18 Jun 2010; CJ Kucera <pez@apocalyptech.com> :
-      Initial Book 2 Map object integration
+   Merged Book 2 Map Branch (initial Book 2 Map in mainline)
 
 *eschalon_utils-0.6.3 (09 Jul 2010)
 
