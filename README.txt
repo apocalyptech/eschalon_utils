@@ -22,6 +22,9 @@ http://www.axialis.com/free/icons/ for details.
 The code in fzipfile.py comes mostly from Python itself, which is under
 the Python License at http://www.python.org/psf/license/
 
+The class WrapLabel, in basegui.py is Copyright(c) 2005 VMware, Inc.
+See basegui.py for the exact licensing terms.
+
 ABOUT
 -----
 

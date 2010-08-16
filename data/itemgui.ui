@@ -353,6 +353,7 @@
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
                             <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -488,7 +489,6 @@
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
-                            <property name="xscale">0</property>
                             <child>
                               <object class="GtkHBox" id="hbox23">
                                 <property name="visible">True</property>
@@ -502,6 +502,7 @@
                                     <signal name="value_changed" handler="on_singleval_changed_int_itempic"/>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -527,21 +528,18 @@
                                     </child>
                                   </object>
                                   <packing>
+                                    <property name="expand">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkAlignment" id="alignment20">
+                                  <object class="GtkAlignment" id="b2_item_picid_notealign">
                                     <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="yscale">0</property>
                                     <property name="left_padding">11</property>
                                     <child>
-                                      <object class="GtkLabel" id="book2_item_picid_note">
-                                        <property name="width_request">270</property>
-                                        <property name="visible">True</property>
-                                        <property name="label" translatable="yes">&lt;i&gt;Note: Picture IDs in Book 2 are only unique within their groups: armor, weapons, magic/alchemy, or "other."&lt;/i&gt;</property>
-                                        <property name="use_markup">True</property>
-                                        <property name="wrap">True</property>
-                                      </object>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                   <packing>
@@ -556,6 +554,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -580,6 +579,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">4</property>
                             <property name="bottom_attach">5</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -605,6 +605,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">5</property>
                             <property name="bottom_attach">6</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -629,6 +630,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">6</property>
                             <property name="bottom_attach">7</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -653,6 +655,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">7</property>
                             <property name="bottom_attach">8</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -707,6 +710,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">8</property>
                             <property name="bottom_attach">9</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -794,6 +798,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">9</property>
                             <property name="bottom_attach">10</property>
+                            <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                       </object>
@@ -1452,6 +1457,7 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="fill">False</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -1459,6 +1465,7 @@
                   <object class="GtkAlignment" id="alignment6">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
+                    <property name="yalign">0</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkTable" id="table2">
@@ -1476,6 +1483,7 @@
                           </object>
                           <packing>
                             <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1491,6 +1499,7 @@
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
                             <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1506,6 +1515,7 @@
                             <property name="top_attach">2</property>
                             <property name="bottom_attach">3</property>
                             <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1571,6 +1581,7 @@
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1638,6 +1649,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">1</property>
                             <property name="bottom_attach">2</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1705,6 +1717,7 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">2</property>
                             <property name="bottom_attach">3</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1741,6 +1754,7 @@
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
                             <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
@@ -1754,17 +1768,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkAlignment" id="alignment16">
+                          <object class="GtkAlignment" id="b2_modifier_3_infoalign">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
+                            <property name="bottom_padding">5</property>
                             <child>
-                              <object class="GtkLabel" id="label6">
-                                <property name="visible">True</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">The third modifier is the only one which can have a negative value, and uses four bytes instead of one (as the other modifiers do).  For potions (and potions used as thrown weapons), though, some of the bits in here seem to be used as flags of some sort:</property>
-                                <property name="use_markup">True</property>
-                                <property name="wrap">True</property>
-                              </object>
+                              <placeholder/>
                             </child>
                           </object>
                           <packing>
@@ -1772,14 +1781,13 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">3</property>
                             <property name="bottom_attach">4</property>
+                            <property name="y_options">GTK_FILL</property>
                           </packing>
                         </child>
                       </object>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
                     <property name="position">1</property>
                   </packing>
                 </child>

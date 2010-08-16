@@ -410,7 +410,7 @@ class B2Item(Item):
             'max_hp_label', 'max_hp',
             'unknownflag', 'unknownflag_label',
             'itemunknownc1', 'itemunknownc1_label',
-            'book2_item_picid_note'
+            'b2_item_picid_notealign'
             ]
 
     def __init__(self, zero=False):

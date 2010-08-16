@@ -7,6 +7,22 @@ the decryption function (and unroll it), which results in about a
 
 Note, therefore, that practically all of this file is an exact
 copy of the stock Python zipfile.py, and not my own.
+
+The original Lib/zipfile.py contained no copyright information of
+its own; the main Python copyright information is:
+
+    Copyright (c) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
+    Python Software Foundation.
+    All rights reserved.
+
+    Copyright (c) 2000 BeOpen.com.
+    All rights reserved.
+
+    Copyright (c) 1995-2001 Corporation for National Research Initiatives.
+    All rights reserved.
+
+    Copyright (c) 1991-1995 Stichting Mathematisch Centrum.
+    All rights reserved.
 """
 import struct, os, time, sys, shutil
 import binascii, cStringIO, stat
