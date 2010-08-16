@@ -37,8 +37,7 @@ Map GUI
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
  * Should see about window sizes on windows
- * Make sure that entity graphic changes when we change type (tried
-   town guard in 35.map, didn't change until I also changed direction)
+ * If a "Save As" is attempted without a manual ".map", add it anyway
 
 Internal
 --------

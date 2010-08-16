@@ -4,6 +4,8 @@
    Bypass a potential click-and-drag performance issue on
       slow machines
    Improvements to map rendering speed
+   Friendly entities in Book 1 get highlighted in green even
+      on "global" map files
 
    11 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Fixed a bug where a missing numpy could crash the app

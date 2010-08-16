@@ -1179,13 +1179,24 @@ class MapGUI(BaseGUI):
         idx = widget.get_active()
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
-        self.map.squares[self.sq_y][self.sq_x].entity.entid = entid
+        entity = self.map.squares[self.sq_y][self.sq_x].entity
+        entity.entid = entid
         if (entid in c.entitytable):
-            health = c.entitytable[entid].health
-            button = self.get_widget('healthmaxbutton')
-            button.set_label('Set to Max Health (%d)' % (health))
-            self.get_widget('health').set_value(health)
-            self.get_widget('movement').set_value(c.entitytable[entid].movement)
+            if entity.savegame:
+                if c.book == 2:
+                    # Entscript is present in non-savegame files, but the "global" script
+                    # that we know about (from the CSV) appears to be filled in by the
+                    # game engine after loading the main map.  The entscripts found in
+                    # the global map files are "special" ones like keys that only certain
+                    # monsters drop, etc.
+                    self.get_widget('entscript').set_text(c.entitytable[entid].entscript)
+                health = c.entitytable[entid].health
+                button = self.get_widget('healthmaxbutton')
+                button.set_label('Set to Max Health (%d)' % (health))
+                self.get_widget('health').set_value(health)
+                self.get_widget('movement').set_value(c.entitytable[entid].movement)
+                self.get_widget('friendly').set_value(c.entitytable[entid].friendly)
+            self.update_ent_square_img()
 
     def on_ent_status_changed(self, widget):
         """ What to do when an entity status value changes. """
@@ -1194,8 +1205,6 @@ class MapGUI(BaseGUI):
         idx = int(idx)
         ent = self.map.squares[self.sq_y][self.sq_x].entity
         ent.statuses[idx] = int(widget.get_value())
-
-        self.update_ent_square_img()
 
     def on_direction_changed(self, widget):
         """ Special case for changing the entity direction. """
@@ -2145,6 +2154,9 @@ class MapGUI(BaseGUI):
             square.addentity(ent)
             self.populate_entity_tab(square)
             self.set_entity_toggle_button(False)
+            # Also trigger on_entid_changed, to prepopulate
+            # what information we can.
+            self.on_entid_changed(self.get_widget('entid'))
         else:
             # Remove the existing entity
             self.map.delentity(self.sq_x, self.sq_y)
@@ -2989,7 +3001,7 @@ class MapGUI(BaseGUI):
             pointer = (1, 1, 1, 0.5)
 
         if (square.entity is not None):
-            if self.req_book == 1 or self.map.is_savegame():
+            if self.map.is_savegame():
                 if (square.entity.friendly == 1):
                     entity = (0, 1, 0, 0.5)
                 else:
