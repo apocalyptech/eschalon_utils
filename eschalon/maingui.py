@@ -143,7 +143,10 @@ class MainGUI(BaseGUI):
         self.prefs_init(self.prefs)
         self.optional_gfx()
         if self.gamedir_set():
-            self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
+            try:
+                self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
+            except:
+                self.gfx = None
         else:
             self.gfx = None
         self.assert_gfx_buttons()
@@ -200,7 +203,7 @@ class MainGUI(BaseGUI):
         Small routine to ensure that we're drawing the right stuff
         depending on if we can read our graphics file or not.
         """
-        if (self.gamedir_set()):
+        if (self.gamedir_set() and self.gfx is not None):
             self.get_widget('picid_button').show()
             self.get_widget('itemgui_picid_button').show()
         else:

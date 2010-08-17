@@ -1,5 +1,11 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.7.1 (17 Aug 2010)
+
+   17 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Fixed a bug where the Book 2 Character editor was
+      requiring graphics to run
+
 *eschalon_utils-0.7.0 (16 Aug 2010)
 
    16 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
