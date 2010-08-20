@@ -564,8 +564,8 @@ class B2Map(Map):
         self.map_unknownstr1 = ''
         self.map_unknownstr2 = ''
         self.soundfile4 = ''
-        self.map_unknownc1 = 0
-        self.map_unknownc2 = 0
+        self.map_unknownc1 = 1
+        self.map_unknownc2 = 1
         self.random_entity_1 = 0
         self.random_entity_2 = 0
         self.map_unknowni2 = 0

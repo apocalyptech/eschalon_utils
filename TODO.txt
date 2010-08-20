@@ -35,6 +35,7 @@ Map GUI
  * Erasing should re-smart-draw stuff around it, perhaps?
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
+ * Script ID 6 (map link) does NOT work like it does in B1!
 
 Internal
 --------
