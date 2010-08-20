@@ -62,6 +62,22 @@ platform, so I'm not sure what needs to be done to package it up and get it
 running.  If you're familiar with those kinds of things, let me know and
 I'll get going on it.
 
+DISTRIBUTING CONTENT
+--------------------
+
+If you end up creating new maps for Eschalon, please do the right thing
+and respect Basilisk Games' wishes in regards to custom content:
+
+    1. You cannot sell what you make; it must be free.
+
+    2. If you put your content up for download anywhere other
+       than the official Basilisk Games forums, you need to have a
+       link that jumps back to the Book I page at
+           http://basiliskgames.com/eschalon-book-i
+
+Presumably, a link to the Book II page would be appropriate if you're
+distributing a Book II map.
+
 INSTALLATION, GENERAL
 ---------------------
 
