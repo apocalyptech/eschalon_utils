@@ -5,6 +5,8 @@
    20 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    "New" menu item for creating new Maps
    Map GUI will now prompt for a new map before Open
+   Fixed a bug which could have overwritten entity health
+      values when populating the Entity tab
 
 *eschalon_utils-0.7.2 (20 Aug 2010)
 

@@ -332,6 +332,7 @@ class MapGUI(BaseGUI):
         self.blanksquare = None
         self.basicsquare = None
         self.updating_map_checkboxes = False
+        self.populating_entity_tab = False
 
         # Blank pixbuf to use in the square editing window
         self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.square_width, self.gfx.square_height*5)
@@ -1275,7 +1276,13 @@ class MapGUI(BaseGUI):
         entity = self.map.squares[self.sq_y][self.sq_x].entity
         entity.entid = entid
         if (entid in c.entitytable):
-            if entity.savegame:
+            # We set the button out here in case we were editing a Global map and
+            # then load a savegame, and edit a tile which has an entity that we
+            # already had selected.
+            button = self.get_widget('healthmaxbutton')
+            health = c.entitytable[entid].health
+            button.set_label('Set to Max Health (%d)' % (health))
+            if not self.populating_entity_tab and entity.savegame:
                 if c.book == 2:
                     # Entscript is present in non-savegame files, but the "global" script
                     # that we know about (from the CSV) appears to be filled in by the
@@ -1283,9 +1290,6 @@ class MapGUI(BaseGUI):
                     # the global map files are "special" ones like keys that only certain
                     # monsters drop, etc.
                     self.get_widget('entscript').set_text(c.entitytable[entid].entscript)
-                health = c.entitytable[entid].health
-                button = self.get_widget('healthmaxbutton')
-                button.set_label('Set to Max Health (%d)' % (health))
                 self.get_widget('health').set_value(health)
                 self.get_widget('movement').set_value(c.entitytable[entid].movement)
                 self.get_widget('friendly').set_value(c.entitytable[entid].friendly)
@@ -2359,6 +2363,7 @@ class MapGUI(BaseGUI):
 
     def populate_entity_tab(self, square):
         """ Populates the entity tab of the square editing screen. """
+        self.populating_entity_tab = True
         if (square.entity.entid in c.entitytable):
             if (c.entitytable[square.entity.entid].name in self.entitykeys):
                 idx = self.entitykeys.index(c.entitytable[square.entity.entid].name)
@@ -2373,6 +2378,7 @@ class MapGUI(BaseGUI):
                     'type that we don\'t know anything about.  The values on the entity '
                     'tab may not be accurate', self.squarewindow)
             self.get_widget('entid').set_active(0)
+        self.populating_entity_tab = False
         self.get_widget('direction').set_active(square.entity.direction-1)
         self.get_widget('entscript').set_text(square.entity.entscript)
         if (self.map.is_savegame()):
