@@ -5126,7 +5126,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
   </object>
   <object class="GtkDialog" id="map_new_type_dialog">
     <property name="width_request">340</property>
-    <property name="height_request">180</property>
+    <property name="height_request">160</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Select New Map Type</property>
     <property name="modal">True</property>
@@ -5143,10 +5143,15 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
           <object class="GtkVBox" id="vbox17">
             <property name="visible">True</property>
             <child>
-              <object class="GtkLabel" id="label28">
+              <object class="GtkAlignment" id="alignment64">
                 <property name="visible">True</property>
-                <property name="ypad">20</property>
-                <property name="label" translatable="yes">Select the type of map you want to create:</property>
+                <property name="top_padding">20</property>
+                <child>
+                  <object class="GtkLabel" id="label28">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Select the type of map you want to create:</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -5154,10 +5159,29 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
               </packing>
             </child>
             <child>
+              <object class="GtkAlignment" id="map_new_type_initial_align">
+                <property name="top_padding">5</property>
+                <child>
+                  <object class="GtkLabel" id="map_new_type_initial_label">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;i&gt;(Hit "Cancel" or Escape to
+Load a map instead)&lt;/i&gt;</property>
+                    <property name="use_markup">True</property>
+                    <property name="justify">center</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkAlignment" id="alignment62">
                 <property name="visible">True</property>
                 <property name="xscale">0</property>
-                <property name="bottom_padding">20</property>
+                <property name="top_padding">10</property>
+                <property name="bottom_padding">10</property>
                 <property name="left_padding">30</property>
                 <property name="right_padding">30</property>
                 <child>
@@ -5196,7 +5220,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

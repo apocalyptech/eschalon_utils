@@ -295,10 +295,16 @@ class MapGUI(BaseGUI):
         self.statusbar = self.get_widget('mainstatusbar')
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
 
-        # If we were given a filename, load it.  If not, display the load dialog
+        # If we were given a filename, load it.  If not, create a new map,
+        # or load one if the user wants.
         if (self.options['filename'] == None):
-            if (not self.on_load()):
-                return
+            self.get_widget('map_new_type_initial_align').show()
+            self.get_widget('map_new_type_dialog').resize(340, 190)
+            if not self.on_new():
+                if not self.on_load():
+                    return
+            self.get_widget('map_new_type_initial_align').hide()
+            self.get_widget('map_new_type_dialog').resize(340, 160)
         else:
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
@@ -868,9 +874,12 @@ class MapGUI(BaseGUI):
         """
         Constructs a new map from scratch
         """
-        resp = self.confirmdialog('Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
-        if resp != gtk.RESPONSE_YES:
-            return
+
+        # Confirm if we already have a map
+        if self.map is not None:
+            resp = self.confirmdialog('Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
+            if resp != gtk.RESPONSE_YES:
+                return False
 
         # Figure out what type of map to create
         dialog = self.get_widget('map_new_type_dialog')
@@ -882,8 +891,8 @@ class MapGUI(BaseGUI):
             savegame_radio.set_active(True)
         resp = dialog.run()
         dialog.hide()
-        if resp == gtk.RESPONSE_CANCEL:
-            return
+        if resp != gtk.RESPONSE_OK:
+            return False
 
         # Now create a new map and blank our our "Save" menu item
         # TODO: Some code duplication here from load_from_file()
@@ -896,7 +905,7 @@ class MapGUI(BaseGUI):
         self.update_undo_gui()
         self.smartdraw.set_map(self.map)
         self.smartdraw.set_gui(self)
-        if (self.mapinit):
+        if self.mapinit:
             self.draw_map()
             self.update_wall_selection_image()
         self.get_widget('map_menu_item_save').set_sensitive(False)
