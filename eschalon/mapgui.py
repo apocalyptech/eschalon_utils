@@ -437,6 +437,7 @@ class MapGUI(BaseGUI):
         """ What to do when we're told to revert. """
         self.load_from_file(self.map.df.filename)
         self.get_widget('map_menu_item_save').set_sensitive(True)
+        self.update_main_map_name()
 
     def on_save(self, widget=None):
         """ Save map to disk. """
@@ -446,6 +447,7 @@ class MapGUI(BaseGUI):
             self.map.write()
             self.putstatus('Saved ' + self.map.df.filename)
             self.get_widget('map_menu_item_save').set_sensitive(True)
+            self.update_main_map_name()
 
     def on_save_as(self, widget=None):
         """ Show the save-as dialog. """
@@ -514,6 +516,7 @@ class MapGUI(BaseGUI):
                 self.get_widget('saveaswindow').run()
                 self.get_widget('saveaswindow').hide()
                 self.get_widget('map_menu_item_save').set_sensitive(True)
+                self.update_main_map_name()
             else:
                 loop = False
 
@@ -871,6 +874,45 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
 
+    def update_main_map_name(self):
+        """
+        Updates the text area above the map with the current map name.
+        """
+        if (c.book == 1 and
+                self.map.df.filename != '' and
+                os.path.basename(self.map.df.filename)[:-4] != self.map.mapid):
+            self.mapname_mainscreen_label.set_markup('%s <span color="red">(Map ID Mismatch)</span>' %
+                    (self.map.mapname))
+            self.mapname_mainscreen_label.set_tooltip_text('This map is saved to a file named "%s" '
+                    'but the Map ID is set to "%s" - this will cause problems with saving the map '
+                    'state, inside Eschalon.  You should change this value in "Map Properties."' %
+                    (os.path.basename(self.map.df.filename), self.map.mapid))
+        else:
+            self.mapname_mainscreen_label.set_text(self.map.mapname)
+            self.mapname_mainscreen_label.set_has_tooltip(False)
+
+    def setup_new_map(self):
+        """
+        Sets various GUI elements which need setting, once we have a "new"
+        map object.  This is called currently from on_new() and load_from_file()
+        """
+
+        # Update the map title
+        self.update_main_map_name()
+
+        # Instansiate our "undo" object so we can handle that
+        self.undo = Undo(self.map)
+        self.update_undo_gui()
+
+        # Load the new map into our SmartDraw object
+        self.smartdraw.set_map(self.map)
+        self.smartdraw.set_gui(self)
+
+        # Load information from the character
+        if (self.mapinit):
+            self.draw_map()
+            self.update_wall_selection_image()
+
     def on_new(self, widget=None):
         """
         Constructs a new map from scratch
@@ -901,14 +943,7 @@ class MapGUI(BaseGUI):
         self.map.set_savegame(savegame_radio.get_active())
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
-        self.mapname_mainscreen_label.set_text(self.map.mapname)
-        self.undo = Undo(self.map)
-        self.update_undo_gui()
-        self.smartdraw.set_map(self.map)
-        self.smartdraw.set_gui(self)
-        if self.mapinit:
-            self.draw_map()
-            self.update_wall_selection_image()
+        self.setup_new_map()
         self.get_widget('map_menu_item_save').set_sensitive(False)
 
         # Return
@@ -966,6 +1001,7 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
         self.get_widget('map_menu_item_save').set_sensitive(True)
+        self.update_main_map_name()
         #self.mainbook.set_sensitive(True)
 
         return True
@@ -990,21 +1026,8 @@ class MapGUI(BaseGUI):
         # Update our status bar
         self.putstatus('Editing ' + self.map.df.filename)
 
-        # Update the map title
-        self.mapname_mainscreen_label.set_text(self.map.mapname)
-
-        # Instansiate our "undo" object so we can handle that
-        self.undo = Undo(self.map)
-        self.update_undo_gui()
-
-        # Load the new map into our SmartDraw object
-        self.smartdraw.set_map(self.map)
-        self.smartdraw.set_gui(self)
-
-        # Load information from the character
-        if (self.mapinit):
-            self.draw_map()
-            self.update_wall_selection_image()
+        # Set up our other GUI elements
+        self.setup_new_map()
 
         # If we appear to be editing a global map file and haven't
         # been told otherwise, show a dialog warning the user
@@ -1187,7 +1210,7 @@ class MapGUI(BaseGUI):
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
-        self.mapname_mainscreen_label.set_text(self.map.mapname)
+        self.update_main_map_name()
         self.propswindow.hide()
         if (c.book == 2 and self.cur_tree_set != self.map.tree_set):
             self.draw_map()

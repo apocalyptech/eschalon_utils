@@ -83,6 +83,18 @@ class Map(object):
         self.df = df
         self.set_df_ent()
 
+    def set_savegame(self, savegame):
+        """
+        Sets the savegame flags as-requested.
+        """
+        for row in self.squares:
+            for square in row:
+                square.savegame = savegame
+        for entity in self.entities:
+            entity.savegame = savegame
+        for script in self.scripts:
+            script.savegame = savegame
+
     def check_map_extension(self):
         """
         Force the map to have a .map extension.  Note that our "Save As" logic
@@ -511,6 +523,7 @@ class B1Map(Map):
         # and the non-Steam versions.  For now I'm just setting it to the values that I know
         # work on my PC - I'm really not sure how we'd go about figuring out if the installed
         # version is Steam or not.
+        super(B1Map, self).set_savegame(savegame)
         if savegame:
             self.savegame_1 = 666
             self.savegame_2 = 666
@@ -723,6 +736,7 @@ class B2Map(Map):
         """
         Sets the state of our "savegame" vars.
         """
+        super(B2Map, self).set_savegame(savegame)
         if savegame:
             self.map_unknownc5 = 1
         else:
