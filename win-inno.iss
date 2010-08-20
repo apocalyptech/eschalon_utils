@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0FCD12BE-F238-438E-BBC4-77FEEEE05DC3}
 AppName=Eschalon Utilities
-AppVerName=Eschalon Utilities 0.7.2
+AppVerName=Eschalon Utilities 0.7.3
 AppPublisher=CJ Kucera
 AppPublisherURL=http://apocalyptech.com/eschalon/
 AppSupportURL=http://apocalyptech.com/eschalon/
@@ -17,7 +17,7 @@ DefaultGroupName=Eschalon Utilities
 AllowNoIcons=yes
 LicenseFile=C:\InstPrograms\eschalon_utils\COPYING.txt
 InfoBeforeFile=C:\InstPrograms\eschalon_utils\README.txt
-OutputBaseFilename=eschalon_utils_0_7_2_setup
+OutputBaseFilename=eschalon_utils_0_7_3_setup
 Compression=lzma
 SolidCompression=yes
 
@@ -25,8 +25,6 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-;Source: "C:\InstPrograms\eschalon\dist\eschalon_b1_char.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "C:\InstPrograms\eschalon\dist\eschalon_b1_map.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\InstPrograms\eschalon_utils\dist\*"; DestDir: {app}; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
