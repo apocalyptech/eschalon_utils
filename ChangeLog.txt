@@ -1,5 +1,11 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.7.2 (20 Aug 2010)
+
+   20 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   "Map ID" is now editable on Book 1 Maps, which is needed
+      to create new maps properly.
+
 *eschalon_utils-0.7.1 (17 Aug 2010)
 
    17 Aug 2010; CJ Kucera <pez@apocalyptech.com> :

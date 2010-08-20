@@ -2947,8 +2947,6 @@ another direction, Eschalon will crash.</property>
                       <packing>
                         <property name="left_attach">1</property>
                         <property name="right_attach">2</property>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -2972,17 +2970,6 @@ another direction, Eschalon will crash.</property>
                         <property name="bottom_attach">3</property>
                         <property name="x_options">GTK_FILL</property>
                         <property name="y_options">GTK_FILL</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="mapid">
-                        <property name="visible">True</property>
-                        <property name="xalign">0</property>
-                        <property name="label" translatable="yes">ID</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -3058,8 +3045,6 @@ another direction, Eschalon will crash.</property>
                         <property name="label" translatable="yes">Map Source:</property>
                       </object>
                       <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
                         <property name="x_options">GTK_FILL</property>
                       </packing>
                     </child>
@@ -3071,6 +3056,8 @@ another direction, Eschalon will crash.</property>
                         <property name="label" translatable="yes">Map ID:</property>
                       </object>
                       <packing>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
                         <property name="x_options">GTK_FILL</property>
                       </packing>
                     </child>
@@ -3386,6 +3373,30 @@ another direction, Eschalon will crash.</property>
                         <property name="right_attach">2</property>
                         <property name="top_attach">10</property>
                         <property name="bottom_attach">11</property>
+                        <property name="x_options">GTK_FILL</property>
+                        <property name="y_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment61">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0</property>
+                        <child>
+                          <object class="GtkEntry" id="mapid">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_markup">This should &lt;b&gt;always&lt;/b&gt; match the filename, without the ".map" extension.  Otherwise, the map state will not be saved properly in savegames.</property>
+                            <property name="invisible_char">&#x25CF;</property>
+                            <signal name="changed" handler="on_singleval_map_changed_str"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">1</property>
+                        <property name="bottom_attach">2</property>
                         <property name="x_options">GTK_FILL</property>
                         <property name="y_options">GTK_FILL</property>
                       </packing>
