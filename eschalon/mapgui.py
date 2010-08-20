@@ -2291,7 +2291,7 @@ class MapGUI(BaseGUI):
         text_2 = self.get_widget('extratext_%d_label' % page)
         obj_1 = self.get_widget('description_%d' % page)
         obj_2 = self.get_widget('extratext_%d' % page)
-        if (scriptid == 6):
+        if (c.book == 1 and scriptid == 6):
             text_1.set_text('Map Link')
             text_2.set_text('Map Coordinates')
             obj_1.set_tooltip_text('Name of the map to send the player to.')
