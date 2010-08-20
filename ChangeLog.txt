@@ -7,6 +7,8 @@
    Map GUI will now prompt for a new map before Open
    Fixed a bug which could have overwritten entity health
       values when populating the Entity tab
+   Map links are just scripts in Book 2, not special values
+      like they were in Book 1 (fixed the labelling)
 
 *eschalon_utils-0.7.2 (20 Aug 2010)
 
