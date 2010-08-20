@@ -429,11 +429,16 @@ class MapGUI(BaseGUI):
     def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
         self.load_from_file(self.map.df.filename)
+        self.get_widget('map_menu_item_save').set_sensitive(True)
 
     def on_save(self, widget=None):
         """ Save map to disk. """
-        self.map.write()
-        self.putstatus('Saved ' + self.map.df.filename)
+        if self.map.df.filename != '':
+            # Safeguard in case this gets called after an "on_new" and we haven't
+            # set a filename yet
+            self.map.write()
+            self.putstatus('Saved ' + self.map.df.filename)
+            self.get_widget('map_menu_item_save').set_sensitive(True)
 
     def on_save_as(self, widget=None):
         """ Show the save-as dialog. """
@@ -447,7 +452,7 @@ class MapGUI(BaseGUI):
         dialog.set_transient_for(self.window)
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
-        if (self.map != None):
+        if (self.map != None and self.map.df.filename != ''):
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
@@ -479,12 +484,29 @@ class MapGUI(BaseGUI):
                 else:
                     new_filename = dialog.get_filename()
 
+                # At this point we're committed to the save
                 loop = False
+
+                # If we're book 1, make sure that our Map ID is set properly
+                if c.book == 1:
+                    base_map_name = os.path.basename(new_filename)[:-4]
+                    if base_map_name != self.map.mapid:
+                        resp = self.confirmdialog('Update Map ID Field?', 'You are saving this map '
+                                'to the file "%s", but the Map ID field <i>(available in the Map Properties '
+                                'screen)</i> is set to "%s".  In order for your maps to save properly in '
+                                'the game engine, they should be the same.  Do you want to update the Map '
+                                'ID to match the filename?' % (base_map_name, self.map.mapid),
+                                dialog)
+                        if resp == gtk.RESPONSE_YES:
+                            self.map.mapid = base_map_name
+
+                # And now do the actual save
                 self.map.df.filename = new_filename
                 self.on_save()
                 self.putstatus('Saved as %s' % (self.map.df.filename))
                 self.get_widget('saveaswindow').run()
                 self.get_widget('saveaswindow').hide()
+                self.get_widget('map_menu_item_save').set_sensitive(True)
             else:
                 loop = False
 
@@ -725,6 +747,7 @@ class MapGUI(BaseGUI):
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
+                'on_new': self.on_new,
                 'on_load': self.on_load,
                 'on_revert': self.on_revert,
                 'on_about': self.on_about,
@@ -841,6 +864,46 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
 
+    def on_new(self, widget=None):
+        """
+        Constructs a new map from scratch
+        """
+        resp = self.confirmdialog('Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
+        if resp != gtk.RESPONSE_YES:
+            return
+
+        # Figure out what type of map to create
+        dialog = self.get_widget('map_new_type_dialog')
+        global_radio = self.get_widget('map_new_type_global')
+        savegame_radio = self.get_widget('map_new_type_savegame')
+        if c.book == 1:
+            global_radio.set_active(True)
+        else:
+            savegame_radio.set_active(True)
+        resp = dialog.run()
+        dialog.hide()
+        if resp == gtk.RESPONSE_CANCEL:
+            return
+
+        # Now create a new map and blank our our "Save" menu item
+        # TODO: Some code duplication here from load_from_file()
+        self.map = Map.load('', self.req_book, self.req_book)
+        self.map.set_savegame(savegame_radio.get_active())
+        self.putstatus('Editing a new map')
+        self.map.mapname = 'New Map'
+        self.mapname_mainscreen_label.set_text(self.map.mapname)
+        self.undo = Undo(self.map)
+        self.update_undo_gui()
+        self.smartdraw.set_map(self.map)
+        self.smartdraw.set_gui(self)
+        if (self.mapinit):
+            self.draw_map()
+            self.update_wall_selection_image()
+        self.get_widget('map_menu_item_save').set_sensitive(False)
+
+        # Return
+        return True
+
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
         
@@ -892,6 +955,7 @@ class MapGUI(BaseGUI):
 
         # Clean up
         dialog.destroy()
+        self.get_widget('map_menu_item_save').set_sensitive(True)
         #self.mainbook.set_sensitive(True)
 
         return True
@@ -942,6 +1006,9 @@ class MapGUI(BaseGUI):
             if (self.globalwarn_check.get_active() != warn):
                 self.prefs.set_bool('mapgui', 'warn_global_map', self.globalwarn_check.get_active())
                 self.prefs.save()
+
+        # Make sure our Save menu item is active
+        self.get_widget('map_menu_item_save').set_sensitive(True)
 
         # Return success
         return True

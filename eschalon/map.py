@@ -48,26 +48,25 @@ class Map(object):
         self.df = None
         self.df_ent = None
         self.filename_ent = ''
-        self.mapid = ''
         self.mapname = ''
         self.soundfile1 = ''
         self.soundfile2 = ''
         self.skybox = ''
         self.soundfile3 = ''
-        self.map_unknowni1 = -1
+        self.map_unknowni1 = 0
 
         # Not entirely sure about the alpha channel, which
         # is always zero, but it seems to make sense
-        self.color_r = -1
-        self.color_g = -1
-        self.color_b = -1
-        self.color_a = -1
+        self.color_r = 255
+        self.color_g = 255
+        self.color_b = 255
+        self.color_a = 0
 
         self.extradata = ''
 
         # Note that book 1 doesn't actually have this, but for sanity's
         # sake we're putting it in the base class
-        self.tree_set = -1
+        self.tree_set = 0
 
         self.cursqcol = 0
         self.cursqrow = 0
@@ -93,7 +92,10 @@ class Map(object):
             self.df.filename = '%s.map' % (self.df.filename)
 
     def set_df_ent(self):
-        self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
+        try:
+            self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
+        except ValueError:
+            self.df_ent = Savefile('')
 
     def replicate(self):
         
@@ -346,18 +348,18 @@ class B1Map(Map):
     def __init__(self, df):
 
         # Book 1-specific vars
-        self.mapid = -1
+        self.mapid = ''
         self.exit_north = ''
         self.exit_east = ''
         self.exit_south = ''
         self.exit_west = ''
-        self.parallax_1 = -1
-        self.parallax_2 = -1
-        self.clouds = -1
-        self.savegame_1 = -1
-        self.savegame_2 = -1
-        self.savegame_3 = -1
-        self.map_unknownh1 = -1
+        self.parallax_1 = 0
+        self.parallax_2 = 0
+        self.clouds = 0
+        self.savegame_1 = 0
+        self.savegame_2 = 0
+        self.savegame_3 = 0
+        self.map_unknownh1 = 0
 
         # Base class attributes
         super(B1Map, self).__init__(df)
@@ -501,6 +503,23 @@ class B1Map(Map):
         # Savegames are... evil?  I guess?
         #return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
 
+    def set_savegame(self, savegame):
+        """
+        Sets the state of our "savegame" vars.
+        """
+        # Note the comments in is_savegame() about the differences between the Steam version
+        # and the non-Steam versions.  For now I'm just setting it to the values that I know
+        # work on my PC - I'm really not sure how we'd go about figuring out if the installed
+        # version is Steam or not.
+        if savegame:
+            self.savegame_1 = 666
+            self.savegame_2 = 666
+            self.savegame_3 = 666
+        else:
+            self.savegame_1 = 0
+            self.savegame_2 = 0
+            self.savegame_3 = 0
+
     def _sub_replicate(self, newmap):
         """
         Replicate b1-specific vars
@@ -532,17 +551,17 @@ class B2Map(Map):
         self.map_unknownstr1 = ''
         self.map_unknownstr2 = ''
         self.soundfile4 = ''
-        self.map_unknownc1 = -1
-        self.map_unknownc2 = -1
-        self.random_entity_1 = -1
-        self.random_entity_2 = -1
-        self.map_unknowni2 = -1
-        self.map_flags = -1
-        self.map_unknowni4 = -1
-        self.map_unknownc5 = -1
-        self.map_unknownc6 = -1
-        self.map_unknownc7 = -1
-        self.map_unknownc8 = -1
+        self.map_unknownc1 = 0
+        self.map_unknownc2 = 0
+        self.random_entity_1 = 0
+        self.random_entity_2 = 0
+        self.map_unknowni2 = 0
+        self.map_flags = 0
+        self.map_unknowni4 = 0
+        self.map_unknownc5 = 0
+        self.map_unknownc6 = 0
+        self.map_unknownc7 = 0
+        self.map_unknownc8 = 0
         self.map_unknownstr4 = ''
         self.map_unknownstr5 = ''
         self.map_unknownstr6 = ''
@@ -699,6 +718,17 @@ class B2Map(Map):
     def is_savegame(self):
         return not self.is_global()
         #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
+
+    def set_savegame(self, savegame):
+        """
+        Sets the state of our "savegame" vars.
+        """
+        if savegame:
+            self.map_unknownc5 = 1
+        else:
+            self.map_unknownc5 = 0
+            self.map_unknownc6 = 0
+            self.map_unknownc7 = 0
 
     def _sub_replicate(self, newmap):
         """

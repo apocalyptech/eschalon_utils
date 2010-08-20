@@ -30,12 +30,12 @@ class Square(object):
         self.x = x
         self.y = y
 
-        self.wall = -1
-        self.floorimg = -1
-        self.decalimg = -1
-        self.wallimg = -1
-        self.walldecalimg = -1
-        self.scriptid = -1
+        self.wall = 0
+        self.floorimg = 0
+        self.decalimg = 0
+        self.wallimg = 0
+        self.walldecalimg = 0
+        self.scriptid = 0
 
         self.scripts = []
         self.entity = None
@@ -216,7 +216,7 @@ class B1Square(Square):
         super(B1Square, self).__init__(x, y)
 
         # Book 1 specific vars
-        self.unknown5 = -1
+        self.unknown5 = 0
         # This var is *probably* actually part of the wall ID, like in book 2
 
     def read(self, df):
@@ -270,7 +270,7 @@ class B2Square(Square):
         super(B2Square, self).__init__(x, y)
 
         # Book 2 specific vars
-        self.unknown_sq_i1 = -1
+        self.unknown_sq_i1 = 0
 
     def read(self, df):
         """ Given a file descriptor, read in the square. """
