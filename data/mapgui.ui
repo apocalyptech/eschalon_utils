@@ -3760,7 +3760,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Soundfile 3:</property>
+                        <property name="label" translatable="yes">Atmosphere:</property>
                       </object>
                       <packing>
                         <property name="top_attach">2</property>
@@ -3773,7 +3773,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Soundfile 2:</property>
+                        <property name="label" translatable="yes">Music (night):</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -3786,7 +3786,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Soundfile 1:</property>
+                        <property name="label" translatable="yes">Music (day):</property>
                       </object>
                       <packing>
                         <property name="x_options">GTK_FILL</property>
@@ -3797,7 +3797,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Soundfile 4:</property>
+                        <property name="label" translatable="yes">Atmosphere (night):</property>
                       </object>
                       <packing>
                         <property name="top_attach">3</property>
