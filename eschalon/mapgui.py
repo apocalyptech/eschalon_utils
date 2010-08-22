@@ -611,6 +611,9 @@ class MapGUI(BaseGUI):
             self.prop_unknown_input_text(table, 5, 17, 'Always empty')
             self.prop_unknown_input_text(table, 6, 18, 'Always empty')
 
+            # Update soundfile label for book 2
+            self.get_widget('soundfile3_label').set_text('Atmosphere (day)')
+
         # Populate our wall type dropdown
         store = self.get_widget('walltype_store')
         store.append(['None', 0])
