@@ -315,8 +315,9 @@ class MainGUI(BaseGUI):
             self.char.df.filename = dialog.get_filename()
             self.save_char()
             self.putstatus('Saved as %s' % (self.char.df.filename))
-            self.get_widget('saveaswindow').run()
-            self.get_widget('saveaswindow').hide()
+            self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
+                    'character will be saved to the new filename, not the original '
+                    'filename.', self.window)
 
         # Clean up
         dialog.destroy()
