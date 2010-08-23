@@ -587,6 +587,9 @@ class MapGUI(BaseGUI):
         self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
 
+        # Not sure why this doesn't work properly just from Glade
+        self.get_widget('soundfile1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+
         # Unknown map properties
         if c.book == 2:
             table = self.get_widget('map_prop_unknown_table')
@@ -613,6 +616,7 @@ class MapGUI(BaseGUI):
 
             # Update soundfile label for book 2
             self.get_widget('soundfile3_label').set_text('Atmosphere (day)')
+            self.get_widget('soundfile3_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
         store = self.get_widget('walltype_store')
@@ -941,13 +945,20 @@ class MapGUI(BaseGUI):
             return False
 
         # Now create a new map and blank our our "Save" menu item
-        # TODO: Some code duplication here from load_from_file()
         self.map = Map.load('', self.req_book, self.req_book)
         self.map.set_savegame(savegame_radio.get_active())
+        self.get_widget('map_menu_item_save').set_sensitive(False)
+        
+        # A few values need to be set to avoid crashes
+        if c.book == 1:
+            self.map.soundfile1 = 'overland_1.ogg'
+            self.map.soundfile3 = 'atmos_birds.wav'
+        else:
+            self.map.soundfile1 = 'eb2_overland1.ogg'
+            self.map.soundfile3 = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
         self.setup_new_map()
-        self.get_widget('map_menu_item_save').set_sensitive(False)
 
         # Return
         return True

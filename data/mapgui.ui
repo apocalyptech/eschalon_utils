@@ -3627,6 +3627,7 @@ another direction, Eschalon will crash.</property>
                         <child>
                           <object class="GtkComboBoxEntry" id="soundfile1_combo">
                             <property name="visible">True</property>
+                            <property name="tooltip_markup">Note that having an empty value here will crash Eschalon</property>
                           </object>
                         </child>
                       </object>
@@ -3773,7 +3774,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Music (night):</property>
+                        <property name="label" translatable="yes">Music 2:</property>
                       </object>
                       <packing>
                         <property name="top_attach">1</property>
@@ -3786,7 +3787,7 @@ another direction, Eschalon will crash.</property>
                         <property name="visible">True</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Music (day):</property>
+                        <property name="label" translatable="yes">Music 1:</property>
                       </object>
                       <packing>
                         <property name="x_options">GTK_FILL</property>
