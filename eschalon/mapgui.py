@@ -1033,10 +1033,11 @@ class MapGUI(BaseGUI):
             map = Map.load(filename, None, self.req_book)
             map.read()
         except LoadException, e:
-            print e
-            errordiag = self.get_widget('loaderrorwindow')
-            errordiag.run()
-            errordiag.hide()
+            self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
+                    'be loaded.  Please choose a different file and try again.'
+                    "\n\n"
+                    'The actual error given was: <tt>%s</tt>' % (str(e)),
+                    self.window)
             return False
 
         # Basic vars
