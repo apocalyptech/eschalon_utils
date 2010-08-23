@@ -23,6 +23,7 @@ import os
 import csv
 import sys
 import time
+import random
 import traceback
 import cStringIO
 from eschalon import constants as c
@@ -30,7 +31,7 @@ from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item
 from eschalon.entity import B1Entity, B2Entity
-from eschalon.basegui import BaseGUI
+from eschalon.basegui import BaseGUI, WrapLabel
 
 # Load our GTK modules
 try:
@@ -181,6 +182,7 @@ class MapGUI(BaseGUI):
         self.menu_redo_label = self.menu_redo.get_children()[0]
         self.draw_floor_checkbox = self.get_widget('draw_floor_checkbox')
         self.draw_floor_spin = self.get_widget('draw_floor_spin')
+        self.fill_map_spin = self.get_widget('fill_map_spin')
         self.draw_decal_checkbox = self.get_widget('draw_decal_checkbox')
         self.draw_decal_spin = self.get_widget('draw_decal_spin')
         self.draw_wall_checkbox = self.get_widget('draw_wall_checkbox')
@@ -355,6 +357,7 @@ class MapGUI(BaseGUI):
         self.draw_decal_spin.set_value(1)
         self.draw_wall_spin.set_value(1)
         self.draw_walldecal_spin.set_value(1)
+        self.fill_map_spin.set_value(1)
 
         # Update our activity label
         self.update_activity_label()
@@ -737,6 +740,7 @@ class MapGUI(BaseGUI):
             self.get_widget('wallimg_image').set_size_request(64, 160)
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
             self.get_widget('ent_square_img').set_size_request(128, 128)
+            self.get_widget('fill_map_img').set_size_request(64, 32)
             self.propswindow.set_size_request(410, 760)
 
         # Create our entity status values box
@@ -779,6 +783,22 @@ class MapGUI(BaseGUI):
             # Don't forget to show everything
             container.show_all()
 
+        # Add a WrapLabel in the Fill dialog
+        adjust = self.get_widget('fill_map_text_adjust')
+        label = WrapLabel('Select a tile to fill over the entire map.  If you '
+                'check the <i>"Overwrite Existing Tiles"</i> checkbox, this will '
+                'overwrite every single tile on the map.  Without the checkbox, '
+                'any tiles with existing floor images will be left alone.  '
+                'If you have the necessary SmartDraw options enabled, this '
+                'will randomize the terrain somewhat, if possible.  Note '
+                'that this operation is <b>not</b> Undoable at the moment, and '
+                'will erase your Undo stack, so save your map first if you\'re '
+                'not sure.')
+        # set_alignment doesn't seem to work with our WrapLabel
+        #label.set_alignment(gtk.JUSTIFY_CENTER)
+        adjust.add(label)
+        adjust.show_all()
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_new': self.on_new,
@@ -790,6 +810,7 @@ class MapGUI(BaseGUI):
                 'on_export_clicked': self.on_export_clicked,
                 'on_undo': self.on_undo,
                 'on_redo': self.on_redo,
+                'on_fill': self.on_fill,
                 'on_clicked': self.on_clicked,
                 'on_released': self.on_released,
                 'on_control_toggle': self.on_control_toggle,
@@ -838,6 +859,8 @@ class MapGUI(BaseGUI):
                 'open_draw_walldecalsel': self.open_draw_walldecalsel,
                 'open_draw_objsel': self.open_draw_objsel,
                 'open_objsel': self.open_objsel,
+                'open_fill_floorsel': self.open_fill_floorsel,
+                'on_fill_floor_changed': self.on_fill_floor_changed,
                 'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
                 'objsel_on_motion': self.objsel_on_motion,
                 'objsel_on_expose': self.objsel_on_expose,
@@ -1173,6 +1196,47 @@ class MapGUI(BaseGUI):
             self.redraw_square(x, y)
         self.update_undo_gui()
 
+    def on_fill(self, widget=None):
+        """
+        What to do when the user selects "Fill" from the Edit menu (or wherever
+        that ends up living).  Should just open the dialog box and then process.
+        """
+        dialog = self.get_widget('fill_map_dialog')
+        resp = dialog.run()
+        dialog.hide()
+        if resp == gtk.RESPONSE_OK:
+            val = int(self.get_widget('fill_map_spin').get_value())
+            pool = []
+            if self.smartdraw_check.get_active() and self.smart_randomize.get_active():
+                pool = self.smartdraw.get_random_terrain_pool(val)
+            # Split these out to avoid doing more checks than needed
+            # inside the loop itself
+            if self.get_widget('fill_map_overwrite').get_active():
+                if len(pool) < 2:
+                    for row in self.map.squares:
+                        for square in row:
+                            square.floorimg = val
+                else:
+                    for row in self.map.squares:
+                        for square in row:
+                            square.floorimg = random.choice(pool)
+            else:
+                if len(pool) < 2:
+                    for row in self.map.squares:
+                        for square in row:
+                            if square.floorimg == 0:
+                                square.floorimg = val
+                else:
+                    for row in self.map.squares:
+                        for square in row:
+                            if square.floorimg == 0:
+                                square.floorimg = random.choice(pool)
+            self.draw_map()
+
+            # Clear out "Undo" - we're not hooking into this yet.
+            self.undo = Undo(self.map)
+            self.update_undo_gui()
+
     def populate_color_selection(self):
         img = self.get_widget('color_img')
         pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 30, 30)
@@ -1429,6 +1493,14 @@ class MapGUI(BaseGUI):
             self.get_widget('draw_floor_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_floor_img').set_from_pixbuf(pixbuf)
+
+    def on_fill_floor_changed(self, widget):
+        """ Update the appropriate image when necessary. """
+        pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
+        if (pixbuf is None):
+            self.get_widget('fill_map_img').set_from_stock(gtk.STOCK_EDIT, 2)
+        else:
+            self.get_widget('fill_map_img').set_from_pixbuf(pixbuf)
 
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
@@ -2506,6 +2578,12 @@ class MapGUI(BaseGUI):
     def open_draw_floorsel(self, widget):
         """ Show the floor selection window for our drawing widget. """
         self.imgsel_launch(self.draw_floor_spin,
+                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                self.gfx.get_floor, True, 1)
+
+    def open_fill_floorsel(self, widget):
+        """ Show the floor selection window for our "fill" widget. """
+        self.imgsel_launch(self.fill_map_spin,
                 self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 

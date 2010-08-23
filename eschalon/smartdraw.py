@@ -632,6 +632,17 @@ class SmartDraw(object):
             known[dir] = self.map.square_relative(square.x, square.y, dir)
         return known[dir]
 
+    def get_random_terrain_pool(self, floorimg):
+        """
+        Given a floor image, return the set of random tiles that we'll choose
+        from.  Will return a tuple of just the floorimg itself if we're not
+        in there.
+        """
+        for tileset in self.random_terrain:
+            if floorimg in tileset:
+                return tileset
+        return (floorimg,)
+
     def draw_floor(self, square, straight_path=True, recurse=True, known={}):
         """
         Given a square, figure out what kind of grass decals it should have,
@@ -674,10 +685,7 @@ class SmartDraw(object):
             # Also randomize the floor tile if we're supposed to (we only do
             # this to the tile actually being drawn, not any adjacent tiles)
             if (self.gui.smart_randomize.get_active()):
-                for tileset in self.random_terrain:
-                    if curfloor in tileset:
-                        square.floorimg = random.choice(tileset)
-                        break
+                square.floorimg = random.choice(self.get_random_terrain_pool(curfloor))
 
         # Figure out whether to try and fit grass decals or sand decals,
         # and which decal type to strip out
