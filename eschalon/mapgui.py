@@ -591,7 +591,11 @@ class MapGUI(BaseGUI):
         self.get_widget('soundfile1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Unknown map properties
-        if c.book == 2:
+        table = self.get_widget('map_prop_unknown_table')
+        if c.book == 1:
+            self.input_uchar(table, 3, 'map_b1_last_xpos', '<i>Last-seen X Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
+            self.input_uchar(table, 4, 'map_b1_last_ypos', '<i>Last-seen Y Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
+        else:
             table = self.get_widget('map_prop_unknown_table')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3, 'Always zero')
             self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Typically the last coordinates the user was seen in, though sometimes it\'s not.')
@@ -1194,7 +1198,6 @@ class MapGUI(BaseGUI):
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
-        self.get_widget('map_unknowni1').set_value(self.map.map_unknowni1)
         if c.book == 1:
             self.get_widget('mapid').set_text(self.map.mapid)
             self.get_widget('exit_north').set_text(self.map.exit_north)
@@ -1205,9 +1208,13 @@ class MapGUI(BaseGUI):
             self.get_widget('parallax_2').set_value(self.map.parallax_2)
             self.get_widget('map_unknownh1').set_value(self.map.map_unknownh1)
             self.get_widget('clouds').set_value(self.map.clouds)
+            self.get_widget('map_b1_last_xpos').set_value(self.map.map_b1_last_xpos)
+            self.get_widget('map_b1_last_ypos').set_value(self.map.map_b1_last_ypos)
+            self.get_widget('map_b1_outsideflag').set_value(self.map.map_b1_outsideflag)
         else:
             self.get_widget('openingscript').set_text(self.map.openingscript)
             self.get_widget('soundfile4').set_text(self.map.soundfile4)
+            self.get_widget('map_unknowni1').set_value(self.map.map_unknowni1)
             self.get_widget('map_unknowni2').set_value(self.map.map_unknowni2)
             self.get_widget('map_unknowni4').set_value(self.map.map_unknowni4)
             #self.get_widget('map_unknownc1').set_value(self.map.map_unknownc1)
@@ -1885,12 +1892,14 @@ class MapGUI(BaseGUI):
         if (script is not None):
             entry.set_value(script.__dict__[name])
 
-    def prop_unknown_input_spin(self, func, type, table, num, row, tooltip=None, signal=None):
+    def prop_unknown_input_spin(self, func, type, table, num, row, tooltip=None, signal=None, prefix=''):
         textdict = {
                 'i': 'Int',
                 'c': 'Char',
                 }
-        varname = 'map_unknown%s%d' % (type, num)
+        if prefix != '':
+            prefix = '%s_' % (prefix)
+        varname = 'map_%sunknown%s%d' % (prefix, type, num)
         text = '<i>Unknown %s %d</i>' % (textdict.get(type, '?'), num)
         if signal is None:
             signal = self.on_singleval_map_changed_int

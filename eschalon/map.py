@@ -53,7 +53,6 @@ class Map(object):
         self.soundfile2 = ''
         self.skybox = ''
         self.soundfile3 = ''
-        self.map_unknowni1 = 0
 
         # Not entirely sure about the alpha channel, which
         # is always zero, but it seems to make sense
@@ -122,7 +121,6 @@ class Map(object):
         newmap.soundfile2 = self.soundfile2
         newmap.skybox = self.skybox
         newmap.soundfile3 = self.soundfile3
-        newmap.map_unknowni1 = self.map_unknowni1
         newmap.color_r = self.color_r
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
@@ -372,6 +370,9 @@ class B1Map(Map):
         self.savegame_2 = 0
         self.savegame_3 = 0
         self.map_unknownh1 = 0
+        self.map_b1_last_xpos = 0
+        self.map_b1_last_ypos = 0
+        self.map_b1_outsideflag = 0
 
         # Base class attributes
         super(B1Map, self).__init__(df)
@@ -395,7 +396,9 @@ class B1Map(Map):
             self.exit_west = self.df.readstr()
             self.skybox = self.df.readstr()
             self.soundfile3 = self.df.readstr()
-            self.map_unknowni1 = self.df.readint()
+            self.map_b1_last_xpos = self.df.readuchar()
+            self.map_b1_last_ypos = self.df.readuchar()
+            self.map_b1_outsideflag = self.df.readshort()
             self.map_unknownh1 = self.df.readshort()
 
             self.color_r = self.df.readuchar()
@@ -465,7 +468,9 @@ class B1Map(Map):
         self.df.writestr(self.exit_west)
         self.df.writestr(self.skybox)
         self.df.writestr(self.soundfile3)
-        self.df.writeint(self.map_unknowni1)
+        self.df.writeuchar(self.map_b1_last_xpos)
+        self.df.writeuchar(self.map_b1_last_ypos)
+        self.df.writeshort(self.map_b1_outsideflag)
         self.df.writeshort(self.map_unknownh1)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
@@ -549,6 +554,9 @@ class B1Map(Map):
         newmap.savegame_2 = self.savegame_2
         newmap.savegame_3 = self.savegame_3
         newmap.map_unknownh1 = self.map_unknownh1
+        newmap.map_b1_last_xpos = self.map_b1_last_xpos
+        newmap.map_b1_last_ypos = self.map_b1_last_ypos
+        newmap.map_b1_outsideflag = self.map_b1_outsideflag
 
 class B2Map(Map):
     """
@@ -570,6 +578,7 @@ class B2Map(Map):
         self.random_entity_2 = 0
         self.map_unknowni2 = 0
         self.map_flags = 0
+        self.map_unknowni1 = 0
         self.map_unknowni4 = 0
         self.map_unknownc5 = 0
         self.map_unknownc6 = 0
@@ -758,6 +767,7 @@ class B2Map(Map):
         newmap.random_entity_2 = self.random_entity_2
         newmap.map_unknowni2 = self.map_unknowni2
         newmap.map_flags = self.map_flags
+        newmap.map_unknowni1 = self.map_unknowni1
         newmap.map_unknowni4 = self.map_unknowni4
         newmap.map_unknownc5 = self.map_unknownc5
         newmap.map_unknownc6 = self.map_unknownc6

@@ -4,6 +4,7 @@
 
    23 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Entities can be erased without entity highlighting on
+   Previously-unknown int val in Book 1 maps was figured out
 
    21 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Updated soundfile labels in map properties window

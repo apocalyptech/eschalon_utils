@@ -200,6 +200,7 @@ class B1Entity(Entity):
             'clouds_label', 'clouds',
             'mapid_label', 'mapid',
             'unknown5_label', 'unknown5',
+            'map_b1_outsideflag_label', 'map_b1_outsideflag',
             ]
 
     def __init__(self, savegame):
@@ -284,6 +285,7 @@ class B2Entity(Entity):
             'map_flags_label', 'map_flags_table',
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
+            'map_unknowni1_label', 'map_unknowni1',
             ]
 
     def __init__(self, savegame):
