@@ -1187,14 +1187,31 @@ class MapGUI(BaseGUI):
         #self.undo.report()
 
     def on_undo(self, widget=None):
-        for (x, y) in self.undo.undo():
-            self.redraw_square(x, y)
-        self.update_undo_gui()
+        """ Process a user Undo action """
+        # We're checking for hugegfx stuff here only on the "main" tile,
+        # on the theory that no action would alter a hugegfx unless it was
+        # directly on that tile.  I believe that to be the case currently,
+        # though perhaps that needs to get revisited at some point.
+        if self.undo.have_undo():
+            history = self.undo.get_undo()
+            self.store_hugegfx_state(self.map.squares[history.y][history.x])
+            for (x, y) in self.undo.undo():
+                self.redraw_square(x, y)
+            self.update_undo_gui()
+            if self.check_hugegfx_state(self.map.squares[history.y][history.x]):
+                self.draw_map()
 
     def on_redo(self, widget=None):
-        for (x, y) in self.undo.redo():
-            self.redraw_square(x, y)
-        self.update_undo_gui()
+        """ Process a user Redo action """
+        # See on_undo() for some notes about the hugegfx stuff
+        if self.undo.have_redo():
+            history = self.undo.get_redo()
+            self.store_hugegfx_state(self.map.squares[history.y][history.x])
+            for (x, y) in self.undo.redo():
+                self.redraw_square(x, y)
+            self.update_undo_gui()
+            if self.check_hugegfx_state(self.map.squares[history.y][history.x]):
+                self.draw_map()
 
     def on_fill(self, widget=None):
         """
