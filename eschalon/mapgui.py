@@ -985,8 +985,13 @@ class MapGUI(BaseGUI):
 
         # Figure out what our initial path should be
         path = ''
-        if (self.map == None):
+        if self.map == None:
             path = self.get_current_savegame_dir()
+        elif self.map.df.filename == '':
+            if self.map.is_savegame():
+                path = self.get_current_savegame_dir()
+            else:
+                path = self.get_current_gamedir()
         else:
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
 
@@ -1005,25 +1010,25 @@ class MapGUI(BaseGUI):
         dialog.add_filter(filter)
 
         # Run the dialog and process its return values
+        retval = False
         rundialog = True
         while (rundialog):
             rundialog = False
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
-                if (not self.load_from_file(dialog.get_filename())):
+                if self.load_from_file(dialog.get_filename()):
+                    self.get_widget('map_menu_item_save').set_sensitive(True)
+                    retval = True
+                else:
                     rundialog = True
-            else:
-                # Check to see if this was the initial load, started without a filename
-                if (self.map == None):
-                    return False
 
         # Clean up
         dialog.destroy()
-        self.get_widget('map_menu_item_save').set_sensitive(True)
-        self.update_main_map_name()
-        #self.mainbook.set_sensitive(True)
+        if retval:
+            self.update_main_map_name()
 
-        return True
+        # Return our results
+        return retval
 
     # Use this to load in a map from a file
     def load_from_file(self, filename):
