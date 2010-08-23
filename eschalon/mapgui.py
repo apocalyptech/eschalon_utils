@@ -3637,12 +3637,7 @@ class MapGUI(BaseGUI):
             self.erase_barrier.set_sensitive(False)
             self.erase_barrier.set_active(False)
 
-        # ... and also for entities and objects
-        if (self.entity_hi_toggle.get_active()):
-            self.erase_entity_checkbox.set_sensitive(True)
-        else:
-            self.erase_entity_checkbox.set_sensitive(False)
-            self.erase_entity_checkbox.set_active(False)
+        # ... and also for objects
         if (self.script_hi_toggle.get_active()):
             self.erase_object_checkbox.set_sensitive(True)
         else:

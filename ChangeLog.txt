@@ -2,6 +2,9 @@
 
 *eschalon_utils-0.7.3 (20 Aug 2010)
 
+   23 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Entities can be erased without entity highlighting on
+
    21 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Updated soundfile labels in map properties window
 
