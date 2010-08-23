@@ -436,17 +436,17 @@ class MapGUI(BaseGUI):
     def on_revert(self, widget=None):
         """ What to do when we're told to revert. """
         self.load_from_file(self.map.df.filename)
-        self.get_widget('map_menu_item_save').set_sensitive(True)
         self.update_main_map_name()
 
     def on_save(self, widget=None):
-        """ Save map to disk. """
-        if self.map.df.filename != '':
-            # Safeguard in case this gets called after an "on_new" and we haven't
-            # set a filename yet
+        """
+        Save map to disk.  Calls out to on_save_as() if we don't have a filename yet.
+        """
+        if self.map.df.filename == '':
+            self.on_save_as()
+        else:
             self.map.write()
             self.putstatus('Saved ' + self.map.df.filename)
-            self.get_widget('map_menu_item_save').set_sensitive(True)
             self.update_main_map_name()
 
     def on_save_as(self, widget=None):
@@ -529,7 +529,6 @@ class MapGUI(BaseGUI):
                 self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
                         'map will be saved to the new filename, not the original filename.',
                         self.window)
-                self.get_widget('map_menu_item_save').set_sensitive(True)
                 self.update_main_map_name()
             else:
                 loop = False
@@ -962,10 +961,9 @@ class MapGUI(BaseGUI):
         if resp != gtk.RESPONSE_OK:
             return False
 
-        # Now create a new map and blank our our "Save" menu item
+        # Now create a new map
         self.map = Map.load('', self.req_book, self.req_book)
         self.map.set_savegame(savegame_radio.get_active())
-        self.get_widget('map_menu_item_save').set_sensitive(False)
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
@@ -1030,7 +1028,6 @@ class MapGUI(BaseGUI):
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
                 if self.load_from_file(dialog.get_filename()):
-                    self.get_widget('map_menu_item_save').set_sensitive(True)
                     retval = True
                 else:
                     rundialog = True
@@ -1077,9 +1074,6 @@ class MapGUI(BaseGUI):
             if (self.globalwarn_check.get_active() != warn):
                 self.prefs.set_bool('mapgui', 'warn_global_map', self.globalwarn_check.get_active())
                 self.prefs.save()
-
-        # Make sure our Save menu item is active
-        self.get_widget('map_menu_item_save').set_sensitive(True)
 
         # Return success
         return True
