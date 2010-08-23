@@ -461,10 +461,23 @@ class MapGUI(BaseGUI):
         dialog.set_transient_for(self.window)
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
-        if (self.map != None and self.map.df.filename != ''):
+
+        # Figure out the initial path
+        path = ''
+        if self.map is None:
+            pass
+        elif self.map.df.filename == '':
+            if self.map.is_savegame():
+                path = self.get_current_savegame_dir()
+            else:
+                path = self.get_current_gamedir()
+            dialog.set_current_folder(path)
+        else:
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
-            if (path != ''):
-                dialog.set_current_folder(path)
+
+        # Set the initial path
+        if (path != ''):
+            dialog.set_current_folder(path)
 
         filter = gtk.FileFilter()
         filter.set_name("Map Files")
