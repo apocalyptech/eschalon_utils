@@ -1,6 +1,6 @@
 # ChangeLog for Eschalon Savefile Editor
 
-*eschalon_utils-0.7.3 (20 Aug 2010)
+*eschalon_utils-0.7.3 (23 Aug 2010)
 
    23 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Entities can be erased without entity highlighting on
