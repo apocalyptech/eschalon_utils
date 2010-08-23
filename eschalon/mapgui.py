@@ -513,8 +513,9 @@ class MapGUI(BaseGUI):
                 self.map.df.filename = new_filename
                 self.on_save()
                 self.putstatus('Saved as %s' % (self.map.df.filename))
-                self.get_widget('saveaswindow').run()
-                self.get_widget('saveaswindow').hide()
+                self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
+                        'map will be saved to the new filename, not the original filename.',
+                        self.window)
                 self.get_widget('map_menu_item_save').set_sensitive(True)
                 self.update_main_map_name()
             else:
