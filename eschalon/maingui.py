@@ -797,10 +797,9 @@ class MainGUI(BaseGUI):
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
         if (self.has_unsaved_changes()):
-            quitconfirm = self.get_widget('quitwindow')
-            response = quitconfirm.run()
-            quitconfirm.hide()
-            if (response == gtk.RESPONSE_OK):
+            response = self.confirmdialog('Confirm Quit', 'You have made unsaved changes '
+                    'to this character.  Really quit?', self.window)
+            if (response == gtk.RESPONSE_YES):
                 gtk.main_quit()
             else:
                 return True
