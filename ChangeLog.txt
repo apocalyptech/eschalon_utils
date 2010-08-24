@@ -5,6 +5,8 @@
    Undo and Redo trigger redraws appropriately when "huge"
       graphics are involved.
    Tall torch graphics now draw flames properly (again)
+   Fixed a bug which could cause an exception while drawing
+      near the bottom of the map
 
 *eschalon_utils-0.7.3 (23 Aug 2010)
 

@@ -1682,8 +1682,9 @@ class MapGUI(BaseGUI):
                             over_ctx.paint()
                 # Redraw any "huge" graphics in this row
                 if c.book == 2:
-                    for gfx_x in huge_gfx_rows[tier_2_y]:
-                        self.draw_huge_gfx(squares[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                    if tier_2_y < 200:
+                        for gfx_x in huge_gfx_rows[tier_2_y]:
+                            self.draw_huge_gfx(squares[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             tier_1_y = tier_1_y + 2
             tier_2_y = tier_2_y + 2
 
