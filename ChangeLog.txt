@@ -1,5 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.7.4 (23 Aug 2010)
+
    23 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Added "Fill" function
    Undo and Redo trigger redraws appropriately when "huge"
