@@ -177,6 +177,9 @@ class PremadeObject(object):
                     map.delentity(square.x, square.y)
                 square.entity = self.entity.replicate()
                 map.entities.append(square.entity)
+                # Global entities don't usually have a script explicitly defined
+                if not square.entity.savegame:
+                    square.entity.entscript = ''
                 square.entity.x = square.x
                 square.entity.y = square.y
                 square.entity.set_initial(square.x, square.y)
