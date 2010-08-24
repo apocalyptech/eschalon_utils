@@ -22,7 +22,7 @@
 # If app_name ever changes, we should update preferences/windows_prefsfile
 # to provide an upgrade path
 app_name = 'Eschalon Savefile Editor'
-version = '0.7.4'
+version = '0.7.5'
 url = 'http://apocalyptech.com/eschalon/'
 authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich', '', 'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 

@@ -1342,7 +1342,7 @@ class MapGUI(BaseGUI):
         """
         if c.book == 2:
             self.on_draw_wall_changed(self.get_widget('draw_wall_spin'))
-            self.on_wall_changed(self.get_widget('wallimg'))
+            self.on_wall_changed(self.get_widget('wallimg'), False)
 
     def on_colorsel_clicked(self, widget):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
@@ -1537,9 +1537,10 @@ class MapGUI(BaseGUI):
         else:
             self.get_widget('draw_decal_img').set_from_pixbuf(pixbuf)
 
-    def on_wall_changed(self, widget):
+    def on_wall_changed(self, widget, do_spin_update=True):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed_int(widget)
+        if do_spin_update:
+            self.on_singleval_square_changed_int(widget)
         (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)

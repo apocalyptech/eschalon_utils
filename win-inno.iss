@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{0FCD12BE-F238-438E-BBC4-77FEEEE05DC3}
 AppName=Eschalon Utilities
-AppVerName=Eschalon Utilities 0.7.4
+AppVerName=Eschalon Utilities 0.7.5
 AppPublisher=CJ Kucera
 AppPublisherURL=http://apocalyptech.com/eschalon/
 AppSupportURL=http://apocalyptech.com/eschalon/
@@ -17,7 +17,7 @@ DefaultGroupName=Eschalon Utilities
 AllowNoIcons=yes
 LicenseFile=C:\InstPrograms\eschalon_utils\COPYING.txt
 InfoBeforeFile=C:\InstPrograms\eschalon_utils\README.txt
-OutputBaseFilename=eschalon_utils_0_7_4_setup
+OutputBaseFilename=eschalon_utils_0_7_5_setup
 Compression=lzma
 SolidCompression=yes
 
