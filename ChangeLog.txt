@@ -4,6 +4,7 @@
    Added "Fill" function
    Undo and Redo trigger redraws appropriately when "huge"
       graphics are involved.
+   Tall torch graphics now draw flames properly (again)
 
 *eschalon_utils-0.7.3 (23 Aug 2010)
 

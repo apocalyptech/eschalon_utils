@@ -3398,6 +3398,13 @@ class MapGUI(BaseGUI):
                     sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                     sq_ctx.paint()
                     drawn = True
+                    if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+                        pixbuf = self.gfx.get_flame(self.curzoom)
+                        if (pixbuf is not None):
+                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
+                            yoffset = int(self.z_height*0.3)
+                            sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
+                            sq_ctx.paint()
 
             # Draw walls
             elif (walltype == self.gfx.TYPE_WALL and self.wall_toggle.get_active()):
@@ -3406,13 +3413,6 @@ class MapGUI(BaseGUI):
                     sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
                     sq_ctx.paint()
                     drawn = True
-                    if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
-                        pixbuf = self.gfx.get_flame(self.curzoom)
-                        if (pixbuf is not None):
-                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
-                            yoffset = int(self.z_height*0.3)
-                            sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
-                            sq_ctx.paint()
 
             # Draw trees
             elif (walltype == self.gfx.TYPE_TREE and self.tree_toggle.get_active()):
