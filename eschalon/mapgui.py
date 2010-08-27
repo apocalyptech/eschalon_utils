@@ -436,10 +436,14 @@ class MapGUI(BaseGUI):
             elif (key == 'o'):
                 self.ctl_object_toggle.set_active(True)
 
-    def on_revert(self, widget=None):
-        """ What to do when we're told to revert. """
-        self.load_from_file(self.map.df.filename)
-        self.update_main_map_name()
+    def on_reload(self, widget=None):
+        """ What to do when we're told to reload. """
+        if self.map.df.filename != '':
+            self.load_from_file(self.map.df.filename)
+            self.update_main_map_name()
+        else:
+            self.infodialog('Reload Not Available', 'Sorry, this map isn\'t reloadable '
+                    'because it has yet to be saved to disk.', self.window)
 
     def on_save(self, widget=None):
         """
@@ -803,7 +807,7 @@ class MapGUI(BaseGUI):
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_new': self.on_new,
                 'on_load': self.on_load,
-                'on_revert': self.on_revert,
+                'on_reload': self.on_reload,
                 'on_about': self.on_about,
                 'on_save': self.on_save,
                 'on_save_as': self.on_save_as,

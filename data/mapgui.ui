@@ -47,13 +47,13 @@
                     </child>
                     <child>
                       <object class="GtkImageMenuItem" id="gtk-revert">
-                        <property name="label">gtk-revert-to-saved</property>
+                        <property name="label">Reload from Disk</property>
                         <property name="visible">True</property>
-                        <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image5</property>
+                        <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
                         <accelerator key="R" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_revert"/>
+                        <signal name="activate" handler="on_reload"/>
                       </object>
                     </child>
                     <child>
@@ -5335,5 +5335,9 @@ Load a map instead)&lt;/i&gt;</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
+  </object>
+  <object class="GtkImage" id="image5">
+    <property name="visible">True</property>
+    <property name="stock">gtk-revert-to-saved</property>
   </object>
 </interface>
