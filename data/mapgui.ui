@@ -923,15 +923,137 @@
                         <property name="visible">True</property>
                         <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkComboBox" id="objectplace_combo">
+                          <object class="GtkVBox" id="vbox19">
                             <property name="visible">True</property>
-                            <property name="model">objectplace_treestore</property>
-                            <signal name="changed" handler="update_activity_label"/>
                             <child>
-                              <object class="GtkCellRendererText" id="objectplace_renderer"/>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
+                              <object class="GtkComboBox" id="objectplace_combo">
+                                <property name="visible">True</property>
+                                <property name="model">objectplace_treestore</property>
+                                <signal name="changed" handler="update_objectplace"/>
+                                <child>
+                                  <object class="GtkCellRendererText" id="objectplace_renderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hbox20">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkLabel" id="objectplace_lock_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Lock Level:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment67">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="objectplace_lock_spin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <property name="adjustment">objectplace_lock_adj</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hbox27">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkLabel" id="objectplace_trap_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Trap:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment69">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkComboBox" id="objectplace_trap_combo">
+                                        <property name="visible">True</property>
+                                        <property name="model">objectplace_trap_store</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cellrenderertext7"/>
+                                          <attributes>
+                                            <attribute name="text">0</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hbox22">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkLabel" id="objectplace_loot_label">
+                                    <property name="visible">True</property>
+                                    <property name="xalign">0</property>
+                                    <property name="label" translatable="yes">Loot Level:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment68">
+                                    <property name="visible">True</property>
+                                    <property name="left_padding">5</property>
+                                    <child>
+                                      <object class="GtkSpinButton" id="objectplace_loot_spin">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="invisible_char">&#x25CF;</property>
+                                        <property name="adjustment">objectplace_loot_adj</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">3</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -5159,7 +5281,6 @@ Load a map instead)&lt;/i&gt;</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-    <property name="page_size">10</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -5334,10 +5455,27 @@ Load a map instead)&lt;/i&gt;</property>
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
-    <property name="page_size">10</property>
   </object>
   <object class="GtkImage" id="image5">
     <property name="visible">True</property>
     <property name="stock">gtk-revert-to-saved</property>
+  </object>
+  <object class="GtkAdjustment" id="objectplace_lock_adj">
+    <property name="upper">10</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="objectplace_loot_adj">
+    <property name="upper">10</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="objectplace_trap_store">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name ID -->
+      <column type="guint"/>
+    </columns>
   </object>
 </interface>

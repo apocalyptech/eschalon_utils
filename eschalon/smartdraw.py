@@ -107,6 +107,9 @@ class PremadeObject(object):
         self.do_walldecalimg = False
         self.do_script = False
         self.do_entity = False
+        self.do_loot = False
+        self.do_lock = False
+        self.do_trap = False
         self.rel_squares = {}
 
     def set_wall(self, wall):
@@ -129,6 +132,15 @@ class PremadeObject(object):
         self.do_walldecalimg = True
         self.square.walldecalimg = floorimg
 
+    def use_loot(self):
+        self.do_loot = True
+
+    def use_lock(self):
+        self.do_lock = True
+
+    def use_trap(self):
+        self.do_trap = True
+
     def set_script(self, scriptid):
         self.do_script = True
         self.square.scriptid = scriptid
@@ -150,7 +162,7 @@ class PremadeObject(object):
         self.rel_squares[direction] = obj
         return obj
 
-    def apply_to(self, map, square):
+    def apply_to(self, gui, map, square):
         extra_affected = []
         if self.do_wall:
             square.wall = self.square.wall
@@ -171,6 +183,15 @@ class PremadeObject(object):
                 map.scripts.append(square.scripts[0])
                 square.scripts[0].x = square.x
                 square.scripts[0].y = square.y
+                if self.do_lock:
+                    square.scripts[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
+                if self.do_trap:
+                    iter = gui.get_widget('objectplace_trap_combo').get_active_iter()
+                    square.scripts[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
+                if c.book > 1:
+                    if self.do_loot:
+                        square.scripts[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
+
         if self.do_entity:
             if self.entity is not None:
                 if square.entity is not None:
@@ -186,7 +207,7 @@ class PremadeObject(object):
         for (dir, rel_obj) in self.rel_squares.items():
             adjsquare = map.square_relative(square.x, square.y, dir)
             if adjsquare:
-                rel_obj.apply_to(map, adjsquare)
+                rel_obj.apply_to(gui, map, adjsquare)
                 extra_affected.append(adjsquare)
         return extra_affected
 
@@ -1074,7 +1095,7 @@ class SmartDraw(object):
         """
         Places a premade object on a square
         """
-        return obj.apply_to(self.map, square)
+        return obj.apply_to(self.gui, self.map, square)
 
     @staticmethod
     def new(book):
@@ -1361,6 +1382,9 @@ class B1SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.flags = 0x40
                     obj.mapscript.sturdiness = 89
+                    if statenum == 1:
+                        obj.use_lock()
+                        obj.use_trap()
                     rel = obj.add_rel_square(framedir)
                     rel.set_walldecalimg(framedecal)
                     cur += 1
@@ -1387,6 +1411,9 @@ class B1SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.flags = 0x40
                     obj.mapscript.sturdiness = 89
+                    if statenum == 1:
+                        obj.use_lock()
+                        obj.use_trap()
                     cur += 1
 
         # Cabinets
@@ -1409,6 +1436,9 @@ class B1SmartDraw(SmartDraw):
                 obj.mapscript.state = statenum
                 obj.mapscript.flags = 0x40
                 obj.mapscript.sturdiness = 89
+                if statenum == 1:
+                    obj.use_lock()
+                    obj.use_trap()
                 cur += 1
 
         # Other Containers
@@ -1420,6 +1450,8 @@ class B1SmartDraw(SmartDraw):
             obj = self.premade_objects.new('Coffin \\ - %s' % (state))
             obj.set_wall(1)
             obj.set_wallimg(wallimg)
+            obj.use_lock()
+            obj.use_trap()
             obj.set_script(3)
             obj.create_scriptobj('Empty')
             obj.mapscript.description = 'a coffin.'
@@ -1435,6 +1467,8 @@ class B1SmartDraw(SmartDraw):
             obj = self.premade_objects.new(name)
             obj.set_wall(1)
             obj.set_wallimg(wallimg)
+            obj.use_lock()
+            obj.use_trap()
             obj.set_script(1)
             obj.create_scriptobj('Empty')
             obj.mapscript.description = text
@@ -1447,6 +1481,7 @@ class B1SmartDraw(SmartDraw):
         obj.mapscript.description = 'a storage barrel of decent quality.'
         obj.mapscript.flags = 0x40
         obj.mapscript.sturdiness = 89
+        obj.use_trap()
 
         obj = self.premade_objects.new('Sealed Barrel')
         obj.set_wall(1)
@@ -1456,6 +1491,7 @@ class B1SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sealed storage barrel of decent quality.'
         obj.mapscript.flags = 0x40
         obj.mapscript.sturdiness = 89
+        obj.use_trap()
 
         # Signs
         self.premade_objects.add_category('Signs')
@@ -1876,6 +1912,9 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.cur_condition = cond
                     obj.mapscript.max_condition = cond
+                    if statenum == 1:
+                        obj.use_trap()
+                        obj.use_lock()
                     rel = obj.add_rel_square(framedir)
                     rel.set_walldecalimg(framedecal)
                     cur += 1
@@ -1906,6 +1945,10 @@ class B2SmartDraw(SmartDraw):
                     obj.mapscript.state = statenum
                     obj.mapscript.cur_condition = cond
                     obj.mapscript.max_condition = cond
+                    obj.use_loot()
+                    if statenum == 1:
+                        obj.use_trap()
+                        obj.use_lock()
                     cur += 1
 
         # Still in the "other containers" cat
@@ -1917,6 +1960,7 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sturdy oaken barrel.'
         obj.mapscript.cur_condition = 80
         obj.mapscript.max_condition = 80
+        obj.use_loot()
 
         obj = self.premade_objects.new('Sealed Barrel')
         obj.set_wall(5)
@@ -1926,6 +1970,7 @@ class B2SmartDraw(SmartDraw):
         obj.mapscript.description = 'a sturdy oak sealed barrel.'
         obj.mapscript.cur_condition = 90
         obj.mapscript.max_condition = 90
+        obj.use_loot()
 
         # Signs
         self.premade_objects.add_category('Signs')

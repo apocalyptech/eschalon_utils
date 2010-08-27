@@ -3,6 +3,8 @@
    27 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Added "Reload" in char editor, clarified Revert
    Renamed Revert to Reload in the map editor
+   Added Trap, Lock Level, and (for Book 2) Loot Level
+      options for premade objects in map editor
 
    26 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Had accidentally omitted one sound generator from the

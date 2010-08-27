@@ -286,6 +286,7 @@ class B2Entity(Entity):
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
             'map_unknowni1_label', 'map_unknowni1',
+            'objectplace_loot_spin', 'objectplace_loot_label',
             ]
 
     def __init__(self, savegame):

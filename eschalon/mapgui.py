@@ -361,6 +361,7 @@ class MapGUI(BaseGUI):
 
         # Update our activity label
         self.update_activity_label()
+        self.update_objectplace()
 
         # Now show our window
         self.window.show()
@@ -736,6 +737,24 @@ class MapGUI(BaseGUI):
                     set_start = True
                     self.get_widget('objectplace_combo').set_active_iter(iter)
 
+        # And set sizing for object placement variables
+        lockspin = self.get_widget('objectplace_lock_spin')
+        lockadj = self.get_widget('objectplace_lock_adj')
+        trapstore = self.get_widget('objectplace_trap_store')
+        for (key, name) in c.traptable.items():
+            trapstore.append([name, key])
+        self.get_widget('objectplace_trap_combo').set_active(0)
+        if c.book == 1:
+            lockspin.set_tooltip_markup('Lock levels run from zero to sixty.  '
+                    'To create a slider lock, edit the object after creation.')
+            lockadj.set_upper(60)
+        else:
+            self.get_widget('objectplace_loot_spin').set_tooltip_markup('Loot '
+                    'levels run from zero (poor-quality) to ten (high-quality)')
+            lockspin.set_tooltip_markup('Lock levels run from zero to ten.  '
+                    'To create a combination lock, edit the object after creation.')
+            lockadj.set_upper(10)
+
         # Resize some images for Book 2 sizes
         if c.book > 1:
             self.get_widget('composite_area').set_size_request(64, 160)
@@ -876,6 +895,7 @@ class MapGUI(BaseGUI):
                 'highlight_uncheck_all': self.highlight_uncheck_all,
                 'update_activity_label': self.update_activity_label,
                 'draw_map': self.draw_map,
+                'update_objectplace': self.update_objectplace,
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -1257,6 +1277,20 @@ class MapGUI(BaseGUI):
             # Clear out "Undo" - we're not hooking into this yet.
             self.undo = Undo(self.map)
             self.update_undo_gui()
+
+    def update_objectplace(self, widget=None):
+        """
+        What happens when our Object Placement dropdown changes.
+        """
+        self.update_activity_label()
+        obj = self.get_cur_object_placement()
+        self.get_widget('objectplace_lock_label').set_sensitive(obj.do_lock)
+        self.get_widget('objectplace_lock_spin').set_sensitive(obj.do_lock)
+        self.get_widget('objectplace_trap_label').set_sensitive(obj.do_trap)
+        self.get_widget('objectplace_trap_combo').set_sensitive(obj.do_trap)
+        if c.book > 1:
+            self.get_widget('objectplace_loot_label').set_sensitive(obj.do_loot)
+            self.get_widget('objectplace_loot_spin').set_sensitive(obj.do_loot)
 
     def populate_color_selection(self):
         img = self.get_widget('color_img')
