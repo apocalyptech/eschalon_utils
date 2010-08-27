@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   27 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
+   Added "Reload" in char editor, clarified Revert
+
    26 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Had accidentally omitted one sound generator from the
       map editor

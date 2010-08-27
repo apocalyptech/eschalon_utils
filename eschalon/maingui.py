@@ -154,6 +154,7 @@ class MainGUI(BaseGUI):
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_revert': self.on_revert,
+                'on_reload': self.on_reload,
                 'on_load': self.on_load,
                 'on_about': self.on_about,
                 'on_save_as': self.on_save_as,
@@ -186,6 +187,7 @@ class MainGUI(BaseGUI):
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
 
         # If we were given a filename, load it.  If not, display the load dialog
+        self.changed = {}
         if (self.options['filename'] == None):
             if (not self.on_load()):
                 return
@@ -377,6 +379,7 @@ class MainGUI(BaseGUI):
         # Basic vars
         self.origchar = char
         self.char = char.replicate()
+        self.clear_all_changes()
         self.changed = {}
 
         # Support for our item screens
@@ -846,6 +849,10 @@ class MainGUI(BaseGUI):
         self.char = self.origchar.replicate()
         self.populate_form_from_char()
         self.clear_all_changes()
+
+    def on_reload(self, widget):
+        """ What to do when we're told to Reload. """
+        self.load_from_file(self.char.df.filename)
 
     def populate_form_from_char(self):
         """ Populates the GUI from our original char object. """

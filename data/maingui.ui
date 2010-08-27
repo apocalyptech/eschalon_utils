@@ -46,13 +46,24 @@
                         </child>
                         <child>
                           <object class="GtkImageMenuItem" id="menuitem3">
-                            <property name="label">gtk-revert-to-saved</property>
+                            <property name="label">Revert to Last Loaded</property>
                             <property name="visible">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="use_underline">True</property>
-                            <property name="use_stock">True</property>
+                            <property name="tooltip_markup">This will revert the character state to how it was when it was last loaded.  This may differ from what's on-disk if you've saved over its slot.</property>
+                            <property name="image">image1</property>
+                            <property name="use_stock">False</property>
                             <property name="accel_group">accelgroup1</property>
                             <signal name="activate" handler="on_revert"/>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkImageMenuItem" id="imagemenuitem1">
+                            <property name="label" translatable="yes">Reload from Disk</property>
+                            <property name="visible">True</property>
+                            <property name="tooltip_markup">Reloads the character from disk</property>
+                            <property name="image">image2</property>
+                            <property name="use_stock">False</property>
+                            <signal name="activate" handler="on_reload"/>
                           </object>
                         </child>
                         <child>
@@ -6568,5 +6579,13 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-revert-to-saved</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="stock">gtk-revert-to-saved</property>
   </object>
 </interface>
