@@ -213,7 +213,7 @@ class MapSelector(gtk.Dialog):
 class ScriptEditorRow(object):
 
     def __init__(self, rownum, table, completion_model, parser,
-            entry_callback, focus_in_callback,
+            entry_callback, focus_in_callback, focus_scroll_callback,
             delbutton_callback, upbutton_callback, downbutton_callback,
             text=''):
 
@@ -263,6 +263,9 @@ class ScriptEditorRow(object):
         # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
         self.commandentry.connect('focus-in-event', focus_in_callback, self)
+        self.delbutton.connect('focus-in-event', focus_scroll_callback)
+        self.upbutton.connect('focus-in-event', focus_scroll_callback)
+        self.downbutton.connect('focus-in-event', focus_scroll_callback)
         self.delbutton.connect('clicked', delbutton_callback, self)
         self.upbutton.connect('clicked', upbutton_callback, self)
         self.downbutton.connect('clicked', downbutton_callback, self)
@@ -441,6 +444,7 @@ class ScriptEditor(object):
             upbutton_callback=self.move_row_up,
             downbutton_callback=self.move_row_down,
             focus_in_callback=self.row_focus_in,
+            focus_scroll_callback=self.move_sb_focus,
             text=text))
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
@@ -697,3 +701,16 @@ class ScriptEditor(object):
         """
         self.cur_focus = row
         self.coordbutton.set_sensitive(True)
+        self.move_sb_focus(widget)
+
+    def move_sb_focus(self, widget, event=None):
+        """
+        A generic focus-in-event which we'll use to have the scrolledwindow
+        automatically scroll to the newly-focused widget.
+        """
+        adj = self.sw.get_vadjustment()
+        alloc = widget.get_allocation()
+        if alloc.y < adj.value or alloc.y > adj.value + adj.page_size:
+            adj.set_value(min(alloc.y, adj.upper-adj.page_size))
+        elif alloc.y+alloc.height > adj.value+adj.page_size:
+            adj.set_value(alloc.y + alloc.height - adj.page_size)
