@@ -436,6 +436,8 @@ class MapGUI(BaseGUI):
                 self.ctl_erase_toggle.set_active(True)
             elif (key == 'o'):
                 self.ctl_object_toggle.set_active(True)
+            elif (key == 's'):
+                self.launch_script_editor()
 
     def on_reload(self, widget=None):
         """ What to do when we're told to reload. """

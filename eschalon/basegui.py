@@ -34,6 +34,7 @@ except:
     sys.exit(1)
 
 from eschalon import constants as c
+from eschalon.scripteditor import ScriptEditor
 
 class WrapLabel(gtk.Label):
 
@@ -414,6 +415,17 @@ class BaseGUI(object):
         col.set_clickable(True)
         col.set_sort_column_id(1)
         self.get_widget('b2_reagent_magic_treeview').append_column(col)
+
+        ###
+        ### Script Editor Window
+        ###
+        self.script_editor = ScriptEditor(self.window)
+
+    def launch_script_editor(self):
+        """
+        Launches our script editor
+        """
+        self.script_editor.launch()
 
     def bypass_delete(self, widget, event):
         """
