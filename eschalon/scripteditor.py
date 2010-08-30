@@ -304,7 +304,10 @@ class ScriptEditor(object):
         tokens = 0
         for row in self.rows:
             tokens += row.update_tokens()
-        self.token_total_label.set_markup('<b>Total Tokens:</b> %d' % (tokens))
+        if tokens > 50:
+            self.token_total_label.set_markup('<span color="red"><b>Total Tokens:</b> %d</span>' % (tokens))
+        else:
+            self.token_total_label.set_markup('<b>Total Tokens:</b> %d' % (tokens))
 
     def command_parser(self, text):
         """
