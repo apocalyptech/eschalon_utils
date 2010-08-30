@@ -158,11 +158,13 @@ class ScriptEditor(object):
                     gtk.STOCK_OK, gtk.RESPONSE_OK))
         self.window.set_size_request(400, 300)
 
+        # Header
         label = gtk.Label()
         label.set_markup('<b>Script Editor</b>')
         label.set_padding(0, 7)
         self.window.vbox.pack_start(label, False)
 
+        # ScrolledWindow; this holds the main table
         self.sw = gtk.ScrolledWindow()
         self.sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.sw.set_shadow_type(gtk.SHADOW_NONE)
@@ -177,9 +179,13 @@ class ScriptEditor(object):
         self.table = gtk.Table()
         align.add(self.table)
 
+        # Bottom HBox, shows some buttons and our token count
+        hbox = gtk.HBox()
+        self.window.vbox.pack_start(hbox, False)
+
         align = gtk.Alignment(0, .5, 0, 1)
-        align.set_padding(7, 0, 0, 0)
-        self.window.vbox.pack_start(align, False)
+        align.set_padding(7, 7, 9, 9)
+        hbox.pack_start(align, False)
         normbutton = gtk.Button()
         align.add(normbutton)
         normhbox = gtk.HBox()
@@ -189,11 +195,13 @@ class ScriptEditor(object):
         normbutton.connect('clicked', self.normalize_page)
 
         self.token_total_label = gtk.Label()
-        self.token_total_label.set_alignment(0, .5)
+        self.token_total_label.set_alignment(1, .5)
+        self.token_total_label.set_padding(9, 0)
         self.token_total_label.set_markup('<b>Total Tokens:</b> 0')
         label.set_padding(5, 7)
-        self.window.vbox.pack_start(self.token_total_label, False)
+        hbox.add(self.token_total_label)
 
+        # Set up the completion model, for our Entry completions to use
         self.completion_model = gtk.ListStore(str, str)
         for command in sorted(c.commands):
             iter = self.completion_model.append()
@@ -206,6 +214,7 @@ class ScriptEditor(object):
             self.completion_model.set(iter, 0, command)
             self.completion_model.set(iter, 1, ' '.join(markup))
 
+        # Now show everything
         self.window.show_all()
         self.rows = []
 
@@ -223,7 +232,7 @@ class ScriptEditor(object):
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
             vadj.set_value(vadj.get_upper())
-        self.update_row_remove_buttons()
+        self.update_gui()
 
     def del_row(self, rownum):
         """
@@ -237,7 +246,7 @@ class ScriptEditor(object):
             row.move_up()
         del self.rows[rownum]
         self.force_blank()
-        self.update_row_remove_buttons()
+        self.update_gui()
 
     def force_blank(self):
         """
@@ -269,14 +278,23 @@ class ScriptEditor(object):
         res = self.window.run()
         self.window.hide()
 
-    def update_row_remove_buttons(self):
+    def update_gui(self):
         """
-        Basically just makes sure that the last row's "remove" button
-        is hidden, and the rest are shown.
+        Performs various tasks that need to be done when we have
+        structural changes.  Right now this includes:
+          1) Making sure that the last row's "remove" button
+             is hidden, and the rest are shown.
+          2) Setting the tab order
         """
+        taborder_entries = []
+        taborder_buttons = []
         for row in self.rows[:-1]:
             row.delbutton.show()
+            taborder_entries.append(row.commandentry)
+            taborder_buttons.append(row.delbutton)
         self.rows[-1].delbutton.hide()
+        taborder_entries.append(self.rows[-1].commandentry)
+        self.table.set_focus_chain(taborder_entries + taborder_buttons)
 
     def update_token_counts(self):
         """
