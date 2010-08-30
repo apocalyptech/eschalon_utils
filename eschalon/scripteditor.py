@@ -54,11 +54,19 @@ class ScriptEditorRow(object):
         self.table = table
         self.update_tokens()
 
-    def get_command(self):
+    def get_commands_text(self):
         """
-        Returns the current text of our command
+        Returns the current text of our command, parsed for validity and
+        normalized.  could possibly contain compound commands.
         """
-        return self.commandentry.get_text().strip()
+        return ' ; '.join([' '.join(c) for c in self.get_commands()])
+
+    def get_commands(self):
+        """
+        Returns the current text of our command.  Runs through our parser to
+        check for validity and 
+        """
+        return self.parser(self.commandentry.get_text())
 
     def move_up(self):
         """
@@ -93,7 +101,7 @@ class ScriptEditorRow(object):
         """
         Update our token count, and return how many tokens we've got
         """
-        commands = self.parser(self.get_command())
+        commands = self.get_commands()
         tokencount = sum([len(command) for command in commands])
         if tokencount == 1:
             plural = ''
@@ -244,11 +252,12 @@ class ScriptEditor(object):
                     if cur == len(text):
                         break
                 except ValueError:
-                    tokens.append(text[lparen:])
+                    tokens.append('%s)' % (text[lparen:]))
                     break
             except ValueError:
                 tokens.append(text[cur:])
                 break
+        print tokens
 
         # Now loop through and process any nonparenthetical tokens,
         # which may involve splitting on ;
@@ -295,7 +304,7 @@ class ScriptEditor(object):
         """
         Normalizes the display so that each command is in its own line
         """
-        full_script = ' ; '.join([row.get_command() for row in self.rows])
+        full_script = ' ; '.join([row.get_commands_text() for row in self.rows])
         self.normalize_script(full_script)
 
     ###
@@ -310,7 +319,7 @@ class ScriptEditor(object):
             if widget.get_text() != '':
                 self.add_row()
         elif row.rownum == len(self.rows)-2:
-            if widget.get_text() == '' and self.rows[-1].get_command() == '':
+            if widget.get_text() == '' and self.rows[-1].commandentry.get_text().strip() == '':
                 self.del_row(len(self.rows)-1)
         self.update_token_counts()
 
