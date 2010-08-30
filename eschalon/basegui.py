@@ -420,6 +420,7 @@ class BaseGUI(object):
         ### Script Editor Window
         ###
         self.script_editor = ScriptEditor(self.window)
+        self.setup_script_editor_launcher(self.get_widget('script_hbox'), self.get_widget('script'))
 
     def launch_script_editor(self, widget, script_entry):
         """

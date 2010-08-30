@@ -56,7 +56,7 @@ class ScriptEditorRow(object):
         self.update_rownum()
         self.commandentry = gtk.Entry()
         self.commandentry.set_text(text)
-        self.commandentry.set_size_request(240, -1)
+        self.commandentry.set_size_request(290, -1)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
         self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
@@ -324,10 +324,13 @@ class ScriptEditor(object):
             row.downbutton.set_sensitive(True)
             taborder_entries.append(row.commandentry)
             taborder_buttons.append(row.delbutton)
+            taborder_buttons.append(row.upbutton)
+            taborder_buttons.append(row.downbutton)
         self.rows[-1].delbutton.set_sensitive(False)
         self.rows[-1].upbutton.set_sensitive(len(self.rows) > 1)
         self.rows[-1].downbutton.set_sensitive(False)
         taborder_entries.append(self.rows[-1].commandentry)
+        taborder_buttons.append(self.rows[-1].upbutton)
         self.table.set_focus_chain(taborder_entries + taborder_buttons)
 
     def update_token_counts(self):

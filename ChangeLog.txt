@@ -1,7 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
    30 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
-   Initial (in-progress) version of a script editor window
+   Script Editor window was added
 
    27 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Added "Reload" in char editor, clarified Revert

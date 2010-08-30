@@ -766,6 +766,9 @@ class MapGUI(BaseGUI):
             self.get_widget('fill_map_img').set_size_request(64, 32)
             self.propswindow.set_size_request(410, 760)
 
+        # Entity death script editor launcher
+        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'))
+
         # Create our entity status values box
         if c.book > 1:
             container = self.get_widget('entity_data_main_vbox')
