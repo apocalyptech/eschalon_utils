@@ -223,10 +223,11 @@ class ScriptEditorRow(object):
 
         # Our widgets
         self.numlabel = gtk.Label()
+        self.numlabel.set_alignment(1, .5)
         self.update_rownum()
         self.commandentry = gtk.Entry()
         self.commandentry.set_text(text)
-        self.commandentry.set_size_request(290, -1)
+        self.commandentry.set_size_request(250, -1)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
         self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
@@ -254,7 +255,7 @@ class ScriptEditorRow(object):
 
         # Attach our widgets to the table
         table.attach(self.numlabel, 0, 1, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.commandentry, 1, 2, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
+        table.attach(self.commandentry, 1, 2, rownum, rownum+1, gtk.FILL|gtk.EXPAND, gtk.FILL, 5)
         table.attach(self.delbutton, 2, 3, rownum, rownum+1, gtk.FILL, gtk.FILL)
         table.attach(self.upbutton, 3, 4, rownum, rownum+1, gtk.FILL, gtk.FILL)
         table.attach(self.downbutton, 4, 5, rownum, rownum+1, gtk.FILL, gtk.FILL)
@@ -334,7 +335,7 @@ class ScriptEditorRow(object):
 
 class ScriptEditor(object):
 
-    def __init__(self, parent):
+    def __init__(self):
         """
         Script Editor
         """
@@ -343,7 +344,7 @@ class ScriptEditor(object):
         self.cur_focus = None
         self.mapgui = None
         self.window = gtk.Dialog('Script Editor',
-                parent,
+                None,
                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_OK, gtk.RESPONSE_OK))
@@ -496,15 +497,18 @@ class ScriptEditor(object):
                 self.table.remove(widget)
         self.rows = []
 
-    def launch(self, initial_script='', has_coords=False):
+    def launch(self, initial_script, parent, has_coords=False):
         """
         Launches our script editor
         """
+        self.window.set_transient_for(parent)
+        self.coordbutton.set_sensitive(False)
         self.normalize_script(initial_script)
         if has_coords:
             self.coordbutton.show()
         else:
             self.coordbutton.hide()
+        self.update_token_counts()
 
         res = self.window.run()
         self.window.hide()
@@ -641,11 +645,13 @@ class ScriptEditor(object):
 
     def add_coordinate(self, widget):
         """
-        Hops back to the map view (somehow) so the user can select a tile.
-        Won't do anything if we don't have focus on an entry, so we can find
-        where to put it.
+        Hops to the map view so the user can select a tile.
+        Won't do anything if we don't have focus on an entry, because
+        we wouldn't know where to put the coordinate.
         """
-        if self.mapgui and self.cur_focus and self.cur_focus == self.rows[self.cur_focus.rownum]:
+        if (self.mapgui and self.cur_focus and
+                len(self.rows) > self.cur_focus.rownum and
+                self.cur_focus == self.rows[self.cur_focus.rownum]):
             selector = MapSelector(self.mapgui, self.window)
             resp = selector.run()
             new_x = selector.mapgui.sq_x

@@ -779,7 +779,7 @@ class MapGUI(BaseGUI):
             self.propswindow.set_size_request(410, 760)
 
         # Entity death script editor launcher
-        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), True)
+        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.squarewindow, True)
 
         # Create our entity status values box
         if c.book > 1:
@@ -2263,7 +2263,7 @@ class MapGUI(BaseGUI):
 
         # Script editor launcher
         hbox = entry.get_property('parent')
-        self.setup_script_editor_launcher(hbox, entry, True)
+        self.setup_script_editor_launcher(hbox, entry, self.squarewindow, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
         if (square.scripts[curpages].trap in c.traptable.keys()):
