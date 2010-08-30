@@ -22,6 +22,7 @@
 import os
 import sys
 import gtk
+import cairo
 
 from eschalon import constants as c
 
@@ -41,10 +42,179 @@ def match_completion(completion, key, iter, column):
         return True
     return False
 
+class MapSelector(gtk.Dialog):
+
+    def __init__(self, mapgui, parent=None):
+        gtk.Dialog.__init__(self, 'Select a Tile',
+                parent,
+                gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+        self.mapgui = mapgui
+        allocation = self.mapgui.mainscroll.get_allocation()
+        self.set_size_request(allocation.width-50, allocation.height-50)
+
+        self.saved_mapgui = False
+
+        # Info labels
+        hbox = gtk.HBox()
+        label = gtk.Label('Left-Click to select a tile.  Middle-click or right-click to drag.')
+        label.set_padding(10, 10)
+        label.set_alignment(0, .5)
+        hbox.pack_start(label, False)
+
+        self.coordlabel = gtk.Label()
+        label.set_padding(10, 10)
+        label.set_alignment(1, .5)
+        hbox.add(self.coordlabel)
+
+        self.vbox.pack_start(hbox, False)
+
+        # Main area
+        self.sw = gtk.ScrolledWindow()
+        self.sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        vp = gtk.Viewport()
+        self.sw.add(vp)
+        self.da = gtk.DrawingArea()
+        vp.add(self.da)
+        self.da.connect('realize', self.on_realize)
+        self.da.connect('expose-event', self.on_expose)
+        self.da.connect('motion-notify-event', self.mapgui.on_mouse_changed)
+        self.da.connect('button-press-event', self.mapgui.on_clicked)
+        self.da.connect('button-release-event', self.mapgui.on_released)
+        self.da.add_events(gtk.gdk.POINTER_MOTION_MASK |
+                gtk.gdk.BUTTON_PRESS_MASK |
+                gtk.gdk.BUTTON_RELEASE_MASK)
+
+        self.vbox.add(self.sw)
+
+        self.init = False
+        self.done_initial_scrolls = False
+
+        self.vbox.show_all()
+
+    def on_realize(self, widget):
+        """
+        This will import the map graphic from our main mapgui image
+        """
+        self.canvas_x = self.mapgui.z_mapsize_x
+        self.canvas_y = self.mapgui.z_mapsize_y
+
+        widget.set_size_request(self.canvas_x, self.canvas_y)
+        self.pixmap = gtk.gdk.Pixmap(widget.window, self.canvas_x, self.canvas_y)
+        self.ctx = self.pixmap.cairo_create()
+        self.ctx.set_source_surface(self.mapgui.guicache)
+        self.ctx.paint()
+
+        widget.window.draw_drawable(widget.get_style().fg_gc[gtk.STATE_NORMAL],
+                self.pixmap,
+                0, 0,
+                0, 0,
+                self.canvas_x, self.canvas_y)
+
+        # This is kind of horrible, but there it is.
+        self.save_mapgui()
+        self.mapgui.coords_label = self.coordlabel
+        self.mapgui.maparea = self.da
+        self.mapgui.mainscroll = self.sw
+        self.mapgui.ctx = self.ctx
+        self.mapgui.edit_mode = self.mapgui.MODE_SCRIPT_ED
+        self.mapgui.action_script_edit = self.action_script_edit
+        # Note that these vars here should really *never* be anything other
+        # than what we're setting them to, by the time we get here.  So
+        # at least theoretically, these statements do nothing.
+        self.mapgui.cleansquares = []
+        self.mapgui.dragging = False
+        self.mapgui.drawing = False
+        self.mapgui.erasing = False
+
+        self.init = True
+
+    def save_mapgui(self):
+        """
+        This is pretty horrible, but we're saving and then changing some variables
+        from the mapgui class, so that we can re-use the functions in there without
+        that class having to know anything about the script editor stuff.  It's, um,
+        hideous?  But yeah...
+        """
+        self.orig_maparea = self.mapgui.maparea
+        self.orig_mainscroll = self.mapgui.mainscroll
+        self.orig_coords_label = self.mapgui.coords_label
+        self.orig_dragging = self.mapgui.dragging
+        self.orig_drawing = self.mapgui.drawing
+        self.orig_erasing = self.mapgui.erasing
+        self.orig_sq_x = self.mapgui.sq_x
+        self.orig_sq_y = self.mapgui.sq_y
+        self.orig_sq_x_prev = self.mapgui.sq_x_prev
+        self.orig_sq_y_prev = self.mapgui.sq_y_prev
+        self.orig_cleansquares = self.mapgui.cleansquares
+        self.orig_ctx = self.mapgui.ctx
+        self.orig_edit_mode = self.mapgui.edit_mode
+        self.orig_action_script_edit = self.mapgui.action_script_edit
+        self.saved_mapgui = True
+
+    def restore_mapgui(self):
+        """
+        See the notes in save_mapgui()
+        """
+        if self.saved_mapgui:
+            self.mapgui.maparea = self.orig_maparea
+            self.mapgui.mainscroll = self.orig_mainscroll
+            self.mapgui.coords_label = self.orig_coords_label
+            self.mapgui.dragging = self.orig_dragging
+            self.mapgui.drawing = self.orig_drawing
+            self.mapgui.erasing = self.orig_erasing
+            self.mapgui.sq_x = self.orig_sq_x
+            self.mapgui.sq_y = self.orig_sq_y
+            self.mapgui.sq_x_prev = self.orig_sq_x_prev
+            self.mapgui.sq_y_prev = self.orig_sq_y_prev
+            self.mapgui.cleansquares = self.orig_cleansquares
+            self.mapgui.ctx = self.orig_ctx
+            self.mapgui.edit_mode = self.orig_edit_mode
+            self.mapgui.action_script_edit = self.orig_action_script_edit
+
+    def on_expose(self, widget, event):
+        """
+        Handle redraws as we scroll around, etc.
+        """
+        if self.init:
+
+            if not self.done_initial_scrolls:
+                # Automatically scroll to the same place that's active on the main map
+                our_hadj = self.sw.get_hadjustment()
+                our_vadj = self.sw.get_vadjustment()
+                map_hadj = self.orig_mainscroll.get_hadjustment()
+                map_vadj = self.orig_mainscroll.get_vadjustment()
+                our_hadj.set_value(map_hadj.get_value())
+                our_vadj.set_value(map_vadj.get_value())
+                self.done_initial_scrolls = True
+
+            # Redraw what squares need to be redrawn
+            for (x, y) in self.mapgui.cleansquares:
+                self.mapgui.draw_square(x, y, True)
+
+            widget.window.draw_drawable(
+                    widget.get_style().fg_gc[gtk.STATE_NORMAL],
+                    self.pixmap,
+                    0, 0,
+                    0, 0,
+                    self.canvas_x, self.canvas_y)
+
+            # Make sure our to-clean list is empty
+            self.mapgui.cleansquares = []
+
+    def action_script_edit(self, x, y):
+        """
+        This will be from a click in our selection window, which means that
+        we can now get out of here and return our new coordinates.
+        self.sq_x and self.sq_y will have the coordinates for us to process.
+        """
+        self.response(gtk.RESPONSE_OK)
+
 class ScriptEditorRow(object):
 
     def __init__(self, rownum, table, completion_model, parser,
-            entry_callback, delbutton_callback, upbutton_callback, downbutton_callback,
+            entry_callback, focus_in_callback,
+            delbutton_callback, upbutton_callback, downbutton_callback,
             text=''):
 
         self.parser = parser
@@ -92,6 +262,7 @@ class ScriptEditorRow(object):
 
         # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
+        self.commandentry.connect('focus-in-event', focus_in_callback, self)
         self.delbutton.connect('clicked', delbutton_callback, self)
         self.upbutton.connect('clicked', upbutton_callback, self)
         self.downbutton.connect('clicked', downbutton_callback, self)
@@ -166,6 +337,8 @@ class ScriptEditor(object):
         """
 
         self.allow_autoscroll = True
+        self.cur_focus = None
+        self.mapgui = None
         self.window = gtk.Dialog('Script Editor',
                 parent,
                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -208,6 +381,21 @@ class ScriptEditor(object):
         normhbox.add(gtk.Label('Normalize'))
         normbutton.add(normhbox)
         normbutton.connect('clicked', self.normalize_page)
+        normbutton.set_tooltip_text('Process any compound statements, get rid of empty '
+                'statements, and close any unclosed parentheses.')
+
+        align = gtk.Alignment(0, .5, 0, 1)
+        align.set_padding(7, 7, 9, 9)
+        hbox.pack_start(align, False)
+        self.coordbutton = gtk.Button()
+        align.add(self.coordbutton)
+        coordhbox = gtk.HBox()
+        coordhbox.add(gtk.image_new_from_stock(gtk.STOCK_ZOOM_IN, gtk.ICON_SIZE_BUTTON))
+        coordhbox.add(gtk.Label('Add Coordinate'))
+        self.coordbutton.add(coordhbox)
+        self.coordbutton.connect('clicked', self.add_coordinate)
+        self.coordbutton.set_tooltip_text('Select a tile from the map and insert the '
+            'coordinates at the current cursor location.')
 
         self.token_total_label = gtk.Label()
         self.token_total_label.set_alignment(1, .5)
@@ -233,6 +421,13 @@ class ScriptEditor(object):
         self.window.vbox.show_all()
         self.rows = []
 
+    def set_gui(self, mapgui):
+        """
+        We can optionally have a coordinate-lookup button on the window,
+        but that requires a GUI object that we can talk to.
+        """
+        self.mapgui = mapgui
+
     def add_row(self, text=''):
         """
         Adds a new line in our script editor window
@@ -245,6 +440,7 @@ class ScriptEditor(object):
             delbutton_callback=self.remove_button_clicked,
             upbutton_callback=self.move_row_up,
             downbutton_callback=self.move_row_down,
+            focus_in_callback=self.row_focus_in,
             text=text))
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
@@ -296,11 +492,15 @@ class ScriptEditor(object):
                 self.table.remove(widget)
         self.rows = []
 
-    def launch(self, initial_script=''):
+    def launch(self, initial_script='', has_coords=False):
         """
         Launches our script editor
         """
         self.normalize_script(initial_script)
+        if has_coords:
+            self.coordbutton.show()
+        else:
+            self.coordbutton.hide()
 
         res = self.window.run()
         self.window.hide()
@@ -435,6 +635,26 @@ class ScriptEditor(object):
         """
         self.normalize_script(self.get_command_aggregate())
 
+    def add_coordinate(self, widget):
+        """
+        Hops back to the map view (somehow) so the user can select a tile.
+        Won't do anything if we don't have focus on an entry, so we can find
+        where to put it.
+        """
+        if self.mapgui and self.cur_focus and self.cur_focus == self.rows[self.cur_focus.rownum]:
+            selector = MapSelector(self.mapgui, self.window)
+            resp = selector.run()
+            new_x = selector.mapgui.sq_x
+            new_y = selector.mapgui.sq_y
+            selector.restore_mapgui()
+            selector.hide()
+            if resp == gtk.RESPONSE_OK:
+                entry = self.cur_focus.commandentry
+                cursor = entry.get_position()
+                curtext = entry.get_text()
+                newtext = '%s %d %s' % (curtext[:cursor].strip(), (new_y*100 + new_x), curtext[cursor:].strip())
+                entry.set_text(newtext.strip())
+
     ###
     ### Handlers called by row elements
     ###
@@ -470,3 +690,10 @@ class ScriptEditor(object):
         """
         if row.rownum != (len(self.rows)-1):
             self.swap_rows(row, self.rows[row.rownum+1])
+
+    def row_focus_in(self, widget, event, row):
+        """
+        What to do when a command entry receives focus
+        """
+        self.cur_focus = row
+        self.coordbutton.set_sensitive(True)

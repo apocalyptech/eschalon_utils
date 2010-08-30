@@ -75,6 +75,7 @@ class MapGUI(BaseGUI):
     MODE_DRAW = 2
     MODE_ERASE = 3
     MODE_OBJECT = 4
+    MODE_SCRIPT_ED = 5
 
     # Actions that a mouse click can take
     ACTION_NONE = -1
@@ -83,6 +84,7 @@ class MapGUI(BaseGUI):
     ACTION_DRAW = 2
     ACTION_ERASE = 4
     ACTION_OBJECT = 5
+    ACTION_SCRIPT_ED = 6
 
     # Mouse button constants
     MOUSE_LEFT = 1
@@ -115,6 +117,11 @@ class MapGUI(BaseGUI):
             MOUSE_LEFT: ACTION_OBJECT,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
+            },
+        MODE_SCRIPT_ED: {
+            MOUSE_LEFT: ACTION_SCRIPT_ED,
+            MOUSE_MIDDLE: ACTION_DRAG,
+            MOUSE_RIGHT: ACTION_DRAG
             },
         }
 
@@ -235,7 +242,8 @@ class MapGUI(BaseGUI):
             self.MODE_MOVE: gtk.gdk.Cursor(gtk.gdk.FLEUR),
             self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL),
             self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE),
-            self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN)
+            self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN),
+            self.MODE_SCRIPT_ED: None,
             }
 
         # Initialize item stuff
@@ -565,6 +573,10 @@ class MapGUI(BaseGUI):
         self.window.set_title('Eschalon Book %d Map Editor' % (c.book))
         self.item_gui_finish(c.book)
 
+        # Tell our ScriptEditor object (initialized in item_gui_finish) about ourselves,
+        # so that it can throw up a dialog to choose a coordinate
+        self.script_editor.set_gui(self)
+
         # Now show or hide form elements depending on the book version
         for item_class in (B1Item, B2Item, B1Entity, B2Entity):
             self.set_book_elem_visibility(item_class, item_class.book == c.book)
@@ -767,7 +779,7 @@ class MapGUI(BaseGUI):
             self.propswindow.set_size_request(410, 760)
 
         # Entity death script editor launcher
-        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'))
+        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), True)
 
         # Create our entity status values box
         if c.book > 1:
@@ -2251,7 +2263,7 @@ class MapGUI(BaseGUI):
 
         # Script editor launcher
         hbox = entry.get_property('parent')
-        self.setup_script_editor_launcher(hbox, entry)
+        self.setup_script_editor_launcher(hbox, entry, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
         if (square.scripts[curpages].trap in c.traptable.keys()):
@@ -2949,6 +2961,8 @@ class MapGUI(BaseGUI):
             self.action_erase_square(self.sq_x, self.sq_y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_square(self.sq_x, self.sq_y)
+        elif (action == self.ACTION_SCRIPT_ED):
+            self.action_script_edit(self.sq_x, self.sq_y)
 
     def on_released(self, widget=None, event=None):
         if (self.dragging or self.drawing or self.erasing):
@@ -3245,6 +3259,15 @@ class MapGUI(BaseGUI):
         except Exception:
 
             self.handle_editing_exception(x, y, sys.exc_info())
+
+    def action_script_edit(self, x, y):
+        """
+        What to do when we've been clicked from the script editing window.
+        This is kind of a hack; the MapSelector class from scripteditor will
+        override this function definition when it's running and do its stuff
+        from there.
+        """
+        pass
 
     def map_toggle(self, widget):
         if not self.updating_map_checkboxes:
