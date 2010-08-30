@@ -25,6 +25,22 @@ import gtk
 
 from eschalon import constants as c
 
+def format_completion_text(layout, cell, model, iter, column):
+    """
+    Formats our completion text for our script commands
+    """
+    cell.set_property('markup', model.get_value(iter, column))
+
+def match_completion(completion, key, iter, column):
+    """
+    Matches based on what's been typed in, for our script commands
+    """
+    model = completion.get_model()
+    text = model.get_value(iter, column)
+    if text.lower().startswith(key.lower()):
+        return True
+    return False
+
 class ScriptEditorRow(object):
 
     def __init__(self, rownum, table, completion_model, parser, entry_callback, delbutton_callback, text=''):
@@ -32,28 +48,39 @@ class ScriptEditorRow(object):
         self.rownum = rownum
         self.parser = parser
 
+        # Our widgets
         self.numlabel = gtk.Label('%d.' % (rownum + 1))
         self.commandentry = gtk.Entry()
         self.commandentry.set_text(text)
         self.commandentry.set_size_request(240, -1)
-        completion = gtk.EntryCompletion()
-        completion.set_model(completion_model)
-        completion.set_text_column(0)
-        self.commandentry.set_completion(completion)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
         self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
 
         self.widgets = (self.numlabel, self.commandentry, self.tokenlabel, self.delbutton)
 
+        # Attach a completion to our text Entry
+        completion = gtk.EntryCompletion()
+        completion.set_model(completion_model)
+        completion.set_popup_set_width(False)
+        renderer = gtk.CellRendererText()
+        completion.pack_start(renderer)
+        completion.set_property('text-column', 0)
+        completion.set_match_func(match_completion, 0)
+        completion.set_cell_data_func(renderer, format_completion_text, 1)
+        self.commandentry.set_completion(completion)
+
+        # Attach our widgets to the table
         table.attach(self.numlabel, 0, 1, rownum, rownum+1, gtk.FILL, gtk.FILL)
         table.attach(self.commandentry, 1, 2, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
         table.attach(self.delbutton, 2, 3, rownum, rownum+1, gtk.FILL, gtk.FILL)
         table.attach(self.tokenlabel, 3, 4, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
 
+        # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
         self.delbutton.connect('clicked', delbutton_callback, self)
 
+        # And now we're basically done
         for widget in self.widgets:
             widget.show_all()
 
@@ -167,9 +194,17 @@ class ScriptEditor(object):
         label.set_padding(5, 7)
         self.window.vbox.pack_start(self.token_total_label, False)
 
-        self.completion_model = gtk.ListStore(str)
-        for command in c.commands:
-            self.completion_model.set(self.completion_model.append(), 0, command)
+        self.completion_model = gtk.ListStore(str, str)
+        for command in sorted(c.commands):
+            iter = self.completion_model.append()
+            markup = ['<b>%s</b>' % (command)]
+            for arg in c.commands[command]:
+                if arg[0] == '(':
+                    markup.append('(<i>&lt;%s&gt;</i>)' % (arg[1:-1]))
+                else:
+                    markup.append('<i>&lt;%s&gt;</i>' % (arg))
+            self.completion_model.set(iter, 0, command)
+            self.completion_model.set(iter, 1, ' '.join(markup))
 
         self.window.show_all()
         self.rows = []
