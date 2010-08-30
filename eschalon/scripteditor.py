@@ -43,9 +43,18 @@ def match_completion(completion, key, iter, column):
     return False
 
 class MapSelector(gtk.Dialog):
+    """
+    This is a dialog used to allow the user to click on a tile on the map
+    and have it populate the coordinates automatically in the script editor.
+    Internally, it does some pretty egregious things to the mapgui class,
+    because I wanted to modify the actual MapGUI code as little as possible.
+    So, we override a bunch of vars and piggyback onto MapGUI's handlers for
+    most things.  Hopefully there's not something subtly catastrophic about
+    doing so.
+    """
 
     def __init__(self, mapgui, parent=None):
-        gtk.Dialog.__init__(self, 'Select a Tile',
+        gtk.Dialog.__init__(self, 'Choose a Tile',
                 parent,
                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
@@ -65,7 +74,7 @@ class MapSelector(gtk.Dialog):
         self.coordlabel = gtk.Label()
         label.set_padding(10, 10)
         label.set_alignment(1, .5)
-        hbox.add(self.coordlabel)
+        hbox.pack_end(self.coordlabel, False, True, 10)
 
         self.vbox.pack_start(hbox, False)
 
@@ -211,6 +220,9 @@ class MapSelector(gtk.Dialog):
         self.response(gtk.RESPONSE_OK)
 
 class ScriptEditorRow(object):
+    """
+    A Single row on our Script Editor window.
+    """
 
     def __init__(self, rownum, table, completion_model, parser,
             entry_callback, focus_in_callback, focus_scroll_callback,
@@ -334,6 +346,11 @@ class ScriptEditorRow(object):
         return tokencount
 
 class ScriptEditor(object):
+    """
+    Master class for doing more high-level script editing.  Probably this
+    should just inherit from gtk.Dialog and do its thing that way, but instead
+    it doesn't.  Alas.
+    """
 
     def __init__(self):
         """
