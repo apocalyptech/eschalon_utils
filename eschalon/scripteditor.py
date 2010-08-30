@@ -23,9 +23,11 @@ import os
 import sys
 import gtk
 
+from eschalon import constants as c
+
 class ScriptEditorRow(object):
 
-    def __init__(self, rownum, table, parser, entry_callback, delbutton_callback, text=''):
+    def __init__(self, rownum, table, completion_model, parser, entry_callback, delbutton_callback, text=''):
 
         self.rownum = rownum
         self.parser = parser
@@ -34,6 +36,10 @@ class ScriptEditorRow(object):
         self.commandentry = gtk.Entry()
         self.commandentry.set_text(text)
         self.commandentry.set_size_request(240, -1)
+        completion = gtk.EntryCompletion()
+        completion.set_model(completion_model)
+        completion.set_text_column(0)
+        self.commandentry.set_completion(completion)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
         self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
@@ -161,6 +167,10 @@ class ScriptEditor(object):
         label.set_padding(5, 7)
         self.window.vbox.pack_start(self.token_total_label, False)
 
+        self.completion_model = gtk.ListStore(str)
+        for command in c.commands:
+            self.completion_model.set(self.completion_model.append(), 0, command)
+
         self.window.show_all()
         self.rows = []
 
@@ -170,6 +180,7 @@ class ScriptEditor(object):
         """
         rownum = len(self.rows)
         self.rows.append(ScriptEditorRow(rownum, self.table,
+            completion_model=self.completion_model,
             parser=self.command_parser,
             entry_callback=self.text_changed,
             delbutton_callback=self.remove_button_clicked,

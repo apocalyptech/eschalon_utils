@@ -342,3 +342,19 @@ class B1Constants:
             0x60: EntHelper('Hesham', 60, 65, 1, 1)
         }
 
+    # Script Commands
+    commands = sorted(['quest', 'kill_quest', 'quest_step',
+        'condition', 'cond_item', 'cond_quest', 'cond_not_quest', 'cond_special',
+        'cond_spot', 'cond_health', 'cond_mana', 'cond_gold', 'cond_state',
+        'give_item', 'remove_item', 'move_player', 'port_to', 'map_port',
+        'add_gold', 'remove_gold', 'heal', 'restore', 'cure_disease', 'cure_poison',
+        'trauma', 'disease', 'effect',
+        'close_door', 'close_port', 'toggle_port', 'toggle_obj', 'destroy_obj',
+        'drop_ent', 'remove_npc', 'trigger_talk', 'convert_tile', 'areacheck', 'det_keg',
+        'gfx', 'message', 'narrative', 'kill_narrative', 'notebox', 'activate_qt',
+        'book', 'destroy_script', 'commit_crime', 'no_crime', 'drama', 'alert_npcs',
+        'sound', 'display', 'time',
+        'drop_item', 'drop_loot',
+        'learn_book', 'learn', 'remove', 'to_flask',
+        'unlocked_with', 'toggle_switch'])
+

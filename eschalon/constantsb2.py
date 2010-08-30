@@ -456,6 +456,25 @@ class B2Constants:
     # Entities
     entitytable = {}
 
+    # Script Commands
+    commands = sorted(['quest', 'kill_quest', 'quest_step',
+        'condition', 'cond_item', 'cond_not_item', 'cond_quest', 'cond_not_quest',
+        'cond_special', 'cond_spot', 'cond_touch', 'cond_health', 'cond_mana',
+        'cond_gold', 'cond_state', 
+        'give_item', 'remove_item', 'move_player', 'portfx', 'port_to', 'map_port',
+        'add_gold', 'remove_gold', 'learn_recipe', 'gain_xp', 'visit_well', 'eat',
+        'heal', 'restore', 'cure_ailment', 'cure_poison', 'trauma', 'disease',
+        'player_effect',
+        'close_door', 'open_port', 'close_port', 'toggle_port', 'toggle_obj',
+        'toggle_zapper', 'destroy_obj', 'drop_ent', 'remove_npc', 'trigger_talk',
+        'convert_tile', 'areacheck', 'det_keg',
+        'special_event', 'gfx', 'msg', 'narrative', 'kill_narrative', 'activate_qt',
+        'book', 'destroy_script', 'commit_crime', 'no_crime', 'drama', 'alert_npcs',
+        'sound', 'asfx', 'display',' time',
+        'drop_gold', 'drop_item', 'drop_loot',
+        'learn_skill', 'learn_spell', 'remove', 'to_flask', 'drink',
+        'unlocked_with', 'toggle_switch'])
+
     # Data
     s = 'ZOzND3khdZGyczSal4TakWqzSCPXpCyPwuNcHb_zPrk='
     d = '2Am9Pff522Nn7JTsjxiNdwQsJsW9aa7VaWaPl0qaiEcvqRC5r3lcKdWXNrrlJhtm'
