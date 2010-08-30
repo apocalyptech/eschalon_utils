@@ -436,8 +436,6 @@ class MapGUI(BaseGUI):
                 self.ctl_erase_toggle.set_active(True)
             elif (key == 'o'):
                 self.ctl_object_toggle.set_active(True)
-            elif (key == 's'):
-                self.launch_script_editor()
 
     def on_reload(self, widget=None):
         """ What to do when we're told to reload. """
@@ -1967,7 +1965,7 @@ class MapGUI(BaseGUI):
     def script_input_label(self, page, table, row, name, text):
         self.input_label(table, row, '%s_%d' % (name, page), text)
 
-    def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None):
+    def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None, hbox=False):
         self.input_label(table, row, name, text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
@@ -1980,13 +1978,19 @@ class MapGUI(BaseGUI):
             entry.connect('changed', signal)
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
-        align.add(entry)
+        if hbox:
+            hbox = gtk.HBox()
+            hbox.pack_start(entry, False)
+            hbox.show()
+            align.add(hbox)
+        else:
+            align.add(entry)
         table.attach(align, 1, 2, row, row+1)
         return entry
 
-    def script_input_text(self, page, table, row, name, text, tooltip=None):
+    def script_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
         varname = '%s_%d' % (name, page)
-        entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250)
+        entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250, hbox)
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (name[:9] == 'item_name'):
@@ -2240,7 +2244,11 @@ class MapGUI(BaseGUI):
                 '(to update)')
         self.script_input_text(curpages, binput, 1, 'extratext', '(to update)',
                 '(to update)')
-        self.script_input_text(curpages, binput, 2, 'script', 'Script')
+        entry = self.script_input_text(curpages, binput, 2, 'script', 'Script', None, True)
+
+        # Script editor launcher
+        hbox = entry.get_property('parent')
+        self.setup_script_editor_launcher(hbox, entry)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
         if (square.scripts[curpages].trap in c.traptable.keys()):

@@ -145,7 +145,7 @@ class ScriptEditorRow(object):
 
 class ScriptEditor(object):
 
-    def __init__(self, parent, initial_script=''):
+    def __init__(self, parent):
         """
         Script Editor
         """
@@ -215,7 +215,7 @@ class ScriptEditor(object):
             self.completion_model.set(iter, 1, ' '.join(markup))
 
         # Now show everything
-        self.window.show_all()
+        self.window.vbox.show_all()
         self.rows = []
 
     def add_row(self, text=''):
@@ -268,15 +268,16 @@ class ScriptEditor(object):
                 self.table.remove(widget)
         self.rows = []
 
-    def launch(self):
+    def launch(self, initial_script=''):
         """
         Launches our script editor
         """
-        self.del_all_rows()
-        self.add_row()
+        self.normalize_script(initial_script)
 
         res = self.window.run()
         self.window.hide()
+
+        return res
 
     def update_gui(self):
         """
@@ -375,6 +376,16 @@ class ScriptEditor(object):
         self.force_blank()
         self.allow_autoscroll = True
 
+    def get_command_aggregate(self):
+        """
+        Returns all of our commands as a single string
+        """
+        ret_list = []
+        for command in [row.get_commands_text() for row in self.rows]:
+            if command != '':
+                ret_list.append(command)
+        return ' ; '.join(ret_list)
+
     ###
     ### Our own handlers
     ###
@@ -383,8 +394,7 @@ class ScriptEditor(object):
         """
         Normalizes the display so that each command is in its own line
         """
-        full_script = ' ; '.join([row.get_commands_text() for row in self.rows])
-        self.normalize_script(full_script)
+        self.normalize_script(self.get_command_aggregate())
 
     ###
     ### Handlers called by row elements

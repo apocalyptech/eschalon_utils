@@ -421,11 +421,28 @@ class BaseGUI(object):
         ###
         self.script_editor = ScriptEditor(self.window)
 
-    def launch_script_editor(self):
+    def launch_script_editor(self, widget, script_entry):
         """
         Launches our script editor
         """
-        self.script_editor.launch()
+        res = self.script_editor.launch(script_entry.get_text())
+        if res == gtk.RESPONSE_OK:
+            script_entry.set_text(self.script_editor.get_command_aggregate())
+
+    def setup_script_editor_launcher(self, container, widget):
+        """
+        Adds a button to launch the script editor, given the container to put
+        it in, and a widget whose .get_text() will provide the script text.
+        """
+        align = gtk.Alignment(0, .5, 1, 1)
+        align.set_padding(0, 0, 6, 0)
+        button = gtk.Button()
+        button.add(gtk.image_new_from_stock(gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
+        button.set_tooltip_text('Launch Script Editor')
+        button.connect('clicked', self.launch_script_editor, (widget))
+        align.add(button)
+        container.pack_start(align, False)
+        align.show_all()
 
     def bypass_delete(self, widget, event):
         """
