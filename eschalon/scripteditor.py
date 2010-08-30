@@ -99,7 +99,7 @@ class ScriptEditorRow(object):
 
     def update_tokens(self):
         """
-        Update our token count, and return how many tokens we've got
+        Update our token count, and return how many tokens we've got.
         """
         commands = self.get_commands()
         tokencount = sum([len(command) for command in commands])
@@ -177,6 +177,7 @@ class ScriptEditor(object):
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
             vadj.set_value(vadj.get_upper())
+        self.update_row_remove_buttons()
 
     def del_row(self, rownum):
         """
@@ -190,6 +191,7 @@ class ScriptEditor(object):
             row.move_up()
         del self.rows[rownum]
         self.force_blank()
+        self.update_row_remove_buttons()
 
     def force_blank(self):
         """
@@ -220,6 +222,15 @@ class ScriptEditor(object):
 
         res = self.window.run()
         self.window.hide()
+
+    def update_row_remove_buttons(self):
+        """
+        Basically just makes sure that the last row's "remove" button
+        is hidden, and the rest are shown.
+        """
+        for row in self.rows[:-1]:
+            row.delbutton.show()
+        self.rows[-1].delbutton.hide()
 
     def update_token_counts(self):
         """
@@ -257,7 +268,6 @@ class ScriptEditor(object):
             except ValueError:
                 tokens.append(text[cur:])
                 break
-        print tokens
 
         # Now loop through and process any nonparenthetical tokens,
         # which may involve splitting on ;
@@ -273,13 +283,18 @@ class ScriptEditor(object):
             else:
                 for (idx, subcommand) in enumerate(token.split(';')):
                     if idx != 0:
-                        command = []
-                        commands.append(command)
+                        if len(command) > 0:
+                            command = []
+                            commands.append(command)
                     subtokens = subcommand.split()
                     for subtoken in subtokens:
                         subtoken = subtoken.strip()
                         if subtoken != '':
                             command.append(subtoken)
+        # Prune a trailing empty command
+        if len(commands) > 1 and len(commands[-1]) == 0:
+            del commands[-1]
+
         #print commands
         return commands
 
