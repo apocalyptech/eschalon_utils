@@ -43,21 +43,33 @@ def match_completion(completion, key, iter, column):
 
 class ScriptEditorRow(object):
 
-    def __init__(self, rownum, table, completion_model, parser, entry_callback, delbutton_callback, text=''):
+    def __init__(self, rownum, table, completion_model, parser,
+            entry_callback, delbutton_callback, upbutton_callback, downbutton_callback,
+            text=''):
 
-        self.rownum = rownum
         self.parser = parser
+        self.table = table
+        self.rownum = rownum
 
         # Our widgets
-        self.numlabel = gtk.Label('%d.' % (rownum + 1))
+        self.numlabel = gtk.Label()
+        self.update_rownum()
         self.commandentry = gtk.Entry()
         self.commandentry.set_text(text)
         self.commandentry.set_size_request(240, -1)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
         self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
+        self.delbutton.set_tooltip_text('Delete this command')
+        self.upbutton = gtk.Button()
+        self.upbutton.add(gtk.image_new_from_stock(gtk.STOCK_GO_UP, gtk.ICON_SIZE_BUTTON))
+        self.upbutton.set_tooltip_text('Move this command up a line')
+        self.downbutton = gtk.Button()
+        self.downbutton.add(gtk.image_new_from_stock(gtk.STOCK_GO_DOWN, gtk.ICON_SIZE_BUTTON))
+        self.downbutton.set_tooltip_text('Move this command down a line')
 
-        self.widgets = (self.numlabel, self.commandentry, self.tokenlabel, self.delbutton)
+        self.widgets = (self.numlabel, self.commandentry, self.tokenlabel,
+                self.delbutton, self.upbutton, self.downbutton)
 
         # Attach a completion to our text Entry
         completion = gtk.EntryCompletion()
@@ -74,17 +86,20 @@ class ScriptEditorRow(object):
         table.attach(self.numlabel, 0, 1, rownum, rownum+1, gtk.FILL, gtk.FILL)
         table.attach(self.commandentry, 1, 2, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
         table.attach(self.delbutton, 2, 3, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.tokenlabel, 3, 4, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
+        table.attach(self.upbutton, 3, 4, rownum, rownum+1, gtk.FILL, gtk.FILL)
+        table.attach(self.downbutton, 4, 5, rownum, rownum+1, gtk.FILL, gtk.FILL)
+        table.attach(self.tokenlabel, 5, 6, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
 
         # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
         self.delbutton.connect('clicked', delbutton_callback, self)
+        self.upbutton.connect('clicked', upbutton_callback, self)
+        self.downbutton.connect('clicked', downbutton_callback, self)
 
         # And now we're basically done
         for widget in self.widgets:
             widget.show_all()
 
-        self.table = table
         self.update_tokens()
 
     def get_commands_text(self):
@@ -156,7 +171,7 @@ class ScriptEditor(object):
                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_OK, gtk.RESPONSE_OK))
-        self.window.set_size_request(400, 300)
+        self.window.set_size_request(500, 400)
 
         # Header
         label = gtk.Label()
@@ -228,6 +243,8 @@ class ScriptEditor(object):
             parser=self.command_parser,
             entry_callback=self.text_changed,
             delbutton_callback=self.remove_button_clicked,
+            upbutton_callback=self.move_row_up,
+            downbutton_callback=self.move_row_down,
             text=text))
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
@@ -247,6 +264,17 @@ class ScriptEditor(object):
         del self.rows[rownum]
         self.force_blank()
         self.update_gui()
+
+    def swap_rows(self, row1, row2):
+        """
+        Swaps the order of two rows.  Note that row1 should be the
+        top row, to avoid problems with swaps at the very end of the
+        list.
+        """
+        command1 = row1.commandentry.get_text()
+        command2 = row2.commandentry.get_text()
+        row2.commandentry.set_text(command1)
+        row1.commandentry.set_text(command2)
 
     def force_blank(self):
         """
@@ -283,17 +311,22 @@ class ScriptEditor(object):
         """
         Performs various tasks that need to be done when we have
         structural changes.  Right now this includes:
-          1) Making sure that the last row's "remove" button
-             is hidden, and the rest are shown.
-          2) Setting the tab order
+          1) Making sure that the last row's "remove" and "down"
+             buttons aren't clickable, and the rest are shown.
+          2) Making sure the first row's "up" button isn't clickable
+          3) Setting the tab order
         """
         taborder_entries = []
         taborder_buttons = []
-        for row in self.rows[:-1]:
-            row.delbutton.show()
+        for (idx, row) in enumerate(self.rows[:-1]):
+            row.delbutton.set_sensitive(True)
+            row.upbutton.set_sensitive((idx != 0))
+            row.downbutton.set_sensitive(True)
             taborder_entries.append(row.commandentry)
             taborder_buttons.append(row.delbutton)
-        self.rows[-1].delbutton.hide()
+        self.rows[-1].delbutton.set_sensitive(False)
+        self.rows[-1].upbutton.set_sensitive(len(self.rows) > 1)
+        self.rows[-1].downbutton.set_sensitive(False)
         taborder_entries.append(self.rows[-1].commandentry)
         self.table.set_focus_chain(taborder_entries + taborder_buttons)
 
@@ -420,3 +453,17 @@ class ScriptEditor(object):
         GUI callback for remove button
         """
         self.del_row(row.rownum)
+
+    def move_row_up(self, widget, row):
+        """
+        Move a row up one
+        """
+        if row.rownum != 0:
+            self.swap_rows(self.rows[row.rownum-1], row)
+
+    def move_row_down(self, widget, row):
+        """
+        Move a row down one
+        """
+        if row.rownum != (len(self.rows)-1):
+            self.swap_rows(row, self.rows[row.rownum+1])
