@@ -36,6 +36,9 @@ Map GUI
  * Smartdrawing should be a little less destructive when doing stuff.
    (overwriting non-grass/sand decals, etc)
  * Larger "brushes" to paint with?
+ * The multiple-object warning in the square window doesn't go away
+   if you close the window and then open up a different square which
+   only has one object.
 
 Internal
 --------
