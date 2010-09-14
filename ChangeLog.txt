@@ -11,7 +11,7 @@
 
    26 Aug 2010; CJ Kucera <pez@apocalyptech.com> :
    Had accidentally omitted one sound generator from the
-      map editor
+      Book 2 map editor
 
 *eschalon_utils-0.7.5 (24 Aug 2010)
 
