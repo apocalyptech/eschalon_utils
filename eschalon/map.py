@@ -218,9 +218,13 @@ class Map(object):
         try:
             entity = Entity.new(c.book, self.is_savegame())
             entity.read(self.df_ent)
-            self.entities.append(entity)
-            if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
-                self.squares[entity.y][entity.x].addentity(entity)
+            if self.squares[entity.y][entity.x].entity is not None:
+                # TODO: Support this better, perhaps?
+                print 'WARNING: Two entities on a single square, discarding all but the original'
+            else:
+                self.entities.append(entity)
+                if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
+                    self.squares[entity.y][entity.x].addentity(entity)
             return True
         except FirstItemLoadException, e:
             return False
