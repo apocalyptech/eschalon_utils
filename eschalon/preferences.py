@@ -172,12 +172,11 @@ class Prefs(object):
 
     def darwin_default(self, cat, name):
         """ Default values on Darwin """
-        # TODO: These are completely untested and basically just guesses.
         if (cat == 'paths'):
             if (name == 'savegames'):
                 return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 1 Saved Games')
             elif (name == 'savegames_b2'):
-                return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 2 Saved Games')
+                return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Basilisk Games', 'Book 2 Saved Games')
             elif (name == 'gamedir'):
                 return '/Applications/Eschalon Book I.app'
             elif (name == 'gamedir_b2'):
