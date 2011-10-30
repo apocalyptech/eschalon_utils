@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # vim: set expandtab tabstop=4 shiftwidth=4:
 # $Id$
 #
