@@ -374,6 +374,11 @@ class MapGUI(BaseGUI):
         # Now show our window
         self.window.show()
 
+        # Uncomment this to have the app export a PNG of all images
+        # on the commandline - also comment out the relevant stuff
+        # in draw_map()
+        #self.export_map_pngs()
+
         # ... and get into the main gtk loop
         gtk.main()
 
@@ -3804,6 +3809,9 @@ class MapGUI(BaseGUI):
         self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 
         self.ctx = self.pixmap.cairo_create()
+        # Comment the next two lines out if you're exporting map PNGs
+        # (so that the images have a tarnsparent background).  Also
+        # another two lines below
         self.ctx.set_source_rgba(0, 0, 0, 1)
         self.ctx.paint()
 
@@ -3811,6 +3819,7 @@ class MapGUI(BaseGUI):
         self.squarebuf_ctx = cairo.Context(self.squarebuf)
         self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
         self.guicache_ctx = cairo.Context(self.guicache)
+        # Here, for PNG exports
         self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
         self.guicache_ctx.paint()
 
