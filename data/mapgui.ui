@@ -1389,7 +1389,7 @@
     </child>
   </object>
   <object class="GtkWindow" id="squarewindow">
-    <property name="width_request">480</property>
+    <property name="width_request">500</property>
     <property name="height_request">720</property>
     <property name="title" translatable="yes">Edit Item Details</property>
     <property name="modal">True</property>
