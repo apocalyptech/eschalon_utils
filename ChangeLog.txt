@@ -1,5 +1,9 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   31 Oct 2011; CJ Kucera <pez@apocalyptech.com> :
+   Current and Maximum HP and Mana was reverse for Book 2
+      characters; fixed that.
+
    29 Oct 2011; CJ Kucera <pez@apocalyptech.com> :
    Fix script shebang lines to work when Python is not
       installed in /usr/bin
