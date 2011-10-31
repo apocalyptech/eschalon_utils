@@ -11,6 +11,11 @@ Data
  * Decode "savename" file format (this is where current-map and actual
    position information is kept, and also quest status, I suspect)
 
+Global GUI
+----------
+ * List of savegames as Eschalon would see them, on an "open" dialog,
+   rather than having to browse
+
 Character GUI
 -------------
  * Implement the "Unknowns" screen
