@@ -242,7 +242,7 @@ class B1Constants:
             9: 'Message (wall decals - plaques, bookcases)',
             10: 'Message (walls - signs, gravestones)',
             11: 'Sealed Barrel',
-            12: 'Miscellaneous Script',
+            12: 'Area Event (triggered by proximity)',
             13: 'Sconce',
             14: 'Trap / Teleporter / Other tile-triggered actions',
             15: 'Blackpowder Keg',
