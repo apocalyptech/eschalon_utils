@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   05 Nov 2011; CJ Kucera <pez@apocalyptech.com> :
+   Add "Open" options to initial map dialog
+
    31 Oct 2011; CJ Kucera <pez@apocalyptech.com> :
    Current and Maximum HP and Mana was reverse for Book 2
       characters; fixed that.

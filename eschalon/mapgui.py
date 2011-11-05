@@ -26,7 +26,7 @@ import time
 import random
 import traceback
 import cStringIO
-from eschalon import constants as c
+from eschalon import version, constants as c
 from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item
@@ -66,6 +66,83 @@ from eschalon.mapscript import Mapscript
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 from eschalon import app_name, version, url, authors
+
+class NewMapDialog(gtk.Dialog):
+    def __init__(self):
+        super(NewMapDialog, self).__init__(
+                flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                    gtk.STOCK_OK, gtk.RESPONSE_OK))
+
+        self.set_default_size(340, 160)
+
+        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align.set_padding(20, 20, 15, 15)
+        label = gtk.Label()
+        label.set_markup('<big><b>Eschalon Book %d Map Editor v%s</b></big>' % (c.book, version))
+        self.title_align.add(label)
+        self.vbox.pack_start(self.title_align, False, False)
+
+        self.open_align_1 = gtk.Alignment(0, 0, 0, 0)
+        self.open_align_1.set_padding(0, 20, 15, 15)
+        self.openlabel = gtk.Label()
+        self.openlabel.set_markup('<b>Open an existing map file:</b>')
+        self.open_align_1.add(self.openlabel)
+        self.vbox.pack_start(self.open_align_1, False, False)
+
+        rvbox = gtk.VBox()
+        self.open_align_2 = gtk.Alignment(0, 0, 0, 1)
+        self.open_align_2.set_padding(0, 10, 40, 15)
+        self.open_align_2.add(rvbox)
+        self.vbox.pack_start(self.open_align_2, False, False)
+
+        self.open_savegame_radio = gtk.RadioButton(label="From the Savegame Directory")
+        rvbox.add(self.open_savegame_radio)
+        self.open_global_radio = gtk.RadioButton(label="From the Global Directory", group=self.open_savegame_radio)
+        if c.book == 1:
+            # There's no point in showing this radio for Book II
+            rvbox.add(self.open_global_radio)
+
+        align = gtk.Alignment(0, 0, 0, 0)
+        align.set_padding(10, 20, 15, 15)
+        self.createlabel = gtk.Label()
+        align.add(self.createlabel)
+        self.vbox.pack_start(align, False, False)
+
+        rvbox = gtk.VBox()
+        align = gtk.Alignment(0, 0, 0, 1)
+        align.set_padding(0, 10, 40, 15)
+        align.add(rvbox)
+        self.vbox.pack_start(align, False, False)
+
+        self.new_savegame_radio = gtk.RadioButton(label="Savegame Map File", group=self.open_savegame_radio)
+        rvbox.add(self.new_savegame_radio)
+        self.new_global_radio = gtk.RadioButton(label="Global Map File", group=self.open_savegame_radio)
+        if c.book == 2:
+            self.new_global_radio.set_tooltip_text('Book 2 global maps are hidden away inside the "datapak" '
+                    'file, so creating a Global Book 2 map may not be worth it.')
+        rvbox.add(self.new_global_radio)
+
+        self.show_all()
+        self.set_initial()
+
+    def set_initial(self, initial=True):
+        if initial:
+            self.set_title("Load or Create a Map")
+            self.createlabel.set_markup("<b>Or, select the type of map you want to create:</b>")
+            self.open_align_1.show()
+            self.open_align_2.show()
+            self.title_align.show()
+            self.open_savegame_radio.set_active(True)
+            self.resize(340, 288)
+        else:
+            self.set_title("Select New Map Type")
+            self.createlabel.set_markup("<b>Select the type of map you want to create:</b>")
+            self.open_align_1.hide()
+            self.open_align_2.hide()
+            self.title_align.hide()
+            self.new_savegame_radio.set_active(True)
+            self.resize(340, 160)
 
 class MapGUI(BaseGUI):
 
@@ -308,17 +385,13 @@ class MapGUI(BaseGUI):
         # If we were given a filename, load it.  If not, create a new map,
         # or load one if the user wants.
         if (self.options['filename'] == None):
-            self.get_widget('map_new_type_initial_align').show()
-            self.get_widget('map_new_type_dialog').resize(340, 190)
             if not self.on_new():
-                if not self.on_load():
-                    return
-            self.get_widget('map_new_type_initial_align').hide()
-            self.get_widget('map_new_type_dialog').resize(340, 160)
+                return;
         else:
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
                     return
+        self.get_widget('map_new_map_dialog').set_initial(False)
 
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
@@ -842,6 +915,10 @@ class MapGUI(BaseGUI):
         adjust.add(label)
         adjust.show_all()
 
+        # "New Map" dialog (previously in Glade, but Glade continues to be awful)
+        dialog = NewMapDialog()
+        self.register_widget('map_new_map_dialog', dialog)
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_new': self.on_new,
@@ -1016,21 +1093,24 @@ class MapGUI(BaseGUI):
                 return False
 
         # Figure out what type of map to create
-        dialog = self.get_widget('map_new_type_dialog')
-        global_radio = self.get_widget('map_new_type_global')
-        savegame_radio = self.get_widget('map_new_type_savegame')
-        if c.book == 1:
-            global_radio.set_active(True)
-        else:
-            savegame_radio.set_active(True)
+        dialog = self.get_widget('map_new_map_dialog')
         resp = dialog.run()
         dialog.hide()
         if resp != gtk.RESPONSE_OK:
             return False
 
+        # Our "new map" dialog will have a couple of "open" options on
+        # it, if it's the initial dialog shown.  Check for those and
+        # process on_load() instead, if we've chosen to do that.
+        if dialog.open_global_radio.get_active() or dialog.open_savegame_radio.get_active():
+            if not self.on_load():
+                # Recursion!  If a user cancels out of the load dialog, they may want to
+                # create a new map instead.  They can cancel out directly from there.
+                return self.on_new()
+
         # Now create a new map
         self.map = Map.load('', self.req_book, self.req_book)
-        self.map.set_savegame(savegame_radio.get_active())
+        self.map.set_savegame(dialog.new_savegame_radio.get_active())
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
@@ -1064,7 +1144,11 @@ class MapGUI(BaseGUI):
         # Figure out what our initial path should be
         path = ''
         if self.map == None:
-            path = self.get_current_savegame_dir()
+            newdialog = self.get_widget('map_new_map_dialog')
+            if newdialog.open_global_radio.get_active():
+                path = self.get_current_gamedir()
+            else:
+                path = self.get_current_savegame_dir()
         elif self.map.df.filename == '':
             if self.map.is_savegame():
                 path = self.get_current_savegame_dir()
