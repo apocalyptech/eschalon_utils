@@ -1103,7 +1103,9 @@ class MapGUI(BaseGUI):
         # it, if it's the initial dialog shown.  Check for those and
         # process on_load() instead, if we've chosen to do that.
         if dialog.open_global_radio.get_active() or dialog.open_savegame_radio.get_active():
-            if not self.on_load():
+            if self.on_load():
+                return True
+            else:
                 # Recursion!  If a user cancels out of the load dialog, they may want to
                 # create a new map instead.  They can cancel out directly from there.
                 return self.on_new()
