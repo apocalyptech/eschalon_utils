@@ -31,7 +31,7 @@ from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item
 from eschalon.entity import B1Entity, B2Entity
-from eschalon.basegui import BaseGUI, WrapLabel
+from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
 
 # Load our GTK modules
 try:
@@ -143,6 +143,32 @@ class NewMapDialog(gtk.Dialog):
             self.title_align.hide()
             self.new_savegame_radio.set_active(True)
             self.resize(340, 160)
+
+class ObjectSelWindow(ImageSelWindow):
+
+    def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
+        self.book = gtk.Notebook()
+        vbox.pack_start(self.book, True, True)
+
+        (sw, self.drawingarea_a) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        self.drawingarea_a.set_name('objsel_a_area')
+        self.label_a = gtk.Label('Set A (misc)')
+        self.book.append_page(sw, self.label_a)
+
+        (self.scrolltoggle, self.drawingarea_b) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        self.drawingarea_b.set_name('objsel_b_area')
+        self.label_b = gtk.Label('Set B (misc)')
+        self.book.append_page(self.scrolltoggle, self.label_b)
+
+        (sw, self.drawingarea_c) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        self.drawingarea_c.set_name('objsel_c_area')
+        self.label_c = gtk.Label('Set C (walls)')
+        self.book.append_page(sw, self.label_c)
+
+        (sw, self.drawingarea_d) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        self.drawingarea_d.set_name('objsel_d_area')
+        self.label_d = gtk.Label('Set D (trees)')
+        self.book.append_page(sw, self.label_d)
 
 class MapGUI(BaseGUI):
 
@@ -640,6 +666,13 @@ class MapGUI(BaseGUI):
         assigning default values, etc.  It's a pretty fuzzy boundary regardless.
         """
 
+        # Object Selection Window
+        self.objsel_window = ObjectSelWindow(
+            on_clicked=self.objsel_on_clicked,
+            on_motion=self.objsel_on_motion,
+            on_expose=self.objsel_on_expose)
+        self.register_widget('objselwindow', self.objsel_window)
+
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
                 'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
@@ -982,9 +1015,6 @@ class MapGUI(BaseGUI):
                 'open_fill_floorsel': self.open_fill_floorsel,
                 'on_fill_floor_changed': self.on_fill_floor_changed,
                 'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
-                'objsel_on_motion': self.objsel_on_motion,
-                'objsel_on_expose': self.objsel_on_expose,
-                'objsel_on_clicked': self.objsel_on_clicked,
                 'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
                 'draw_check_all': self.draw_check_all,
                 'draw_uncheck_all': self.draw_uncheck_all,
@@ -2796,27 +2826,24 @@ class MapGUI(BaseGUI):
         in a class, somehow, instead of a dict.
         """
         if c.book == 1:
-            self.get_widget('imgsel_scroll1').show()
+            self.objsel_window.scrolltoggle.show()
             letters = ['d', 'c', 'b', 'a']
-            self.get_widget('objsel_a_title_label').set_label('Set A (misc)')
-            self.get_widget('objsel_b_title_label').set_label('Set B (misc)')
-            self.get_widget('objsel_c_title_label').set_label('Set C (walls)')
-            self.get_widget('objsel_d_title_label').set_label('Set D (trees)')
+            self.objsel_window.label_a.set_label('Set A (misc)')
+            self.objsel_window.label_b.set_label('Set B (misc)')
+            self.objsel_window.label_c.set_label('Set C (walls)')
+            self.objsel_window.label_d.set_label('Set D (trees)')
         else:
-            self.get_widget('imgsel_scroll1').hide()
+            self.objsel_window.scrolltoggle.hide()
             letters = ['c', 'd', 'a']
-            self.get_widget('objsel_a_title_label').set_label('Set A (misc)')
-            self.get_widget('objsel_c_title_label').set_label('Set B (walls)')
-            self.get_widget('objsel_d_title_label').set_label('Set C (trees)')
+            self.objsel_window.label_a.set_label('Set A (misc)')
+            self.objsel_window.label_c.set_label('Set B (walls)')
+            self.objsel_window.label_d.set_label('Set C (trees)')
         self.imgsel_window = self.get_widget('objselwindow')
         self.imgsel_window.set_size_request((self.gfx.obj_a_width*self.gfx.obj_a_cols)+60, 600)
         if (spinwidget is None):
             self.imgsel_widget = self.get_widget('wallimg')
         else:
             self.imgsel_widget = spinwidget
-        self.objsel_book = self.get_widget('objsel_book')
-        self.imgsel_bgcolor_img = self.get_widget('objsel_bgcolor_img')
-        self.imgsel_bgcolor_event = self.get_widget('objsel_bgcolor_event')
         self.imgsel_getfunc = self.gfx.get_object
         self.imgsel_getfunc_obj_func = None
         self.imgsel_getfunc_extraarg = self.map.tree_set
@@ -2827,7 +2854,7 @@ class MapGUI(BaseGUI):
         self.objsel_panes['a'] = {
                 'init': False,
                 'clean': [],
-                'area': self.get_widget('objsel_a_area'),
+                'area': self.objsel_window.drawingarea_a,
                 'width': self.gfx.obj_a_width,
                 'height': self.gfx.obj_a_height,
                 'cols': self.gfx.obj_a_cols,
@@ -2846,7 +2873,7 @@ class MapGUI(BaseGUI):
             self.objsel_panes['b'] = {
                     'init': False,
                     'clean': [],
-                    'area': self.get_widget('objsel_b_area'),
+                    'area': self.objsel_window.drawingarea_b,
                     'width': self.gfx.obj_b_width,
                     'height': self.gfx.obj_b_height,
                     'cols': self.gfx.obj_b_cols,
@@ -2864,7 +2891,7 @@ class MapGUI(BaseGUI):
         self.objsel_panes['c'] = {
                 'init': False,
                 'clean': [],
-                'area': self.get_widget('objsel_c_area'),
+                'area': self.objsel_window.drawingarea_c,
                 'width': self.gfx.obj_c_width,
                 'height': self.gfx.obj_c_height,
                 'cols': self.gfx.obj_c_cols,
@@ -2882,7 +2909,7 @@ class MapGUI(BaseGUI):
         self.objsel_panes['d'] = {
                 'init': False,
                 'clean': [],
-                'area': self.get_widget('objsel_d_area'),
+                'area': self.objsel_window.drawingarea_d,
                 'width': self.gfx.obj_d_width,
                 'height': self.gfx.obj_d_height,
                 'cols': self.gfx.obj_d_cols,
@@ -2903,7 +2930,7 @@ class MapGUI(BaseGUI):
             if (int(self.imgsel_widget.get_value()) >= self.objsel_panes[letter]['offset']):
                 curpage = self.objsel_panes[letter]['page']
                 break
-        self.objsel_book.set_current_page(curpage)
+        self.objsel_window.book.set_current_page(curpage)
         self.objsel_current = ''
         #self.load_objsel_vars(self.get_widget('objsel_%s_area' % (letters[3-curpage])))
         self.imgsel_window.show()
@@ -2922,6 +2949,8 @@ class MapGUI(BaseGUI):
         if (letter != self.objsel_current):
             for (key, val) in self.objsel_panes[letter].items():
                 self.__dict__['imgsel_%s' % key] = val
+                if key == 'area':
+                    self.objsel_window.drawingarea = val
             self.objsel_current = letter
 
     def objsel_on_clicked(self, widget, event):

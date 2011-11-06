@@ -1,3 +1,13 @@
+More immediately, but I'm too tired to continue for the night:
+
+ * set_transient_for() on "new" dialog
+ * get the transient working for the img/obj dialogs too actually
+ * don't do a show_all() in constructor on "new" dialog?
+ * docstrings for these new GUI classes
+ * actually hook up "escape" functionality on there
+ * Explicit option to "zero" the image lookup
+ * Also, reformat that changelog
+
 Packaging
 ---------
  * Should package this properly for all OSes.  Install into the

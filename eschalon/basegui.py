@@ -105,6 +105,79 @@ class WrapLabel(gtk.Label):
             self.__wrap_width = width
             self.queue_resize()
 
+class ImageSelWindow(gtk.Window):
+
+    def __init__(self, object_tabs=False, on_clicked=None, on_motion=None, on_expose=None):
+        super(ImageSelWindow, self).__init__()
+        self.set_title("Select an Icon")
+        self.set_modal(True)
+
+        vbox = gtk.VBox()
+        self.add(vbox)
+
+        label = gtk.Label("Selecting an icon or hitting Escape will close this dialog.")
+        label.set_alignment(.5, .5)
+        label.set_padding(0, 6)
+        vbox.pack_start(label, False, False)
+
+        self.setup_drawing_area(vbox, on_clicked, on_motion, on_expose)
+
+        self.bgcolor_box = gtk.VBox()
+        vbox.pack_start(self.bgcolor_box, False, True)
+
+        label = gtk.Label()
+        label.set_markup('<i>(Click to change background color)</i>')
+        label.set_alignment(.5, .5)
+        label.set_padding(0, 2)
+        self.bgcolor_box.pack_start(label, True, True)
+
+        align = gtk.Alignment(.5, .5, 0, 1)
+        self.bgcolor_box.pack_start(align, False, True)
+
+        vp = gtk.Viewport()
+        vp.set_shadow_type(gtk.SHADOW_IN)
+        align.add(vp)
+
+        self.eventbox = gtk.EventBox()
+        vp.add(self.eventbox)
+
+        self.image = gtk.Image()
+        self.image.set_alignment(.5, .5)
+        self.image.set_padding(0, 0)
+        self.image.set_size_request(170, 29)
+        self.eventbox.add(self.image)
+
+        vbox.show_all()
+
+    def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
+        (sw, self.drawingarea) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        vbox.pack_start(sw, True, True)
+
+    def create_drawing_area(self, on_clicked, on_motion, on_expose):
+        """
+        Creates a new DrawingArea, contained within a Viewport and ScrolledWindow.
+        Returns a tuple of the ScrolledWindow and the DrawingArea.
+        """
+
+        sw = gtk.ScrolledWindow()
+
+        vp = gtk.Viewport()
+        vp.set_shadow_type(gtk.SHADOW_IN)
+        sw.add(vp)
+
+        da = gtk.DrawingArea()
+        da.set_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK)
+        if on_clicked is not None:
+            da.connect('button-press-event', on_clicked)
+        if on_motion is not None:
+            da.connect('motion-notify-event', on_motion)
+        if on_expose is not None:
+            da.connect('expose-event', on_expose)
+        vp.add(da)
+
+        return (sw, da)
+
+
 class BaseGUI(object):
 
     # Constants
@@ -244,9 +317,6 @@ class BaseGUI(object):
                 'on_b2_modifier_changed': self.on_b2_modifier_changed,
                 'on_item_close_clicked': self.on_item_close_clicked,
                 'open_itemsel': self.open_itemsel,
-                'imgsel_on_motion': self.imgsel_on_motion,
-                'imgsel_on_expose': self.imgsel_on_expose,
-                'imgsel_on_clicked': self.imgsel_on_clicked,
                 'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
                 'bypass_delete': self.bypass_delete,
                 'on_b2_item_attr3_treeview_clicked': self.on_b2_item_attr3_treeview_clicked,
@@ -330,6 +400,15 @@ class BaseGUI(object):
         Called when we load a new character, this will update the item form with
         elements which are dynamic based on the Book
         """
+
+        ###
+        ### Image Selection Window
+        ###
+        self.imgsel_window = ImageSelWindow(
+            on_clicked=self.imgsel_on_clicked,
+            on_motion=self.imgsel_on_motion,
+            on_expose=self.imgsel_on_expose)
+        self.register_widget('item_imgsel_window', self.imgsel_window)
 
         ###
         ### Item Type and Subtype dropdowns
@@ -984,7 +1063,7 @@ class BaseGUI(object):
         return item
 
     def imgsel_init_bgcolor(self):
-        (x, y) = self.imgsel_bgcolor_img.get_size_request()
+        (x, y) = self.imgsel_window.image.get_size_request()
         pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, x, y)
         steps = 4
         max = 255
@@ -1000,8 +1079,8 @@ class BaseGUI(object):
             temppixbuf.fill(color)
             temppixbuf.copy_area(0, 0, stepwidth, y, pixbuf, (i*stepwidth), 0)
         # We have to connect this in the code because there's no interface to do so in Glade
-        self.imgsel_bgcolor_event.connect('button-press-event', self.on_bgcolor_img_clicked)
-        self.imgsel_bgcolor_img.set_from_pixbuf(pixbuf)
+        self.imgsel_window.eventbox.connect('button-press-event', self.on_bgcolor_img_clicked)
+        self.imgsel_window.image.set_from_pixbuf(pixbuf)
         self.imgsel_bgcolor_pixbuf = pixbuf
 
     def imgsel_launch(self, widget, width, height, cols, rows, getfunc, bgcolor_select=True, offset=0, getfunc_obj_func=None):
@@ -1016,14 +1095,11 @@ class BaseGUI(object):
         """
         self.imgsel_init = False
         self.imgsel_clean = []
-        self.imgsel_window = self.get_widget('imgselwindow')
+        self.imgsel_window = self.get_widget("item_imgsel_window")
         if (self.curitemtype == self.ITEM_MAP):
             self.imgsel_window.set_transient_for(self.squarewindow)
         else:
             self.imgsel_window.set_transient_for(self.itemwindow)
-        self.imgsel_area = self.get_widget('imgsel_area')
-        self.imgsel_bgcolor_img = self.get_widget('bgcolor_img')
-        self.imgsel_bgcolor_event = self.get_widget('bgcolor_event')
         self.imgsel_widget = widget
         self.imgsel_width = width
         self.imgsel_height = height
@@ -1049,9 +1125,9 @@ class BaseGUI(object):
         self.imgsel_window.set_size_request(req_width, req_height)
         self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
         if (bgcolor_select):
-            self.get_widget('imgsel_bgcolor_box').show()
+            self.imgsel_window.bgcolor_box.show()
         else:
-            self.get_widget('imgsel_bgcolor_box').hide()
+            self.imgsel_window.bgcolor_box.hide()
         self.imgsel_window.show()
 
     def imgsel_on_motion(self, widget, event):
@@ -1067,7 +1143,7 @@ class BaseGUI(object):
             self.imgsel_clean.append((self.imgsel_mousex, self.imgsel_mousey))
             self.imgsel_mousex_prev = self.imgsel_mousex
             self.imgsel_mousey_prev = self.imgsel_mousey
-        self.imgsel_area.queue_draw()
+        self.imgsel_window.drawingarea.queue_draw()
 
     def imgsel_draw(self, x, y):
         imgnum = (y*self.imgsel_cols)+x
@@ -1123,15 +1199,15 @@ class BaseGUI(object):
             else:
                 self.imgsel_curx = (int(self.imgsel_widget.get_value())-self.imgsel_offset) % self.imgsel_cols
                 self.imgsel_cury = int((int(self.imgsel_widget.get_value())-self.imgsel_offset) / self.imgsel_cols)
-            self.imgsel_area.set_size_request(self.imgsel_x, self.imgsel_y)
-            self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_area.window, self.imgsel_x, self.imgsel_y)
+            self.imgsel_window.drawingarea.set_size_request(self.imgsel_x, self.imgsel_y)
+            self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_window.drawingarea.window, self.imgsel_x, self.imgsel_y)
             self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
             self.imgsel_blank.fill(self.imgsel_blank_color)
-            self.imgsel_gc_white = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_white = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
             self.imgsel_gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
-            self.imgsel_gc_black = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_black = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
             self.imgsel_gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.imgsel_gc_green = gtk.gdk.GC(self.imgsel_area.window)
+            self.imgsel_gc_green = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
             self.imgsel_gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
             self.imgsel_pixmap.draw_rectangle(self.imgsel_gc_black, True, 0, 0, self.imgsel_x, self.imgsel_y)
             for y in range(self.imgsel_rows):
@@ -1139,7 +1215,7 @@ class BaseGUI(object):
                     self.imgsel_draw(x, y)
             self.imgsel_init = True
         self.imgsel_clean = []
-        self.imgsel_area.window.draw_drawable(self.imgsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
+        self.imgsel_window.drawingarea.window.draw_drawable(self.imgsel_window.drawingarea.get_style().fg_gc[gtk.STATE_NORMAL],
             self.imgsel_pixmap, 0, 0, 0, 0, self.imgsel_x, self.imgsel_y)
 
     def imgsel_on_clicked(self, widget, event):
@@ -1158,7 +1234,7 @@ class BaseGUI(object):
         color = pixels[int(event.y)][int(event.x)][0]
         self.imgsel_blank_color = self.imgsel_generate_grayscale(color)
         self.imgsel_init = False
-        self.imgsel_area.queue_draw()
+        self.imgsel_window.drawingarea.queue_draw()
 
     def get_gamedir_filelist(self, dir, ext, keepext=True, matchprefixes=None):
         if c.book == 1:
