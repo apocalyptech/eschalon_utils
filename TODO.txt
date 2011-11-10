@@ -7,6 +7,7 @@ More immediately, but I'm too tired to continue for the night:
  * actually hook up "escape" functionality on there
  * Explicit option to "zero" the image lookup
  * Also, reformat that changelog
+ * Book 2 Map Properties dialog needs a bit of widening
 
 Packaging
 ---------
