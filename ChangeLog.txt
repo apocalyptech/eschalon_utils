@@ -1,9 +1,11 @@
 # ChangeLog for Eschalon Savefile Editor
 
-*eschalon_utils-0.8.0 (05 Feb 2012)
+*eschalon_utils-0.8.0 (06 Feb 2012)
 
    05 Nov 2011; CJ Kucera <pez@apocalyptech.com> :
    Add "Open" options to initial map dialog
+   Updated Windows EXE packaging to Python 2.7, and latest
+      PyGTK versions, etc.
 
    31 Oct 2011; CJ Kucera <pez@apocalyptech.com> :
    Current and Maximum HP and Mana was reverse for Book 2
