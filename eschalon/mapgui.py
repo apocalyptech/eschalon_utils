@@ -1966,7 +1966,7 @@ class MapGUI(BaseGUI):
         """ Keep track of where the mouse is """
 
         if (self.dragging):
-            if gtk.events_pending():
+            if sys.platform != 'win32' and gtk.events_pending():
                 # A default Fedora 13 install on my old development
                 # machine performs horribly slowly on click-and-drag
                 # for some reason.  This is a pretty simple way to
