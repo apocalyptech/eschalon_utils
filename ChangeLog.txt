@@ -1,5 +1,7 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-0.8.0 (05 Feb 2012)
+
    05 Nov 2011; CJ Kucera <pez@apocalyptech.com> :
    Add "Open" options to initial map dialog
 
