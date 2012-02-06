@@ -152,7 +152,7 @@ far less tested than the Linux side.
 
 You're welcome to run the Python scripts directly (as the Linux folks do), if
 you want, in which case you will need a gtk+ runtime (I recommend a recent one
-directly from gtk.org), Python (2.6), and all three PyGTK components installed
+directly from gtk.org), Python (2.7), and all three PyGTK components installed
 (PyCairo, PyGObject, and PyGTK).  Additionally, to edit Book II maps, you'll
 want PyCrypto and czipfile.  Some direct links can be found on the website.
 
