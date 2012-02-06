@@ -1,0 +1,3 @@
+eb2_zipfile_crypt.py export-ignore
+data/check_dup_ids.pl export-ignore
+.git* export-ignore
