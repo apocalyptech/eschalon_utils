@@ -19,8 +19,6 @@ Process:
 
     4) Copy data/ to dist/
 
-    5) Copy C:\GTK\(lib|etc) to dist/  (is this actually needed?)
-
-    6) Right-click on win-inno.iss and choose "Compile"
+    5) Right-click on win-inno.iss and choose "Compile"
 
 You should be left with a nice self-contained EXE in Output/
