@@ -146,7 +146,13 @@ class ImageSelWindow(gtk.Window):
         self.image.set_size_request(170, 29)
         self.eventbox.add(self.image)
 
+        self.connect('delete-event', self.delete_event)
+
         vbox.show_all()
+
+    def delete_event(self, widget, event):
+        self.hide()
+        return True
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
         (sw, self.drawingarea) = self.create_drawing_area(on_clicked, on_motion, on_expose)
