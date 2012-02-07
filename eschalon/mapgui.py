@@ -671,6 +671,7 @@ class MapGUI(BaseGUI):
             on_motion=self.objsel_on_motion,
             on_expose=self.objsel_on_expose)
         self.register_widget('objselwindow', self.objsel_window)
+        self.objsel_window.set_transient_for(self.squarewindow)
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
