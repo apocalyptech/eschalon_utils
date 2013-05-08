@@ -155,6 +155,8 @@ class Prefs(object):
             elif (name == 'gamedir_b2'):
                 for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
                     fulldir = os.path.join(dir, 'eschalon_book_2')
+                    if (os.path.isdir(os.path.join(fulldir, 'data'))):
+                        return fulldir
                     if (os.path.isfile(os.path.join(fulldir, 'datapak'))):
                         return fulldir
                 # If nothing found, don't just assume - return a blank string.  This way it
@@ -291,6 +293,8 @@ class Prefs(object):
             elif (name == 'gamedir_b2'):
                 for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
                     testdir = os.path.join(dir, 'Eschalon Book II')
+                    if (os.path.isdir(os.path.join(testdir, 'data'))):
+                        return testdir
                     if (os.path.isfile(os.path.join(testdir, 'datapak'))):
                         return testdir
                 # If we got here, it wasn't found - check the registry.  If there

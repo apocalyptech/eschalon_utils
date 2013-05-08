@@ -26,6 +26,7 @@ import cairo
 import base64
 import gobject
 import cStringIO
+import glob
 from struct import unpack
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
@@ -736,12 +737,17 @@ class B2Gfx(Gfx):
         """
         Reads a given filename.
         """
-        filename = '%s/%s' % (dir, filename)
         if self.loaded:
+            newfilename = os.path.join(self.gamedir, dir, filename)
             try:
-                return self.zip.read(filename)
+                return open(newfilename, 'rb').read()
+            except IOError:
+                pass
+            newfilename = '%s/%s' % (dir, filename)
+            try:
+                return self.zip.read(newfilename)
             except KeyError:
-                raise LoadException('Filename %s not found in datapak!' % (filename))
+                raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
         else:
             raise LoadException('We haven\'t initialized ourselves yet')
 
@@ -883,8 +889,11 @@ class B2Gfx(Gfx):
         pad = ord(plain[-1])
         text = plain[:-pad]
         
-        self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
-        self.zip.setpassword(text)
+        if os.path.isfile(os.path.join(self.gamedir, 'datapak')):
+            self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
+            self.zip.setpassword(text)
+        else:
+            self.zip = None
 
         self.loaded = True
 
@@ -893,6 +902,12 @@ class B2Gfx(Gfx):
         Returns a list of all files inside the archive.
         """
         if self.loaded:
-            return self.zip.namelist()
+            if self.zip is None:
+                namelist = []
+                for i in ['data', 'gfx', 'maps', 'music', 'sound']:
+                    namelist = namelist + glob.glob(os.path.join(self.gamedir, i, '*'))
+                return namelist
+            else:
+                return self.zip.namelist()
         else:
             return []
