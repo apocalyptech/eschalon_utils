@@ -287,7 +287,7 @@ class BaseGUI(object):
 
         # Update the text on our graphics popups
         if c.book == 1:
-            gfxfile = 'gfx.pak'
+            gfxfile = 'gfx.pak (or packedgraphics)'
         else:
             gfxfile = 'datapak (or data)'
         opt_label = self.prefsbuilder.get_object('gfx_opt_window_mainlabel')
@@ -538,7 +538,7 @@ class BaseGUI(object):
         return True
 
     def gamedir_set_b1(self):
-        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
+        return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'packedgraphics'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
 
     def gamedir_set_b2(self):
         return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'data'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'datapak')))
@@ -611,7 +611,7 @@ class BaseGUI(object):
             self.prefsbuilder.get_object('b2_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir
             gui_savegamedir = self.prefs_savegame
-            look_for = [ 'gfx.pak' ]
+            look_for = [ 'gfx.pak', 'packedgraphics' ]
         else:
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').show()

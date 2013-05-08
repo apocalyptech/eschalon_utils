@@ -418,7 +418,10 @@ class B1Gfx(Gfx):
 
         # Graphics PAK file
         self.pakloc = os.path.join(prefs.get_str('paths', 'gamedir'), 'gfx.pak')
-        self.df = Savefile(self.pakloc)
+        if os.path.isfile(self.pakloc):
+            self.df = Savefile(self.pakloc)
+        else:
+            self.df = None
 
         # Finally call the parent constructor
         super(B1Gfx, self).__init__(prefs, datadir)
@@ -426,6 +429,9 @@ class B1Gfx(Gfx):
     def readfile(self, filename):
         """ Reads a given filename out of the PAK. """
         if self.loaded:
+            filepath = os.path.join(self.prefs.get_str('paths', 'gamedir'), 'packedgraphics', filename)
+            if os.path.isfile(filepath):
+                return open(filepath, 'rb').read()
             if (filename in self.fileindex):
                 self.df.open_r()
                 self.df.seek(self.zeroindex + self.fileindex[filename].abs_index)
@@ -445,6 +451,10 @@ class B1Gfx(Gfx):
         """ Read in the main file index. """
 
         df = self.df
+        if df is None:
+            self.loaded = True
+            return
+
         df.open_r()
         header = df.read(4)
         if (header != '!PAK'):
