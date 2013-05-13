@@ -13,14 +13,15 @@
 # Developed and tested on Mac OS 10.8.3 64 bit
 
 # Build these apps
-APPS="eschalon_b1_char eschalon_b1_map eschalon_b2_char eschalon_b2_map"
+#APPS="eschalon_b1_char eschalon_b1_map eschalon_b2_char eschalon_b2_map"
+APPS="eschalon_utils"
 # Include these python modules
 INCLUDE="gtk,gio,atk,pangocairo"
 # Add these files to each app bundle.  We can't include gtk here because the
 # MachO header rebuild fails with the python library - see below for more
 # info
 RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0"
-DMG="Eschalon Savefile Editor"
+DMG="Eschalon Utils"
 
 # Exit if any step exits uncleanly. Helpful for a hack job like this
 set -e
