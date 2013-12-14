@@ -139,15 +139,14 @@ class MainGUI(BaseGUI):
         self.avatarsel_mousey_prev = -1
 
         # Set up our graphics cache
+        self.gfx = None
         self.prefs_init(self.prefs)
         self.optional_gfx()
         if self.gamedir_set():
             try:
                 self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
             except:
-                self.gfx = None
-        else:
-            self.gfx = None
+                pass
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
@@ -366,7 +365,7 @@ class MainGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            char = Character.load(filename, None, self.req_book)
+            char = Character.load(filename, self.req_book, self.req_book)
             char.read()
         except LoadException, e:
             errordiag = self.get_widget('loaderrorwindow')

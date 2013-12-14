@@ -241,8 +241,10 @@ class Item(object):
         """
         if book == 1:
             return B1Item(zero)
-        else:
+        elif book == 2:
             return B2Item(zero)
+        elif book == 3:
+            return B3Item(zero)
 
 class B1Item(Item):
     """
@@ -538,3 +540,10 @@ class B2Item(Item):
         return (self.attr_modified_1 > 0 or
             self.attr_modified_2 > 0 or
             self.attr_modified_3 > 0)
+
+class B3Item(B2Item):
+    """
+    Item structure for Book 3
+    """
+
+    book = 3

@@ -31,6 +31,12 @@ class EschalonUtils:
     def b2map(self, widget, data=None):
         prog = MapGUI(self.options, Prefs(), 2)
         return prog.run()
+    def b3char(self, widget, data=None):
+        prog = MainGUI(self.options, Prefs(), 3)
+        return prog.run()
+    def b3map(self, widget, data=None):
+        prog = MapGUI(self.options, Prefs(), 3)
+        return prog.run()
 
     def delete_event(self, widget, event, data=None):
         return False
@@ -50,14 +56,17 @@ class EschalonUtils:
 
         row1 = gtk.HBox(homogeneous=False, spacing=10)
         row2 = gtk.HBox(homogeneous=False, spacing=10)
-        for row in [gtk.Label('Select a utility to run'), row1, row2]:
+        row3 = gtk.HBox(homogeneous=False, spacing=10)
+        for row in [gtk.Label('Select a utility to run'), row1, row2, row3]:
             row.show()
             col.add(row)
  
         buttons = { "Book I Character Editor": [self.b1char, row1],
                     "Book I Map Editor": [self.b1map, row1],
                     "Book II Character Editor": [self.b2char, row2],
-                    "Book II Map Editor": [self.b2map, row2]}
+                    "Book II Map Editor": [self.b2map, row2],
+                    "Book III Character Editor": [self.b3char, row3],
+                    "Book III Map Editor": [self.b3map, row3]}
         for label in buttons.keys():
             button = gtk.Button(label)
             button.connect_object("clicked", gtk.Widget.hide, window)

@@ -25,7 +25,7 @@ from eschalon.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
-    progname = 'eschalon_b1_map.py'
+    progname = 'eschalon_b2_map.py'
     print
     print "To launch the GUI:"
     print "\t%s [<mapfile>]" % (progname)
@@ -38,7 +38,7 @@ def usage(full=False):
         print "Wherever <mapfile> appears in the above, you should specify the"
         print "location of the file named with a '.map' extension.  This utility"
         print "can load both maps that are inside your savegame folder, and the"
-        print "stock maps in Eschalon Book 1's 'data' directory."
+        print "stock maps in Eschalon Book 2's 'data' directory."
         print
         print "By default, the application will launch the GUI.  Note that"
         print "specifying a map file is optional when you're launching"

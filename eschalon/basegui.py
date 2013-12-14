@@ -248,8 +248,10 @@ class BaseGUI(object):
         # Prefs fields
         self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
         self.prefs_savegame_b2 = self.prefsbuilder.get_object('savegame_b2_chooser')
+        self.prefs_savegame_b3 = self.prefsbuilder.get_object('savegame_b3_chooser')
         self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
         self.prefs_gamedir_b2 = self.prefsbuilder.get_object('gamedata_b2_chooser')
+        self.prefs_gamedir_b3 = self.prefsbuilder.get_object('gamedata_b3_chooser')
         self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
         self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
         self.prefs_warn_slowzip = self.prefsbuilder.get_object('prefs_warn_slowzip')
@@ -288,8 +290,10 @@ class BaseGUI(object):
         # Update the text on our graphics popups
         if c.book == 1:
             gfxfile = 'gfx.pak (or packedgraphics)'
-        else:
+        elif c.book == 2:
             gfxfile = 'datapak (or data)'
+        elif c.book == 3:
+            gfxfile = 'datapak.zip'
         opt_label = self.prefsbuilder.get_object('gfx_opt_window_mainlabel')
         opt_label.set_markup('We couldn\'t locate the file "%s," which can be used by '
             'this program to enhance the GUI.  It\'s not required, but it does look '
@@ -543,29 +547,40 @@ class BaseGUI(object):
     def gamedir_set_b2(self):
         return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'data'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'datapak')))
 
+    def gamedir_set_b3(self):
+        return (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b3'), 'datapak.zip')))
+
     def gamedir_set(self, book=None):
         if book is None:
             if c.book == 1:
                 return self.gamedir_set_b1()
-            else:
+            elif c.book == 2:
                 return self.gamedir_set_b2()
+            elif c.book == 3:
+                return self.gamedir_set_b3()
         else:
             if book == 1:
                 return self.gamedir_set_b1()
-            else:
+            elif c.book == 2:
                 return self.gamedir_set_b2()
+            elif c.book == 3:
+                return self.gamedir_set_b3()
 
     def get_savegame_dir_key(self):
         if c.book == 1:
             return 'savegames'
-        else:
+        elif c.book == 2:
             return 'savegames_b2'
+        elif c.book == 3:
+            return 'savegames_b3'
 
     def get_gamedir_key(self):
         if c.book == 1:
             return 'gamedir'
-        else:
+        elif c.book == 2:
             return 'gamedir_b2'
+        elif c.book == 3:
+            return 'gamedir_b3'
 
     def get_current_savegame_dir(self):
         """
@@ -609,15 +624,24 @@ class BaseGUI(object):
         if c.book == 1:
             self.prefsbuilder.get_object('b1_dir_tab').show()
             self.prefsbuilder.get_object('b2_dir_tab').hide()
+            self.prefsbuilder.get_object('b3_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir
             gui_savegamedir = self.prefs_savegame
             look_for = [ 'gfx.pak', 'packedgraphics' ]
-        else:
+        elif c.book == 2:
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').show()
+            self.prefsbuilder.get_object('b3_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir_b2
             gui_savegamedir = self.prefs_savegame_b2
             look_for = [ 'datapak', 'data' ]
+        elif c.book == 3:
+            self.prefsbuilder.get_object('b1_dir_tab').hide()
+            self.prefsbuilder.get_object('b2_dir_tab').hide()
+            self.prefsbuilder.get_object('b3_dir_tab').show()
+            gui_gamedir = self.prefs_gamedir_b3
+            gui_savegamedir = self.prefs_savegame_b3
+            look_for = [ 'datapak.zip' ]
 
         # In case we have a blank value stored in the prefs file, re-attempt to set it
         # from the default (should theoretically return '' anyway if we can't)
