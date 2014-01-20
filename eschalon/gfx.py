@@ -1001,6 +1001,18 @@ class B3Gfx(Gfx):
 
     def __init__(self, prefs, datadir):
 
+        # Import Crypto stuff
+        try:
+            from Crypto.Cipher import AES
+            self.aesc = AES
+        except:
+            raise Exception('Book 3 Graphics requires pycrypto, please install it:'
+                "\n\n\t"
+                'http://www.dlitz.net/software/pycrypto/'
+                "\n\n"
+                'For most Linux distributions, the package name is "python-crypto"')
+        self.prep_crypt()
+
         # Wall graphic groups
         for i in range(251):
             self.wall_gfx_group[i] = self.GFX_SET_OBJ
@@ -1099,6 +1111,17 @@ class B3Gfx(Gfx):
     def item_overlayfunc_weapon(self, surface, width, height, cols):
         return self.item_overlayfunc(surface, width, height, cols, 'weapon')
 
+    def prep_crypt(self):
+        # Yes, I'm fully aware that all this munging about is merely obfuscation and
+        # wouldn't actually prevent anyone from getting to the data, but I feel
+        # obligated to go through the motions regardless.  Hi there!  Note that I 
+        # *did* get BW's permission to access the graphics data this way.
+        s = base64.urlsafe_b64decode(c.s)
+        d = base64.urlsafe_b64decode(c.d)
+        iv = d[:16]
+        self.aesenc = d[16:]
+        self.aes = self.aesc.new(s, self.aesc.MODE_CBC, iv)
+
     def readfile(self, filename, dir='gfx'):
         """
         Reads a given filename.
@@ -1108,7 +1131,7 @@ class B3Gfx(Gfx):
             try:
                 return self.zip.read(filename)
             except KeyError:
-                raise LoadException('Filename %s not found in datapak.zip!' % (filename))
+                raise LoadException('Filename %s not found in datapak!' % (filename))
         else:
             raise LoadException('We haven\'t initialized ourselves yet')
 
@@ -1246,7 +1269,15 @@ class B3Gfx(Gfx):
             return None
 
     def initialread(self):
-        self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak.zip'), 'r')
+        plain = self.aes.decrypt(self.aesenc)
+        pad = ord(plain[-1])
+        text = plain[:-pad]
+        
+        if os.path.isfile(os.path.join(self.gamedir, 'datapak')):
+            self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
+            self.zip.setpassword(text)
+        else:
+            self.zip = None
 
         self.loaded = True
 
