@@ -790,7 +790,7 @@ class B2Gfx(Gfx):
         """
         Reads a given filename.
         """
-        if self.loaded:
+        if self.loaded and self.zip != None:
             newfilename = os.path.join(self.gamedir, dir, filename)
             try:
                 return open(newfilename, 'rb').read()
@@ -946,7 +946,7 @@ class B2Gfx(Gfx):
             self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
             self.zip.setpassword(text)
         else:
-            self.zip = None
+            raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
 
         self.loaded = True
 
@@ -1277,7 +1277,7 @@ class B3Gfx(Gfx):
             self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
             self.zip.setpassword(text)
         else:
-            self.zip = None
+            raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
 
         self.loaded = True
 

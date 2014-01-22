@@ -902,7 +902,7 @@ class MainGUI(BaseGUI):
 
         for num in range(len(c.statustable)):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
-            if char.book == 2:
+            if char.book == 2 or char.book == 3:
                 self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
 
         if char.book == 1:
