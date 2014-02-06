@@ -561,5 +561,5 @@ class B3Constants:
         }
 
     # Data
-    s = 'ZOzND3khdZGyczSal4TakWqzSCPXpCyPwuNcHb_zPrk='
-    d = '2Am9Pff522Nn7JTsjxiNd4euix0Me3qCUYhDig7hfNvn2U0fCoGxx5ZQFyQy-hMu' 
+    s = '8UKI-we0IrTU_GTBclOnipmDrIUOOmk_TuaiKdHiUxs='
+    d = 'mCHMjWyeZkmQ4QueVJgetB3u8KjAP2Vktw7Fvy2Devql5Yi3aAMoxtDJIGH95Huk' 
