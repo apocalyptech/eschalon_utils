@@ -1107,7 +1107,7 @@ class B3Character(Character):
         self.set_inv_size(10, 8, 2, 5)
         super(B3Character, self).__init__(df)
 
-        # Book 2 specific vars
+        # Book 2/3 specific vars
         self.gender = -1
         self.origin = -1
         self.axiom = -1
@@ -1175,7 +1175,7 @@ class B3Character(Character):
                 self.fxblock.append(self.df.readint())
 
             # Non-permanent Chracter Statuses (will expire automatically)
-            for i in range(26):
+            for i in range(30):
                 self.statuses.append(self.df.readint())
                 self.statuses_extra.append(self.df.readint())
 
