@@ -1034,8 +1034,8 @@ class B3Gfx(Gfx):
                 range(368, 378) + range(384, 394) + [402]):
             self.wall_types[i] = self.TYPE_WALL
 
-        # Book 2 specific caches
-        self.treecache = [ None, None, None ]
+        # Book 3 specific caches
+        self.treecache = [ None, None, None, None ]
         self.hugegfxcache = {}
         self.itemcache = {
                 'armor': None,
