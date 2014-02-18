@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # vim: set expandtab tabstop=4 shiftwidth=4:
+# $Id: eschalon_b3_map.py,v 1.2 2010/07/28 21:22:05 pez Exp $
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2011 CJ Kucera
+# Copyright (C) 2008-2010 CJ Kucera
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ from eschalon.preferences import Prefs
 
 def usage(full=False):
     #progname = sys.argv[0]
-    progname = 'eschalon_b2_map.py'
+    progname = 'eschalon_b3_map.py'
     print
     print "To launch the GUI:"
     print "\t%s [<mapfile>]" % (progname)
@@ -38,7 +39,7 @@ def usage(full=False):
         print "Wherever <mapfile> appears in the above, you should specify the"
         print "location of the file named with a '.map' extension.  This utility"
         print "can load both maps that are inside your savegame folder, and the"
-        print "stock maps in Eschalon Book 2's 'data' directory."
+        print "stock maps in Eschalon Book 3's 'data' directory."
         print
         print "By default, the application will launch the GUI.  Note that"
         print "specifying a map file is optional when you're launching"
@@ -155,9 +156,9 @@ def main(argv=None):
         # PyGTK installed, etc).  Not that this program follows PEP8-recommended
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalon.mapgui import MapGUI
-        prog = MapGUI(options, Prefs(), 2)
+        prog = MapGUI(options, Prefs(), 3)
     else:
-        prog = MapCLI(options, Prefs(), 2)
+        prog = MapCLI(options, Prefs(), 3)
 
     # ... and run it
     return prog.run()

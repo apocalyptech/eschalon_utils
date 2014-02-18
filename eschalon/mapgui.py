@@ -28,8 +28,8 @@ import cStringIO
 from eschalon import version, constants as c
 from eschalon.gfx import Gfx
 from eschalon.undo import Undo
-from eschalon.item import B1Item, B2Item
-from eschalon.entity import B1Entity, B2Entity
+from eschalon.item import B1Item, B2Item, B3Item
+from eschalon.entity import B1Entity, B2Entity, B3Entity
 from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
 
 # Load our GTK modules
@@ -364,7 +364,7 @@ class MapGUI(BaseGUI):
             sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
-        if c.book == 2 and not self.gfx.fast_zipfile:
+        if c.book > 1 and not self.gfx.fast_zipfile:
             self.get_widget('render_slowzip_warning').show()
             self.drawstatuswindow.set_size_request(350, 200)
             warn = self.prefs.get_bool('mapgui', 'warn_slow_zip')
@@ -421,7 +421,7 @@ class MapGUI(BaseGUI):
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
-        if self.req_book == 2:
+        if self.req_book > 1:
             self.zoom_levels.append(64)
         self.get_widget('map_zoom_adj').set_property('upper', len(self.zoom_levels)-1)
         default_zoom = self.prefs.get_int('mapgui', 'default_zoom')-1
@@ -500,7 +500,7 @@ class MapGUI(BaseGUI):
         # 32 / 0 1024x1024, ten to a row
         # 32 / 32 2048x2048, twenty-one to a row (with some left over)
         # 64 / 64 2048x2048, sixteen to a row
-        if self.req_book != 2:
+        if self.req_book == 1:
             return
         reader = csv.DictReader(cStringIO.StringIO(self.gfx.readfile('entities.csv', 'data')))
         for row in reader:
@@ -689,7 +689,7 @@ class MapGUI(BaseGUI):
         self.script_editor.set_gui(self)
 
         # Now show or hide form elements depending on the book version
-        for item_class in (B1Item, B2Item, B1Entity, B2Entity):
+        for item_class in (B1Item, B2Item, B3Item, B1Entity, B2Entity, B3Entity):
             self.set_book_elem_visibility(item_class, item_class.book == c.book)
 
         # Draw our control box
@@ -1148,8 +1148,11 @@ class MapGUI(BaseGUI):
         if c.book == 1:
             self.map.soundfile1 = 'overland_1.ogg'
             self.map.soundfile3 = 'atmos_birds.wav'
-        else:
+        elif c.book == 2:
             self.map.soundfile1 = 'eb2_overland1.ogg'
+            self.map.soundfile3 = 'atmos_birds.wav'
+        elif c.book == 3:
+            self.map.soundfile1 = 'book3_steps_of_the_wayfarer_dj.ogg'
             self.map.soundfile3 = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
@@ -1446,7 +1449,7 @@ class MapGUI(BaseGUI):
         self.get_widget('soundfile1').set_text(self.map.soundfile1)
         self.get_widget('soundfile2').set_text(self.map.soundfile2)
         self.get_widget('soundfile3').set_text(self.map.soundfile3)
-        if c.book == 2:
+        if c.book > 1:
             self.cur_tree_set = self.map.tree_set
             for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
                 if row[1] == self.map.tree_set:
@@ -1514,7 +1517,7 @@ class MapGUI(BaseGUI):
         if we have a tree currently selected on our drawing/editing tools,
         that graphic won't get updated unless we do so manually.
         """
-        if c.book == 2:
+        if c.book > 1:
             self.on_draw_wall_changed(self.get_widget('draw_wall_spin'))
             self.on_wall_changed(self.get_widget('wallimg'), False)
 
@@ -1767,7 +1770,7 @@ class MapGUI(BaseGUI):
         self.squarewindow.hide()
 
         # Check for hugegfx changes
-        if c.book == 2:
+        if c.book > 1:
             if self.check_hugegfx_state(self.map.squares[self.sq_y][self.sq_x]):
                 self.draw_map()
 
@@ -1845,7 +1848,7 @@ class MapGUI(BaseGUI):
                         over_ctx.set_source_surface(op_buf, ((-3+(2*tier_i))*self.z_halfwidth)-offset+self.z_halfwidth, yval)
                         over_ctx.paint()
                 # Redraw any "huge" graphics in this row
-                if c.book == 2:
+                if c.book > 1:
                     for gfx_x in huge_gfx_rows[tier_1_y]:
                         self.draw_huge_gfx(squares[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             if (i < 9):
@@ -1856,7 +1859,7 @@ class MapGUI(BaseGUI):
                             over_ctx.set_source_surface(op_buf, ((-1+tier_i)*self.z_width)-offset+self.z_halfwidth, (i-4)*self.z_height)
                             over_ctx.paint()
                 # Redraw any "huge" graphics in this row
-                if c.book == 2:
+                if c.book > 1:
                     if tier_2_y < 200:
                         for gfx_x in huge_gfx_rows[tier_2_y]:
                             self.draw_huge_gfx(squares[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
@@ -3067,7 +3070,7 @@ class MapGUI(BaseGUI):
         if (action == self.ACTION_EDIT):
             if (self.sq_y < len(self.map.squares)):
                 if (self.sq_x < len(self.map.squares[self.sq_y])):
-                    if c.book == 2:
+                    if c.book > 1:
                         self.store_hugegfx_state(self.map.squares[self.sq_y][self.sq_x])
                     self.undo.store(self.sq_x, self.sq_y)
                     self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
@@ -3133,7 +3136,7 @@ class MapGUI(BaseGUI):
         try:
             # Grab our square object
             square = self.map.squares[y][x]
-            if c.book == 2:
+            if c.book > 1:
                 self.store_hugegfx_state(square)
 
             # Now draw anything that the user's requesed
@@ -3231,7 +3234,7 @@ class MapGUI(BaseGUI):
                 self.update_undo_gui()
 
             # Check for hugegfx changes
-            if c.book == 2:
+            if c.book > 1:
                 if self.check_hugegfx_state(square):
                     self.draw_map()
 
@@ -3254,7 +3257,7 @@ class MapGUI(BaseGUI):
             
             # Grab our square object
             square = self.map.squares[y][x]
-            if c.book == 2:
+            if c.book > 1:
                 self.store_hugegfx_state(square)
 
             # Now erase anything that the user's requesed
@@ -3319,7 +3322,7 @@ class MapGUI(BaseGUI):
                 self.update_undo_gui()
 
             # Check for hugegfx changes
-            if c.book == 2:
+            if c.book > 1:
                 if self.check_hugegfx_state(square):
                     self.draw_map()
 
@@ -3356,7 +3359,7 @@ class MapGUI(BaseGUI):
             
             # Grab our square object
             square = self.map.squares[y][x]
-            if c.book == 2:
+            if c.book > 1:
                 self.store_hugegfx_state(square)
 
             # Let's just implement this in SmartDraw
@@ -3372,7 +3375,7 @@ class MapGUI(BaseGUI):
                 self.update_undo_gui()
 
             # Check our hugegfx state and redraw if need be
-            if c.book == 2:
+            if c.book > 1:
                 if self.check_hugegfx_state(square):
                     self.draw_map()
 
@@ -3619,7 +3622,7 @@ class MapGUI(BaseGUI):
                     drawn = True
 
         # Draw a zapper
-        if (self.req_book == 2 and square.scriptid == 19 and self.object_toggle.get_active()):
+        if (self.req_book > 1 and square.scriptid == 19 and self.object_toggle.get_active()):
             pixbuf = self.gfx.get_zapper(self.curzoom)
             if pixbuf is not None:
                 xoffset = self.z_squarebuf_offset
@@ -3800,7 +3803,8 @@ class MapGUI(BaseGUI):
                         0, height_x4,
                         1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if ((self.req_book == 1 and square.decalimg == 52) or
-                (self.req_book == 2 and square.decalimg == 101)):
+                (self.req_book == 2 and square.decalimg == 101) or
+                (self.req_book == 3 and square.decalimg == 101)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
                             torchwidth-1, torchdecalyoff,
@@ -3992,9 +3996,9 @@ class MapGUI(BaseGUI):
             huge_gfxes = []
             for x in range(len(self.map.squares[y])):
                 self.draw_square(x, y)
-                if self.map.squares[y][x].scriptid == 21 and self.map.squares[y][x].wallimg == 1000:
+                if self.map.squares[y][x].scriptid == 21:
                     huge_gfxes.append(self.map.squares[y][x])
-            if self.req_book == 2 and self.huge_gfx_toggle.get_active():
+            if self.req_book > 1 and self.huge_gfx_toggle.get_active():
                 for square in huge_gfxes:
                     self.draw_huge_gfx(square)
                     self.huge_gfx_rows[y].append(square.x)

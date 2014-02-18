@@ -33,6 +33,8 @@ Name: "{group}\Book 1 Character Editor"; Filename: "{app}\eschalon_b1_char.exe"
 Name: "{group}\Book 1 Map Editor"; Filename: "{app}\eschalon_b1_map.exe"
 Name: "{group}\Book 2 Character Editor"; Filename: "{app}\eschalon_b2_char.exe"
 Name: "{group}\Book 2 Map Editor"; Filename: "{app}\eschalon_b2_map.exe"
+Name: "{group}\Book 3 Character Editor"; Filename: "{app}\eschalon_b3_char.exe"
+Name: "{group}\Book 3 Map Editor"; Filename: "{app}\eschalon_b3_map.exe"
 Name: "{group}\Uninstall Eschalon Utilities"; Filename: "{uninstallexe}"
 
 [Run]

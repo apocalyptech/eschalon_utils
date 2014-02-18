@@ -201,8 +201,10 @@ class Square(object):
         """
         if book == 1:
             return B1Square(x, y)
-        else:
+        elif book == 2:
             return B2Square(x, y)
+        elif book == 3:
+            return B3Square(x, y)
 
 class B1Square(Square):
     """
@@ -312,3 +314,62 @@ class B2Square(Square):
         Do we have data in our B2-specific elements?
         """
         return (self.unknown_sq_i1 != 0)
+
+class B3Square(Square):
+    """
+    Square structure for Book 3
+    """
+
+    book = 3
+
+    def __init__(self, x, y):
+        super(B3Square, self).__init__(x, y)
+
+        # Book 2/3 specific vars
+        self.unknown_sq_i1 = 0
+        self.unknown_sq_i2 = 0
+
+    def read(self, df):
+        """ Given a file descriptor, read in the square. """
+
+        self.wall = df.readuchar()
+        self.floorimg = df.readuchar()
+        self.decalimg = df.readuchar()
+        self.wallimg = df.readshort()
+        self.walldecalimg = df.readuchar()
+        self.scriptid = df.readuchar()
+        if self.savegame:
+            self.unknown_sq_i1 = df.readint()
+            self.unknown_sq_i2 = df.readint()
+
+    def write(self, df):
+        """ Write the square to the file. """
+
+        df.writeuchar(self.wall)
+        df.writeuchar(self.floorimg)
+        df.writeuchar(self.decalimg)
+        df.writeshort(self.wallimg)
+        df.writeuchar(self.walldecalimg)
+        df.writeuchar(self.scriptid)
+        if self.savegame:
+            df.writeint(self.unknown_sq_i1)
+            df.writeint(self.unknown_sq_i2)
+
+    def _sub_replicate(self, newsquare):
+        """
+        Replication for B2/3 elements
+        """
+        newsquare.unknown_sq_i1 = self.unknown_sq_i1
+        newsquare.unknown_sq_i2 = self.unknown_sq_i2
+
+    def _sub_equals(self, square):
+        """
+        Equality function for B2/3
+        """
+        return (square.unknown_sq_i1 == self.unknown_sq_i1 and square.unknown_sq_i2 == self.unknown_sq_i2)
+
+    def _sub_hasdata(self):
+        """
+        Do we have data in our B2/3-specific elements?
+        """
+        return (self.unknown_sq_i1 != 0 or self.unknown_sq_i2 != 0)

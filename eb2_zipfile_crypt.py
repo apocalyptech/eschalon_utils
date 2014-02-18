@@ -23,7 +23,7 @@ import os
 import base64
 from Crypto.Cipher import AES
 
-plain_text = '_Sr1g@As_!IzCE-"<;!Q'
+plain_text = ''
 block_size = 16
 key_size = 32
 mode = AES.MODE_CBC

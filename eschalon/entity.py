@@ -176,8 +176,10 @@ class Entity(object):
         """
         if book == 1:
             return B1Entity(savegame)
-        else:
+        elif book == 2:
             return B2Entity(savegame)
+        elif book == 3:
+            return B3Entity(savegame)
 
 class B1Entity(Entity):
     """
@@ -364,3 +366,101 @@ class B2Entity(Entity):
             df.writeshort(self.ent_zero1)
             for status in self.statuses:
                 df.writeint(status)
+
+class B3Entity(Entity):
+    """
+    Entity structure for Book 3
+    """
+
+    book = 3
+    form_elements = [
+            'huge_gfx_button',
+            'decalpref_snow', 'decalpref_lava',
+            'b2_walltype_label', 'b2_walltype',
+            'openingscript_label', 'openingscript',
+            'soundfile4_label', 'soundfile4_combo',
+            'unknown_sq_i1_label', 'unknown_sq_i1',
+            'tree_set_label', 'tree_set',
+            'map_flags_label', 'map_flags_table',
+            'random_entity_1_label', 'random_entity_1',
+            'random_entity_2_label', 'random_entity_2',
+            'map_unknowni1_label', 'map_unknowni1',
+            ]
+
+    def __init__(self, savegame):
+        super(B3Entity, self).__init__(savegame)
+
+        # B2/3-specific vars
+        self.statuses = []
+
+    def _sub_tozero(self):
+        """
+        To-zero for B1 elements
+        """
+        self.statuses = []
+        for i in range(26):
+            self.statuses.append(0)
+
+    def _sub_replicate(self, newentity):
+        """
+        Replication for B1 elements
+        """
+        newentity.statuses = []
+        for status in self.statuses:
+            newentity.statuses.append(status)
+
+    def _sub_equals(self, entity):
+        """
+        Equality function for B1
+        """
+        if len(self.statuses) != len(entity.statuses):
+            return False
+        for (mystatus, newstatus) in zip(self.statuses, entity.statuses):
+            if mystatus != newstatus:
+                return False
+        return True
+
+    def read(self, df):
+        """ Given a file descriptor, read in the entity. """
+
+        # We throw an exception because there seems to be an arbitrary
+        # number of entities in the file, and no 'entity count' anywhere.
+        # TODO: verify that the count isn't in the main map file.
+        if (df.eof()):
+            raise FirstItemLoadException('Reached EOF')
+
+        # ... everything else
+        self.entid = df.readuchar()
+        self.x = df.readuchar()
+        self.y = df.readuchar()
+        self.direction = df.readuchar()
+        self.entscript = df.readstr()
+        if (self.savegame):
+            self.friendly = df.readuchar()
+            self.movement = df.readuchar()
+            self.health = df.readint()
+            self.ent_unknownc1 = df.readuchar()
+            self.initial_loc = df.readshort()
+            self.ent_zero1 = df.readshort()
+            self.statuses = []
+            for i in range(30):
+                self.statuses.append(df.readint())
+
+    def write(self, df):
+        """ Write the entity to the file. """
+
+        df.writeuchar(self.entid)
+        df.writeuchar(self.x)
+        df.writeuchar(self.y)
+        df.writeuchar(self.direction)
+        df.writestr(self.entscript)
+        if (self.savegame):
+            df.writeuchar(self.friendly)
+            df.writeuchar(self.movement)
+            df.writeint(self.health)
+            df.writeuchar(self.ent_unknownc1)
+            df.writeshort(self.initial_loc)
+            df.writeshort(self.ent_zero1)
+            for status in self.statuses:
+                df.writeint(status)
+

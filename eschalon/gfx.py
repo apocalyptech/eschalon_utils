@@ -26,6 +26,7 @@ import cairo
 import base64
 import gobject
 import cStringIO
+import glob
 from struct import unpack
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
@@ -228,6 +229,47 @@ class B2GfxEntCache(GfxCache):
         if (self.gdkcache is not None):
             self.pixbuf = Gfx.surface_to_pixbuf(newsurf)
 
+class B3GfxEntCache(GfxCache):
+    """
+    A class to hold image data about entity graphics.  We're doing all kinds
+    of things here to support Book 2.
+    """
+    def __init__(self, ent, pngdata):
+
+        # Read in the data as usual, with junk for width and height
+        super(B3GfxEntCache, self).__init__(pngdata, -1, -1, 1)
+
+        # Figure out various dimensions
+        imgwidth = self.surface.get_width()
+        imgheight = self.surface.get_height()
+        self.width = ent.width
+        self.height = ent.height
+        cols = int(imgwidth/ent.width)
+        #print '%s - %d x %d: %d cols' % (ent.name, self.width, self.height, cols)
+
+        # Some information on size scaling
+        self.size_scale = self.width/64.0
+
+        # Construct an abbreviated image with just one frame per direction
+        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height*ent.dirs)
+        newctx = cairo.Context(newsurf)
+        newctx.save()
+        for i in range(ent.dirs):
+            frame = ent.frames * i
+            col = (frame % cols)
+            row = int(frame / cols)
+            newctx.set_operator(cairo.OPERATOR_SOURCE)
+            newctx.set_source_surface(self.surface, -col*self.width, -row*self.height + (i*self.height))
+            newctx.rectangle(0, i*self.height, self.width, self.height)
+            newctx.fill()
+        newctx.restore()
+        self.surface = newsurf
+        #newsurf.write_to_png('computed_%s' % (ent.gfxfile))
+
+        # (and on our pixbuf copy as well)
+        if (self.gdkcache is not None):
+            self.pixbuf = Gfx.surface_to_pixbuf(newsurf)
+
 class SingleImageGfxCache(GfxCache):
     """
     Class to take care of "huge" images, mostly, in which we just want to cache resized graphics.
@@ -330,8 +372,10 @@ class Gfx(object):
         """
         if book == 1:
             return B1Gfx(prefs, datadir)
-        else:
+        elif book == 2:
             return B2Gfx(prefs, datadir)
+        elif book == 3:
+            return B3Gfx(prefs, datadir)
 
 class B1Gfx(Gfx):
     """
@@ -417,7 +461,10 @@ class B1Gfx(Gfx):
 
         # Graphics PAK file
         self.pakloc = os.path.join(prefs.get_str('paths', 'gamedir'), 'gfx.pak')
-        self.df = Savefile(self.pakloc)
+        if os.path.isfile(self.pakloc):
+            self.df = Savefile(self.pakloc)
+        else:
+            self.df = None
 
         # Finally call the parent constructor
         super(B1Gfx, self).__init__(prefs, datadir)
@@ -425,6 +472,9 @@ class B1Gfx(Gfx):
     def readfile(self, filename):
         """ Reads a given filename out of the PAK. """
         if self.loaded:
+            filepath = os.path.join(self.prefs.get_str('paths', 'gamedir'), 'packedgraphics', filename)
+            if os.path.isfile(filepath):
+                return open(filepath, 'rb').read()
             if (filename in self.fileindex):
                 self.df.open_r()
                 self.df.seek(self.zeroindex + self.fileindex[filename].abs_index)
@@ -444,6 +494,10 @@ class B1Gfx(Gfx):
         """ Read in the main file index. """
 
         df = self.df
+        if df is None:
+            self.loaded = True
+            return
+
         df.open_r()
         header = df.read(4)
         if (header != '!PAK'):
@@ -736,12 +790,17 @@ class B2Gfx(Gfx):
         """
         Reads a given filename.
         """
-        filename = '%s/%s' % (dir, filename)
-        if self.loaded:
+        if self.loaded and self.zip != None:
+            newfilename = os.path.join(self.gamedir, dir, filename)
             try:
-                return self.zip.read(filename)
+                return open(newfilename, 'rb').read()
+            except IOError:
+                pass
+            newfilename = '%s/%s' % (dir, filename)
+            try:
+                return self.zip.read(newfilename)
             except KeyError:
-                raise LoadException('Filename %s not found in datapak!' % (filename))
+                raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
         else:
             raise LoadException('We haven\'t initialized ourselves yet')
 
@@ -883,8 +942,11 @@ class B2Gfx(Gfx):
         pad = ord(plain[-1])
         text = plain[:-pad]
         
-        self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
-        self.zip.setpassword(text)
+        if os.path.isfile(os.path.join(self.gamedir, 'datapak')):
+            self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
+            self.zip.setpassword(text)
+        else:
+            raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
 
         self.loaded = True
 
@@ -894,5 +956,342 @@ class B2Gfx(Gfx):
         """
         if self.loaded:
             return self.zip.namelist()
+        else:
+            return []
+
+class B3Gfx(Gfx):
+    """
+    Graphics structure for Book 3
+    """
+
+    book = 3
+    wall_types = {}
+    wall_gfx_group = {}
+    squarebuf_mult = 1.5
+    item_dim = 50
+    item_cols = 10
+    item_rows = 10
+    square_width = 64
+    square_height = 32
+    floor_cols = 8
+    floor_rows = 16
+    decal_cols = 16
+    decal_rows = 16
+    obj_a_width = 64
+    obj_a_height = 64
+    obj_a_cols = 16
+    obj_a_rows = 10
+    obj_a_offset = 1
+    obj_c_width = 64
+    obj_c_height = 96
+    obj_c_cols = 16
+    obj_c_rows = 10
+    obj_c_offset = 256
+    obj_d_width = 96
+    obj_d_height = 160
+    obj_d_cols = 5
+    obj_d_rows = 1
+    obj_d_offset = 251
+    walldecal_cols = 16
+    walldecal_rows = 10
+
+    GFX_SET_OBJ = 1
+    GFX_SET_WALL = 2
+    GFX_SET_TREE = 3
+
+    def __init__(self, prefs, datadir):
+
+        # Import Crypto stuff
+        try:
+            from Crypto.Cipher import AES
+            self.aesc = AES
+        except:
+            raise Exception('Book 3 Graphics requires pycrypto, please install it:'
+                "\n\n\t"
+                'http://www.dlitz.net/software/pycrypto/'
+                "\n\n"
+                'For most Linux distributions, the package name is "python-crypto"')
+        self.prep_crypt()
+
+        # Wall graphic groups
+        for i in range(251):
+            self.wall_gfx_group[i] = self.GFX_SET_OBJ
+        for i in range(251, 256):
+            self.wall_gfx_group[i] = self.GFX_SET_TREE
+        for i in range(256, 513):
+            self.wall_gfx_group[i] = self.GFX_SET_WALL
+
+        # Wall object types
+        for i in (range(251) + range(266, 272) + range(282, 286) +
+                range(314, 320) + range(330, 336) + range(346, 352) +
+                range(364, 368) + range(378, 384) + range(394, 402) +
+                range(403, 513)):
+            self.wall_types[i] = self.TYPE_OBJ
+        for i in range(251, 256):
+            self.wall_types[i] = self.TYPE_TREE
+        for i in (range(256, 266) + range(272, 282) + range(286, 314) +
+                range(320, 330) + range(336, 346) + range(352, 364) +
+                range(368, 378) + range(384, 394) + [402]):
+            self.wall_types[i] = self.TYPE_WALL
+
+        # Book 3 specific caches
+        self.treecache = [ None, None, None, None ]
+        self.hugegfxcache = {}
+        self.itemcache = {
+                'armor': None,
+                'magic': None,
+                'misc': None,
+                'weapons': None
+            }
+        self.itemcache_overlayfunc = {
+                'armor': self.item_overlayfunc_armor,
+                'magic': None,
+                'misc': None,
+                'weapons': self.item_overlayfunc_weapon
+            }
+        self.zappercache = None
+
+        # Item type graphic file lookups
+        self.itemtype_gfxcache_idx = {}
+        for num in range(50):
+            self.itemtype_gfxcache_idx[num] = 'misc'
+        for num in range(1, 3):
+            self.itemtype_gfxcache_idx[num] = 'weapons'
+        for num in range(3, 11):
+            self.itemtype_gfxcache_idx[num] = 'armor'
+        for num in range(11, 16) + [17]:
+            self.itemtype_gfxcache_idx[num] = 'magic'
+        
+        # Store our gamedir
+        self.gamedir = prefs.get_str('paths', 'gamedir_b3')
+
+        # Finally call the parent constructor
+        super(B3Gfx, self).__init__(prefs, datadir)
+
+    def item_overlayfunc(self, surface, width, height, cols, type):
+        """
+        In Book 2, the Weapon and Armor graphics don't have a background, which looks
+        a little odd in the GUI.  So we construct them based on the given elements in
+        the data dir.
+        """
+
+        # First load in the background and its frame
+        frame = self.readfile('icon_frame.png')
+        background = self.readfile('%s_icon_blank.png' % (type))
+        framesurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(frame))
+        backsurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(background))
+
+        # Now create a new surface and tile the background over the whole thing
+        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, surface.get_width(), surface.get_height())
+        newctx = cairo.Context(newsurf)
+        rows = int(surface.get_height()/height)
+        for row in range(rows):
+            for col in range(cols):
+                newctx.set_source_surface(backsurf, col*width, row*height)
+                newctx.rectangle(col*width, row*height, width, height)
+                newctx.paint()
+
+        # Overlay our passed-in surface on top
+        newctx.set_source_surface(surface, 0, 0)
+        newctx.rectangle(0, 0, surface.get_width(), surface.get_height())
+        newctx.paint()
+
+        # Now tile the frame on top of every item
+        for row in range(rows):
+            for col in range(cols):
+                newctx.set_source_surface(framesurf, col*width, row*height)
+                newctx.rectangle(col*width, row*height, width, height)
+                newctx.paint()
+
+        return newsurf
+
+    def item_overlayfunc_armor(self, surface, width, height, cols):
+        return self.item_overlayfunc(surface, width, height, cols, 'armor')
+
+    def item_overlayfunc_weapon(self, surface, width, height, cols):
+        return self.item_overlayfunc(surface, width, height, cols, 'weapon')
+
+    def prep_crypt(self):
+        # Yes, I'm fully aware that all this munging about is merely obfuscation and
+        # wouldn't actually prevent anyone from getting to the data, but I feel
+        # obligated to go through the motions regardless.  Hi there!  Note that I 
+        # *did* get BW's permission to access the graphics data this way.
+        s = base64.urlsafe_b64decode(c.s)
+        d = base64.urlsafe_b64decode(c.d)
+        iv = d[:16]
+        self.aesenc = d[16:]
+        self.aes = self.aesc.new(s, self.aesc.MODE_CBC, iv)
+
+    def readfile(self, filename, dir='gfx'):
+        """
+        Reads a given filename.
+        """
+        filename = '%s/%s' % (dir, filename)
+        if self.loaded:
+            try:
+                return self.zip.read(filename)
+            except KeyError:
+                raise LoadException('Filename %s not found in datapak!' % (filename))
+        else:
+            raise LoadException('We haven\'t initialized ourselves yet')
+
+    def get_item(self, item, size=None, gdk=True):
+        if item.type not in self.itemtype_gfxcache_idx:
+            idx = 'misc'
+        else:
+            idx = self.itemtype_gfxcache_idx[item.type]
+        if (self.itemcache[idx] is None):
+            self.itemcache[idx] = GfxCache(self.readfile('%s_sheet.png' % (idx)), 50, 50, 10, self.itemcache_overlayfunc[idx])
+        return self.itemcache[idx].getimg(item.pictureid+1, size, gdk)
+
+    def get_floor(self, floornum, size=None, gdk=False):
+        if (floornum == 0):
+            return None
+        if (self.floorcache is None):
+            self.floorcache = GfxCache(self.readfile('iso_base.png'), 64, 32, 8)
+        return self.floorcache.getimg(floornum, size, gdk)
+
+    def get_decal(self, decalnum, size=None, gdk=False):
+        if (decalnum == 0):
+            return None
+        if (self.decalcache is None):
+            self.decalcache = GfxCache(self.readfile('iso_basedecals.png'), 64, 32, 16)
+        return self.decalcache.getimg(decalnum, size, gdk)
+
+    # Returns a tuple, first item is the surface, second is the extra height to add while drawing
+    def get_object(self, objnum, size=None, gdk=False, treeset=0):
+        if (objnum == 0):
+            return (None, 0, 0)
+        try:
+            walltype = self.wall_gfx_group[objnum]
+        except KeyError:
+            return (None, 0, 0)
+        if (walltype == self.GFX_SET_OBJ):
+            if (self.objcache1 is None):
+                self.objcache1 = GfxCache(self.readfile('iso_obj.png'), 64, 64, 16)
+            return (self.objcache1.getimg(objnum, size, gdk), 1, 0)
+        elif (walltype == self.GFX_SET_WALL):
+            if (self.objcache2 is None):
+                self.objcache2 = GfxCache(self.readfile('iso_walls.png'), 64, 96, 16)
+            return (self.objcache2.getimg(objnum-255, size, gdk), 2, 0)
+        elif (walltype == self.GFX_SET_TREE):
+            if (self.treecache[treeset] is None):
+                self.treecache[treeset] = GfxCache(self.readfile('iso_trees%d.png' % (treeset)), 96, 160, 5)
+            if (objnum in self.treemap):
+                # note the size difference for Book 2 trees (50% wider)
+                if not size:
+                    size = self.square_width
+                offset = -int(size/4)
+                size = int(size * 1.5)
+                return (self.treecache[treeset].getimg(self.treemap[objnum], size, gdk), 4, offset)
+            else:
+                return (None, 4, 0)
+
+    def get_object_decal(self, decalnum, size=None, gdk=False):
+        if (decalnum == 0):
+            return None
+        if (self.objdecalcache is None):
+            self.objdecalcache = GfxCache(self.readfile('iso_objdecals.png'), 64, 96, 16)
+        return self.objdecalcache.getimg(decalnum, size, gdk)
+
+    def get_flame(self, size=None, gdk=False):
+        """
+        Grabs the flame graphic, so it's clear when viewing maps.  I provide my own
+        image here instead of using the game's because the file bundled with the game
+        doesn't have transparency information, and I don't feel like doing a conversion.
+        """
+        if (self.flamecache is None):
+            df = open(os.path.join(self.datadir, 'torch_single.png'), 'rb')
+            flamedata = df.read()
+            df.close()
+            # The torch image came from Book 1 and is scaled to 52 pixels, not
+            # 64, which is why we're passing that in here.  I figure there's not
+            # much point to having a separate Book 1 and Book 2 flame graphic.
+            self.flamecache = SingleImageGfxCache(flamedata, 52.0)
+        if (size is None):
+            size = self.square_width
+        return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
+
+    def get_zapper(self, size=None, gdk=False):
+        """
+        Grabs a zapper image.
+        """
+        if (self.zappercache is None):
+            df = open(os.path.join(self.datadir, 'zappy_single.png'), 'rb')
+            zapperdata = df.read()
+            df.close()
+            self.zappercache = SingleImageGfxCache(zapperdata)
+        if (size is None):
+            size = self.square_width
+        return self.zappercache.getimg(1, int(size*self.zappercache.size_scale), gdk)
+
+    def get_huge_gfx(self, file, size=None, gdk=False):
+        """
+        Grabs an arbitrary graphic file from our pool (used for the "huge" graphics like Hammerlorne,
+        Corsair ships, etc, in Book 2)
+        """
+        if file not in self.hugegfxcache:
+            if (file.find('/') != -1 or file.find('..') != -1 or file.find('\\') != -1):
+                return None
+            try:
+                self.hugegfxcache[file] = SingleImageGfxCache(self.readfile(file))
+            except LoadException:
+                return None
+        if (size is None):
+            size = self.square_width
+        return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
+
+    def get_entity(self, entnum, direction, size=None, gdk=False):
+        try:
+            ent = c.entitytable[entnum]
+        except KeyError:
+            return None
+        if (entnum not in self.entcache):
+            filename = ent.gfxfile
+            self.entcache[entnum] = B3GfxEntCache(ent, self.readfile(filename))
+        cache = self.entcache[entnum]
+        if (size is None):
+            size = self.square_width
+        return cache.getimg(direction, int(size*cache.size_scale), gdk)
+
+    def get_avatar(self, avatarnum):
+        if (avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12)):
+            if (avatarnum not in self.avatarcache):
+                if (avatarnum == 0xFFFFFFFF):
+                    if (os.path.exists(os.path.join(self.gamedir, 'mypic.png'))):
+                        self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.gamedir, 'mypic.png'))
+                    else:
+                        return None
+                else:
+                    self.avatarcache[avatarnum] = GfxCache(self.readfile('port%d.png' % (avatarnum)), 64, 64, 1).pixbuf
+            return self.avatarcache[avatarnum]
+        else:
+            return None
+
+    def initialread(self):
+        plain = self.aes.decrypt(self.aesenc)
+        pad = ord(plain[-1])
+        text = plain[:-pad]
+        
+        if os.path.isfile(os.path.join(self.gamedir, 'datapak')):
+            self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
+            self.zip.setpassword(text)
+        else:
+            raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
+
+        self.loaded = True
+
+    def filelist(self):
+        """
+        Returns a list of all files inside the archive.
+        """
+        if self.loaded:
+            if self.zip is None:
+                namelist = []
+                for i in ['data', 'gfx', 'maps', 'music', 'sound']:
+                    namelist = namelist + glob.glob(os.path.join(self.gamedir, i, '*'))
+                return namelist
+            else:
+                return self.zip.namelist()
         else:
             return []

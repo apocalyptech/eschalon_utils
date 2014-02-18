@@ -33,6 +33,7 @@ __all__ = [ 'app_name', 'version', 'url', 'authors'
 
 from eschalon.constantsb1 import B1Constants
 from eschalon.constantsb2 import B2Constants
+from eschalon.constantsb3 import B3Constants
 
 class Constants:
     """
@@ -45,7 +46,8 @@ class Constants:
     def __init__(self, book=1):
         self.groups = {
                 1: B1Constants,
-                2: B2Constants
+                2: B2Constants,
+                3: B3Constants
             }
         self.book = None
         self.switch_to_book(book)

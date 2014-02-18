@@ -56,11 +56,8 @@ that file as well.
 
 This was developed on Linux, and it uses Python, GTK+, and PyGTK to do
 its stuff.  The application also runs perfectly fine on Windows (see the
-Windows section, below).  I know that the required Python/GTK+ packages
-are supposed to be available on OSX, but I don't have easy access to that
-platform, so I'm not sure what needs to be done to package it up and get it
-running.  If you're familiar with those kinds of things, let me know and
-I'll get going on it.
+Windows section, below).  With the required Python/GTK+ packages
+installed, it runs correctly on OS X as well.
 
 DISTRIBUTING CONTENT
 --------------------
@@ -156,11 +153,41 @@ directly from gtk.org), Python (2.7), and all three PyGTK components installed
 (PyCairo, PyGObject, and PyGTK).  Additionally, to edit Book II maps, you'll
 want PyCrypto and czipfile.  Some direct links can be found on the website.
 
-INSTALLATION, OSX
------------------
+INSTALLATION, OS X
+------------------
 
-I don't know.  If anyone gets this running, let me know so I can update the
-documentation.
+First, you need the X11 app. Up to 10.7, recent versions of OS X come with
+it pre-installed, but 10.8 users need to download and install the version
+from http://xquartz.macosforge.org/
+
+Any method that gets you pygtk, pycrypto, and czipfile ought to work, but
+the following worked for me.  Be careful with making parallel full python
+installs, which MacPorts will do and Homebrew can do.
+
+Install Homebrew - http://mxcl.github.io/homebrew/
+
+From the Terminal, run:
+
+brew install pygtk
+sudo easy_install czipfile
+sudo easy_install pycrypto
+
+I recommend running the apps from the Terminal so that you can see any error
+output:
+
+cd /path/to/eschalon_utils
+./eschalon_b1_char.py
+
+If you want to build self-contained OS X application bundles, also get
+py2app:
+
+sudo easy_install py2app
+
+Then run the make-osx-apps.sh script. The resulting apps should be portable
+to other Macs without having to install any libraries (you will still need
+X11.app).  TODO: when you first run these apps and identify the location of
+the save files and data files, they crash afterward.  Just re-launch them
+and you shouldn't have any further problems.
 
 USAGE
 -----

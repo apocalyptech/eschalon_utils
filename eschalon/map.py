@@ -111,8 +111,10 @@ class Map(object):
         
         if self.book == 1:
             newmap = B1Map(Savefile(self.df.filename))
-        else:
+        elif self.book == 2:
             newmap = B2Map(Savefile(self.df.filename))
+        elif self.book == 3:
+            newmap = B3Map(Savefile(self.df.filename))
 
         # Single vals (no need to do actual replication)
         newmap.mapname = self.mapname
@@ -310,6 +312,14 @@ class Map(object):
             return None
 
     @staticmethod
+    def is_ascii(s):
+        for c in s:
+            ascii = ord(c)
+            if ascii < 32 or ascii > 126:
+                return False
+        return True
+        
+    @staticmethod
     def load(filename, book=None, req_book=None):
         """
         Static method to load a map file.  This will open the file once
@@ -319,25 +329,25 @@ class Map(object):
         """
         df = Savefile(filename)
 
-        # Both B1 and B2 map files start with nine strings (though their meanings
-        # vary) - at that point, Book 2 goes into some integer data whereas Book
-        # 1 has a couple more strings.  The first two binary bytes in Book 2 seem
-        # to each *always* be 0x01, so that's how we'll differentiate
+        # Book 1 files start with 10 strings, Book 2 with 9, and Book 3 with
+        # more.  To see what kind of file we have, read 11 strings and check
+        # whether the last two are ASCII-only
         if book is None:
             try:
                 df.open_r()
-                for i in range(9):
-                    df.readstr()
-                c1 = df.readuchar()
-                c2 = df.readuchar()
+                strings = []
+                for i in range(11):
+                    strings.append(df.readstr())
                 df.close()
             except (IOError, struct.error), e:
                 raise LoadException(str(e))
 
-            if c1 == 1 or c2 == 1:
+            if not Map.is_ascii(strings[9]):
                 book = 2
-            else:
+            elif not Map.is_ascii(strings[10]):
                 book = 1
+            else:
+                book = 3
 
         # See if we're required to conform to a specific book
         if (req_book is not None and book != req_book):
@@ -347,9 +357,12 @@ class Map(object):
         if book == 1:
             c.switch_to_book(1)
             return B1Map(df)
-        else:
+        elif book == 2:
             c.switch_to_book(2)
             return B2Map(df)
+        elif book == 3:
+            c.switch_to_book(3)
+            return B3Map(df)
 
 class B1Map(Map):
     """
@@ -759,6 +772,238 @@ class B2Map(Map):
     def _sub_replicate(self, newmap):
         """
         Replicate b2-specific vars
+        """
+        newmap.openingscript = self.openingscript
+        newmap.map_unknownstr1 = self.map_unknownstr1
+        newmap.map_unknownstr2 = self.map_unknownstr2
+        newmap.soundfile4 = self.soundfile4
+        newmap.map_unknownc1 = self.map_unknownc1
+        newmap.map_unknownc2 = self.map_unknownc2
+        newmap.random_entity_1 = self.random_entity_1
+        newmap.random_entity_2 = self.random_entity_2
+        newmap.map_unknowni2 = self.map_unknowni2
+        newmap.map_flags = self.map_flags
+        newmap.map_unknowni1 = self.map_unknowni1
+        newmap.map_unknowni4 = self.map_unknowni4
+        newmap.map_unknownc5 = self.map_unknownc5
+        newmap.map_unknownc6 = self.map_unknownc6
+        newmap.map_unknownc7 = self.map_unknownc7
+        newmap.map_unknownc8 = self.map_unknownc8
+        newmap.map_unknownstr4 = self.map_unknownstr4
+        newmap.map_unknownstr5 = self.map_unknownstr5
+        newmap.map_unknownstr6 = self.map_unknownstr6
+
+class B3Map(Map):
+    """
+    Book 3 Map definitions
+    """
+
+    book = 3
+
+    def __init__(self, df):
+
+        # Book 2/3 specific vars
+        self.openingscript = ''
+        self.map_unknownstr0 = ''
+        self.map_unknownstr1 = ''
+        self.map_unknownstr2 = ''
+        self.soundfile4 = ''
+        self.soundfile5 = ''
+        self.soundfile6 = ''
+        self.map_unknownc1 = 1
+        self.map_unknownc2 = 1
+        self.random_entity_1 = 0
+        self.random_entity_2 = 0
+        self.map_unknowni2 = 0
+        self.map_flags = 0
+        self.map_unknowni1 = 0
+        self.map_unknowni4 = 0
+        self.map_unknownc5 = 0
+        self.map_unknownc6 = 0
+        self.map_unknownc7 = 0
+        self.map_unknownc8 = 0
+        self.map_unknownstr4 = ''
+        self.map_unknownstr5 = ''
+        self.map_unknownstr6 = ''
+
+        # Now the base attributes
+        super(B3Map, self).__init__(df)
+
+    def read(self):
+        """ Read in the whole map from a file descriptor. """
+
+        try:
+
+            # Open the file
+            self.df.open_r()
+
+            # Start processing
+            self.map_unknownstr0 = self.df.readstr()
+            self.mapname = self.df.readstr()
+            self.openingscript = self.df.readstr()
+            self.map_unknownstr1 = self.df.readstr()
+            self.map_unknownstr2 = self.df.readstr()
+            self.skybox = self.df.readstr()
+            self.soundfile1 = self.df.readstr()
+            self.soundfile2 = self.df.readstr()
+            self.soundfile3 = self.df.readstr()
+            self.soundfile4 = self.df.readstr()
+            self.soundfile5 = self.df.readstr()
+            self.soundfile6 = self.df.readstr()
+            self.map_unknownc1 = self.df.readuchar()
+            self.map_unknownc2 = self.df.readuchar()
+            self.random_entity_1 = self.df.readuchar()
+            self.random_entity_2 = self.df.readuchar()
+            self.color_r = self.df.readuchar()
+            self.color_g = self.df.readuchar()
+            self.color_b = self.df.readuchar()
+            self.color_a = self.df.readuchar()
+            # map_unknowni1 looks like it may contain parallax values
+            self.map_unknowni1 = self.df.readint()
+            self.map_unknowni2 = self.df.readint()
+            self.map_unknowni3 = self.df.readint()
+            self.map_flags = self.df.readint()
+            self.map_unknowni4 = self.df.readint()
+            self.map_unknowni5 = self.df.readint()
+            self.tree_set = self.df.readint()
+
+            # These are all zero on the "global" map files
+            self.map_unknownc5 = self.df.readuchar()
+            self.map_unknownc6 = self.df.readuchar()
+            self.map_unknownc7 = self.df.readuchar()
+            self.map_unknownc8 = self.df.readuchar()
+
+            self.map_unknownstr4 = self.df.readstr()
+            self.map_unknownstr5 = self.df.readstr()
+            self.map_unknownstr6 = self.df.readstr()
+
+            # Squares
+            self.set_square_savegame()
+            for i in range(200*100):
+                self.addsquare()
+
+            # Scripts...  Just keep going until EOF
+            try:
+                while (self.addscript()):
+                    pass
+            except FirstItemLoadException, e:
+                pass
+
+            # Entities...  Just keep going until EOF (note that this is in a separate file)
+            # Also note that we have to support situations where there is no entity file
+            if (self.df_ent.exists()):
+                self.df_ent.open_r()
+                try:
+                    while (self.addentity()):
+                        pass
+                except FirstItemLoadException, e:
+                    pass
+                self.df_ent.close()
+
+            # If there's extra data at the end, we likely don't have
+            # a valid char file
+            self.extradata = self.df.read()
+            if (len(self.extradata)>0):
+                raise LoadException('Extra data at end of file')
+
+            # Close the file
+            self.df.close()
+
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+    def write(self):
+        """ Writes out the map to the file descriptor. """
+
+        # We require a '.map' extension
+        self.check_map_extension()
+        
+        # Open the file
+        self.df.open_w()
+
+        # Start
+        self.df.writestr(self.map_unknownstr0)
+        self.df.writestr(self.mapname)
+        self.df.writestr(self.openingscript)
+        self.df.writestr(self.map_unknownstr1)
+        self.df.writestr(self.map_unknownstr2)
+        self.df.writestr(self.skybox)
+        self.df.writestr(self.soundfile1)
+        self.df.writestr(self.soundfile2)
+        self.df.writestr(self.soundfile3)
+        self.df.writestr(self.soundfile4)
+        self.df.writestr(self.soundfile5)
+        self.df.writestr(self.soundfile6)
+        self.df.writeuchar(self.map_unknownc1)
+        self.df.writeuchar(self.map_unknownc2)
+        self.df.writeuchar(self.random_entity_1)
+        self.df.writeuchar(self.random_entity_2)
+        self.df.writeuchar(self.color_r)
+        self.df.writeuchar(self.color_g)
+        self.df.writeuchar(self.color_b)
+        self.df.writeuchar(self.color_a)
+        self.df.writeint(self.map_unknowni1)
+        self.df.writeint(self.map_unknowni2)
+        self.df.writeint(self.map_unknowni3)
+        self.df.writeint(self.map_flags)
+        self.df.writeint(self.map_unknowni4)
+        self.df.writeint(self.map_unknowni5)
+        self.df.writeint(self.tree_set)
+        self.df.writeuchar(self.map_unknownc5)
+        self.df.writeuchar(self.map_unknownc6)
+        self.df.writeuchar(self.map_unknownc7)
+        self.df.writeuchar(self.map_unknownc8)
+        self.df.writestr(self.map_unknownstr4)
+        self.df.writestr(self.map_unknownstr5)
+        self.df.writestr(self.map_unknownstr6)
+
+        # Squares
+        for row in self.squares:
+            for square in row:
+                square.write(self.df)
+
+        # Scripts
+        for script in self.scripts:
+            script.write(self.df)
+
+        # Any extra data we might have
+        if (len(self.extradata) > 0):
+            self.df.writestr(self.extradata)
+
+        # Clean up
+        self.df.close()
+
+        # Now write out entities, which actually happens in a different file
+        # We open regardless of entities, because we'd have to zero out the
+        # file.
+        self.set_df_ent()
+        self.df_ent.open_w()
+        for entity in self.entities:
+            entity.write(self.df_ent)
+        self.df_ent.close()
+
+    def is_global(self):
+        return (self.map_unknownc5 == 0 and self.map_unknownc6 == 0 and self.map_unknownc7 == 0)
+
+    def is_savegame(self):
+        return not self.is_global()
+        #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
+
+    def set_savegame(self, savegame):
+        """
+        Sets the state of our "savegame" vars.
+        """
+        super(B3Map, self).set_savegame(savegame)
+        if savegame:
+            self.map_unknownc5 = 1
+        else:
+            self.map_unknownc5 = 0
+            self.map_unknownc6 = 0
+            self.map_unknownc7 = 0
+
+    def _sub_replicate(self, newmap):
+        """
+        Replicate b2/3-specific vars
         """
         newmap.openingscript = self.openingscript
         newmap.map_unknownstr1 = self.map_unknownstr1
