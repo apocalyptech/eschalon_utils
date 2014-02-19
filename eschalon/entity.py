@@ -148,7 +148,7 @@ class Entity(object):
             ret.append("\tHealth: %d" % (self.health))
             ret.append("\tInitial Tile: %d" % self.initial_loc)
             ret.append("\tMovement Flag: %d" % (self.movement))
-            if self.book == 2:
+            if self.book != 1:
                 for (i, status) in enumerate(self.statuses):
                     if status != 0:
                         if i in c.statustable:
@@ -398,7 +398,7 @@ class B3Entity(Entity):
         To-zero for B1 elements
         """
         self.statuses = []
-        for i in range(26):
+        for i in range(30):
             self.statuses.append(0)
 
     def _sub_replicate(self, newentity):
