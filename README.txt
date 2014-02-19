@@ -28,17 +28,17 @@ See basegui.py for the exact licensing terms.
 ABOUT
 -----
 
-This package contains applications for editing savegames in
-the games Eschalon Book I and Book II, by Basilisk Games.
+This package contains applications for editing savegames in the games
+Eschalon Book I, Book II, and Book III by Basilisk Games.
 
    http://basiliskgames.com/eschalon-book-i
    http://basiliskgames.com/eschalon-book-ii
+   http://basiliskgames.com/eschalon-book-iii
 
-There are four separate utilities: a character editor and a map editor
-for both Book I and Book II.  The map editor can edit maps stored as
-part of your savegame, and the global maps included in the game
-distribution, though for Book II there is no direct way to get at the
-global map files.
+There are six separate utilities: a character editor and a map editor for
+each game.  The map editor can edit maps stored as part of your savegame,
+and the global maps included in the game distribution, though for Books II
+and III there is no direct way to get at the global map files.
 
 Right now the utilities support just about everything you'd want to edit,
 though there's still plenty of values in the file of whose purpose I'm
@@ -72,8 +72,8 @@ and respect Basilisk Games' wishes in regards to custom content:
        link that jumps back to the Book I page at
            http://basiliskgames.com/eschalon-book-i
 
-Presumably, a link to the Book II page would be appropriate if you're
-distributing a Book II map.
+Presumably, a link to the Book II/III page would be appropriate if you're
+distributing a Book II/III map.
 
 INSTALLATION, GENERAL
 ---------------------
@@ -105,30 +105,33 @@ into somewhere in your $PATH (~/bin is probably the best location).  For example
    $ ln -s /path/to/eschalon_b1_map.py .
    $ ln -s /path/to/eschalon_b2_char.py .
    $ ln -s /path/to/eschalon_b2_map.py .
+   $ ln -s /path/to/eschalon_b3_char.py .
+   $ ln -s /path/to/eschalon_b3_map.py .
 
 At that point you should be able to just run "eschalon_b1_char.py" from the
 command prompt, for instance.  Setting up shortcuts through your window
 manager of choice should work fine, as well.  Failing that, just run them
 from the directory you untarred them into.
 
-NOTE ABOUT BOOK II MAP EDITING: To edit Book II map files, you'll need two
-other packages installed which may not be present on your system.  The first
-is PyCrypto: http://www.dlitz.net/software/pycrypto/  This tends to be
-packaged as "python-crypto" by most distributions.  Gentoo uses "pycrypto."
-The second package is czipfile, available here: http://pypi.python.org/pypi/czipfile
-This is probably not packaged by your distribution yet.  The easiest way to
-install it would be via either easy_install or pip:
+NOTE ABOUT BOOK II/III MAP EDITING: To edit Book II or III map files, you'll
+need two other packages installed which may not be present on your system. 
+The first is PyCrypto: http://www.dlitz.net/software/pycrypto/ This tends to
+be packaged as "python-crypto" by most distributions.  Gentoo uses
+"pycrypto." The second package is czipfile, available here:
+http://pypi.python.org/pypi/czipfile This is probably not packaged by your
+distribution yet.  The easiest way to install it would be via either
+easy_install or pip:
 
   # easy_install czipfile
  or
   # pip install czipfile
 
 If those methods don't work for you, you should be able to just download it
-from the above link.  Note that czipfile isn't ACTUALLY required to edit Book
-II maps, but without czipfile, loading maps can take an absurdly long time.
-Trust me, you will want to have it installed.  Note once again that this only
-affects Book II map editing.  The character editors, and the Book I map editor
-are not affected.
+from the above link.  Note that czipfile isn't ACTUALLY required to edit
+Book II/III maps, but without czipfile, loading maps can take an absurdly
+long time.  Trust me, you will want to have it installed.  Note once again
+that this only affects Book II/III map editing.  The character editors, and
+the Book I map editor are not affected.
 
 As of 0.5.0, the minimum gtk+ required MIGHT be 2.18.0, though you may have
 success with earlier versions.  If there are problems with older versions,
@@ -147,11 +150,12 @@ your start menu.  Please be sure to let me know if there are problems with
 that process, as I hardly spend any time in Windows, and the Windows side is
 far less tested than the Linux side.
 
-You're welcome to run the Python scripts directly (as the Linux folks do), if
-you want, in which case you will need a gtk+ runtime (I recommend a recent one
-directly from gtk.org), Python (2.7), and all three PyGTK components installed
-(PyCairo, PyGObject, and PyGTK).  Additionally, to edit Book II maps, you'll
-want PyCrypto and czipfile.  Some direct links can be found on the website.
+You're welcome to run the Python scripts directly (as the Linux folks do),
+if you want, in which case you will need a gtk+ runtime (I recommend a
+recent one directly from gtk.org), Python (2.7), and all three PyGTK
+components installed (PyCairo, PyGObject, and PyGTK).  Additionally, to edit
+Book II/III maps, you'll want PyCrypto and czipfile.  Some direct links can
+be found on the website.
 
 INSTALLATION, OS X
 ------------------
@@ -192,13 +196,13 @@ and you shouldn't have any further problems.
 USAGE
 -----
 
-The applications are mostly designed to be run via their GUIs, which you
-can launch simply by double-clicking or running eschalon_b1_char.py,
-eschalon_b1_map.py or eschalon_b2_char.py.  There are commandline options for
-both, though, and you can get help for those options by running
-"eschalon_b1_char.py -h", for instance, to get help with the character editor.
-A few of the character editor commandline options may be useful.  The options
-available on the map editor are far less useful.
+The applications are mostly designed to be run via their GUIs, which you can
+launch simply by double-clicking or running eschalon_bX_char.py, or
+eschalon_bX_map.py.  There are commandline options for both, though, and you
+can get help for those options by running "eschalon_b1_char.py -h", for
+instance, to get help with the character editor.  A few of the character
+editor commandline options may be useful.  The options available on the map
+editor are far less useful.
 
 The drawing features on the map editor are fairly new still, and I expect that
 bugs will eventually be found.  Let me know!

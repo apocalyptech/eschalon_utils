@@ -23,7 +23,10 @@
 app_name = 'Eschalon Savefile Editor'
 version = '0.8.1'
 url = 'http://apocalyptech.com/eschalon/'
-authors = ['Main Code - CJ Kucera', 'Additional Code / Ideas - WR Goerlich', '', 'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
+authors = [ 'Main Code - CJ Kucera',
+ 'Additional Code / Ideas - WR Goerlich', '',
+ 'Book III / OS X Code - Elliot Kendall', '',
+ 'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'B1Unknowns', 'B2Unknowns',
