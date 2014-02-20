@@ -123,6 +123,7 @@ class NewMapDialog(gtk.Dialog):
         rvbox.add(self.new_global_radio)
 
         self.show_all()
+        self.hide()
         self.set_initial()
 
     def set_initial(self, initial=True):
