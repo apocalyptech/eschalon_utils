@@ -84,8 +84,8 @@ class MainCLI(object):
                 print 'New Permanent Status Flags: %08X' % (char.permstatuses)
 
         if (options['reset_hunger'] > 0):
-            if char.book != 2:
-                print 'Resetting hunger/thirst is only available for Book 2 characters'
+            if char.book == 1:
+                print 'Resetting hunger/thirst is only available for Book 2/3 characters'
             else:
                 print 'Old Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger/10.0, char.thirst/10.0)
                 char.resetHunger()
@@ -144,7 +144,7 @@ class MainCLI(object):
         print "DEX: %2d    WIS: %2d     MP: %d/%d" % (char.dexterity, char.wisdom, char.curmana, char.maxmana)
         print "END: %2d    PCP: %2d    EXP: %d" % (char.endurance, char.perception, char.experience)
         print "SPD: %2d    CCN: %2d   GOLD: %d" % (char.speed, char.concentration, char.gold)
-        if (char.book == 2):
+        if (char.book > 1):
             print "HUNGER: %2d%%    THIRST: %2d%%" % (char.hunger/10.0, char.thirst/10.0)
         print
         
@@ -154,7 +154,7 @@ class MainCLI(object):
         for i in range(len(char.statuses)):
             if (char.statuses[i] > 0):
                 extra = ''
-                if char.book == 2:
+                if char.book > 1:
                     if (char.statuses_extra[i] > 0):
                         extra = '  - extra (casting level): %d' % (char.statuses_extra[i])
                 if (c.statustable.has_key(i)):
@@ -167,7 +167,7 @@ class MainCLI(object):
                     print "\t* Diseased: %s" % (c.diseasetable[key])
         print
 
-        if char.book == 2:
+        if char.book > 1:
             print '"PERMANENT" CHARATER STATUS'
             print "---------------------------"
             print
@@ -246,7 +246,7 @@ class MainCLI(object):
         print "READIED SPELLS"
         print "--------------"
         print
-        if char.book == 2:
+        if char.book > 1:
             if char.readied_spell != '':
                 print "\t(current) - %s / Level %d" % (char.readied_spell, char.readied_spell_lvl)
         i = 1
@@ -258,7 +258,7 @@ class MainCLI(object):
             i = i + 1
         print
 
-        if char.book == 2:
+        if char.book > 1:
             portal_locs = []
             for (slot, portal_loc) in enumerate(char.portal_locs):
                 if portal_loc[1] != '':
@@ -277,7 +277,7 @@ class MainCLI(object):
         Only valid for Book 2
         """
         char = self.char
-        if char.book == 2:
+        if char.book > 1:
             print "ALCHEMY RECIPE BOOK"
             print "-------------------"
             print
@@ -323,7 +323,7 @@ class MainCLI(object):
             print "Alternate Weapon:"
             print char.weap_alt.display(unknowns)
 
-        if char.book == 2:
+        if char.book > 1:
             slotorder = [ 'Quiver', 'Helm', 'Cloak', 'Amulet', 'Torso',
                     'Weapon', 'Belt', 'Gauntlet', 'Legs', 'Ring 1', 'Ring 2',
                     'Shield', 'Feed' ]
@@ -346,7 +346,7 @@ class MainCLI(object):
 
         char = self.char
 
-        if char.book == 2:
+        if char.book > 1:
             print "KEYRING"
             print "-------"
             print

@@ -117,12 +117,13 @@ class NewMapDialog(gtk.Dialog):
         self.new_savegame_radio = gtk.RadioButton(label="Savegame Map File", group=self.open_savegame_radio)
         rvbox.add(self.new_savegame_radio)
         self.new_global_radio = gtk.RadioButton(label="Global Map File", group=self.open_savegame_radio)
-        if c.book == 2:
-            self.new_global_radio.set_tooltip_text('Book 2 global maps are hidden away inside the "datapak" '
-                    'file, so creating a Global Book 2 map may not be worth it.')
+        if c.book > 1:
+            self.new_global_radio.set_tooltip_text('Book 2/3 global maps are hidden away inside the "datapak" '
+                    'file, so creating a Global Book 2/3 map may not be worth it.')
         rvbox.add(self.new_global_radio)
 
         self.show_all()
+        self.hide()
         self.set_initial()
 
     def set_initial(self, initial=True):
@@ -689,8 +690,14 @@ class MapGUI(BaseGUI):
         self.script_editor.set_gui(self)
 
         # Now show or hide form elements depending on the book version
+        # Hide first, then show, so that we don't end up hiding elements
+        # used in more than one book
         for item_class in (B1Item, B2Item, B3Item, B1Entity, B2Entity, B3Entity):
-            self.set_book_elem_visibility(item_class, item_class.book == c.book)
+            if (item_class.book != c.book):
+                self.set_book_elem_visibility(item_class, False)
+        for item_class in (B1Item, B2Item, B3Item, B1Entity, B2Entity, B3Entity):
+            if (item_class.book == c.book):
+                self.set_book_elem_visibility(item_class, True)
 
         # Draw our control box
         ctlbox = self.get_widget('control_alignment')
@@ -1505,7 +1512,7 @@ class MapGUI(BaseGUI):
     def on_propswindow_close(self, widget, event=None):
         self.update_main_map_name()
         self.propswindow.hide()
-        if (c.book == 2 and self.cur_tree_set != self.map.tree_set):
+        if (c.book > 1 and self.cur_tree_set != self.map.tree_set):
             self.draw_map()
             self.update_wall_selection_image()
         return True
@@ -1599,7 +1606,7 @@ class MapGUI(BaseGUI):
             health = c.entitytable[entid].health
             button.set_label('Set to Max Health (%d)' % (health))
             if not self.populating_entity_tab and entity.savegame:
-                if c.book == 2:
+                if c.book > 1:
                     # Entscript is present in non-savegame files, but the "global" script
                     # that we know about (from the CSV) appears to be filled in by the
                     # game engine after loading the main map.  The entscripts found in
@@ -3164,7 +3171,7 @@ class MapGUI(BaseGUI):
                 #        self.draw_decal_checkbox.get_active()):
                 if (square.walldecalimg in self.smartdraw.wall_list['walldecal_seethrough']):
                     square.wall = 5
-                elif (c.book == 2 and square.wallimg in self.smartdraw.wall_list['wall_restrict']):
+                elif (c.book > 1 and square.wallimg in self.smartdraw.wall_list['wall_restrict']):
                     square.wall = 2
                 elif (square.wallimg in self.smartdraw.wall_list['wall_blocked']):
                     square.wall = 1
