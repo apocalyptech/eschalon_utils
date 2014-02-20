@@ -49,8 +49,8 @@ if (gtk.check_version(2, 18, 0) is not None):
 # Lookup tables we'll need
 from eschalon.gfx import Gfx
 from eschalon.basegui import BaseGUI
-from eschalon.character import Character, B1Character, B2Character
-from eschalon.item import Item, B1Item, B2Item
+from eschalon.character import Character, B1Character, B2Character, B3Character
+from eschalon.item import Item, B1Item, B2Item, B3Item
 from eschalon.savefile import LoadException
 from eschalon import constants as c
 from eschalon import app_name, version, url, authors
@@ -548,7 +548,7 @@ class MainGUI(BaseGUI):
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = int(widget.get_value())
         changed = (origobj.statuses[arrnum] != obj.statuses[arrnum])
-        if c.book == 2 and (origobj.statuses_extra[arrnum] != obj.statuses_extra[arrnum]):
+        if c.book > 1 and (origobj.statuses_extra[arrnum] != obj.statuses_extra[arrnum]):
             changed = True
         self.set_changed_widget(not changed, labelname, labelwidget, label)
 
@@ -902,7 +902,7 @@ class MainGUI(BaseGUI):
 
         for num in range(len(c.statustable)):
             self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
-            if char.book == 2 or char.book == 3:
+            if char.book > 1:
                 self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
 
         if char.book == 1:
@@ -937,7 +937,7 @@ class MainGUI(BaseGUI):
         for i in range(10):
             self.get_widget('readyslots_spell_%d' % (i)).set_text(char.readyslots[i][0])
             self.get_widget('readyslots_level_%d' % (i)).set_value(char.readyslots[i][1])
-        if char.book == 2:
+        if char.book > 1:
             self.get_widget('readied_spell').set_text(char.readied_spell)
             self.get_widget('readied_spell_lvl').set_value(char.readied_spell_lvl)
 
@@ -960,7 +960,7 @@ class MainGUI(BaseGUI):
         self.get_widget('torches').set_value(char.torches)
         self.get_widget('torchused').set_value(char.torchused)
 
-        if char.book == 2:
+        if char.book > 1:
             for num in range(6):
                 self.get_widget('portal_loc_loc_%d' % (num)).set_value(char.portal_locs[num][0])
                 self.get_widget('portal_loc_map_%d' % (num)).set_text(char.portal_locs[num][1])
@@ -1158,7 +1158,7 @@ class MainGUI(BaseGUI):
         ### Note that technically we don't need to do this dynamically, since
         ### these dropdowns only exist for Book 2.
         ###
-        if c.book == 2:
+        if c.book > 1:
             box1 = self.get_widget('alchemy_vbox_1')
             box2 = self.get_widget('alchemy_vbox_2')
             for box in [box1, box2]:
@@ -1183,7 +1183,7 @@ class MainGUI(BaseGUI):
             box2.show_all()
 
         # Now show or hide form elements depending on the book version
-        for char_class in (B1Character, B2Character, B1Item, B2Item):
+        for char_class in (B1Character, B2Character, B3Character, B1Item, B2Item, B3Item):
             self.set_book_elem_visibility(char_class, char_class.book == c.book)
 
     def gui_item_page(self, container, pagetitle, rows, tablename):
@@ -1284,7 +1284,7 @@ class MainGUI(BaseGUI):
     def avatarsel_draw(self, x):
         if (x < 0 or x >= self.avatarsel_cols or self.gfx is None):
             return
-        if c.book == 2:
+        if c.book > 1:
             if x == 12:
                 pixbuf = self.gfx.get_avatar(0xFFFFFFFF)
             else:

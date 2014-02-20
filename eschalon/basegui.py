@@ -437,7 +437,7 @@ class BaseGUI(object):
         ### Note that technically we don't need to do this dynamically, since
         ### these dropdowns only exist for Book 2.
         ###
-        if book == 2:
+        if book > 1:
             boxes = []
             for i in range(1, 4):
                 boxes.append(self.get_widget('attr_modified_%d' % (i)))
@@ -458,7 +458,7 @@ class BaseGUI(object):
             align.add(label)
 
             align = self.get_widget('b2_item_picid_notealign')
-            label = WrapLabel('<i>Note: Picture IDs in Book 2 are only '
+            label = WrapLabel('<i>Note: Picture IDs in Book 2/3 are only '
                     'unique within their groups: armor, weapons, '
                     'magic/alchemy, or "other."</i>')
             label.show()
@@ -831,7 +831,7 @@ class BaseGUI(object):
 
     def on_b2_modifier_changed(self, widget):
         """ What to do when a book 2 item attribute changes. """
-        if c.book != 2:
+        if c.book == 1:
             return
         wname = widget.get_name()
         num = int(wname.split('_')[-1])

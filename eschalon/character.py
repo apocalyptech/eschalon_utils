@@ -243,7 +243,7 @@ class Character(object):
         """
         Resets hunger and thirst; only valid for Book 2 characters, of course.
         """
-        if self.book == 2:
+        if self.book > 1:
             self.hunger = 1000
             self.thirst = 1000
 

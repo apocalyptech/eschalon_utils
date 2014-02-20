@@ -172,7 +172,7 @@ class Item(object):
                     ret.append("\t(Note: this item has not been identified yet, difficulty %d)" % (self.visibility))
             ret.append("\tPicture ID: %d" % self.pictureid)
             ret.append("\tValue: %d" % self.value)
-            if self.book == 2 and self.max_hp > 0:
+            if self.book > 1 and self.max_hp > 0:
                 ret.append("\tCondition: %d%% (%d of %d)" % (self.cur_hp/float(self.max_hp)*100, self.cur_hp, self.max_hp))
             if (self.basedamage > 0):
                 ret.append("\tBase Damage: %d" % self.basedamage)
@@ -227,7 +227,7 @@ class Item(object):
                 ret.append("\tUnknown fields:")
                 ret.append("\t\tZero 1: %d" % self.zero1)
                 ret.append("\t\tEmpty String: %s" % self.emptystr)
-                if (self.book == 2):
+                if (self.book > 1):
                     ret.append("\t\tUnknown Flag: %d" % (self.unknownflag))
                     ret.append("\t\tUnknown Byte 1: %d" % (self.itemunknownc1))
         ret.append('')

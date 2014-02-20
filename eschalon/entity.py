@@ -148,7 +148,7 @@ class Entity(object):
             ret.append("\tHealth: %d" % (self.health))
             ret.append("\tInitial Tile: %d" % self.initial_loc)
             ret.append("\tMovement Flag: %d" % (self.movement))
-            if self.book != 1:
+            if self.book > 1:
                 for (i, status) in enumerate(self.statuses):
                     if status != 0:
                         if i in c.statustable:

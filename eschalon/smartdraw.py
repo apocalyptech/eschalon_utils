@@ -440,7 +440,7 @@ class SmartDraw(object):
 
         if (self.revindexes[self.IDX_WALL][connflags] == -1):
             square.wallimg = self.special
-            if c.book == 2:
+            if c.book > 1:
                 square.wall = 2
         else:
             square.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
@@ -500,7 +500,7 @@ class SmartDraw(object):
         else:
             if (self.revindexes[self.IDX_WALL][newflags] == -1):
                 square.wallimg = self.special
-                if c.book == 2:
+                if c.book > 1:
                     square.wall = 2
             else:
                 square.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
