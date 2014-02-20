@@ -3,6 +3,13 @@
 *eschalon_utils-next
 
    19 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Properly display GUI elements specific to more than one book
+   Fix bug with displaying the new map dialog when loading a map named on
+      the command line
+   Be consistent about how we check book number
+   Minor Book III fixes
+
+   19 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Write the correct number of Book III entity statuses to file
    Properly display statuses for Book III entities
 
