@@ -1183,8 +1183,14 @@ class MainGUI(BaseGUI):
             box2.show_all()
 
         # Now show or hide form elements depending on the book version
+        # Hide first, then show, so that we don't end up hiding elements
+        # used in more than one book
         for char_class in (B1Character, B2Character, B3Character, B1Item, B2Item, B3Item):
-            self.set_book_elem_visibility(char_class, char_class.book == c.book)
+            if (char_class.book != c.book):
+                self.set_book_elem_visibility(char_class, False)
+        for char_class in (B1Character, B2Character, B3Character, B1Item, B2Item, B3Item):
+            if (char_class.book == c.book):
+                self.set_book_elem_visibility(char_class, True)
 
     def gui_item_page(self, container, pagetitle, rows, tablename):
         """ Sets up a page to store item information. """

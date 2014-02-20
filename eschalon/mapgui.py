@@ -690,8 +690,14 @@ class MapGUI(BaseGUI):
         self.script_editor.set_gui(self)
 
         # Now show or hide form elements depending on the book version
+        # Hide first, then show, so that we don't end up hiding elements
+        # used in more than one book
         for item_class in (B1Item, B2Item, B3Item, B1Entity, B2Entity, B3Entity):
-            self.set_book_elem_visibility(item_class, item_class.book == c.book)
+            if (item_class.book != c.book):
+                self.set_book_elem_visibility(item_class, False)
+        for item_class in (B1Item, B2Item, B3Item, B1Entity, B2Entity, B3Entity):
+            if (item_class.book == c.book):
+                self.set_book_elem_visibility(item_class, True)
 
         # Draw our control box
         ctlbox = self.get_widget('control_alignment')
