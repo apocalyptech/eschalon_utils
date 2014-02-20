@@ -1,5 +1,31 @@
 # ChangeLog for Eschalon Savefile Editor
 
+*eschalon_utils-next
+
+   19 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Write the correct number of Book III entity statuses to file
+   Properly display statuses for Book III entities
+
+   18 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Add Book III files to Windows build config
+
+   21 Dec 2013; Elliot Kendall <elliotkendall@gmail.com> :
+   Fix some Book III character loading issues
+
+   13 Dec 2013; Elliot Kendall <elliotkendall@gmail.com> :
+   Initial Book III support
+
+   13 May 2013; Elliot Kendall <elliotkendall@gmail.com> :
+   Add a single-executable launcher to reduce the size of an OS X
+      app package including all the editors
+
+   08 May 2013; Elliot Kendall <elliotkendall@gmail.com> :
+   Support reading gfx and datapak resources directly from the filesystem,
+      to support some third-party vendor distributions
+
+   26 Apr 2013; Elliot Kendall <elliotkendall@gmail.com> :
+   Add script to build OS X apps, expand OS X install instructions
+
 *eschalon_utils-0.8.1 (06 Feb 2012)
 
    06 Nov 2011; CJ Kucera <pez@apocalyptech.com> :
