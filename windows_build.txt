@@ -9,6 +9,10 @@ Requirements:
 
 Process:
 
+Just run "make-windows-installer.bat"
+
+Manual Process:
+
     1) To avoid having to change paths in win-inno.iss, copy to
        C:\InstPrograms\eschalon_utils
 
