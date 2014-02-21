@@ -3,6 +3,7 @@
 *eschalon_utils-next
 
    21 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Fix datapak initialization error message
    Create batch script to automate Windows installer build
 
    20 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
