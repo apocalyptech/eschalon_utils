@@ -36,6 +36,8 @@ for APP in $APPS; do
 
   # Run py2app
   py2applet --make-setup "$APP.py"
+  # Turn off argv emulation, needed for some older versions of py2app
+  perl -i -pe 's/(argv_emulation.: )True/$1False/' setup.py 
   python setup.py py2app --site-packages --use-pythonpath -f "$FRAMEWORKS" -i "$INCLUDE" -r "$RESOURCES" -d "$DMG"
 
   # The data directory gets referenced relative to the contents of the
