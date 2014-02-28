@@ -6,13 +6,10 @@
 # - py2app, czipfile, and pycrypto installed with easy_install
 # - OS X developer tools
 #
-# You may get different version of some libraries than me, which may
-# necessitate changing things below.  We expect libicuuc.50.1.dylib,
-# libicudata.50.1.dylib, pango 1.34.0, and gdk-pixbuf 2.28.1.
-#
 # Developed and tested on Mac OS 10.8.3 64 bit
 
 # Build these apps
+# Uncomment to build individual apps
 #APPS="eschalon_b1_char eschalon_b1_map eschalon_b2_char eschalon_b2_map"
 APPS="eschalon_utils"
 # Include these python modules
@@ -21,6 +18,10 @@ INCLUDE="gtk,gio,atk,pangocairo"
 # MachO header rebuild fails with the python library - see below for more
 # info
 RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0"
+# Extra dylibs to include. For some reason this one wasn't getting picked
+# up by default
+FRAMEWORKS="libgailutil.18.dylib"
+# What to call the disk image we create
 DMG="Eschalon Utils"
 
 # Exit if any step exits uncleanly. Helpful for a hack job like this
@@ -35,18 +36,12 @@ for APP in $APPS; do
 
   # Run py2app
   py2applet --make-setup "$APP.py"
-  python setup.py py2app -i "$INCLUDE" -r "$RESOURCES" -d "$DMG"
-
-  # The libraries are referenced by these names, and py2app doesn't make
-  # the appropriate links, so make them ourselves
-  cd "$DMG"/"$APP".app/Contents/Frameworks
-  ln -s libicuuc.50.1.dylib libicuuc.50.dylib
-  ln -s libicudata.50.1.dylib libicudata.50.dylib
+  python setup.py py2app --site-packages --use-pythonpath -f "$FRAMEWORKS" -i "$INCLUDE" -r "$RESOURCES" -d "$DMG"
 
   # The data directory gets referenced relative to the contents of the
   # site-packages directory.  If it's a zip file as py2app makes, this
   # doesn't work right
-  cd ../Resources/lib/python2.7
+  cd "$DMG"/"$APP".app/Contents/Resources/lib/python2.7
   mkdir site-packages
   cd site-packages
   unzip ../site-packages.zip
@@ -94,9 +89,9 @@ for APP in $APPS; do
   # vitally important that the replacement be the exact same length
   # as the original. We pad up with dots
   cd ../Frameworks
-  perl -i -pe 's?/usr/local/Cellar/pango/1.34.0/etc/pango?../Resources/etc/pango\x00.................?' libpango-1.0.0.dylib
-  perl -i -pe 's?/usr/local/Cellar/pango/1.34.0/lib/pango?../Resources/lib/pango\x00.................?' libpango-1.0.0.dylib
-  perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/2.28.1/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-2.0.0.dylib
+  perl -i -pe 's?/usr/local/Cellar/pango/....../etc/pango?../Resources/etc/pango\x00.................?' libpango-1.0.0.dylib
+  perl -i -pe 's?/usr/local/Cellar/pango/....../lib/pango?../Resources/lib/pango\x00.................?' libpango-1.0.0.dylib
+  perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/....../lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-2.0.0.dylib
 
   # Go back to the root to start the next loop iteration
   cd ../../../..
