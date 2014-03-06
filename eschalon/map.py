@@ -815,9 +815,11 @@ class B3Map(Map):
         self.random_entity_1 = 0
         self.random_entity_2 = 0
         self.map_unknowni2 = 0
+        self.map_unknowni3 = 0
         self.map_flags = 0
         self.map_unknowni1 = 0
         self.map_unknowni4 = 0
+        self.map_unknowni5 = 0
         self.map_unknownc5 = 0
         self.map_unknownc6 = 0
         self.map_unknownc7 = 0
