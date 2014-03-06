@@ -2,6 +2,9 @@
 
 *eschalon_utils-next
 
+   06 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Properly initialize B3 map values for maps created from scratch
+
    21 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Fix datapak initialization error message
    Create batch script to automate Windows installer build

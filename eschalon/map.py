@@ -817,7 +817,9 @@ class B3Map(Map):
         self.map_unknowni2 = 0
         self.map_flags = 0
         self.map_unknowni1 = 0
+        self.map_unknowni3 = 0
         self.map_unknowni4 = 0
+        self.map_unknowni5 = 0
         self.map_unknownc5 = 0
         self.map_unknownc6 = 0
         self.map_unknownc7 = 0
