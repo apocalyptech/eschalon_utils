@@ -3,6 +3,7 @@
 *eschalon_utils-next
 
    06 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Breakable walls in Book III are type 22, not 50
    Properly initialize B3 map values for maps created from scratch
 
    21 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
