@@ -325,7 +325,9 @@ class B3Constants:
             21: 'Harden Armor',
             22: 'Imbue with Fire',
             23: 'Imbue with Cold',
-            24: 'Imbue with Poison'
+            24: 'Imbue with Poison',
+            25: 'Create Fused Keg',
+            26: 'Refill Lantern',
         }
 
     gendertable = {
