@@ -158,7 +158,7 @@ class B3Constants:
             44: 'Dehex',
             45: 'Mystic Hammer',
             46: 'Mass Boil',
-            47: 'Summon Beast'
+            47: 'Graven Idol'
         }
 
     # Should maybe just have a Spell class for this instead

@@ -2,6 +2,21 @@
 
 *eschalon_utils-next
 
+   09 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Replace Summon Beast with Graven Idol in spell constants table
+
+   07 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Add support for two new recipes
+
+   05 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Fix saving newly-created Book III maps
+
+   20 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Properly display GUI elements specific to more than one book
+   Fix bug with displaying new map dialog when loading a map named on the
+      command line
+   Correctly show modifiers tab on Book III item dialog; minor Book III fixes
+
    19 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Write the correct number of Book III entity statuses to file
    Properly display statuses for Book III entities
