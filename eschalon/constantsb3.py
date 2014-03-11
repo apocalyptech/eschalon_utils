@@ -261,7 +261,9 @@ class B3Constants:
             0x34: 'Poison',
             0x35: 'Small Effect Area (thrown potions)',
             0x36: 'Medium Effect Area (thrown potions)',
-            0x37: 'Large Effect Area (thrown potions)'
+            0x37: 'Large Effect Area (thrown potions)',
+            0x38: 'Not implemented',
+            0x39: 'Radiant',
         }
 
     # This table is a bitfield lookup
