@@ -1,5 +1,5 @@
 Eschalon Savefile Editor
-Copyright (C) 2008-2012 CJ Kucera
+Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

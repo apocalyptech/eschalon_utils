@@ -3,7 +3,7 @@
 # $Id: eschalon_b3_char.py,v 1.2 2010/06/12 20:21:53 pez Exp $
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2010 CJ Kucera
+# Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
