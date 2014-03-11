@@ -24,7 +24,7 @@ app_name = 'Eschalon Savefile Editor'
 version = '1.0.0'
 url = 'http://apocalyptech.com/eschalon/'
 authors = [ 'Main Code - CJ Kucera',
- 'Additional Code / Ideas - WR Goerlich', '',
+ 'Additional Code / Ideas - WR Goerlich',
  'Book III / OS X Code - Elliot Kendall', '',
  'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 
