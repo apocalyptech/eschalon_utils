@@ -427,6 +427,7 @@ class B3Constants:
             18: 'Nest / Computer Teriminal',
             19: 'Zapper',
             21: 'Huge Graphic',
+            23: 'Ceramic pot (breakable with powder keg)',
             25: 'Light Source (white)',
             26: 'Light Source (red)',
             27: 'Light Source (green)',

@@ -2,6 +2,9 @@
 
 *eschalon_utils-next
 
+   11 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Add object type 23 - explodable ceramic pot
+
    09 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Replace Summon Beast with Graven Idol in spell constants table
 
