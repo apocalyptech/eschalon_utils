@@ -796,24 +796,27 @@ class MapGUI(BaseGUI):
         # Note that maplist will be empty for B2, but that's okay since B2 won't
         # end up using it.
         maplist = self.get_gamedir_filelist('data', 'map', False)
-        ogglist = self.get_gamedir_filelist('music', 'ogg')
-        wavlist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
+        musiclist = self.get_gamedir_filelist('music', 'ogg')
+        atmoslist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
+        randsoundlist = self.get_gamedir_filelist('sound', 'wav', True, ['rand_'])
         if c.book == 1:
             skyboxlist = ['back1.png', 'back2.png', 'back3.png']
-        else:
+        elif c.book == 2:
             skyboxlist = ['shear_wall.png']
+        else:
+            skyboxlist = []
 
         # Populate the dropdowns on our global properties window
         self.populate_comboboxentry('exit_north_combo', maplist)
         self.populate_comboboxentry('exit_east_combo', maplist)
         self.populate_comboboxentry('exit_south_combo', maplist)
         self.populate_comboboxentry('exit_west_combo', maplist)
-        self.populate_comboboxentry('music1_combo', ogglist)
-        self.populate_comboboxentry('music2_combo', ogglist)
-        self.populate_comboboxentry('atmos_sound1_combo', wavlist)
-        self.populate_comboboxentry('atmos_sound2_combo', wavlist)
-        self.populate_comboboxentry('random_sound1_combo', wavlist)
-        self.populate_comboboxentry('random_sound2_combo', wavlist)
+        self.populate_comboboxentry('music1_combo', musiclist)
+        self.populate_comboboxentry('music2_combo', musiclist)
+        self.populate_comboboxentry('atmos_sound1_combo', atmoslist)
+        self.populate_comboboxentry('atmos_sound2_combo', atmoslist)
+        self.populate_comboboxentry('random_sound1_combo', randsoundlist)
+        self.populate_comboboxentry('random_sound2_combo', randsoundlist)
         self.populate_comboboxentry('skybox_combo', skyboxlist)
 
         # And populate our object/script type dropdown as well
