@@ -2,23 +2,20 @@
 
 *eschalon_utils-1.0.0 ()
 
-   11 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
-   Add object type 23 - explodable ceramic pot
+   06 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Breakable walls in Book III are type 22, not 50
+   Properly initialize B3 map values for maps created from scratch
 
-   09 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
-   Replace Summon Beast with Graven Idol in spell constants table
-
-   07 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
-   Add support for two new recipes
-
-   05 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
-   Fix saving newly-created Book III maps
+   21 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
+   Fix datapak initialization error message
+   Create batch script to automate Windows installer build
 
    20 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Properly display GUI elements specific to more than one book
-   Fix bug with displaying new map dialog when loading a map named on the
-      command line
-   Correctly show modifiers tab on Book III item dialog; minor Book III fixes
+   Fix bug with displaying the new map dialog when loading a map named on
+      the command line
+   Be consistent about how we check book number
+   Minor Book III fixes
 
    19 Feb 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Write the correct number of Book III entity statuses to file

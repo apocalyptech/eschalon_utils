@@ -427,6 +427,7 @@ class B3Constants:
             18: 'Nest / Computer Teriminal',
             19: 'Zapper',
             21: 'Huge Graphic',
+            22: 'Breakable Wall',
             23: 'Ceramic pot (breakable with powder keg)',
             25: 'Light Source (white)',
             26: 'Light Source (red)',
@@ -448,7 +449,6 @@ class B3Constants:
             42: 'Sound Generator (Wind)',
             43: 'Sound Generator (Swimming Water)',
             44: 'Sound Generator (Electric Field)',
-            50: 'Breakable Wall',
         }
 
     class EntHelper(object):
