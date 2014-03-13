@@ -754,15 +754,26 @@ class MapGUI(BaseGUI):
             self.get_widget('atmos_sound1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
-        store = self.get_widget('walltype_store')
-        store.append(['None', 0])
-        store.append(['Normal Wall', 1])
+        wstore = self.get_widget('walltype_store')
+        wstore.append(['None', 0])
+        wstore.append(['Normal Wall', 1])
         if c.book == 1:
             self.wallvals = (0, 1, 5)
         else:
             self.wallvals = (0, 1, 2, 5)
-            store.append(['Restrict Movement', 2])
-        store.append(['See-Through', 5])
+            wstore.append(['Restrict Movement', 2])
+        wstore.append(['See-Through', 5])
+
+        # Populate our tree set dropdown
+        tstore = self.get_widget('tree_set_store')
+        tstore.append(['Deciduous', 0])
+        if c.book == 2:
+            tstore.append(['Evergreen', 1])
+            tstore.append(['Snow-Covered', 2])
+        elif c.book == 3:
+            tstore.append(['Swamp', 1])
+            tstore.append(['Snow-Covered', 2])
+            tstore.append(['Evergreen', 3])
 
         # Process our entity list, for use in the entity type dropdown
         # This is.... Not the greatest.  Ah well.  Keeping the monsters
