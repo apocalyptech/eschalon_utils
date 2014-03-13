@@ -857,7 +857,7 @@
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Opening Script:</property>
+                        <property name="label" translatable="yes">Entrance Script:</property>
                       </object>
                       <packing>
                         <property name="top_attach">7</property>
@@ -1292,6 +1292,7 @@
                           <object class="GtkEntry" id="returnscript">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">This script is run each time the character enters the map.</property>
                             <property name="invisible_char">●</property>
                             <property name="invisible_char_set">True</property>
                             <property name="primary_icon_activatable">False</property>
@@ -1334,6 +1335,7 @@
                           <object class="GtkEntry" id="exitscript">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">This script is run each time the character leaves the map.</property>
                             <property name="invisible_char">●</property>
                             <property name="invisible_char_set">True</property>
                             <property name="primary_icon_activatable">False</property>
@@ -1536,7 +1538,7 @@
                             </child>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry10">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
@@ -1567,7 +1569,7 @@
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry12">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
@@ -1598,7 +1600,7 @@
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry14">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
@@ -1630,7 +1632,7 @@
                             <property name="tooltip_markup">Note that having an empty value here will crash Eschalon</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry16">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
@@ -1845,7 +1847,7 @@
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry18">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
                                 <property name="primary_icon_sensitive">True</property>
@@ -1921,7 +1923,7 @@
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry20">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
@@ -1981,7 +1983,7 @@
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
                               <object class="GtkEntry" id="comboboxentry-entry23">
-                                <property name="can_focus">False</property>
+                                <property name="can_focus">True</property>
                                 <property name="invisible_char">●</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
