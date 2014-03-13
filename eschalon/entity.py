@@ -279,14 +279,15 @@ class B2Entity(Entity):
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
-            'openingscript_label', 'openingscript',
-            'soundfile4_label', 'soundfile4_combo',
+            'entrancescript_label', 'entrancescript',
+            'random_sound1_label', 'random_sound1_combo',
             'unknown_sq_i1_label', 'unknown_sq_i1',
             'tree_set_label', 'tree_set',
             'map_flags_label', 'map_flags_table',
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
-            'map_unknowni1_label', 'map_unknowni1',
+            'parallax1_label', 'parallax_1',
+            'parallax2_label', 'parallax_2',
             'objectplace_loot_spin', 'objectplace_loot_label',
             ]
 
@@ -377,14 +378,16 @@ class B3Entity(Entity):
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
             'b2_walltype_label', 'b2_walltype',
-            'openingscript_label', 'openingscript',
-            'soundfile4_label', 'soundfile4_combo',
+            'entrancescript_label', 'entrancescript',
+            'random_sound1_label', 'random_sound1_combo',
+            'random_sound2_label', 'random_sound2_combo',
             'unknown_sq_i1_label', 'unknown_sq_i1',
             'tree_set_label', 'tree_set',
             'map_flags_label', 'map_flags_table',
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
-            'map_unknowni1_label', 'map_unknowni1',
+            'parallax_1_label', 'parallax_1',
+            'parallax_2_label', 'parallax_2',
             ]
 
     def __init__(self, savegame):

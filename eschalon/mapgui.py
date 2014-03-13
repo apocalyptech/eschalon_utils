@@ -676,7 +676,8 @@ class MapGUI(BaseGUI):
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
-                'soundfile1', 'soundfile2', 'soundfile3', 'soundfile4', 'skybox']
+                'music1', 'music2', 'atmos_sound1', 'atmos_sound2',
+                'random_sound1', 'random_sound2', 'skybox']
         for var in comboboxentries:
             self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
             self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
@@ -739,7 +740,7 @@ class MapGUI(BaseGUI):
         self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
 
         # Not sure why this doesn't work properly just from Glade
-        self.get_widget('soundfile1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+        self.get_widget('music1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Unknown map properties
         table = self.get_widget('map_prop_unknown_table')
@@ -747,31 +748,10 @@ class MapGUI(BaseGUI):
             self.input_uchar(table, 3, 'map_b1_last_xpos', '<i>Last-seen X Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
             self.input_uchar(table, 4, 'map_b1_last_ypos', '<i>Last-seen Y Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
         else:
-            table = self.get_widget('map_prop_unknown_table')
-            self.prop_unknown_input_spin(self.input_int, 'i', table, 2, 3, 'Always zero')
-            self.prop_unknown_input_spin(self.input_int, 'i', table, 4, 5, 'Typically the last coordinates the user was seen in, though sometimes it\'s not.')
 
-            # These two are *always* 1 in all of the map files that I've seen, and we're using them
-            # to identify whether the map file is book 1 or book 2.  So, we're going to omit allowing
-            # their edit.
-            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 1, 6)
-            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 2, 7)
-
-            # We're locking these down because they appear to function as savegame/global identifiers
-            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 5, 10, 'This should be zero for global maps', False)
-            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 6, 11, 'This is often nonzero on savegames', False)
-            #self.prop_unknown_input_spin(self.input_uchar, 'c', table, 7, 12, 'This is often nonzero on savegames', False)
-
-            self.prop_unknown_input_spin(self.input_uchar, 'c', table, 8, 13, 'Always zero')
-            self.prop_unknown_input_text(table, 1, 14, 'Always empty')
-            self.prop_unknown_input_text(table, 2, 15, 'Always empty')
-            self.prop_unknown_input_text(table, 4, 16, 'Always empty')
-            self.prop_unknown_input_text(table, 5, 17, 'Always empty')
-            self.prop_unknown_input_text(table, 6, 18, 'Always empty')
-
-            # Update soundfile label for book 2
-            self.get_widget('soundfile3_label').set_text('Atmosphere (day)')
-            self.get_widget('soundfile3_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+            # Update sound labels for book 2
+            self.get_widget('atmos_sound1_label').set_text('Atmosphere (day)')
+            self.get_widget('atmos_sound1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
         store = self.get_widget('walltype_store')
@@ -828,10 +808,12 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('exit_east_combo', maplist)
         self.populate_comboboxentry('exit_south_combo', maplist)
         self.populate_comboboxentry('exit_west_combo', maplist)
-        self.populate_comboboxentry('soundfile1_combo', ogglist)
-        self.populate_comboboxentry('soundfile2_combo', ogglist)
-        self.populate_comboboxentry('soundfile3_combo', wavlist)
-        self.populate_comboboxentry('soundfile4_combo', wavlist)
+        self.populate_comboboxentry('music1_combo', ogglist)
+        self.populate_comboboxentry('music2_combo', ogglist)
+        self.populate_comboboxentry('atmos_sound1_combo', wavlist)
+        self.populate_comboboxentry('atmos_sound2_combo', wavlist)
+        self.populate_comboboxentry('random_sound1_combo', wavlist)
+        self.populate_comboboxentry('random_sound2_combo', wavlist)
         self.populate_comboboxentry('skybox_combo', skyboxlist)
 
         # And populate our object/script type dropdown as well
@@ -1153,14 +1135,15 @@ class MapGUI(BaseGUI):
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
-            self.map.soundfile1 = 'overland_1.ogg'
-            self.map.soundfile3 = 'atmos_birds.wav'
+            self.map.music1 = 'overland_1.ogg'
+            self.map.atmos_sound1 = 'atmos_birds.wav'
         elif c.book == 2:
-            self.map.soundfile1 = 'eb2_overland1.ogg'
-            self.map.soundfile3 = 'atmos_birds.wav'
+            self.map.music1 = 'eb2_overland1.ogg'
+            self.map.atmos_sound1 = 'atmos_birds.wav'
         elif c.book == 3:
-            self.map.soundfile1 = 'book3_steps_of_the_wayfarer_dj.ogg'
-            self.map.soundfile3 = 'atmos_birds.wav'
+            self.map.version = '0.992'
+            self.map.music1 = 'book3_steps_of_the_wayfarer_dj.ogg'
+            self.map.atmos_sound1 = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
         self.setup_new_map()
@@ -1453,9 +1436,9 @@ class MapGUI(BaseGUI):
         else:
             self.get_widget('maptype').set_text('Global Map File')
         self.get_widget('mapname').set_text(self.map.mapname)
-        self.get_widget('soundfile1').set_text(self.map.soundfile1)
-        self.get_widget('soundfile2').set_text(self.map.soundfile2)
-        self.get_widget('soundfile3').set_text(self.map.soundfile3)
+        self.get_widget('music1').set_text(self.map.music1)
+        self.get_widget('music2').set_text(self.map.music2)
+        self.get_widget('atmos_sound1').set_text(self.map.atmos_sound1)
         if c.book > 1:
             self.cur_tree_set = self.map.tree_set
             for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
@@ -1477,36 +1460,29 @@ class MapGUI(BaseGUI):
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
+        self.get_widget('parallax_1').set_value(self.map.parallax_1)
+        self.get_widget('parallax_2').set_value(self.map.parallax_2)
         if c.book == 1:
             self.get_widget('mapid').set_text(self.map.mapid)
             self.get_widget('exit_north').set_text(self.map.exit_north)
             self.get_widget('exit_east').set_text(self.map.exit_east)
             self.get_widget('exit_south').set_text(self.map.exit_south)
             self.get_widget('exit_west').set_text(self.map.exit_west)
-            self.get_widget('parallax_1').set_value(self.map.parallax_1)
-            self.get_widget('parallax_2').set_value(self.map.parallax_2)
             self.get_widget('map_unknownh1').set_value(self.map.map_unknownh1)
             self.get_widget('clouds').set_value(self.map.clouds)
             self.get_widget('map_b1_last_xpos').set_value(self.map.map_b1_last_xpos)
             self.get_widget('map_b1_last_ypos').set_value(self.map.map_b1_last_ypos)
             self.get_widget('map_b1_outsideflag').set_value(self.map.map_b1_outsideflag)
         else:
-            self.get_widget('openingscript').set_text(self.map.openingscript)
-            self.get_widget('soundfile4').set_text(self.map.soundfile4)
-            self.get_widget('map_unknowni1').set_value(self.map.map_unknowni1)
-            self.get_widget('map_unknowni2').set_value(self.map.map_unknowni2)
-            self.get_widget('map_unknowni4').set_value(self.map.map_unknowni4)
-            #self.get_widget('map_unknownc1').set_value(self.map.map_unknownc1)
-            #self.get_widget('map_unknownc2').set_value(self.map.map_unknownc2)
-            #self.get_widget('map_unknownc5').set_value(self.map.map_unknownc5)
-            #self.get_widget('map_unknownc6').set_value(self.map.map_unknownc6)
-            #self.get_widget('map_unknownc7').set_value(self.map.map_unknownc7)
-            self.get_widget('map_unknownc8').set_value(self.map.map_unknownc8)
-            self.get_widget('map_unknownstr1').set_text(self.map.map_unknownstr1)
-            self.get_widget('map_unknownstr2').set_text(self.map.map_unknownstr2)
-            self.get_widget('map_unknownstr4').set_text(self.map.map_unknownstr4)
-            self.get_widget('map_unknownstr5').set_text(self.map.map_unknownstr5)
-            self.get_widget('map_unknownstr6').set_text(self.map.map_unknownstr6)
+            self.get_widget('entrancescript').set_text(self.map.entrancescript)
+            self.get_widget('returnscript').set_text(self.map.returnscript)
+            self.get_widget('exitscript').set_text(self.map.exitscript)
+            self.get_widget('random_sound1').set_text(self.map.random_sound1)
+            if c.book == 3:
+                self.get_widget('atmos_sound2').set_text(self.map.atmos_sound2)
+                self.get_widget('random_sound2').set_text(self.map.random_sound2)
+                self.get_widget('cloud_offset_x').set_value(self.map.cloud_offset_x)
+                self.get_widget('cloud_offset_y').set_value(self.map.cloud_offset_y)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
