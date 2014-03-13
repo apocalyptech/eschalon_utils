@@ -158,7 +158,7 @@ class B3Constants:
             44: 'Dehex',
             45: 'Mystic Hammer',
             46: 'Mass Boil',
-            47: 'Summon Beast'
+            47: 'Graven Idol'
         }
 
     # Should maybe just have a Spell class for this instead
@@ -261,7 +261,9 @@ class B3Constants:
             0x34: 'Poison',
             0x35: 'Small Effect Area (thrown potions)',
             0x36: 'Medium Effect Area (thrown potions)',
-            0x37: 'Large Effect Area (thrown potions)'
+            0x37: 'Large Effect Area (thrown potions)',
+            0x38: 'Not implemented',
+            0x39: 'Radiant',
         }
 
     # This table is a bitfield lookup
@@ -325,7 +327,9 @@ class B3Constants:
             21: 'Harden Armor',
             22: 'Imbue with Fire',
             23: 'Imbue with Cold',
-            24: 'Imbue with Poison'
+            24: 'Imbue with Poison',
+            25: 'Create Fused Keg',
+            26: 'Refill Lantern',
         }
 
     gendertable = {
@@ -424,6 +428,7 @@ class B3Constants:
             19: 'Zapper',
             21: 'Huge Graphic',
             22: 'Breakable Wall',
+            23: 'Ceramic pot (breakable with powder keg)',
             25: 'Light Source (white)',
             26: 'Light Source (red)',
             27: 'Light Source (green)',

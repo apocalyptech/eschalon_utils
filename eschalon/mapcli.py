@@ -59,7 +59,7 @@ class MapCLI(object):
 
         map = self.map
         print "Map %s (%s)" % (map.mapid, map.mapname)
-        print "Soundfiles: %s, %s, %s" % (map.soundfile1, map.soundfile2, map.soundfile3)
+        print "Soundfiles: %s, %s, %s" % (map.music1, map.music2, map.atmos_sound1)
         print "Skybox: %s" % (map.skybox)
         print "Skybox Parallax 1: %d" % (map.parallax_1)
         print "Skybox Parallax 2: %d" % (map.parallax_2)

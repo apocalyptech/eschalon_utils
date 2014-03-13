@@ -800,7 +800,7 @@ class B2Character(Character):
 
             # Some unknown values (zeroes so far)
             for i in range(14):
-                self.unknown.fourteenzeros.append(self.df.readint())
+                self.unknown.zeros.append(self.df.readint())
 
             # Position/orientation
             self.orientation = self.df.readuchar()
@@ -951,7 +951,7 @@ class B2Character(Character):
             self.df.writeint(recipe)
 
         # Unknowns
-        for zero in self.unknown.fourteenzeros:
+        for zero in self.unknown.zeros:
             self.df.writeint(zero)
 
         # Position/orientation
@@ -1203,12 +1203,12 @@ class B3Character(Character):
                 self.addreadyslot(self.df.readstr(), self.df.readuchar())
 
             # Alchemy Recipes
-            for i in range(25):
+            for i in range(27):
                 self.addalchemy()
 
             # Some unknown values (zeroes so far)
-            for i in range(14):
-                self.unknown.fourteenzeros.append(self.df.readint())
+            for i in range(12):
+                self.unknown.zeros.append(self.df.readint())
 
             # Position/orientation
             self.orientation = self.df.readuchar()
@@ -1360,7 +1360,7 @@ class B3Character(Character):
             self.df.writeint(recipe)
 
         # Unknowns
-        for zero in self.unknown.fourteenzeros:
+        for zero in self.unknown.zeros:
             self.df.writeint(zero)
 
         # Position/orientation

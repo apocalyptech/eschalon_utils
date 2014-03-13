@@ -134,7 +134,7 @@ class B2Unknowns(object):
         self.initzero = -1
         self.version = -1 # I suspect this might be savefile version
         self.zero1 = -1
-        self.fourteenzeros = []
+        self.zeros = []
         self.strangeblock = []
         self.unknowni1 = -1
         self.unknowni2 = -1
@@ -167,8 +167,8 @@ class B2Unknowns(object):
         newunknown.extradata = self.extradata
 
         # Lists
-        for item in self.fourteenzeros:
-            newunknown.fourteenzeros.append(item)
+        for item in self.zeros:
+            newunknown.zeros.append(item)
         for item in self.strangeblock:
             newunknown.strangeblock.append(item)
         for item in self.twentyninezeros:
@@ -202,7 +202,7 @@ class B2Unknowns(object):
         ret.append("Initial Zero: %d" % self.initzero)
         ret.append("Possibly savefile version: %d" % (self.version))
         ret.append("Usually Zero: %d" % (self.zero1))
-        ret.append(self.iblock(self.fourteenzeros, 'Fourteen Zeros'))
+        ret.append(self.iblock(self.zeros, 'Some Zeros'))
         ret.append(self.cblock(self.strangeblock, 'Somewhat Strange Block'))
         ret.append("Unknown Integer 1: %d" % (self.unknowni1))
         ret.append("Unknown Integer 2: %d" % (self.unknowni2))

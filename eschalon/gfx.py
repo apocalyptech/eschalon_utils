@@ -1277,7 +1277,7 @@ class B3Gfx(Gfx):
             self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
             self.zip.setpassword(text)
         else:
-            raise LoadException('Could not open datapak!')
+            raise LoadException('Filename %s not found on filesystem or in datapak!' % (newfilename))
 
         self.loaded = True
 

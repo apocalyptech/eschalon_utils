@@ -48,10 +48,10 @@ class Map(object):
         self.df_ent = None
         self.filename_ent = ''
         self.mapname = ''
-        self.soundfile1 = ''
-        self.soundfile2 = ''
+        self.music1 = ''
+        self.music2 = ''
         self.skybox = ''
-        self.soundfile3 = ''
+        self.atmos_sound1 = ''
 
         # Not entirely sure about the alpha channel, which
         # is always zero, but it seems to make sense
@@ -59,6 +59,9 @@ class Map(object):
         self.color_g = 255
         self.color_b = 255
         self.color_a = 0
+
+        self.parallax_1 = 0
+        self.parallax_2 = 0
 
         self.extradata = ''
 
@@ -118,16 +121,18 @@ class Map(object):
 
         # Single vals (no need to do actual replication)
         newmap.mapname = self.mapname
-        newmap.soundfile1 = self.soundfile1
-        newmap.soundfile2 = self.soundfile2
+        newmap.music1 = self.music1
+        newmap.music2 = self.music2
         newmap.skybox = self.skybox
-        newmap.soundfile3 = self.soundfile3
+        newmap.atmos_sound1 = self.atmos_sound1
         newmap.color_r = self.color_r
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
         newmap.color_a = self.color_a
         newmap.extradata = self.extradata
         newmap.tree_set = self.tree_set
+        newmap.parallax_1 = self.parallax_1
+        newmap.parallax_2 = self.parallax_2
 
         # Copy squares
         for i in range(200):
@@ -379,8 +384,6 @@ class B1Map(Map):
         self.exit_east = ''
         self.exit_south = ''
         self.exit_west = ''
-        self.parallax_1 = 0
-        self.parallax_2 = 0
         self.clouds = 0
         self.savegame_1 = 0
         self.savegame_2 = 0
@@ -404,14 +407,14 @@ class B1Map(Map):
             # Start processing
             self.mapid = self.df.readstr()
             self.mapname = self.df.readstr()
-            self.soundfile1 = self.df.readstr()
-            self.soundfile2 = self.df.readstr()
+            self.music1 = self.df.readstr()
+            self.music2 = self.df.readstr()
             self.exit_north = self.df.readstr()
             self.exit_east = self.df.readstr()
             self.exit_south = self.df.readstr()
             self.exit_west = self.df.readstr()
             self.skybox = self.df.readstr()
-            self.soundfile3 = self.df.readstr()
+            self.atmos_sound1 = self.df.readstr()
             self.map_b1_last_xpos = self.df.readuchar()
             self.map_b1_last_ypos = self.df.readuchar()
             self.map_b1_outsideflag = self.df.readshort()
@@ -476,14 +479,14 @@ class B1Map(Map):
         # Start
         self.df.writestr(self.mapid)
         self.df.writestr(self.mapname)
-        self.df.writestr(self.soundfile1)
-        self.df.writestr(self.soundfile2)
+        self.df.writestr(self.music1)
+        self.df.writestr(self.music2)
         self.df.writestr(self.exit_north)
         self.df.writestr(self.exit_east)
         self.df.writestr(self.exit_south)
         self.df.writestr(self.exit_west)
         self.df.writestr(self.skybox)
-        self.df.writestr(self.soundfile3)
+        self.df.writestr(self.atmos_sound1)
         self.df.writeuchar(self.map_b1_last_xpos)
         self.df.writeuchar(self.map_b1_last_ypos)
         self.df.writeshort(self.map_b1_outsideflag)
@@ -563,8 +566,6 @@ class B1Map(Map):
         newmap.exit_east = self.exit_east
         newmap.exit_south = self.exit_south
         newmap.exit_west = self.exit_west
-        newmap.parallax_1 = self.parallax_1
-        newmap.parallax_2 = self.parallax_2
         newmap.clouds = self.clouds
         newmap.savegame_1 = self.savegame_1
         newmap.savegame_2 = self.savegame_2
@@ -584,26 +585,22 @@ class B2Map(Map):
     def __init__(self, df):
 
         # Book 2 specific vars
-        self.openingscript = ''
-        self.map_unknownstr1 = ''
-        self.map_unknownstr2 = ''
-        self.soundfile4 = ''
-        self.map_unknownc1 = 1
-        self.map_unknownc2 = 1
+        self.entrancescript = ''
+        self.returnscript = ''
+        self.exitscript = ''
+        self.random_sound1 = ''
+        self.loadhook = 1
+        self.unusedc1 = 1
         self.random_entity_1 = 0
         self.random_entity_2 = 0
-        self.map_unknowni2 = 0
         self.map_flags = 0
-        self.map_unknowni1 = 0
-        self.map_unknowni4 = 0
-        self.map_unknownc5 = 0
-        self.map_unknownc6 = 0
-        self.map_unknownc7 = 0
-        self.map_unknownc8 = 0
-        self.map_unknownstr4 = ''
-        self.map_unknownstr5 = ''
-        self.map_unknownstr6 = ''
-
+        self.start_tile = 0
+        self.tree_set = 0
+        self.last_turn = 0
+        self.unusedstr1 = ''
+        self.unusedstr2 = ''
+        self.unusedstr3 = ''
+        
         # Now the base attributes
         super(B2Map, self).__init__(df)
 
@@ -617,38 +614,33 @@ class B2Map(Map):
 
             # Start processing
             self.mapname = self.df.readstr()
-            self.openingscript = self.df.readstr()
-            self.map_unknownstr1 = self.df.readstr()
-            self.map_unknownstr2 = self.df.readstr()
+            self.entrancescript = self.df.readstr()
+            self.returnscript = self.df.readstr()
+            self.exitscript = self.df.readstr()
             self.skybox = self.df.readstr()
-            self.soundfile1 = self.df.readstr()
-            self.soundfile2 = self.df.readstr()
-            self.soundfile3 = self.df.readstr()
-            self.soundfile4 = self.df.readstr()
-            self.map_unknownc1 = self.df.readuchar()
-            self.map_unknownc2 = self.df.readuchar()
+            self.music1 = self.df.readstr()
+            self.music2 = self.df.readstr()
+            self.atmos_sound1 = self.df.readstr()
+            self.random_sound1 = self.df.readstr()
+            self.loadhook = self.df.readuchar()
+            self.unusedc1 = self.df.readuchar()
             self.random_entity_1 = self.df.readuchar()
             self.random_entity_2 = self.df.readuchar()
             self.color_r = self.df.readuchar()
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
-            # map_unknowni1 looks like it may contain parallax values
-            self.map_unknowni1 = self.df.readint()
-            self.map_unknowni2 = self.df.readint()
+            self.parallax_1 = self.df.readint()
+            self.parallax_2 = self.df.readint()
             self.map_flags = self.df.readint()
-            self.map_unknowni4 = self.df.readint()
+            self.start_tile = self.df.readint()
             self.tree_set = self.df.readint()
 
-            # These are all zero on the "global" map files
-            self.map_unknownc5 = self.df.readuchar()
-            self.map_unknownc6 = self.df.readuchar()
-            self.map_unknownc7 = self.df.readuchar()
-            self.map_unknownc8 = self.df.readuchar()
+            self.last_turn = self.df.readint()
 
-            self.map_unknownstr4 = self.df.readstr()
-            self.map_unknownstr5 = self.df.readstr()
-            self.map_unknownstr6 = self.df.readstr()
+            self.unusedstr1 = self.df.readstr()
+            self.unusedstr2 = self.df.readstr()
+            self.unusedstr3 = self.df.readstr()
 
             # Squares
             self.set_square_savegame()
@@ -696,34 +688,31 @@ class B2Map(Map):
 
         # Start
         self.df.writestr(self.mapname)
-        self.df.writestr(self.openingscript)
-        self.df.writestr(self.map_unknownstr1)
-        self.df.writestr(self.map_unknownstr2)
+        self.df.writestr(self.entrancescript)
+        self.df.writestr(self.returnscript)
+        self.df.writestr(self.exitscript)
         self.df.writestr(self.skybox)
-        self.df.writestr(self.soundfile1)
-        self.df.writestr(self.soundfile2)
-        self.df.writestr(self.soundfile3)
-        self.df.writestr(self.soundfile4)
-        self.df.writeuchar(self.map_unknownc1)
-        self.df.writeuchar(self.map_unknownc2)
+        self.df.writestr(self.music1)
+        self.df.writestr(self.music2)
+        self.df.writestr(self.atmos_sound1)
+        self.df.writestr(self.random_sound1)
+        self.df.writeuchar(self.loadhook)
+        self.df.writeuchar(self.unusedc1)
         self.df.writeuchar(self.random_entity_1)
         self.df.writeuchar(self.random_entity_2)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.map_unknowni1)
-        self.df.writeint(self.map_unknowni2)
+        self.df.writeint(self.parallax_1)
+        self.df.writeint(self.parallax_2)
         self.df.writeint(self.map_flags)
-        self.df.writeint(self.map_unknowni4)
+        self.df.writeint(self.start_tile)
         self.df.writeint(self.tree_set)
-        self.df.writeuchar(self.map_unknownc5)
-        self.df.writeuchar(self.map_unknownc6)
-        self.df.writeuchar(self.map_unknownc7)
-        self.df.writeuchar(self.map_unknownc8)
-        self.df.writestr(self.map_unknownstr4)
-        self.df.writestr(self.map_unknownstr5)
-        self.df.writestr(self.map_unknownstr6)
+        self.df.writeint(self.last_turn)
+        self.df.writestr(self.unusedstr1)
+        self.df.writestr(self.unusedstr2)
+        self.df.writestr(self.unusedstr3)
 
         # Squares
         for row in self.squares:
@@ -751,11 +740,10 @@ class B2Map(Map):
         self.df_ent.close()
 
     def is_global(self):
-        return (self.map_unknownc5 == 0 and self.map_unknownc6 == 0 and self.map_unknownc7 == 0)
+        return (self.last_turn == 0)
 
     def is_savegame(self):
         return not self.is_global()
-        #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
 
     def set_savegame(self, savegame):
         """
@@ -763,37 +751,31 @@ class B2Map(Map):
         """
         super(B2Map, self).set_savegame(savegame)
         if savegame:
-            self.map_unknownc5 = 1
+            self.last_turn = 1
         else:
-            self.map_unknownc5 = 0
-            self.map_unknownc6 = 0
-            self.map_unknownc7 = 0
+            self.last_turn = 0
 
     def _sub_replicate(self, newmap):
         """
         Replicate b2-specific vars
         """
-        newmap.openingscript = self.openingscript
-        newmap.map_unknownstr1 = self.map_unknownstr1
-        newmap.map_unknownstr2 = self.map_unknownstr2
-        newmap.soundfile4 = self.soundfile4
-        newmap.map_unknownc1 = self.map_unknownc1
-        newmap.map_unknownc2 = self.map_unknownc2
+        newmap.entrancescript = self.entrancescript
+        newmap.returnscript = self.returnscript
+        newmap.exitscript = self.exitscript
+        newmap.random_sound1 = self.random_sound1
+        newmap.loadhook = self.loadhook
+        newmap.unusedc1 = self.unusedc1
         newmap.random_entity_1 = self.random_entity_1
         newmap.random_entity_2 = self.random_entity_2
-        newmap.map_unknowni2 = self.map_unknowni2
         newmap.map_flags = self.map_flags
-        newmap.map_unknowni1 = self.map_unknowni1
-        newmap.map_unknowni4 = self.map_unknowni4
-        newmap.map_unknownc5 = self.map_unknownc5
-        newmap.map_unknownc6 = self.map_unknownc6
-        newmap.map_unknownc7 = self.map_unknownc7
-        newmap.map_unknownc8 = self.map_unknownc8
-        newmap.map_unknownstr4 = self.map_unknownstr4
-        newmap.map_unknownstr5 = self.map_unknownstr5
-        newmap.map_unknownstr6 = self.map_unknownstr6
+        newmap.start_tile = self.start_tile
+        newmap.tree_set = self.tree_set
+        newmap.last_turn = self.last_turn
+        newmap.unusedstr1 = self.unusedstr1
+        newmap.unusedstr2 = self.unusedstr2
+        newmap.unusedstr3 = self.unusedstr3
 
-class B3Map(Map):
+class B3Map(B2Map):
     """
     Book 3 Map definitions
     """
@@ -802,34 +784,18 @@ class B3Map(Map):
 
     def __init__(self, df):
 
-        # Book 2/3 specific vars
-        self.openingscript = ''
-        self.map_unknownstr0 = ''
-        self.map_unknownstr1 = ''
-        self.map_unknownstr2 = ''
-        self.soundfile4 = ''
-        self.soundfile5 = ''
-        self.soundfile6 = ''
-        self.map_unknownc1 = 1
-        self.map_unknownc2 = 1
-        self.random_entity_1 = 0
-        self.random_entity_2 = 0
-        self.map_unknowni2 = 0
-        self.map_flags = 0
-        self.map_unknowni1 = 0
-        self.map_unknowni3 = 0
-        self.map_unknowni4 = 0
-        self.map_unknowni5 = 0
-        self.map_unknownc5 = 0
-        self.map_unknownc6 = 0
-        self.map_unknownc7 = 0
-        self.map_unknownc8 = 0
-        self.map_unknownstr4 = ''
-        self.map_unknownstr5 = ''
-        self.map_unknownstr6 = ''
+        # Book 3 specific vars
+        self.version = '0.992'
+        self.atmos_sound2 = ''
+        self.random_sound2 = ''
+        self.cloud_offset_x = 0
+        self.cloud_offset_y = 0
 
         # Now the base attributes
         super(B3Map, self).__init__(df)
+
+        # Override the parent class - without this B3 maps won't load
+        self.loadhook = 2
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -840,44 +806,39 @@ class B3Map(Map):
             self.df.open_r()
 
             # Start processing
-            self.map_unknownstr0 = self.df.readstr()
+            self.version = self.df.readstr()
             self.mapname = self.df.readstr()
-            self.openingscript = self.df.readstr()
-            self.map_unknownstr1 = self.df.readstr()
-            self.map_unknownstr2 = self.df.readstr()
+            self.entrancescript = self.df.readstr()
+            self.returnscript = self.df.readstr()
+            self.exitscript = self.df.readstr()
             self.skybox = self.df.readstr()
-            self.soundfile1 = self.df.readstr()
-            self.soundfile2 = self.df.readstr()
-            self.soundfile3 = self.df.readstr()
-            self.soundfile4 = self.df.readstr()
-            self.soundfile5 = self.df.readstr()
-            self.soundfile6 = self.df.readstr()
-            self.map_unknownc1 = self.df.readuchar()
-            self.map_unknownc2 = self.df.readuchar()
+            self.music1 = self.df.readstr()
+            self.music2 = self.df.readstr()
+            self.atmos_sound1 = self.df.readstr()
+            self.atmos_sound2 = self.df.readstr()
+            self.random_sound1 = self.df.readstr()
+            self.random_sound2 = self.df.readstr()
+            self.loadhook = self.df.readuchar()
+            self.unusedc1 = self.df.readuchar()
             self.random_entity_1 = self.df.readuchar()
             self.random_entity_2 = self.df.readuchar()
             self.color_r = self.df.readuchar()
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
-            # map_unknowni1 looks like it may contain parallax values
-            self.map_unknowni1 = self.df.readint()
-            self.map_unknowni2 = self.df.readint()
-            self.map_unknowni3 = self.df.readint()
+            self.parallax_1 = self.df.readint()
+            self.parallax_2 = self.df.readint()
+            self.cloud_offset_x = self.df.readint()
+            self.cloud_offset_y = self.df.readint()
             self.map_flags = self.df.readint()
-            self.map_unknowni4 = self.df.readint()
-            self.map_unknowni5 = self.df.readint()
+            self.start_tile = self.df.readint()
             self.tree_set = self.df.readint()
 
-            # These are all zero on the "global" map files
-            self.map_unknownc5 = self.df.readuchar()
-            self.map_unknownc6 = self.df.readuchar()
-            self.map_unknownc7 = self.df.readuchar()
-            self.map_unknownc8 = self.df.readuchar()
+            self.last_turn = self.df.readint()
 
-            self.map_unknownstr4 = self.df.readstr()
-            self.map_unknownstr5 = self.df.readstr()
-            self.map_unknownstr6 = self.df.readstr()
+            self.unusedstr1 = self.df.readstr()
+            self.unusedstr2 = self.df.readstr()
+            self.unusedstr3 = self.df.readstr()
 
             # Squares
             self.set_square_savegame()
@@ -924,40 +885,37 @@ class B3Map(Map):
         self.df.open_w()
 
         # Start
-        self.df.writestr(self.map_unknownstr0)
+        self.df.writestr(self.version)
         self.df.writestr(self.mapname)
-        self.df.writestr(self.openingscript)
-        self.df.writestr(self.map_unknownstr1)
-        self.df.writestr(self.map_unknownstr2)
+        self.df.writestr(self.entrancescript)
+        self.df.writestr(self.returnscript)
+        self.df.writestr(self.exitscript)
         self.df.writestr(self.skybox)
-        self.df.writestr(self.soundfile1)
-        self.df.writestr(self.soundfile2)
-        self.df.writestr(self.soundfile3)
-        self.df.writestr(self.soundfile4)
-        self.df.writestr(self.soundfile5)
-        self.df.writestr(self.soundfile6)
-        self.df.writeuchar(self.map_unknownc1)
-        self.df.writeuchar(self.map_unknownc2)
+        self.df.writestr(self.music1)
+        self.df.writestr(self.music2)
+        self.df.writestr(self.atmos_sound1)
+        self.df.writestr(self.atmos_sound2)
+        self.df.writestr(self.random_sound1)
+        self.df.writestr(self.random_sound2)
+        self.df.writeuchar(self.loadhook)
+        self.df.writeuchar(self.unusedc1)
         self.df.writeuchar(self.random_entity_1)
         self.df.writeuchar(self.random_entity_2)
         self.df.writeuchar(self.color_r)
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.map_unknowni1)
-        self.df.writeint(self.map_unknowni2)
-        self.df.writeint(self.map_unknowni3)
+        self.df.writeint(self.parallax_1)
+        self.df.writeint(self.parallax_2)
+        self.df.writeint(self.cloud_offset_x)
+        self.df.writeint(self.cloud_offset_y)
         self.df.writeint(self.map_flags)
-        self.df.writeint(self.map_unknowni4)
-        self.df.writeint(self.map_unknowni5)
+        self.df.writeint(self.start_tile)
         self.df.writeint(self.tree_set)
-        self.df.writeuchar(self.map_unknownc5)
-        self.df.writeuchar(self.map_unknownc6)
-        self.df.writeuchar(self.map_unknownc7)
-        self.df.writeuchar(self.map_unknownc8)
-        self.df.writestr(self.map_unknownstr4)
-        self.df.writestr(self.map_unknownstr5)
-        self.df.writestr(self.map_unknownstr6)
+        self.df.writeint(self.last_turn)
+        self.df.writestr(self.unusedstr1)
+        self.df.writestr(self.unusedstr2)
+        self.df.writestr(self.unusedstr3)
 
         # Squares
         for row in self.squares:
@@ -984,45 +942,14 @@ class B3Map(Map):
             entity.write(self.df_ent)
         self.df_ent.close()
 
-    def is_global(self):
-        return (self.map_unknownc5 == 0 and self.map_unknownc6 == 0 and self.map_unknownc7 == 0)
-
-    def is_savegame(self):
-        return not self.is_global()
-        #return (self.map_unknownc5 != 0 or self.map_unknownc6 != 0 or self.map_unknownc7 != 0)
-
-    def set_savegame(self, savegame):
-        """
-        Sets the state of our "savegame" vars.
-        """
-        super(B3Map, self).set_savegame(savegame)
-        if savegame:
-            self.map_unknownc5 = 1
-        else:
-            self.map_unknownc5 = 0
-            self.map_unknownc6 = 0
-            self.map_unknownc7 = 0
-
     def _sub_replicate(self, newmap):
         """
-        Replicate b2/3-specific vars
+        Replicate b3-specific vars
         """
-        newmap.openingscript = self.openingscript
-        newmap.map_unknownstr1 = self.map_unknownstr1
-        newmap.map_unknownstr2 = self.map_unknownstr2
-        newmap.soundfile4 = self.soundfile4
-        newmap.map_unknownc1 = self.map_unknownc1
-        newmap.map_unknownc2 = self.map_unknownc2
-        newmap.random_entity_1 = self.random_entity_1
-        newmap.random_entity_2 = self.random_entity_2
-        newmap.map_unknowni2 = self.map_unknowni2
-        newmap.map_flags = self.map_flags
-        newmap.map_unknowni1 = self.map_unknowni1
-        newmap.map_unknowni4 = self.map_unknowni4
-        newmap.map_unknownc5 = self.map_unknownc5
-        newmap.map_unknownc6 = self.map_unknownc6
-        newmap.map_unknownc7 = self.map_unknownc7
-        newmap.map_unknownc8 = self.map_unknownc8
-        newmap.map_unknownstr4 = self.map_unknownstr4
-        newmap.map_unknownstr5 = self.map_unknownstr5
-        newmap.map_unknownstr6 = self.map_unknownstr6
+        newmap.version = self.version
+        newmap.atmos_sound2 = self.atmos_sound2
+        newmap.random_sound2 = self.random_sound2
+        newmap.cloud_offset_x = self.cloud_offset_x
+        newmap.cloud_offset_y = self.cloud_offset_y
+
+        super(B3Map, self)._sub_replicate(newmap)
