@@ -2,7 +2,7 @@
 # vim: set expandtab tabstop=4 shiftwidth=4:
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2012 CJ Kucera
+# Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 # If app_name ever changes, we should update preferences/windows_prefsfile
 # to provide an upgrade path
 app_name = 'Eschalon Savefile Editor'
-version = '0.8.1'
+version = '1.0.0'
 url = 'http://apocalyptech.com/eschalon/'
 authors = [ 'Main Code - CJ Kucera',
- 'Additional Code / Ideas - WR Goerlich', '',
+ 'Additional Code / Ideas - WR Goerlich',
  'Book III / OS X Code - Elliot Kendall', '',
  'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 

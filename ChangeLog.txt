@@ -1,6 +1,6 @@
 # ChangeLog for Eschalon Savefile Editor
 
-*eschalon_utils-next
+*eschalon_utils-1.0.0 ()
 
    11 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Add object type 23 - explodable ceramic pot

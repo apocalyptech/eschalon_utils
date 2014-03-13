@@ -7,9 +7,16 @@ Requirements:
   * cx_Freeze
   * Inno Setup Compiler
 
-Process:
+Mostly-Automated Process:
 
-    1) To avoid having to change paths in win-inno.iss, copy to
+    1) To avoid having to change paths in win-inno.iss, move the
+       archive to C:\InstPrograms\eschalon_utils
+
+    2) Then run "make-windows-installer.bat" from inside that dir
+
+Manual Process:
+
+    1) To avoid having to change paths in win-inno.iss, move to
        C:\InstPrograms\eschalon_utils
 
     2) From a DOS cmd, run "win-setup.py build_exe"
