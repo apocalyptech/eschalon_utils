@@ -21,7 +21,7 @@
 # If app_name ever changes, we should update preferences/windows_prefsfile
 # to provide an upgrade path
 app_name = 'Eschalon Savefile Editor'
-version = '1.0.0'
+version = '1.0.0-pre'
 url = 'http://apocalyptech.com/eschalon/'
 authors = [ 'Main Code - CJ Kucera',
  'Additional Code / Ideas - WR Goerlich',
