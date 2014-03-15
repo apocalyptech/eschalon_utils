@@ -546,4 +546,5 @@ class B3Item(B2Item):
     Item structure for Book 3
     """
 
+    # The file format is identical, so we don't need to override anything
     book = 3
