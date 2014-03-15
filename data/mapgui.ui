@@ -3,11 +3,6 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkAccelGroup" id="accelgroup1"/>
-  <object class="GtkAdjustment" id="adjustment1">
-    <property name="upper">65535</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="adjustment10">
     <property name="upper">10000</property>
     <property name="value">1</property>
@@ -78,6 +73,11 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment22">
+    <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="adjustment23">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
@@ -122,6 +122,11 @@
   <object class="GtkAdjustment" id="adjustment9">
     <property name="upper">255</property>
     <property name="value">1</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="cartography_adjustment">
+    <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -1299,6 +1304,7 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
+                            <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -1342,6 +1348,7 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
+                            <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -2140,7 +2147,7 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment1</property>
+                            <property name="adjustment">cartography_adjustment</property>
                             <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                           </object>
                         </child>
@@ -4385,6 +4392,11 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
       <action-widget response="-5">slowzip_saveas_ok</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkAdjustment" id="square_flag_adjust">
+    <property name="upper">4294967295</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="squarewindow">
     <property name="width_request">500</property>
     <property name="height_request">720</property>
@@ -4481,7 +4493,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                   <object class="GtkTable" id="table12">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="n_rows">8</property>
+                    <property name="n_rows">9</property>
                     <property name="n_columns">3</property>
                     <child>
                       <object class="GtkAlignment" id="alignment8">
@@ -4706,52 +4718,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkAlignment" id="alignment106">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                        <property name="xalign">0</property>
-                        <property name="xscale">0</property>
-                        <child>
-                          <object class="GtkSpinButton" id="unknown5">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment17</property>
-                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="right_attach">3</property>
-                        <property name="top_attach">6</property>
-                        <property name="bottom_attach">7</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="unknown5_label">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                        <property name="xalign">1</property>
-                        <property name="xpad">3</property>
-                        <property name="label" translatable="yes">&lt;i&gt;Unknown:&lt;/i&gt;</property>
-                        <property name="use_markup">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="top_attach">6</property>
-                        <property name="bottom_attach">7</property>
-                        <property name="x_options">GTK_FILL</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkLabel" id="label54">
                         <property name="width_request">20</property>
                         <property name="visible">True</property>
@@ -4759,7 +4725,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                       </object>
                       <packing>
-                        <property name="bottom_attach">8</property>
+                        <property name="bottom_attach">9</property>
                         <property name="x_options">GTK_FILL</property>
                         <property name="y_options">GTK_FILL</property>
                       </packing>
@@ -5008,13 +4974,13 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="unknown_sq_i1_label">
+                      <object class="GtkLabel" id="square_flag_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
-                        <property name="label" translatable="yes">&lt;i&gt;Unknown:&lt;/i&gt;</property>
+                        <property name="label" translatable="yes">Square Flag</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -5033,7 +4999,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="unknown_sq_i1">
+                          <object class="GtkSpinButton" id="square_flag">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -5042,7 +5008,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">unknown_sq_i1_adjust</property>
+                            <property name="adjustment">square_flag_adjust</property>
                             <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
                           </object>
                         </child>
@@ -5052,6 +5018,102 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="right_attach">3</property>
                         <property name="top_attach">7</property>
                         <property name="bottom_attach">8</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="unknown5_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <property name="xalign">1</property>
+                        <property name="xpad">3</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Unknown:&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">8</property>
+                        <property name="bottom_attach">9</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment106">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0</property>
+                        <child>
+                          <object class="GtkSpinButton" id="unknown5">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="invisible_char">●</property>
+                            <property name="primary_icon_activatable">False</property>
+                            <property name="secondary_icon_activatable">False</property>
+                            <property name="primary_icon_sensitive">True</property>
+                            <property name="secondary_icon_sensitive">True</property>
+                            <property name="adjustment">adjustment17</property>
+                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="top_attach">8</property>
+                        <property name="bottom_attach">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="cartography_label">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <property name="xalign">1</property>
+                        <property name="xpad">3</property>
+                        <property name="label" translatable="yes">Cartography</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="right_attach">2</property>
+                        <property name="top_attach">6</property>
+                        <property name="bottom_attach">7</property>
+                        <property name="x_options">GTK_FILL</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment72">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <property name="xalign">0</property>
+                        <property name="xscale">0</property>
+                        <child>
+                          <object class="GtkSpinButton" id="cartography">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="tooltip_text" translatable="yes">The level of cartography skill that this square has been explored with</property>
+                            <property name="invisible_char">●</property>
+                            <property name="invisible_char_set">True</property>
+                            <property name="primary_icon_activatable">False</property>
+                            <property name="secondary_icon_activatable">False</property>
+                            <property name="primary_icon_sensitive">True</property>
+                            <property name="secondary_icon_sensitive">True</property>
+                            <property name="adjustment">cartography_adjustment</property>
+                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left_attach">2</property>
+                        <property name="right_attach">3</property>
+                        <property name="top_attach">6</property>
+                        <property name="bottom_attach">7</property>
                       </packing>
                     </child>
                   </object>
@@ -6123,11 +6185,6 @@ another direction, Eschalon will crash.</property>
       <!-- column-name treeset -->
       <column type="guint"/>
     </columns>
-  </object>
-  <object class="GtkAdjustment" id="unknown_sq_i1_adjust">
-    <property name="upper">4294967295</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
   </object>
   <object class="GtkListStore" id="walltype_store">
     <columns>

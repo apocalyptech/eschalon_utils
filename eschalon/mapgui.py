@@ -2666,7 +2666,9 @@ class MapGUI(BaseGUI):
         if c.book == 1:
             self.get_widget('unknown5').set_value(square.unknown5)
         else:
-            self.get_widget('unknown_sq_i1').set_value(square.unknown_sq_i1)
+            self.get_widget('square_flag').set_value(square.square_flag)
+            if c.book == 3:
+                self.get_widget('cartography').set_value(square.cartography)
 
         # Now entites, if needed
         if (square.entity is None):

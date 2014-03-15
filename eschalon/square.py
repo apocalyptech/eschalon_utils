@@ -175,7 +175,9 @@ class Square(object):
             if self.book == 1:
                 ret.append("    Unknown 5: %d" % self.unknown5)
             else:
-                ret.append("    Unknown Int 1: %d" % self.unknown_sq_i1)
+                ret.append("    Square flag: %d" % self.square_flag)
+                if self.book == 3:
+                    ret.append("    Cartography: %d" % self.cartography)
 
         # Display any entities we may have
         if (self.entity is not None):
@@ -271,7 +273,7 @@ class B2Square(Square):
         super(B2Square, self).__init__(x, y)
 
         # Book 2 specific vars
-        self.unknown_sq_i1 = 0
+        self.square_flag = 0
 
     def read(self, df):
         """ Given a file descriptor, read in the square. """
@@ -283,7 +285,7 @@ class B2Square(Square):
         self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
         if self.savegame:
-            self.unknown_sq_i1 = df.readint()
+            self.square_flag = df.readint()
 
     def write(self, df):
         """ Write the square to the file. """
@@ -295,27 +297,27 @@ class B2Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
         if self.savegame:
-            df.writeint(self.unknown_sq_i1)
+            df.writeint(self.square_flag)
 
     def _sub_replicate(self, newsquare):
         """
         Replication for B2 elements
         """
-        newsquare.unknown_sq_i1 = self.unknown_sq_i1
+        newsquare.square_flag = self.square_flag
 
     def _sub_equals(self, square):
         """
         Equality function for B2
         """
-        return (square.unknown_sq_i1 == self.unknown_sq_i1)
+        return (square.square_flag == self.square_flag)
 
     def _sub_hasdata(self):
         """
         Do we have data in our B2-specific elements?
         """
-        return (self.unknown_sq_i1 != 0)
+        return (self.square_flag != 0)
 
-class B3Square(Square):
+class B3Square(B2Square):
     """
     Square structure for Book 3
     """
@@ -325,9 +327,8 @@ class B3Square(Square):
     def __init__(self, x, y):
         super(B3Square, self).__init__(x, y)
 
-        # Book 2/3 specific vars
-        self.unknown_sq_i1 = 0
-        self.unknown_sq_i2 = 0
+        # Book 3 specific vars
+        self.cartography = 0
 
     def read(self, df):
         """ Given a file descriptor, read in the square. """
@@ -339,8 +340,8 @@ class B3Square(Square):
         self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
         if self.savegame:
-            self.unknown_sq_i1 = df.readint()
-            self.unknown_sq_i2 = df.readint()
+            self.square_flag = df.readint()
+            self.cartography = df.readint()
 
     def write(self, df):
         """ Write the square to the file. """
@@ -352,24 +353,24 @@ class B3Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
         if self.savegame:
-            df.writeint(self.unknown_sq_i1)
-            df.writeint(self.unknown_sq_i2)
+            df.writeint(self.square_flag)
+            df.writeint(self.cartography)
 
     def _sub_replicate(self, newsquare):
         """
-        Replication for B2/3 elements
+        Replication for B3 elements
         """
-        newsquare.unknown_sq_i1 = self.unknown_sq_i1
-        newsquare.unknown_sq_i2 = self.unknown_sq_i2
+        super(B3Square, self)._sub_replicate(newsquare)
+        newsquare.cartography = self.cartography
 
     def _sub_equals(self, square):
         """
-        Equality function for B2/3
+        Equality function for B3
         """
-        return (square.unknown_sq_i1 == self.unknown_sq_i1 and square.unknown_sq_i2 == self.unknown_sq_i2)
+        return (square.cartography == self.cartography and super(B3Square, self)._sub_equals(square))
 
     def _sub_hasdata(self):
         """
-        Do we have data in our B2/3-specific elements?
+        Do we have data in our B3-specific elements?
         """
-        return (self.unknown_sq_i1 != 0 or self.unknown_sq_i2 != 0)
+        return (self.cartography != 0 or super(B3Square)._sub_hasdata(self))
