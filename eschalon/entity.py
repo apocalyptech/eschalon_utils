@@ -278,7 +278,7 @@ class B2Entity(Entity):
     form_elements = [
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
-            'b2_walltype_label', 'b2_walltype',
+            'b2_barrier_label', 'b2_barrier',
             'entrancescript_label', 'entrancescript',
             'random_sound1_label', 'random_sound1_combo',
             'square_flag_label', 'square_flag',
@@ -377,7 +377,7 @@ class B3Entity(Entity):
     form_elements = [
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
-            'b2_walltype_label', 'b2_walltype',
+            'b2_barrier_label', 'b2_barrier',
             'entrancescript_label', 'entrancescript',
             'random_sound1_label', 'random_sound1_combo',
             'random_sound2_label', 'random_sound2_combo',

@@ -5,6 +5,7 @@
    16 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Update "Parallax 1" and "Parallax 2" to be X and Y instead
    Allow "Cloud Offset X/Y" to be edited in the GUI
+   Use "barrier" consistently in the GUI
    Change some internal variables to better match the official
       variable names in the Eschalon engine
 

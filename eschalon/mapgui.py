@@ -754,7 +754,7 @@ class MapGUI(BaseGUI):
             self.get_widget('atmos_sound_day_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
-        wstore = self.get_widget('walltype_store')
+        wstore = self.get_widget('barrier_store')
         wstore.append(['None', 0])
         wstore.append(['Normal Wall', 1])
         if c.book == 1:
@@ -990,7 +990,7 @@ class MapGUI(BaseGUI):
                 'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
                 'on_direction_changed': self.on_direction_changed,
                 'on_map_flag_changed': self.on_map_flag_changed,
-                'on_walltype_changed': self.on_walltype_changed,
+                'on_barrier_changed': self.on_barrier_changed,
                 'on_entity_toggle': self.on_entity_toggle,
                 'on_script_add': self.on_script_add,
                 'on_floor_changed': self.on_floor_changed,
@@ -2257,9 +2257,9 @@ class MapGUI(BaseGUI):
         script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
         self.on_flag_changed(name, flagval, widget, script)
 
-    def on_walltype_changed(self, widget):
+    def on_barrier_changed(self, widget):
         """
-        What to do when our walltype dropdown is changed.
+        What to do when our barrier dropdown is changed.
         """
         model = widget.get_model()
         self.map.squares[self.sq_y][self.sq_x].wall = model[widget.get_active()][1]
@@ -2644,16 +2644,16 @@ class MapGUI(BaseGUI):
         if square.wall in self.wallvals:
             self.get_widget('wall_label').hide()
             self.get_widget('wall').hide()
-            self.get_widget('walltype_label').show()
-            self.get_widget('walltype').show()
-            model = self.get_widget('walltype').get_model()
+            self.get_widget('barrier_label').show()
+            self.get_widget('barrier').show()
+            model = self.get_widget('barrier').get_model()
             for (idx, row) in enumerate(model):
                 if (row[1] == square.wall):
-                    self.get_widget('walltype').set_active(idx)
+                    self.get_widget('barrier').set_active(idx)
                     break
         else:
-            self.get_widget('walltype_label').hide()
-            self.get_widget('walltype').hide()
+            self.get_widget('barrier_label').hide()
+            self.get_widget('barrier').hide()
             self.get_widget('wall_label').show()
             self.get_widget('wall').show()
             self.get_widget('wall').set_value(square.wall)
