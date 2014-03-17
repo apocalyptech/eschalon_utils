@@ -196,10 +196,10 @@ class B3Constants:
             23: 'Predator Sight',
             24: 'Mana Fortified',
             25: 'Greater Protection',
-            26: 'Unknown 1',
-            27: 'Unknown 2',
-            28: 'Unknown 3',
-            29: 'Unknown 4',
+            26: 'Guiding Light',
+            27: 'Blind',
+            28: 'Unknown 1',
+            29: 'Unknown 2',
         }
 
     # Rather a lot of duplicated information in here, but it turns
