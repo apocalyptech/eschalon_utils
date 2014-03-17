@@ -2,6 +2,9 @@
 
 *eschalon_utils-1.0.0 ()
 
+   16 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Update "Parallax 1" and "Parallax 2" to be X and Y instead
+
    06 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Breakable walls in Book III are type 22, not 50
    Properly initialize B3 map values for maps created from scratch

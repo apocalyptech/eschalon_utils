@@ -1479,7 +1479,7 @@
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="parallax_2">
+                          <object class="GtkSpinButton" id="parallax_y">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">●</property>
@@ -1508,7 +1508,7 @@
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="parallax_1">
+                          <object class="GtkSpinButton" id="parallax_x">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">●</property>
@@ -1747,12 +1747,12 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="parallax_2_label">
+                      <object class="GtkLabel" id="parallax_y_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Parallax Value 2:</property>
+                        <property name="label" translatable="yes">Parallax Y:</property>
                       </object>
                       <packing>
                         <property name="top_attach">8</property>
@@ -1761,12 +1761,12 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="parallax_1_label">
+                      <object class="GtkLabel" id="parallax_x_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
                         <property name="xpad">5</property>
-                        <property name="label" translatable="yes">Parallax Value 1:</property>
+                        <property name="label" translatable="yes">Parallax X:</property>
                       </object>
                       <packing>
                         <property name="top_attach">7</property>

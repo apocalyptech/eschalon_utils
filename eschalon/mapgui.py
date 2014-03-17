@@ -1474,8 +1474,8 @@ class MapGUI(BaseGUI):
         self.get_widget('skybox').set_text(self.map.skybox)
         self.populate_color_selection()
         self.get_widget('color_a').set_value(self.map.color_a)
-        self.get_widget('parallax_1').set_value(self.map.parallax_1)
-        self.get_widget('parallax_2').set_value(self.map.parallax_2)
+        self.get_widget('parallax_x').set_value(self.map.parallax_x)
+        self.get_widget('parallax_y').set_value(self.map.parallax_y)
         if c.book == 1:
             self.get_widget('mapid').set_text(self.map.mapid)
             self.get_widget('exit_north').set_text(self.map.exit_north)

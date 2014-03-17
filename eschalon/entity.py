@@ -196,8 +196,8 @@ class B1Entity(Entity):
             'exit_east_label', 'exit_east_combo',
             'exit_south_label', 'exit_south_combo',
             'map_unknownh1_label', 'map_unknownh1',
-            'parallax_1_label', 'parallax_1',
-            'parallax_2_label', 'parallax_2',
+            'parallax_x_label', 'parallax_x',
+            'parallax_y_label', 'parallax_y',
             'clouds_label', 'clouds',
             'mapid_label', 'mapid',
             'unknown5_label', 'unknown5',
@@ -286,8 +286,8 @@ class B2Entity(Entity):
             'map_flags_label', 'map_flags_table',
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
-            'parallax1_label', 'parallax_1',
-            'parallax2_label', 'parallax_2',
+            'parallax1_label', 'parallax_x',
+            'parallax2_label', 'parallax_y',
             'objectplace_loot_spin', 'objectplace_loot_label',
             ]
 
@@ -387,8 +387,8 @@ class B3Entity(Entity):
             'map_flags_label', 'map_flags_table',
             'random_entity_1_label', 'random_entity_1',
             'random_entity_2_label', 'random_entity_2',
-            'parallax_1_label', 'parallax_1',
-            'parallax_2_label', 'parallax_2',
+            'parallax_x_label', 'parallax_x',
+            'parallax_y_label', 'parallax_y',
             ]
 
     def __init__(self, savegame):

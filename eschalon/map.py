@@ -60,8 +60,8 @@ class Map(object):
         self.color_b = 255
         self.color_a = 0
 
-        self.parallax_1 = 0
-        self.parallax_2 = 0
+        self.parallax_x = 0
+        self.parallax_y = 0
 
         self.extradata = ''
 
@@ -131,8 +131,8 @@ class Map(object):
         newmap.color_a = self.color_a
         newmap.extradata = self.extradata
         newmap.tree_set = self.tree_set
-        newmap.parallax_1 = self.parallax_1
-        newmap.parallax_2 = self.parallax_2
+        newmap.parallax_x = self.parallax_x
+        newmap.parallax_y = self.parallax_y
 
         # Copy squares
         for i in range(200):
@@ -425,8 +425,8 @@ class B1Map(Map):
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
 
-            self.parallax_1 = self.df.readint()
-            self.parallax_2 = self.df.readint()
+            self.parallax_x = self.df.readint()
+            self.parallax_y = self.df.readint()
             self.clouds = self.df.readint()
             self.savegame_1 = self.df.readint()
             self.savegame_2 = self.df.readint()
@@ -495,8 +495,8 @@ class B1Map(Map):
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.parallax_1)
-        self.df.writeint(self.parallax_2)
+        self.df.writeint(self.parallax_x)
+        self.df.writeint(self.parallax_y)
         self.df.writeint(self.clouds)
         self.df.writeint(self.savegame_1)
         self.df.writeint(self.savegame_2)
@@ -630,8 +630,8 @@ class B2Map(Map):
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
-            self.parallax_1 = self.df.readint()
-            self.parallax_2 = self.df.readint()
+            self.parallax_x = self.df.readint()
+            self.parallax_y = self.df.readint()
             self.map_flags = self.df.readint()
             self.start_tile = self.df.readint()
             self.tree_set = self.df.readint()
@@ -704,8 +704,8 @@ class B2Map(Map):
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.parallax_1)
-        self.df.writeint(self.parallax_2)
+        self.df.writeint(self.parallax_x)
+        self.df.writeint(self.parallax_y)
         self.df.writeint(self.map_flags)
         self.df.writeint(self.start_tile)
         self.df.writeint(self.tree_set)
@@ -826,8 +826,8 @@ class B3Map(B2Map):
             self.color_g = self.df.readuchar()
             self.color_b = self.df.readuchar()
             self.color_a = self.df.readuchar()
-            self.parallax_1 = self.df.readint()
-            self.parallax_2 = self.df.readint()
+            self.parallax_x = self.df.readint()
+            self.parallax_y = self.df.readint()
             self.cloud_offset_x = self.df.readint()
             self.cloud_offset_y = self.df.readint()
             self.map_flags = self.df.readint()
@@ -905,8 +905,8 @@ class B3Map(B2Map):
         self.df.writeuchar(self.color_g)
         self.df.writeuchar(self.color_b)
         self.df.writeuchar(self.color_a)
-        self.df.writeint(self.parallax_1)
-        self.df.writeint(self.parallax_2)
+        self.df.writeint(self.parallax_x)
+        self.df.writeint(self.parallax_y)
         self.df.writeint(self.cloud_offset_x)
         self.df.writeint(self.cloud_offset_y)
         self.df.writeint(self.map_flags)
