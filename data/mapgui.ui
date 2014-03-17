@@ -1558,7 +1558,7 @@
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkComboBoxEntry" id="atmos_sound1_combo">
+                          <object class="GtkComboBoxEntry" id="atmos_sound_day_combo">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
@@ -1775,7 +1775,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="atmos_sound1_label">
+                      <object class="GtkLabel" id="atmos_sound_day_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>
@@ -1911,7 +1911,7 @@
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkComboBoxEntry" id="atmos_sound2_combo">
+                          <object class="GtkComboBoxEntry" id="atmos_sound_night_combo">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child internal-child="entry">
@@ -1937,7 +1937,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="atmos_sound2_label">
+                      <object class="GtkLabel" id="atmos_sound_night_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">1</property>

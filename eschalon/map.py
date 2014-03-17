@@ -51,7 +51,7 @@ class Map(object):
         self.music1 = ''
         self.music2 = ''
         self.skybox = ''
-        self.atmos_sound1 = ''
+        self.atmos_sound_day = ''
 
         # Not entirely sure about the alpha channel, which
         # is always zero, but it seems to make sense
@@ -124,7 +124,7 @@ class Map(object):
         newmap.music1 = self.music1
         newmap.music2 = self.music2
         newmap.skybox = self.skybox
-        newmap.atmos_sound1 = self.atmos_sound1
+        newmap.atmos_sound_day = self.atmos_sound_day
         newmap.color_r = self.color_r
         newmap.color_g = self.color_g
         newmap.color_b = self.color_b
@@ -414,7 +414,7 @@ class B1Map(Map):
             self.exit_south = self.df.readstr()
             self.exit_west = self.df.readstr()
             self.skybox = self.df.readstr()
-            self.atmos_sound1 = self.df.readstr()
+            self.atmos_sound_day = self.df.readstr()
             self.map_b1_last_xpos = self.df.readuchar()
             self.map_b1_last_ypos = self.df.readuchar()
             self.map_b1_outsideflag = self.df.readshort()
@@ -486,7 +486,7 @@ class B1Map(Map):
         self.df.writestr(self.exit_south)
         self.df.writestr(self.exit_west)
         self.df.writestr(self.skybox)
-        self.df.writestr(self.atmos_sound1)
+        self.df.writestr(self.atmos_sound_day)
         self.df.writeuchar(self.map_b1_last_xpos)
         self.df.writeuchar(self.map_b1_last_ypos)
         self.df.writeshort(self.map_b1_outsideflag)
@@ -620,7 +620,7 @@ class B2Map(Map):
             self.skybox = self.df.readstr()
             self.music1 = self.df.readstr()
             self.music2 = self.df.readstr()
-            self.atmos_sound1 = self.df.readstr()
+            self.atmos_sound_day = self.df.readstr()
             self.random_sound1 = self.df.readstr()
             self.loadhook = self.df.readuchar()
             self.unusedc1 = self.df.readuchar()
@@ -694,7 +694,7 @@ class B2Map(Map):
         self.df.writestr(self.skybox)
         self.df.writestr(self.music1)
         self.df.writestr(self.music2)
-        self.df.writestr(self.atmos_sound1)
+        self.df.writestr(self.atmos_sound_day)
         self.df.writestr(self.random_sound1)
         self.df.writeuchar(self.loadhook)
         self.df.writeuchar(self.unusedc1)
@@ -786,7 +786,7 @@ class B3Map(B2Map):
 
         # Book 3 specific vars
         self.version = '0.992'
-        self.atmos_sound2 = ''
+        self.atmos_sound_night = ''
         self.random_sound2 = ''
         self.cloud_offset_x = 0
         self.cloud_offset_y = 0
@@ -814,8 +814,8 @@ class B3Map(B2Map):
             self.skybox = self.df.readstr()
             self.music1 = self.df.readstr()
             self.music2 = self.df.readstr()
-            self.atmos_sound1 = self.df.readstr()
-            self.atmos_sound2 = self.df.readstr()
+            self.atmos_sound_day = self.df.readstr()
+            self.atmos_sound_night = self.df.readstr()
             self.random_sound1 = self.df.readstr()
             self.random_sound2 = self.df.readstr()
             self.loadhook = self.df.readuchar()
@@ -893,8 +893,8 @@ class B3Map(B2Map):
         self.df.writestr(self.skybox)
         self.df.writestr(self.music1)
         self.df.writestr(self.music2)
-        self.df.writestr(self.atmos_sound1)
-        self.df.writestr(self.atmos_sound2)
+        self.df.writestr(self.atmos_sound_day)
+        self.df.writestr(self.atmos_sound_night)
         self.df.writestr(self.random_sound1)
         self.df.writestr(self.random_sound2)
         self.df.writeuchar(self.loadhook)
@@ -947,7 +947,7 @@ class B3Map(B2Map):
         Replicate b3-specific vars
         """
         newmap.version = self.version
-        newmap.atmos_sound2 = self.atmos_sound2
+        newmap.atmos_sound_night = self.atmos_sound_night
         newmap.random_sound2 = self.random_sound2
         newmap.cloud_offset_x = self.cloud_offset_x
         newmap.cloud_offset_y = self.cloud_offset_y

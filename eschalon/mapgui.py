@@ -676,7 +676,7 @@ class MapGUI(BaseGUI):
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
-                'music1', 'music2', 'atmos_sound1', 'atmos_sound2',
+                'music1', 'music2', 'atmos_sound_day', 'atmos_sound_night',
                 'random_sound1', 'random_sound2', 'skybox']
         for var in comboboxentries:
             self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
@@ -750,8 +750,8 @@ class MapGUI(BaseGUI):
         else:
 
             # Update sound labels for book 2
-            self.get_widget('atmos_sound1_label').set_text('Atmosphere (day)')
-            self.get_widget('atmos_sound1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+            self.get_widget('atmos_sound_day_label').set_text('Atmosphere (day)')
+            self.get_widget('atmos_sound_day_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
         wstore = self.get_widget('walltype_store')
@@ -824,8 +824,8 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('exit_west_combo', maplist)
         self.populate_comboboxentry('music1_combo', musiclist)
         self.populate_comboboxentry('music2_combo', musiclist)
-        self.populate_comboboxentry('atmos_sound1_combo', atmoslist)
-        self.populate_comboboxentry('atmos_sound2_combo', atmoslist)
+        self.populate_comboboxentry('atmos_sound_day_combo', atmoslist)
+        self.populate_comboboxentry('atmos_sound_night_combo', atmoslist)
         self.populate_comboboxentry('random_sound1_combo', randsoundlist)
         self.populate_comboboxentry('random_sound2_combo', randsoundlist)
         self.populate_comboboxentry('skybox_combo', skyboxlist)
@@ -1150,14 +1150,14 @@ class MapGUI(BaseGUI):
         # A few values need to be set to avoid crashes
         if c.book == 1:
             self.map.music1 = 'overland_1.ogg'
-            self.map.atmos_sound1 = 'atmos_birds.wav'
+            self.map.atmos_sound_day = 'atmos_birds.wav'
         elif c.book == 2:
             self.map.music1 = 'eb2_overland1.ogg'
-            self.map.atmos_sound1 = 'atmos_birds.wav'
+            self.map.atmos_sound_day = 'atmos_birds.wav'
         elif c.book == 3:
             self.map.version = '0.992'
             self.map.music1 = 'book3_steps_of_the_wayfarer_dj.ogg'
-            self.map.atmos_sound1 = 'atmos_birds.wav'
+            self.map.atmos_sound_day = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
         self.setup_new_map()
@@ -1452,7 +1452,7 @@ class MapGUI(BaseGUI):
         self.get_widget('mapname').set_text(self.map.mapname)
         self.get_widget('music1').set_text(self.map.music1)
         self.get_widget('music2').set_text(self.map.music2)
-        self.get_widget('atmos_sound1').set_text(self.map.atmos_sound1)
+        self.get_widget('atmos_sound_day').set_text(self.map.atmos_sound_day)
         if c.book > 1:
             self.cur_tree_set = self.map.tree_set
             for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
@@ -1493,7 +1493,7 @@ class MapGUI(BaseGUI):
             self.get_widget('exitscript').set_text(self.map.exitscript)
             self.get_widget('random_sound1').set_text(self.map.random_sound1)
             if c.book == 3:
-                self.get_widget('atmos_sound2').set_text(self.map.atmos_sound2)
+                self.get_widget('atmos_sound_night').set_text(self.map.atmos_sound_night)
                 self.get_widget('random_sound2').set_text(self.map.random_sound2)
                 self.get_widget('cloud_offset_x').set_value(self.map.cloud_offset_x)
                 self.get_widget('cloud_offset_y').set_value(self.map.cloud_offset_y)
