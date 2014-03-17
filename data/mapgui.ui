@@ -88,16 +88,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="adjustment3">
-    <property name="upper">2000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment4">
-    <property name="upper">2000</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkAdjustment" id="adjustment5">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
@@ -127,6 +117,16 @@
   </object>
   <object class="GtkAdjustment" id="cartography_adjustment">
     <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="cloud_x_adj">
+    <property name="upper">4294967296</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="cloud_y_adj">
+    <property name="upper">4294967296</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -278,7 +278,6 @@
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="border_width">11</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_abort_render" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox18">
@@ -375,7 +374,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -390,7 +388,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -439,7 +436,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="open_fill_floorsel" swapped="no"/>
                         <child>
                           <object class="GtkImage" id="fill_map_img">
@@ -496,7 +492,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="draw_indicator">True</property>
                   </object>
                 </child>
@@ -926,7 +921,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                           </object>
@@ -941,7 +935,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                           </object>
@@ -958,7 +951,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                           </object>
@@ -974,7 +966,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
-                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
                             <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                             <child>
@@ -1004,7 +995,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                               </object>
@@ -1028,7 +1018,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                               </object>
@@ -1054,7 +1043,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                               </object>
@@ -1079,7 +1067,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_map_flag_changed" swapped="no"/>
                                 <child>
@@ -1487,7 +1474,7 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment4</property>
+                            <property name="adjustment">parallax_y_adj</property>
                             <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                           </object>
                         </child>
@@ -1516,7 +1503,7 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment3</property>
+                            <property name="adjustment">parallax_x_adj</property>
                             <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                           </object>
                         </child>
@@ -1672,7 +1659,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="border_width">3</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="on_colorsel_clicked" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="color_img">
@@ -2040,7 +2026,8 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment4</property>
+                            <property name="adjustment">cloud_x_adj</property>
+                            <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -2083,7 +2070,8 @@
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">adjustment4</property>
+                            <property name="adjustment">cloud_y_adj</property>
+                            <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -2133,6 +2121,15 @@
                     <property name="n_rows">2</property>
                     <property name="n_columns">2</property>
                     <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
                       <object class="GtkAlignment" id="alignment60">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -2172,12 +2169,6 @@
                         <property name="x_options">GTK_FILL</property>
                       </packing>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                 </child>
               </object>
@@ -2216,7 +2207,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="border_width">5</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_propswindow_close" swapped="no"/>
               </object>
@@ -2266,7 +2256,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -2337,7 +2326,6 @@ to modify the global map files.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="xalign">1</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
@@ -2396,7 +2384,6 @@ to modify the global map files.</property>
               <object class="GtkMenuItem" id="menuitem1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_File</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -2408,7 +2395,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2420,7 +2406,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-open</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2432,7 +2417,6 @@ to modify the global map files.</property>
                         <property name="label">Reload from Disk</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="image">image5</property>
                         <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2445,7 +2429,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2457,7 +2440,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-save-as</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2476,7 +2458,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-preferences</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2489,7 +2470,6 @@ to modify the global map files.</property>
                         <property name="label">_Export Image</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2508,7 +2488,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2523,7 +2502,6 @@ to modify the global map files.</property>
               <object class="GtkMenuItem" id="menuitem5">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Edit</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -2535,7 +2513,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-undo</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2548,7 +2525,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-redo</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2567,7 +2543,6 @@ to modify the global map files.</property>
                         <property name="label" translatable="yes">_Fill Map...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="image">image3</property>
                         <property name="use_stock">False</property>
@@ -2585,7 +2560,6 @@ to modify the global map files.</property>
                         <property name="label">_Map Properties</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2601,7 +2575,6 @@ to modify the global map files.</property>
               <object class="GtkMenuItem" id="View">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Draw</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -2612,7 +2585,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="floor_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Floors</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2623,7 +2595,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="decal_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Decals</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2634,7 +2605,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="object_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Objects</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2645,7 +2615,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="wall_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Walls</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2656,7 +2625,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="tree_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Trees</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2667,7 +2635,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="objectdecal_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Object Decals</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2678,7 +2645,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="entity_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Entities</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2689,7 +2655,6 @@ to modify the global map files.</property>
                       <object class="GtkCheckMenuItem" id="huge_gfx_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Huge Graphics</property>
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
@@ -2706,7 +2671,6 @@ to modify the global map files.</property>
                       <object class="GtkMenuItem" id="object_check_all">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">(Check All)</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="draw_check_all" swapped="no"/>
@@ -2716,7 +2680,6 @@ to modify the global map files.</property>
                       <object class="GtkMenuItem" id="object_uncheck_all">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">(Uncheck All)</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="draw_uncheck_all" swapped="no"/>
@@ -2730,7 +2693,6 @@ to modify the global map files.</property>
               <object class="GtkMenuItem" id="menuitem2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Highlighting</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -2742,7 +2704,6 @@ to modify the global map files.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Barrier Highlighting</property>
                         <property name="use_underline">True</property>
                         <signal name="toggled" handler="map_toggle" swapped="no"/>
@@ -2753,7 +2714,6 @@ to modify the global map files.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">When active, objects will be highlighted on the map</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Object Highlighting</property>
                         <property name="use_underline">True</property>
                         <signal name="toggled" handler="map_toggle" swapped="no"/>
@@ -2764,7 +2724,6 @@ to modify the global map files.</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">When active, entities will be highlighted on the map</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">Entity Highlighting</property>
                         <property name="use_underline">True</property>
                         <signal name="toggled" handler="map_toggle" swapped="no"/>
@@ -2780,7 +2739,6 @@ to modify the global map files.</property>
                       <object class="GtkMenuItem" id="highlight_check_all">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">(Check All)</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="highlight_check_all" swapped="no"/>
@@ -2790,7 +2748,6 @@ to modify the global map files.</property>
                       <object class="GtkMenuItem" id="highlight_uncheck_all">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="label" translatable="yes">(Uncheck All)</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="highlight_uncheck_all" swapped="no"/>
@@ -2804,7 +2761,6 @@ to modify the global map files.</property>
               <object class="GtkMenuItem" id="menuitem4">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_Help</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
@@ -2816,7 +2772,6 @@ to modify the global map files.</property>
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
@@ -2899,7 +2854,6 @@ to modify the global map files.</property>
                                 <property name="receives_default">True</property>
                                 <property name="tooltip_text" translatable="yes">Zoom Out</property>
                                 <property name="border_width">2</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="zoom_out" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image4">
@@ -2940,7 +2894,6 @@ to modify the global map files.</property>
                                 <property name="receives_default">True</property>
                                 <property name="tooltip_text" translatable="yes">Zoom In</property>
                                 <property name="border_width">2</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="zoom_in" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="image1">
@@ -3000,7 +2953,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                                 <child>
@@ -3017,7 +2969,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_draw_floorsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="draw_floor_img">
@@ -3053,7 +3004,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                                 <child>
@@ -3072,7 +3022,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_draw_decalsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="draw_decal_img">
@@ -3112,7 +3061,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                                 <child>
@@ -3131,7 +3079,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_draw_objsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="draw_wall_img">
@@ -3171,7 +3118,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                                 <child>
@@ -3190,7 +3136,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
                                 <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_draw_walldecalsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="draw_walldecal_img">
@@ -3232,7 +3177,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Having this enabled will cause you to set the Barrier flag on everything you draw.  This option is only available when you have Barrier Highlighting turned on.</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3253,7 +3197,6 @@ to modify the global map files.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Enabling this option will make your barriers see-through.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <child>
                                       <object class="GtkLabel" id="label33">
@@ -3314,7 +3257,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3325,7 +3267,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3340,7 +3281,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3355,7 +3295,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3371,7 +3310,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Enabling this option will remove the barrier flag on everything you erase.</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="update_activity_label" swapped="no"/>
                               </object>
@@ -3386,7 +3324,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -3400,7 +3337,6 @@ to modify the global map files.</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -3650,7 +3586,6 @@ to modify the global map files.</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Use this to completely disable Smartdraw.</property>
-                                <property name="use_action_appearance">False</property>
                                 <property name="active">True</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="on_smartdraw_check_toggled" swapped="no"/>
@@ -3680,7 +3615,6 @@ to modify the global map files.</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text" translatable="yes">When enabled, the app will attempt to set the barrier flag where appropriate.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3698,7 +3632,6 @@ to modify the global map files.</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text" translatable="yes">Enabling this will cause the app to try and link up walls and fences intelligently.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3720,7 +3653,6 @@ to modify the global map files.</property>
                                         <property name="receives_default">False</property>
                                         <property name="has_tooltip">True</property>
                                         <property name="tooltip_text" translatable="yes">Attempts to automatically apply floor decals to blend terrain properly.  Specify the preferred edge type below.</property>
-                                        <property name="use_action_appearance">False</property>
                                         <property name="active">True</property>
                                         <property name="draw_indicator">True</property>
                                         <signal name="toggled" handler="on_draw_smart_floor_toggled" swapped="no"/>
@@ -3748,7 +3680,6 @@ to modify the global map files.</property>
                                                 <property name="receives_default">False</property>
                                                 <property name="has_tooltip">True</property>
                                                 <property name="tooltip_text" translatable="yes">This option will make paths going in cardinal directions as straight as possible (most maps in the base Eschalon game are more zig-zaggy)</property>
-                                                <property name="use_action_appearance">False</property>
                                                 <property name="active">True</property>
                                                 <property name="draw_indicator">True</property>
                                               </object>
@@ -3814,7 +3745,6 @@ to modify the global map files.</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text" translatable="yes">Currently just randomizes some decals where appropriate.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3832,7 +3762,6 @@ to modify the global map files.</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text" translatable="yes">Some graphics (grass, for instance) were meant to be randomized as you draw.  This will do so.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -3850,7 +3779,6 @@ to modify the global map files.</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
                                     <property name="tooltip_text" translatable="yes">This will automatically fill in more than one square if needed, to complete a more "complex" object.</property>
-                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -4042,7 +3970,6 @@ to modify the global map files.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -4200,6 +4127,16 @@ to modify the global map files.</property>
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkAdjustment" id="parallax_x_adj">
+    <property name="upper">2000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="parallax_y_adj">
+    <property name="upper">2000</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkListStore" id="random_entity_store">
     <columns>
       <!-- column-name name -->
@@ -4235,7 +4172,6 @@ to modify the global map files.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -4250,7 +4186,6 @@ to modify the global map files.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -4326,7 +4261,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <property name="relief">half</property>
                         <property name="uri">http://pypi.python.org/pypi/czipfile</property>
                       </object>
@@ -4364,7 +4298,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
                 <property name="xalign">1</property>
                 <property name="active">True</property>
                 <property name="draw_indicator">True</property>
@@ -4541,7 +4474,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_walldecalsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="walldecalimg_image">
@@ -4615,7 +4547,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_decalsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="decalimg_image">
@@ -4689,7 +4620,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_floorsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="floorimg_image">
@@ -4776,7 +4706,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
-                                <property name="use_action_appearance">False</property>
                                 <signal name="clicked" handler="open_objsel" swapped="no"/>
                                 <child>
                                   <object class="GtkImage" id="wallimg_image">
@@ -5160,7 +5089,6 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_entity_toggle" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox10">
@@ -5673,7 +5601,6 @@ another direction, Eschalon will crash.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">True</property>
-                                                        <property name="use_action_appearance">False</property>
                                                         <signal name="clicked" handler="on_healthmaxbutton_clicked" swapped="no"/>
                                                       </object>
                                                     </child>
@@ -5828,7 +5755,6 @@ another direction, Eschalon will crash.</property>
                                                         <property name="visible">True</property>
                                                         <property name="can_focus">True</property>
                                                         <property name="receives_default">True</property>
-                                                        <property name="use_action_appearance">False</property>
                                                         <signal name="clicked" handler="on_setinitial_clicked" swapped="no"/>
                                                       </object>
                                                     </child>
@@ -6047,7 +5973,6 @@ another direction, Eschalon will crash.</property>
                         <property name="receives_default">True</property>
                         <property name="has_tooltip">True</property>
                         <property name="tooltip_markup">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
-                        <property name="use_action_appearance">False</property>
                         <signal name="clicked" handler="on_script_add" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox13">
@@ -6158,7 +6083,6 @@ another direction, Eschalon will crash.</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="border_width">5</property>
-                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
                 <signal name="clicked" handler="on_squarewindow_close" swapped="no"/>
               </object>
