@@ -21,7 +21,7 @@
 import random
 from eschalon import constants as c
 from eschalon.map import Map
-from eschalon.square import Square
+from eschalon.tile import Tile
 from eschalon.entity import Entity
 from eschalon.mapscript import Mapscript
 
@@ -89,14 +89,14 @@ class PremadeObject(object):
     """
     A class to hold information about a premade object.  For instance,
     it'd be nice to be able to just plop a door down, or a chest,
-    without having to do the actual object creation in the square
+    without having to do the actual object creation in the tile
     editor.
     """
 
     def __init__(self, name):
         self.name = name
-        self.square = Square.new(c.book, -1, -1)
-        self.square.savegame = True
+        self.tile = Tile.new(c.book, -1, -1)
+        self.tile.savegame = True
         self.mapscript = None
         self.entity = None
         self.do_wall = False
@@ -109,27 +109,27 @@ class PremadeObject(object):
         self.do_loot = False
         self.do_lock = False
         self.do_trap = False
-        self.rel_squares = {}
+        self.rel_tiles = {}
 
     def set_wall(self, wall):
         self.do_wall = True
-        self.square.wall = wall
+        self.tile.wall = wall
 
     def set_floorimg(self, floorimg):
         self.do_floorimg = True
-        self.square.floorimg = floorimg
+        self.tile.floorimg = floorimg
 
     def set_decalimg(self, decalimg):
         self.do_decalimg = True
-        self.square.decalimg = decalimg
+        self.tile.decalimg = decalimg
 
     def set_wallimg(self, wallimg):
         self.do_wallimg = True
-        self.square.wallimg = wallimg
+        self.tile.wallimg = wallimg
 
     def set_walldecalimg(self, floorimg):
         self.do_walldecalimg = True
-        self.square.walldecalimg = floorimg
+        self.tile.walldecalimg = floorimg
 
     def use_loot(self):
         self.do_loot = True
@@ -142,7 +142,7 @@ class PremadeObject(object):
 
     def set_script(self, scriptid):
         self.do_script = True
-        self.square.scriptid = scriptid
+        self.tile.scriptid = scriptid
 
     def create_scriptobj(self, initcontents='random'):
         self.mapscript = Mapscript.new(c.book, True)
@@ -156,58 +156,58 @@ class PremadeObject(object):
         self.do_entity = True
         return self.entity
 
-    def add_rel_square(self, direction):
+    def add_rel_tile(self, direction):
         obj = PremadeObject('relative %d' % (direction))
-        self.rel_squares[direction] = obj
+        self.rel_tiles[direction] = obj
         return obj
 
-    def apply_to(self, gui, map, square):
+    def apply_to(self, gui, map, tile):
         extra_affected = []
         if self.do_wall:
-            square.wall = self.square.wall
+            tile.wall = self.tile.wall
         if self.do_floorimg:
-            square.floorimg = self.square.floorimg
+            tile.floorimg = self.tile.floorimg
         if self.do_decalimg:
-            square.decalimg = self.square.decalimg
+            tile.decalimg = self.tile.decalimg
         if self.do_wallimg:
-            square.wallimg = self.square.wallimg
+            tile.wallimg = self.tile.wallimg
         if self.do_walldecalimg:
-            square.walldecalimg = self.square.walldecalimg
+            tile.walldecalimg = self.tile.walldecalimg
         if self.do_script:
-            square.scriptid = self.square.scriptid
-            for i in range(len(square.scripts)):
-                map.delscript(square.x, square.y, 0)
+            tile.scriptid = self.tile.scriptid
+            for i in range(len(tile.scripts)):
+                map.delscript(tile.x, tile.y, 0)
             if self.mapscript is not None:
-                square.addscript(self.mapscript.replicate())
-                map.scripts.append(square.scripts[0])
-                square.scripts[0].x = square.x
-                square.scripts[0].y = square.y
+                tile.addscript(self.mapscript.replicate())
+                map.scripts.append(tile.scripts[0])
+                tile.scripts[0].x = tile.x
+                tile.scripts[0].y = tile.y
                 if self.do_lock:
-                    square.scripts[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
+                    tile.scripts[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
                 if self.do_trap:
                     iter = gui.get_widget('objectplace_trap_combo').get_active_iter()
-                    square.scripts[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
+                    tile.scripts[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
                 if c.book > 1:
                     if self.do_loot:
-                        square.scripts[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
+                        tile.scripts[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
 
         if self.do_entity:
             if self.entity is not None:
-                if square.entity is not None:
-                    map.delentity(square.x, square.y)
-                square.entity = self.entity.replicate()
-                map.entities.append(square.entity)
+                if tile.entity is not None:
+                    map.delentity(tile.x, tile.y)
+                tile.entity = self.entity.replicate()
+                map.entities.append(tile.entity)
                 # Global entities don't usually have a script explicitly defined
-                if not square.entity.savegame:
-                    square.entity.entscript = ''
-                square.entity.x = square.x
-                square.entity.y = square.y
-                square.entity.set_initial(square.x, square.y)
-        for (dir, rel_obj) in self.rel_squares.items():
-            adjsquare = map.square_relative(square.x, square.y, dir)
-            if adjsquare:
-                rel_obj.apply_to(gui, map, adjsquare)
-                extra_affected.append(adjsquare)
+                if not tile.entity.savegame:
+                    tile.entity.entscript = ''
+                tile.entity.x = tile.x
+                tile.entity.y = tile.y
+                tile.entity.set_initial(tile.x, tile.y)
+        for (dir, rel_obj) in self.rel_tiles.items():
+            adjtile = map.tile_relative(tile.x, tile.y, dir)
+            if adjtile:
+                rel_obj.apply_to(gui, map, adjtile)
+                extra_affected.append(adjtile)
         return extra_affected
 
 class PremadeObjectCollection(object):
@@ -248,7 +248,7 @@ class PremadeObjectCollection(object):
     def set_savegame(self, savegame):
         for objects in self.collection.values():
             for obj in objects:
-                obj.square.savegame = savegame
+                obj.tile.savegame = savegame
                 if obj.mapscript is not None:
                     obj.mapscript.savegame = savegame
                 if obj.entity is not None:
@@ -362,7 +362,7 @@ class SmartDraw(object):
     def set_special(self, wallid):
         self.special = wallid
 
-    def get_wall_group(self, square, wallgroup=None):
+    def get_wall_group(self, tile, wallgroup=None):
         """
         Returns the base group ID of the given wall ID.
         If appropriate (ie: for checking adjacent walls while editing, pass in
@@ -370,35 +370,35 @@ class SmartDraw(object):
         the "special" 4-connection object is found.
         """
         wallstart = -1
-        if (wallgroup is not None and square.wallimg == self.special):
+        if (wallgroup is not None and tile.wallimg == self.special):
             return wallgroup
         for start in self.wallstarts:
-            if (square.wallimg >= start and square.wallimg < start+10):
+            if (tile.wallimg >= start and tile.wallimg < start+10):
                 return start
-        if (square.wallimg in self.fenceids):
+        if (tile.wallimg in self.fenceids):
             return self.fenceids[0]
         for val in (self.bigfencestarts + self.bigfence2starts):
-            if (square.wallimg == val or square.wallimg == val+1):
+            if (tile.wallimg == val or tile.wallimg == val+1):
                 return val
         return None
 
-    def draw_wall(self, square):
+    def draw_wall(self, tile):
         """
         Draws using the given wall.
-        Will return a list of squares that have been updated by this action
-        (not including the given square, which is assumed), or None if smart
+        Will return a list of tiles that have been updated by this action
+        (not including the given tile, which is assumed), or None if smart
         drawing isn't applicable in this case.
         """
         # First set up and make sure that we're even drawing a wall
         retarr = []
-        wallgroup = self.get_wall_group(square)
+        wallgroup = self.get_wall_group(tile)
         if (wallgroup is None):
             # If we're not drawing a wall, see if we should be randomizing
             # anything
             if (self.gui.smart_randomize.get_active()):
                 for tileset in self.random_obj:
-                    if square.wallimg in tileset:
-                        square.wallimg = random.choice(tileset)
+                    if tile.wallimg in tileset:
+                        tile.wallimg = random.choice(tileset)
                         break
             return None
 
@@ -406,7 +406,7 @@ class SmartDraw(object):
         # be problematic if I were to try to handle everything in one function
         # here.
         if (wallgroup in ([self.fenceids[0]] + self.bigfencestarts + self.bigfence2starts)):
-            return self.draw_fence(square, wallgroup)
+            return self.draw_fence(tile, wallgroup)
 
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_wall_connection() where appropriate
@@ -414,16 +414,16 @@ class SmartDraw(object):
         connflags = 0
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            adjsquare = self.map.square_relative(square.x, square.y, testdir)
-            if adjsquare is None:
+            adjtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            if adjtile is None:
                 continue
-            adjgroup = self.get_wall_group(adjsquare, wallgroup)
+            adjgroup = self.get_wall_group(adjtile, wallgroup)
             if (adjgroup is None or adjgroup != wallgroup):
                 continue
             connflags = connflags|testdir
             flagcount += 1
-            if (self.add_wall_connection(wallgroup, adjsquare, self.REV_DIR[testdir])):
-                retarr.append(adjsquare)
+            if (self.add_wall_connection(wallgroup, adjtile, self.REV_DIR[testdir])):
+                retarr.append(adjtile)
 
         # Figure out what to put down if we don't actually have a match
         if (connflags not in self.revindexes[self.IDX_WALL]):
@@ -439,23 +439,23 @@ class SmartDraw(object):
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
         if (self.revindexes[self.IDX_WALL][connflags] == -1):
-            square.wallimg = self.special
+            tile.wallimg = self.special
             if c.book > 1:
-                square.wall = 2
+                tile.wall = 2
         else:
-            square.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
-            square.wall = 1
+            tile.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
+            tile.wall = 1
 
         # And lastly, return.
         return retarr
 
-    def add_wall_connection(self, group, square, dir):
+    def add_wall_connection(self, group, tile, dir):
         """
-        Adds a connection to the given square.  Note that this doesn't do
+        Adds a connection to the given tile.  Note that this doesn't do
         any actual bounds checking; it should really only be called from
-        draw_wall(), above.  Returns whether or not we modified the square.
+        draw_wall(), above.  Returns whether or not we modified the tile.
 
-        It *does* however "clean" squares, to prune off connections which
+        It *does* however "clean" tiles, to prune off connections which
         don't need to be there anymore.
 
         There's some duplicated code in here from draw_wall(), but it's
@@ -463,10 +463,10 @@ class SmartDraw(object):
         """
 
         # First grab our current status and add in the requested connection
-        if (square.wallimg == self.special):
+        if (tile.wallimg == self.special):
             idx = -1
         else:
-            idx = square.wallimg - group
+            idx = tile.wallimg - group
         curflags = self.indexes[self.IDX_WALL][idx]
         newflags = dir
 
@@ -476,10 +476,10 @@ class SmartDraw(object):
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             if (testdir == dir):
                 continue
-            testsquare = self.map.square_relative(square.x, square.y, testdir)
-            if testsquare is None:
+            testtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            if testtile is None:
                 continue
-            testgroup = self.get_wall_group(testsquare, group)
+            testgroup = self.get_wall_group(testtile, group)
             if (testgroup and testgroup == group):
                 conncount += 1
                 newflags = (newflags | testdir)
@@ -499,22 +499,22 @@ class SmartDraw(object):
             return False
         else:
             if (self.revindexes[self.IDX_WALL][newflags] == -1):
-                square.wallimg = self.special
+                tile.wallimg = self.special
                 if c.book > 1:
-                    square.wall = 2
+                    tile.wall = 2
             else:
-                square.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
-                square.wall = 1
+                tile.wallimg = group + self.revindexes[self.IDX_WALL][newflags]
+                tile.wall = 1
             return True
 
-    def draw_fence(self, square, fencestart):
+    def draw_fence(self, tile, fencestart):
         """
         Draws a fence.  If we've got here, we KNOW that we're a fence already.
         Note that there's a lot of duplicate code from draw_wall(), above, but
         there's enough differences that I'd rather not combine the two.
 
-        Will return a list of squares that have been updated by this action
-        (not including the given square, which is assumed).
+        Will return a list of tiles that have been updated by this action
+        (not including the given tile, which is assumed).
         """
 
         retarr = []
@@ -532,28 +532,28 @@ class SmartDraw(object):
 
         # Now loop through our directions and see where we should link to.
         # We'll additionally call out to add_fence_connection() where appropriate
-        # to update adjacent walls.  We're hampered a bit since each fence square
+        # to update adjacent walls.  We're hampered a bit since each fence tile
         # can only support two connections.
         connflags = 0
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            adjsquare = self.map.square_relative(square.x, square.y, testdir)
-            if adjsquare is None:
+            adjtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            if adjtile is None:
                 continue
-            adjgroup = self.get_wall_group(adjsquare)
+            adjgroup = self.get_wall_group(adjtile)
             if (adjgroup is None or adjgroup != fencestart):
                 continue
             connflags = connflags|testdir
             flagcount += 1
             if fencestart == self.fenceids[0]:
-                if (self.add_fence_connection(adjsquare, self.REV_DIR[testdir])):
-                    retarr.append(adjsquare)
+                if (self.add_fence_connection(adjtile, self.REV_DIR[testdir])):
+                    retarr.append(adjtile)
             else:
                 # Our selection for the "big" fence is highly limited
                 connflags = connflags|self.REV_DIR[testdir]
                 flagcount += 1
-                if (self.add_big_fence_connection(adjsquare, self.REV_DIR[testdir], fencestart, idx)):
-                    retarr.append(adjsquare)
+                if (self.add_big_fence_connection(adjtile, self.REV_DIR[testdir], fencestart, idx)):
+                    retarr.append(adjtile)
                 break
             if (flagcount == 2):
                 break
@@ -571,18 +571,18 @@ class SmartDraw(object):
             else:
                 raise Exception("flagcount isn't 1 or 0 - should figure out why")
 
-        square.wallimg = fencestart + self.revindexes[idx][connflags]
+        tile.wallimg = fencestart + self.revindexes[idx][connflags]
 
         # And lastly, return.
         return retarr
 
-    def add_fence_connection(self, square, dir):
+    def add_fence_connection(self, tile, dir):
         """
-        Adds a connection to the given square.  Note that this doesn't do
+        Adds a connection to the given tile.  Note that this doesn't do
         any actual bounds checking; it should really only be called from
-        draw_fence(), above.  Returns whether or not we modified the square.
+        draw_fence(), above.  Returns whether or not we modified the tile.
 
-        It *does* however "clean" squares, to prune off connections which
+        It *does* however "clean" tiles, to prune off connections which
         don't need to be there anymore.
 
         There's some duplicated code in here from draw_fence(), but it's
@@ -592,7 +592,7 @@ class SmartDraw(object):
         """
 
         # First grab our current status and add in the requested connection
-        idx = square.wallimg - self.fenceids[0]
+        idx = tile.wallimg - self.fenceids[0]
         curflags = self.indexes[self.IDX_FENCE][idx]
         newflags = dir
 
@@ -603,10 +603,10 @@ class SmartDraw(object):
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             if (testdir == dir):
                 continue
-            testsquare = self.map.square_relative(square.x, square.y, testdir)
-            if testsquare is None:
+            testtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            if testtile is None:
                 continue
-            testgroup = self.get_wall_group(testsquare)
+            testgroup = self.get_wall_group(testtile)
             if (testgroup and testgroup == self.fenceids[0]):
                 conncount += 1
                 newflags = (newflags | testdir)
@@ -626,10 +626,10 @@ class SmartDraw(object):
         if (curflags == newflags):
             return False
         else:
-            square.wallimg = self.fenceids[0] + self.revindexes[self.IDX_FENCE][newflags]
+            tile.wallimg = self.fenceids[0] + self.revindexes[self.IDX_FENCE][newflags]
             return True
 
-    def add_big_fence_connection(self, square, dir, fencestart, idx):
+    def add_big_fence_connection(self, tile, dir, fencestart, idx):
         """
         Adds a connection to the "big" fence.  This is actually far simpler than
         add_fence_connection because we only have two possible "big" fence tiles,
@@ -639,20 +639,20 @@ class SmartDraw(object):
         connflags = dir
         connflags = connflags|self.REV_DIR[dir]
         newimg = fencestart + self.revindexes[idx][connflags]
-        if (newimg != square.wallimg):
-            square.wallimg = newimg
+        if (newimg != tile.wallimg):
+            tile.wallimg = newimg
             return True
         else:
             return False
 
-    def get_rel(self, square, known, dir):
+    def get_rel(self, tile, known, dir):
         """
-        Given a square, a "known" array, and a direction, return the square in
-        that direction.  This will update "known" appropriately when a square
+        Given a tile, a "known" array, and a direction, return the tile in
+        that direction.  This will update "known" appropriately when a tile
         isn't found.
         """
         if (dir not in known):
-            known[dir] = self.map.square_relative(square.x, square.y, dir)
+            known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
         return known[dir]
 
     def get_random_terrain_pool(self, floorimg):
@@ -666,18 +666,18 @@ class SmartDraw(object):
                 return tileset
         return (floorimg,)
 
-    def draw_floor(self, square, straight_path=True, recurse=True, known={}):
+    def draw_floor(self, tile, straight_path=True, recurse=True, known={}):
         """
-        Given a square, figure out what kind of grass decals it should have,
+        Given a tile, figure out what kind of grass decals it should have,
         if any.  Will actually set the decal image, as well.  If 'recurse'
         is True, we'll make recursive calls to do the same with adjacent
-        squares.  Using 'known' you can pass in any squares which may have
+        tiles.  Using 'known' you can pass in any tiles which may have
         already been loaded (which can help avoid unnecessary calls to
-        Map.square_relative().
+        Map.tile_relative().
         
-        Returns a list of modified squares if we're recursing, or just
+        Returns a list of modified tiles if we're recursing, or just
         true/false otherwise.  (Note that the list does not include the
-        original square, which is just assumed.)
+        original tile, which is just assumed.)
 
         It should be noted that I stumbled across the "straight_path" stuff
         purely by accident; that wasn't actually my goal when I first
@@ -690,25 +690,25 @@ class SmartDraw(object):
         model = self.gui.get_widget('decalpref').get_model()
         idxtype = model.get_value(iter, 1)
         if (idxtype == self.IDX_BEACH):
-            return self.draw_beach(square)
+            return self.draw_beach(tile)
 
         connflags = 0
         connflags_not = 0
         flagcount = 0
         affected = []
-        curdecal = square.decalimg
-        curfloor = square.floorimg
+        curdecal = tile.decalimg
+        curfloor = tile.floorimg
 
-        # If recursing, load in all the squares we'll need, first
+        # If recursing, load in all the tiles we'll need, first
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
-                known[dir] = self.map.square_relative(square.x, square.y, dir)
+                known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
 
             # Also randomize the floor tile if we're supposed to (we only do
             # this to the tile actually being drawn, not any adjacent tiles)
             if (self.gui.smart_randomize.get_active()):
-                square.floorimg = random.choice(self.get_random_terrain_pool(curfloor))
+                tile.floorimg = random.choice(self.get_random_terrain_pool(curfloor))
 
         # Figure out whether to try and fit grass decals or sand decals,
         # and which decal type to strip out
@@ -721,40 +721,40 @@ class SmartDraw(object):
                     decalpref_blacklists[idx].append(inner_idx)
         blacklist = decalpref_blacklists[idxtype]
 
-        # First find out more-typical adjacent squares
+        # First find out more-typical adjacent tiles
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            adjsquare = self.get_rel(square, known, testdir)
-            if (not adjsquare):
+            adjtile = self.get_rel(tile, known, testdir)
+            if (not adjtile):
                 continue
-            if (adjsquare.floorimg in self.tilesets[idxtype]):
+            if (adjtile.floorimg in self.tilesets[idxtype]):
                 connflags = connflags|testdir
                 flagcount += 1
             else:
                 connflags_not = connflags_not|testdir
 
-            # Process adjacent squares if we're supposed to
+            # Process adjacent tiles if we're supposed to
             if (recurse):
-                if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
-                    affected.append(adjsquare)
+                if (self.draw_floor(adjtile, straight_path, False, { self.REV_DIR[testdir]: tile })):
+                    affected.append(adjtile)
 
         # If we're recursing, we'll need to check the cardinal directions as
         # well, to clear out errant corner-connection decals
         if (recurse):
             for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                adjsquare = self.get_rel(square, known, testdir)
-                if (not adjsquare):
+                adjtile = self.get_rel(tile, known, testdir)
+                if (not adjtile):
                     continue
-                if (self.draw_floor(adjsquare, straight_path, False, { self.REV_DIR[testdir]: square })):
-                    affected.append(adjsquare)
+                if (self.draw_floor(adjtile, straight_path, False, { self.REV_DIR[testdir]: tile })):
+                    affected.append(adjtile)
 
-        if (square.floorimg in self.tilesets[idxtype]):
+        if (tile.floorimg in self.tilesets[idxtype]):
 
-            # Now let's just get out of here if we're a grass square ourselves.
+            # Now let's just get out of here if we're a grass tile ourselves.
             # We could have exited earlier, but this way we can recurse around ourselves
             # without duplicating much code.
             for idx in full_idx_list:
-                if (square.decalimg in self.indexes[idx].keys()):
-                    square.decalimg = 0
+                if (tile.decalimg in self.indexes[idx].keys()):
+                    tile.decalimg = 0
 
         else:
 
@@ -765,26 +765,26 @@ class SmartDraw(object):
                 # instead
                 if (flagcount == 4):
                     # Just pick a random one from our "fullest" pool
-                    square.decalimg = random.choice(self.tile_fullest[idxtype])
+                    tile.decalimg = random.choice(self.tile_fullest[idxtype])
                 elif (flagcount == 3):
                     # Pick one from the "fullest" pool which matches
                     # most closely
                     for choice in self.tile_fullest[idxtype]:
                         choiceflags = self.indexes[idxtype][choice]
                         if ((choiceflags & connflags_not) == 0):
-                            square.decalimg = choice
+                            tile.decalimg = choice
                             break
 
                 # Prune, in case there are adjacent tiles
-                curflags = self.indexes[idxtype][square.decalimg]
+                curflags = self.indexes[idxtype][tile.decalimg]
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                    adjsquare = self.get_rel(square, known, testdir)
-                    if (not adjsquare):
+                    adjtile = self.get_rel(tile, known, testdir)
+                    if (not adjtile):
                         continue
-                    if (adjsquare.floorimg not in self.tilesets[idxtype]):
+                    if (adjtile.floorimg not in self.tilesets[idxtype]):
                         curflags = (curflags & ~testdir)
                 if (curflags in self.revindexes[idxtype]):
-                    square.decalimg = self.revindexes[idxtype][curflags]
+                    tile.decalimg = self.revindexes[idxtype][curflags]
             else:
                 # See if there's a more-specific tile we could match on
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
@@ -792,14 +792,14 @@ class SmartDraw(object):
                         if (straight_path):
                             found_adj_same = False
                             for adjdir in self.CARD_ADJ_DIRS[testdir]:
-                                adjsquare = self.get_rel(square, known, self.COMP_DIR[testdir|adjdir])
-                                if (not adjsquare):
+                                adjtile = self.get_rel(tile, known, self.COMP_DIR[testdir|adjdir])
+                                if (not adjtile):
                                     continue
-                                if (adjsquare.floorimg in self.tilesets[idxtype]):
+                                if (adjtile.floorimg in self.tilesets[idxtype]):
                                     found_adj_same = True
                                     break
-                                elif (adjsquare.decalimg in self.indexes[idxtype]):
-                                    adjflags = self.indexes[idxtype][adjsquare.decalimg]
+                                elif (adjtile.decalimg in self.indexes[idxtype]):
+                                    adjflags = self.indexes[idxtype][adjtile.decalimg]
                                     testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
                                     if (adjflags == testflag):
                                         found_adj_same = True
@@ -807,80 +807,80 @@ class SmartDraw(object):
                             if (not found_adj_same):
                                 continue
                     if ((connflags|testdir) in self.revindexes[idxtype]):
-                        adjsquare = self.get_rel(square, known, testdir)
-                        if (not adjsquare):
+                        adjtile = self.get_rel(tile, known, testdir)
+                        if (not adjtile):
                             continue
-                        if (adjsquare.floorimg in self.tilesets[idxtype]):
+                        if (adjtile.floorimg in self.tilesets[idxtype]):
                             connflags = connflags | testdir
                             if (flagcount != 0):
                                 break
                 if (connflags == 0):
                     for idx in full_idx_list:
-                        if (square.decalimg in self.indexes[idx]):
-                            square.decalimg = 0
+                        if (tile.decalimg in self.indexes[idx]):
+                            tile.decalimg = 0
                 else:
-                    square.decalimg = self.revindexes[idxtype][connflags]
+                    tile.decalimg = self.revindexes[idxtype][connflags]
 
         # Check our blacklist, after all that, and filter it out if we've been bad
         for item in blacklist:
-            if square.decalimg in self.indexes[item].keys():
-                square.decalimg = 0
+            if tile.decalimg in self.indexes[item].keys():
+                tile.decalimg = 0
                 break
 
         # Finally, if we're handling Lava tiles, we need to do one more recursive loop
         # to draw a complimentary decal on the actual Lava tiles themselves.
         if (recurse and idxtype == self.IDX_LAVA):
-            newaffected = self.draw_complimentary_decals(idxtype, square, known)
-            for testsquare in newaffected:
-                if testsquare not in affected:
-                    affected.append(testsquare)
+            newaffected = self.draw_complimentary_decals(idxtype, tile, known)
+            for testtile in newaffected:
+                if testtile not in affected:
+                    affected.append(testtile)
 
         # And now return
         if (recurse):
             return affected
         else:
-            return (curdecal != square.decalimg or curfloor != square.floorimg)
+            return (curdecal != tile.decalimg or curfloor != tile.floorimg)
 
-    def draw_complimentary_decals(self, idxtype, centersquare, known):
+    def draw_complimentary_decals(self, idxtype, centertile, known):
         """
         This is an extra recursive loop, run after the main draw_floor() routine,
         which will "double up" decal images (eg: for Book 2 Lava decals, which
         needs to have a decal on the lava tiles themselves).  Note that, unfortunately,
         to process this correctly, we have to recurse an additional level out.
         """
-        actionsquares = []
-        for square in [centersquare] + known.values():
-            if square is None:
+        actiontiles = []
+        for tile in [centertile] + known.values():
+            if tile is None:
                 continue
-            if square.floorimg not in self.tilesets[idxtype]:
+            if tile.floorimg not in self.tilesets[idxtype]:
                 continue
             connflags = 0
             flagcount = 0
             for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-                adjsquare = self.map.square_relative(square.x, square.y, dir)
-                if adjsquare is None:
+                adjtile = self.map.tile_relative(tile.x, tile.y, dir)
+                if adjtile is None:
                     continue
-                if adjsquare.floorimg in self.tilesets[idxtype]:
+                if adjtile.floorimg in self.tilesets[idxtype]:
                     continue
-                if adjsquare.decalimg in self.indexes[idxtype]:
-                    idxdir = self.indexes[idxtype][adjsquare.decalimg]
+                if adjtile.decalimg in self.indexes[idxtype]:
+                    idxdir = self.indexes[idxtype][adjtile.decalimg]
                     if (idxdir & self.REV_DIR[dir] == self.REV_DIR[dir]):
                         flagcount += 1
                         connflags = connflags | dir
             if flagcount == 4:
-                actionsquares.append((square, random.choice(self.tile_fullest[idxtype])))
+                actiontiles.append((tile, random.choice(self.tile_fullest[idxtype])))
             elif flagcount == 0:
-                actionsquares.append((square, 0))
+                actiontiles.append((tile, 0))
             else:
-                actionsquares.append((square, self.revindexes[idxtype][connflags]))
+                actiontiles.append((tile, self.revindexes[idxtype][connflags]))
         affected = []
-        for (square, newdecal) in actionsquares:
-            if square.decalimg != newdecal:
-                affected.append(square)
-                square.decalimg = newdecal
+        for (tile, newdecal) in actiontiles:
+            if tile.decalimg != newdecal:
+                affected.append(tile)
+                tile.decalimg = newdecal
         return affected
 
-    def draw_decal(self, square):
+    def draw_decal(self, tile):
         """
         Draws using the given decal.  Right now this just processes randomization
         if we're asked to
@@ -889,12 +889,12 @@ class SmartDraw(object):
         retarr = []
         if (self.gui.smart_randomize.get_active()):
             for tileset in self.random_decal:
-                if square.decalimg in tileset:
-                    square.decalimg = random.choice(tileset)
+                if tile.decalimg in tileset:
+                    tile.decalimg = random.choice(tileset)
                     break
         return None
 
-    def draw_walldecal(self, square):
+    def draw_walldecal(self, tile):
         """
         Draws using the given wall decal.  Right now this just processes randomization
         if we're asked to
@@ -903,12 +903,12 @@ class SmartDraw(object):
         retarr = []
         if (self.gui.smart_randomize.get_active()):
             for tileset in self.random_walldecal:
-                if square.walldecalimg in tileset:
-                    square.walldecalimg = random.choice(tileset)
+                if tile.walldecalimg in tileset:
+                    tile.walldecalimg = random.choice(tileset)
                     break
         return None
 
-    def draw_beach(self, square, recurse=True, known={}, parent_water=False):
+    def draw_beach(self, tile, recurse=True, known={}, parent_water=False):
         """
         Drawing beach tiles is handled differently from the usual decal
         stuff.  The overall flow is similar, but we're touching different
@@ -924,57 +924,57 @@ class SmartDraw(object):
         connflags_not = 0
         flagcount = 0
         affected = []
-        curdecal = square.decalimg
-        curfloor = square.floorimg
+        curdecal = tile.decalimg
+        curfloor = tile.floorimg
         blacklist = []
         for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
             blacklist.extend(self.indexes[self.IDX_GRASS].keys())
 
         # Find out if we're drawing a water tile, or one of the sand tiles
         drawing_water = False
-        if (parent_water or (recurse and square.floorimg in self.water)):
+        if (parent_water or (recurse and tile.floorimg in self.water)):
             drawing_water = True
 
-        # If recursing, load in all the squares we'll need, first
+        # If recursing, load in all the tiles we'll need, first
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
-                known[dir] = self.map.square_relative(square.x, square.y, dir)
+                known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
 
             # Additionally, set our tile to full-sand so that the recursion
             # stuff can link in properly
-            if square.floorimg in self.beach_index.keys():
-                square.floorimg = self.tilesets[self.IDX_SAND][0]
+            if tile.floorimg in self.beach_index.keys():
+                tile.floorimg = self.tilesets[self.IDX_SAND][0]
 
             # We're going to recurse now rather than later
             for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW,
                 self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                adjsquare = self.get_rel(square, known, testdir)
-                if (adjsquare):
-                    if (self.draw_beach(adjsquare, False, { self.REV_DIR[testdir]: square }, drawing_water)):
-                        affected.append(adjsquare)
+                adjtile = self.get_rel(tile, known, testdir)
+                if (adjtile):
+                    if (self.draw_beach(adjtile, False, { self.REV_DIR[testdir]: tile }, drawing_water)):
+                        affected.append(adjtile)
 
-        # First find out more-typical adjacent squares
-        if (square.floorimg in self.beach_index.keys() + self.water):
+        # First find out more-typical adjacent tiles
+        if (tile.floorimg in self.beach_index.keys() + self.water):
 
             # Let's put down a full-sand tile in place of whatever we actually put in,
             # under the assumption that the tile we're drawing should be mostly sand.
-            if recurse and square.floorimg not in self.water:
-                square.floorimg = self.tilesets[self.IDX_SAND][0]
+            if recurse and tile.floorimg not in self.water:
+                tile.floorimg = self.tilesets[self.IDX_SAND][0]
 
             for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-                adjsquare = self.get_rel(square, known, testdir)
-                if (not adjsquare):
+                adjtile = self.get_rel(tile, known, testdir)
+                if (not adjtile):
                     continue
                 # Two criteria for accepting a connection for the given direction:
-                #    1) The adjacent square is one of our defined "beach" tiles AND the tile
+                #    1) The adjacent tile is one of our defined "beach" tiles AND the tile
                 #       has sand facing in our direction
                 #  -or-
-                #    2) The adjacent square is NOT one of our "beach" tiles but is also not water.
+                #    2) The adjacent tile is NOT one of our "beach" tiles but is also not water.
                 # We do this because we'd like to consider anything non-sand to be virtually "sand"
-                if ((adjsquare.floorimg in self.beach_index.keys() and
-                    (self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
-                    or (adjsquare.floorimg not in self.beach_index.keys() and adjsquare.floorimg not in self.water)):
+                if ((adjtile.floorimg in self.beach_index.keys() and
+                    (self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
+                    or (adjtile.floorimg not in self.beach_index.keys() and adjtile.floorimg not in self.water)):
                     connflags = connflags|testdir
                     flagcount += 1
                 else:
@@ -998,8 +998,8 @@ class SmartDraw(object):
                 # We're completely surrounded by water.  Unless we're drawing a water
                 # tile and happen to be processing the "center" tile still, convert us
                 # to a full-sand piece.
-                if (not recurse or square.floorimg not in self.water):
-                    square.floorimg = self.tilesets[self.IDX_SAND][0]
+                if (not recurse or tile.floorimg not in self.water):
+                    tile.floorimg = self.tilesets[self.IDX_SAND][0]
             elif process_special:
                 # The only case of being in here would be if we're drawing water, and we
                 # have two connections which happen to be adjacent from each other.  For
@@ -1011,28 +1011,28 @@ class SmartDraw(object):
                 for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
                     if ((connflags & dir) == dir):
                         connflags = connflags & ~dir
-                        square.floorimg = self.beach_revindex[connflags]
+                        tile.floorimg = self.beach_revindex[connflags]
                         break
             else:
                 # See if there's a more-specific tile we could match on
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                     if ((connflags|testdir) in self.beach_revindex):
-                        adjsquare = self.get_rel(square, known, testdir)
-                        if (not adjsquare):
+                        adjtile = self.get_rel(tile, known, testdir)
+                        if (not adjtile):
                             continue
                         # To add in this direction as a "connection", this compound statement has to be true:
-                        #   1) The adjacent square is in our collection of beach tiles
+                        #   1) The adjacent tile is in our collection of beach tiles
                         # -AND-
-                        #     a) The adjacent square has sand pointing in our direction
+                        #     a) The adjacent tile has sand pointing in our direction
                         #    -or-
-                        #     b) The adjacent square is "virtually" pointing in our direction (via ADJ_DIR)
+                        #     b) The adjacent tile is "virtually" pointing in our direction (via ADJ_DIR)
                         # -AND-
                         #   2) We must have a tile which matches the resulting connection, of course.
                         # TODO: Seems ugly, would like to simplify.  Also, like above, we should probably
                         # consider any non-"beach" tile to be a connection, yes?
-                        if (adjsquare.floorimg in self.beach_index.keys() and
-                            ((self.beach_index[adjsquare.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir] or
-                             (self.beach_index[adjsquare.floorimg] & self.ADJ_DIR[self.REV_DIR[testdir]]) == self.ADJ_DIR[self.REV_DIR[testdir]])):
+                        if (adjtile.floorimg in self.beach_index.keys() and
+                            ((self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir] or
+                             (self.beach_index[adjtile.floorimg] & self.ADJ_DIR[self.REV_DIR[testdir]]) == self.ADJ_DIR[self.REV_DIR[testdir]])):
                             if ((connflags | testdir) in self.beach_revindex):
                                 connflags = connflags | testdir
                                 if (flagcount != 0):
@@ -1040,61 +1040,61 @@ class SmartDraw(object):
                 if (connflags == 0):
                     # If we're here, there's no sand surrounding us at all.
                     # Set ourselves to water.
-                    square.floorimg = self.water[0]
+                    tile.floorimg = self.water[0]
                 else:
-                    square.floorimg = self.beach_revindex[connflags]
+                    tile.floorimg = self.beach_revindex[connflags]
 
         # Check our decal blacklist, after all that, and filter it out if there's
         # something here which shouldn't be.
-        if square.decalimg in blacklist:
-            square.decalimg = 0
+        if tile.decalimg in blacklist:
+            tile.decalimg = 0
 
         # And now return
         if (recurse):
             return affected
         else:
-            return (curdecal != square.decalimg or curfloor != square.floorimg)
+            return (curdecal != tile.decalimg or curfloor != tile.floorimg)
 
-    def draw_smart_complex_obj(self, collection, square, undo):
+    def draw_smart_complex_obj(self, collection, tile, undo):
         """
         Sees if we can draw a complex wall object.
         """
         affected = []
         text = None
-        obj = collection.get(square.__dict__[collection.var])
+        obj = collection.get(tile.__dict__[collection.var])
         if obj is not None:
             text = obj.name
-            (fwd, rev) = obj.get_steps(square.__dict__[collection.var])
+            (fwd, rev) = obj.get_steps(tile.__dict__[collection.var])
             for series in (fwd, rev):
-                (curx, cury) = (square.x, square.y)
+                (curx, cury) = (tile.x, tile.y)
                 for (dir, id) in series:
-                    newsquare = self.map.square_relative(curx, cury, dir)
-                    if newsquare:
-                        if (newsquare.__dict__[collection.var] != id):
-                            undo.add_additional(newsquare)
-                            affected.append(newsquare)
-                            newsquare.__dict__[collection.var] = id
-                            (curx, cury) = (newsquare.x, newsquare.y)
+                    newtile = self.map.tile_relative(curx, cury, dir)
+                    if newtile:
+                        if (newtile.__dict__[collection.var] != id):
+                            undo.add_additional(newtile)
+                            affected.append(newtile)
+                            newtile.__dict__[collection.var] = id
+                            (curx, cury) = (newtile.x, newtile.y)
                             if obj.wallflag is not None:
-                                newsquare.wall = obj.wallflag
+                                newtile.wall = obj.wallflag
                     else:
                         break
         return (text, affected)
 
-    def draw_smart_complex_wall(self, square, undo):
-        return self.draw_smart_complex_obj(self.complex_obj_wall, square, undo)
+    def draw_smart_complex_wall(self, tile, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_wall, tile, undo)
 
-    def draw_smart_complex_floor(self, square, undo):
-        return self.draw_smart_complex_obj(self.complex_obj_floor, square, undo)
+    def draw_smart_complex_floor(self, tile, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_floor, tile, undo)
 
-    def draw_smart_complex_decal(self, square, undo):
-        return self.draw_smart_complex_obj(self.complex_obj_decal, square, undo)
+    def draw_smart_complex_decal(self, tile, undo):
+        return self.draw_smart_complex_obj(self.complex_obj_decal, tile, undo)
 
-    def place_object(self, square, obj):
+    def place_object(self, tile, obj):
         """
-        Places a premade object on a square
+        Places a premade object on a tile
         """
-        return obj.apply_to(self.gui, self.map, square)
+        return obj.apply_to(self.gui, self.map, tile)
 
     @staticmethod
     def new(book):
@@ -1384,7 +1384,7 @@ class B1SmartDraw(SmartDraw):
                     if statenum == 1:
                         obj.use_lock()
                         obj.use_trap()
-                    rel = obj.add_rel_square(framedir)
+                    rel = obj.add_rel_tile(framedir)
                     rel.set_walldecalimg(framedecal)
                     cur += 1
 
@@ -1914,7 +1914,7 @@ class B2SmartDraw(SmartDraw):
                     if statenum == 1:
                         obj.use_trap()
                         obj.use_lock()
-                    rel = obj.add_rel_square(framedir)
+                    rel = obj.add_rel_tile(framedir)
                     rel.set_walldecalimg(framedecal)
                     cur += 1
 

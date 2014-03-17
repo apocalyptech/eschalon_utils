@@ -11,7 +11,7 @@ class EschalonUtils:
             'list': False,
             'listoptions' : {
                 'all': False,
-                'squares': False,
+                'tiles': False,
                 'objects': False,
                 'txtmap': False
                 },

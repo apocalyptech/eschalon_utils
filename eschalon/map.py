@@ -22,7 +22,7 @@ import os
 import struct
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
-from eschalon.square import Square
+from eschalon.tile import Tile
 from eschalon.mapscript import Mapscript
 from eschalon.entity import Entity
 
@@ -72,11 +72,11 @@ class Map(object):
         self.cursqcol = 0
         self.cursqrow = 0
 
-        self.squares = []
+        self.tiles = []
         for i in range(200):
-            self.squares.append([])
+            self.tiles.append([])
             for j in range(100):
-                self.squares[i].append(Square.new(c.book, j, i))
+                self.tiles[i].append(Tile.new(c.book, j, i))
 
         self.scripts = []
         self.entities = []
@@ -88,9 +88,9 @@ class Map(object):
         """
         Sets the savegame flags as-requested.
         """
-        for row in self.squares:
-            for square in row:
-                square.savegame = savegame
+        for row in self.tiles:
+            for tile in row:
+                tile.savegame = savegame
         for entity in self.entities:
             entity.savegame = savegame
         for script in self.scripts:
@@ -134,10 +134,10 @@ class Map(object):
         newmap.parallax_x = self.parallax_x
         newmap.parallax_y = self.parallax_y
 
-        # Copy squares
+        # Copy tiles
         for i in range(200):
             for j in range(100):
-                newmap.squares[i][j] = self.squares[i][j].replicate()
+                newmap.tiles[i][j] = self.tiles[i][j].replicate()
 
         # At this point, scripts and entities have been replicated as well;
         # loop through our list to repopulate from the new objects, so that
@@ -146,8 +146,8 @@ class Map(object):
             if (entity is None):
                 newmap.entities.append(None)
             else:
-                if (entity.y < len(newmap.squares) and entity.x < len(newmap.squares[entity.y])):
-                    newmap.entities.append(newmap.squares[entity.y][entity.x].entity)
+                if (entity.y < len(newmap.tiles) and entity.x < len(newmap.tiles[entity.y])):
+                    newmap.entities.append(newmap.tiles[entity.y][entity.x].entity)
                 else:
                     newmap.entities.append(entity.replicate())
         scriptidxtemp = {}
@@ -155,13 +155,13 @@ class Map(object):
             if (script is None):
                 newmap.scripts.append(None)
             else:
-                if (script.y < len(newmap.squares) and script.x < len(newmap.squares[script.y])):
+                if (script.y < len(newmap.tiles) and script.x < len(newmap.tiles[script.y])):
                     key = '%d%02d' % (script.y, script.x)
                     if (key in scriptidxtemp):
                         scriptidxtemp[key] += 1
                     else:
                         scriptidxtemp[key] = 0
-                    newmap.scripts.append(newmap.squares[script.y][script.x].scripts[scriptidxtemp[key]])
+                    newmap.scripts.append(newmap.tiles[script.y][script.x].scripts[scriptidxtemp[key]])
                 else:
                     newmap.scripts.append(script.replicate())
 
@@ -177,17 +177,17 @@ class Map(object):
         """
         pass
 
-    def set_square_savegame(self):
-        """ Sets the savegame flag appropriately for all squares """
+    def set_tile_savegame(self):
+        """ Sets the savegame flag appropriately for all tiles """
         savegame = self.is_savegame()
-        for row in self.squares:
-            for square in row:
-                square.savegame = savegame
+        for row in self.tiles:
+            for tile in row:
+                tile.savegame = savegame
 
-    def addsquare(self):
-        """ Add a new square, assuming that the squares are stored in a
+    def addtile(self):
+        """ Add a new tile, assuming that the tiles are stored in a
             left-to-right, top-to-bottom format in the map. """
-        self.squares[self.cursqrow][self.cursqcol].read(self.df)
+        self.tiles[self.cursqrow][self.cursqcol].read(self.df)
         self.cursqcol = self.cursqcol + 1
         if (self.cursqcol == 100):
             self.cursqcol = 0
@@ -200,55 +200,55 @@ class Map(object):
             script.read(self.df)
             # Note that once we start deleting scripts, you'll have to update both constructs here.
             # Something along the lines of this should do:
-            #   self.map.squares[y][x].scripts.remove(script)
+            #   self.map.tiles[y][x].scripts.remove(script)
             #   self.scripts.remove(script)
             # ... does that object then get put into a garbage collector or something?  Do we have to
             # set that to None at some point, manually?
             self.scripts.append(script)
             if (script.x >= 0 and script.x < 100 and script.y >= 0 and script.y < 200):
-                self.squares[script.y][script.x].addscript(script)
+                self.tiles[script.y][script.x].addscript(script)
             return True
         except FirstItemLoadException, e:
             return False
 
     def delscript(self, x, y, idx):
-        """ Deletes a mapscript, both from the associated square, and our internal list. """
-        square = self.squares[y][x]
-        script = square.scripts[idx]
+        """ Deletes a mapscript, both from the associated tile, and our internal list. """
+        tile = self.tiles[y][x]
+        script = tile.scripts[idx]
         if (script is not None):
             self.scripts.remove(script)
-            self.squares[y][x].delscript(script)
+            self.tiles[y][x].delscript(script)
 
     def addentity(self):
         """ Add an entity. """
         try:
             entity = Entity.new(c.book, self.is_savegame())
             entity.read(self.df_ent)
-            if self.squares[entity.y][entity.x].entity is not None:
+            if self.tiles[entity.y][entity.x].entity is not None:
                 # TODO: Support this better, perhaps?
-                print 'WARNING: Two entities on a single square, discarding all but the original'
+                print 'WARNING: Two entities on a single tile, discarding all but the original'
             else:
                 self.entities.append(entity)
                 if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
-                    self.squares[entity.y][entity.x].addentity(entity)
+                    self.tiles[entity.y][entity.x].addentity(entity)
             return True
         except FirstItemLoadException, e:
             return False
 
     def delentity(self, x, y):
-        """ Deletes an entity, both from the associated square, and our internal list. """
-        square = self.squares[y][x]
-        ent = square.entity
+        """ Deletes an entity, both from the associated tile, and our internal list. """
+        tile = self.tiles[y][x]
+        ent = tile.entity
         if (ent is not None):
             self.entities.remove(ent)
-            square.delentity()
+            tile.delentity()
 
     def rgb_color(self):
         return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
 
     def coords_relative(self, x, y, dir):
         """
-        Static method to return coordinates for the square
+        Static method to return coordinates for the tile
         relative to the given coords.  1 = N, 2 = NE, etc
         """
         if (dir == self.DIR_N):
@@ -308,11 +308,11 @@ class Map(object):
         else:
             return None
 
-    def square_relative(self, x, y, dir):
-        """ Returns a square object relative to the given coords. """
+    def tile_relative(self, x, y, dir):
+        """ Returns a tile object relative to the given coords. """
         coords = self.coords_relative(x, y, dir)
         if (coords):
-            return self.squares[coords[1]][coords[0]]
+            return self.tiles[coords[1]][coords[0]]
         else:
             return None
 
@@ -432,10 +432,10 @@ class B1Map(Map):
             self.savegame_2 = self.df.readint()
             self.savegame_3 = self.df.readint()
 
-            # Squares
-            self.set_square_savegame()
+            # Tiles
+            self.set_tile_savegame()
             for i in range(200*100):
-                self.addsquare()
+                self.addtile()
 
             # Scripts...  Just keep going until EOF
             try:
@@ -502,10 +502,10 @@ class B1Map(Map):
         self.df.writeint(self.savegame_2)
         self.df.writeint(self.savegame_3)
 
-        # Squares
-        for row in self.squares:
-            for square in row:
-                square.write(self.df)
+        # Tiles
+        for row in self.tiles:
+            for tile in row:
+                tile.write(self.df)
 
         # Scripts
         for script in self.scripts:
@@ -642,10 +642,10 @@ class B2Map(Map):
             self.unusedstr2 = self.df.readstr()
             self.unusedstr3 = self.df.readstr()
 
-            # Squares
-            self.set_square_savegame()
+            # Tiles
+            self.set_tile_savegame()
             for i in range(200*100):
-                self.addsquare()
+                self.addtile()
 
             # Scripts...  Just keep going until EOF
             try:
@@ -714,10 +714,10 @@ class B2Map(Map):
         self.df.writestr(self.unusedstr2)
         self.df.writestr(self.unusedstr3)
 
-        # Squares
-        for row in self.squares:
-            for square in row:
-                square.write(self.df)
+        # Tiles
+        for row in self.tiles:
+            for tile in row:
+                tile.write(self.df)
 
         # Scripts
         for script in self.scripts:
@@ -840,10 +840,10 @@ class B3Map(B2Map):
             self.unusedstr2 = self.df.readstr()
             self.unusedstr3 = self.df.readstr()
 
-            # Squares
-            self.set_square_savegame()
+            # Tiles
+            self.set_tile_savegame()
             for i in range(200*100):
-                self.addsquare()
+                self.addtile()
 
             # Scripts...  Just keep going until EOF
             try:
@@ -917,10 +917,10 @@ class B3Map(B2Map):
         self.df.writestr(self.unusedstr2)
         self.df.writestr(self.unusedstr3)
 
-        # Squares
-        for row in self.squares:
-            for square in row:
-                square.write(self.df)
+        # Tiles
+        for row in self.tiles:
+            for tile in row:
+                tile.write(self.df)
 
         # Scripts
         for script in self.scripts:

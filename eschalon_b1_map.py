@@ -31,8 +31,8 @@ def usage(full=False):
     print "\t%s [<mapfile>]" % (progname)
     print
     print "To list map attributes on the console:"
-    print "\t%s -l [-s <squares|objects|txtmap>] [-u] <mapfile>" % (progname)
-    print "\t%s --list [--show=<squares|...>] [--unknowns] <mapfile>" % (progname)
+    print "\t%s -l [-s <tiles|objects|txtmap>] [-u] <mapfile>" % (progname)
+    print "\t%s --list [--show=<tiles|...>] [--unknowns] <mapfile>" % (progname)
     print
     if (full):
         print "Wherever <mapfile> appears in the above, you should specify the"
@@ -51,16 +51,16 @@ def usage(full=False):
         print
         print "By default, the --list option will only show the basic map"
         print "information.  To get a text listing of the attributes of every"
-        print "single square on the map (you'll probabably want to redirect this"
-        print "to a file, since there are 20,000 squares in an Eschalon map,"
-        print "though the utility will skip empty squares), you would use:"
+        print "single tile on the map (you'll probabably want to redirect this"
+        print "to a file, since there are 20,000 tiles in an Eschalon map,"
+        print "though the utility will skip empty tiles), you would use:"
         print
-        print "\t%s -l -s squares <mapfile>" % (progname)
+        print "\t%s -l -s tiles <mapfile>" % (progname)
         print "\tor"
-        print "\t%s --list --show=squares <mapfile>" % (progname)
+        print "\t%s --list --show=tiles <mapfile>" % (progname)
         print
         print "If you wanted a listing of all the objects in the map, specify"
-        print "'objects' instead of 'squares'."
+        print "'objects' instead of 'tiles'."
         print
         print "When being shown the listing, specify -u or --unknowns to"
         print "also show unknown data from the map file."
@@ -94,7 +94,7 @@ def main(argv=None):
             'list': False,
             'listoptions' : {
                 'all': False,
-                'squares': False,
+                'tiles': False,
                 'objects': False,
                 'txtmap': False
                 },
@@ -124,8 +124,8 @@ def main(argv=None):
             options['gui'] = False
             options['list'] = True
         elif (o in ('-s', '--show')):
-            if (a == 'squares'):
-                options['listoptions']['squares'] = True
+            if (a == 'tiles'):
+                options['listoptions']['tiles'] = True
             elif (a == 'objects'):
                 options['listoptions']['objects'] = True
             elif (a == 'txtmap'):

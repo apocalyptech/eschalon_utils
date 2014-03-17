@@ -130,7 +130,7 @@ class MapSelector(gtk.Dialog):
         # Note that these vars here should really *never* be anything other
         # than what we're setting them to, by the time we get here.  So
         # at least theoretically, these statements do nothing.
-        self.mapgui.cleansquares = []
+        self.mapgui.cleantiles = []
         self.mapgui.dragging = False
         self.mapgui.drawing = False
         self.mapgui.erasing = False
@@ -154,7 +154,7 @@ class MapSelector(gtk.Dialog):
         self.orig_sq_y = self.mapgui.sq_y
         self.orig_sq_x_prev = self.mapgui.sq_x_prev
         self.orig_sq_y_prev = self.mapgui.sq_y_prev
-        self.orig_cleansquares = self.mapgui.cleansquares
+        self.orig_cleantiles = self.mapgui.cleantiles
         self.orig_ctx = self.mapgui.ctx
         self.orig_edit_mode = self.mapgui.edit_mode
         self.orig_action_script_edit = self.mapgui.action_script_edit
@@ -175,7 +175,7 @@ class MapSelector(gtk.Dialog):
             self.mapgui.sq_y = self.orig_sq_y
             self.mapgui.sq_x_prev = self.orig_sq_x_prev
             self.mapgui.sq_y_prev = self.orig_sq_y_prev
-            self.mapgui.cleansquares = self.orig_cleansquares
+            self.mapgui.cleantiles = self.orig_cleantiles
             self.mapgui.ctx = self.orig_ctx
             self.mapgui.edit_mode = self.orig_edit_mode
             self.mapgui.action_script_edit = self.orig_action_script_edit
@@ -196,9 +196,9 @@ class MapSelector(gtk.Dialog):
                 our_vadj.set_value(map_vadj.get_value())
                 self.done_initial_scrolls = True
 
-            # Redraw what squares need to be redrawn
-            for (x, y) in self.mapgui.cleansquares:
-                self.mapgui.draw_square(x, y, True)
+            # Redraw what tiles need to be redrawn
+            for (x, y) in self.mapgui.cleantiles:
+                self.mapgui.draw_tile(x, y, True)
 
             widget.window.draw_drawable(
                     widget.get_style().fg_gc[gtk.STATE_NORMAL],
@@ -208,7 +208,7 @@ class MapSelector(gtk.Dialog):
                     self.canvas_x, self.canvas_y)
 
             # Make sure our to-clean list is empty
-            self.mapgui.cleansquares = []
+            self.mapgui.cleantiles = []
 
     def action_script_edit(self, x, y):
         """

@@ -20,8 +20,8 @@
 
 from eschalon import constants as c
 
-class Square(object):
-    """ A class to hold data about a particular square on a map. """
+class Tile(object):
+    """ A class to hold data about a particular tile on a map. """
 
     def __init__(self, x, y):
         """ A fresh object with no data. """
@@ -41,30 +41,30 @@ class Square(object):
         self.savegame = False
 
     def replicate(self):
-        newsquare = Square.new(self.book, self.x, self.y)
-        newsquare.savegame = self.savegame
+        newtile = Tile.new(self.book, self.x, self.y)
+        newtile.savegame = self.savegame
 
         # Simple Values
-        newsquare.wall = self.wall
-        newsquare.floorimg = self.floorimg
-        newsquare.decalimg = self.decalimg
-        newsquare.wallimg = self.wallimg
-        newsquare.walldecalimg = self.walldecalimg
-        newsquare.scriptid = self.scriptid
+        newtile.wall = self.wall
+        newtile.floorimg = self.floorimg
+        newtile.decalimg = self.decalimg
+        newtile.wallimg = self.wallimg
+        newtile.walldecalimg = self.walldecalimg
+        newtile.scriptid = self.scriptid
 
         # Arrays
         for script in self.scripts:
-            newsquare.scripts.append(script.replicate())
+            newtile.scripts.append(script.replicate())
         
         # Objects
         if (self.entity is not None):
-            newsquare.entity = self.entity.replicate()
+            newtile.entity = self.entity.replicate()
 
         # Call out to superclass replication
-        self._sub_replicate(newsquare)
+        self._sub_replicate(newtile)
 
         # ... aaand return our new object
-        return newsquare
+        return newtile
 
     def _sub_replicate(self, newentity):
         """
@@ -72,23 +72,23 @@ class Square(object):
         """
         pass
 
-    def equals(self, square):
+    def equals(self, tile):
         """
-        Compare ourselves to another square object.  We're just
+        Compare ourselves to another tile object.  We're just
         checking if our values are the same, NOT if we're *actually*
         the same object.  Returns true for equality, false for inequality.
         """
-        return (self._sub_equals(square) and
-                self.x == square.x and
-                self.y == square.y and
-                self.wall == square.wall and
-                self.floorimg == square.floorimg and
-                self.decalimg == square.decalimg and
-                self.wallimg == square.wallimg and
-                self.walldecalimg == square.walldecalimg and
-                self.scriptid == square.scriptid and
-                self.entity_equals(square.entity) and
-                self.scripts_equal(square.scripts))
+        return (self._sub_equals(tile) and
+                self.x == tile.x and
+                self.y == tile.y and
+                self.wall == tile.wall and
+                self.floorimg == tile.floorimg and
+                self.decalimg == tile.decalimg and
+                self.wallimg == tile.wallimg and
+                self.walldecalimg == tile.walldecalimg and
+                self.scriptid == tile.scriptid and
+                self.entity_equals(tile.entity) and
+                self.scripts_equal(tile.scripts))
 
     def _sub_equals(self, entity):
         """
@@ -175,7 +175,7 @@ class Square(object):
             if self.book == 1:
                 ret.append("    Unknown 5: %d" % self.unknown5)
             else:
-                ret.append("    Square flag: %d" % self.square_flag)
+                ret.append("    Tile flag: %d" % self.tile_flag)
                 if self.book == 3:
                     ret.append("    Cartography: %d" % self.cartography)
 
@@ -202,28 +202,28 @@ class Square(object):
         Static method to initialize the correct object
         """
         if book == 1:
-            return B1Square(x, y)
+            return B1Tile(x, y)
         elif book == 2:
-            return B2Square(x, y)
+            return B2Tile(x, y)
         elif book == 3:
-            return B3Square(x, y)
+            return B3Tile(x, y)
 
-class B1Square(Square):
+class B1Tile(Tile):
     """
-    Square structure for Book 1
+    Tile structure for Book 1
     """
 
     book = 1
 
     def __init__(self, x, y):
-        super(B1Square, self).__init__(x, y)
+        super(B1Tile, self).__init__(x, y)
 
         # Book 1 specific vars
         self.unknown5 = 0
         # This var is *probably* actually part of the wall ID, like in book 2
 
     def read(self, df):
-        """ Given a file descriptor, read in the square. """
+        """ Given a file descriptor, read in the tile. """
 
         self.wall = df.readuchar()
         self.floorimg = df.readuchar()
@@ -234,7 +234,7 @@ class B1Square(Square):
         self.scriptid = df.readuchar()
 
     def write(self, df):
-        """ Write the square to the file. """
+        """ Write the tile to the file. """
 
         df.writeuchar(self.wall)
         df.writeuchar(self.floorimg)
@@ -244,17 +244,17 @@ class B1Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
 
-    def _sub_replicate(self, newsquare):
+    def _sub_replicate(self, newtile):
         """
         Replication for B1 elements
         """
-        newsquare.unknown5 = self.unknown5
+        newtile.unknown5 = self.unknown5
 
-    def _sub_equals(self, square):
+    def _sub_equals(self, tile):
         """
         Equality function for B1
         """
-        return (square.unknown5 == self.unknown5)
+        return (tile.unknown5 == self.unknown5)
 
     def _sub_hasdata(self):
         """
@@ -262,21 +262,21 @@ class B1Square(Square):
         """
         return (self.unknown5 != 0)
 
-class B2Square(Square):
+class B2Tile(Tile):
     """
-    Square structure for Book 2
+    Tile structure for Book 2
     """
 
     book = 2
 
     def __init__(self, x, y):
-        super(B2Square, self).__init__(x, y)
+        super(B2Tile, self).__init__(x, y)
 
         # Book 2 specific vars
-        self.square_flag = 0
+        self.tile_flag = 0
 
     def read(self, df):
-        """ Given a file descriptor, read in the square. """
+        """ Given a file descriptor, read in the tile. """
 
         self.wall = df.readuchar()
         self.floorimg = df.readuchar()
@@ -285,10 +285,10 @@ class B2Square(Square):
         self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
         if self.savegame:
-            self.square_flag = df.readint()
+            self.tile_flag = df.readint()
 
     def write(self, df):
-        """ Write the square to the file. """
+        """ Write the tile to the file. """
 
         df.writeuchar(self.wall)
         df.writeuchar(self.floorimg)
@@ -297,41 +297,41 @@ class B2Square(Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
         if self.savegame:
-            df.writeint(self.square_flag)
+            df.writeint(self.tile_flag)
 
-    def _sub_replicate(self, newsquare):
+    def _sub_replicate(self, newtile):
         """
         Replication for B2 elements
         """
-        newsquare.square_flag = self.square_flag
+        newtile.tile_flag = self.tile_flag
 
-    def _sub_equals(self, square):
+    def _sub_equals(self, tile):
         """
         Equality function for B2
         """
-        return (square.square_flag == self.square_flag)
+        return (tile.tile_flag == self.tile_flag)
 
     def _sub_hasdata(self):
         """
         Do we have data in our B2-specific elements?
         """
-        return (self.square_flag != 0)
+        return (self.tile_flag != 0)
 
-class B3Square(B2Square):
+class B3Tile(B2Tile):
     """
-    Square structure for Book 3
+    Tile structure for Book 3
     """
 
     book = 3
 
     def __init__(self, x, y):
-        super(B3Square, self).__init__(x, y)
+        super(B3Tile, self).__init__(x, y)
 
         # Book 3 specific vars
         self.cartography = 0
 
     def read(self, df):
-        """ Given a file descriptor, read in the square. """
+        """ Given a file descriptor, read in the tile. """
 
         self.wall = df.readuchar()
         self.floorimg = df.readuchar()
@@ -340,11 +340,11 @@ class B3Square(B2Square):
         self.walldecalimg = df.readuchar()
         self.scriptid = df.readuchar()
         if self.savegame:
-            self.square_flag = df.readint()
+            self.tile_flag = df.readint()
             self.cartography = df.readint()
 
     def write(self, df):
-        """ Write the square to the file. """
+        """ Write the tile to the file. """
 
         df.writeuchar(self.wall)
         df.writeuchar(self.floorimg)
@@ -353,24 +353,24 @@ class B3Square(B2Square):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.scriptid)
         if self.savegame:
-            df.writeint(self.square_flag)
+            df.writeint(self.tile_flag)
             df.writeint(self.cartography)
 
-    def _sub_replicate(self, newsquare):
+    def _sub_replicate(self, newtile):
         """
         Replication for B3 elements
         """
-        super(B3Square, self)._sub_replicate(newsquare)
-        newsquare.cartography = self.cartography
+        super(B3Tile, self)._sub_replicate(newtile)
+        newtile.cartography = self.cartography
 
-    def _sub_equals(self, square):
+    def _sub_equals(self, tile):
         """
         Equality function for B3
         """
-        return (square.cartography == self.cartography and super(B3Square, self)._sub_equals(square))
+        return (tile.cartography == self.cartography and super(B3Tile, self)._sub_equals(tile))
 
     def _sub_hasdata(self):
         """
         Do we have data in our B3-specific elements?
         """
-        return (self.cartography != 0 or super(B3Square)._sub_hasdata(self))
+        return (self.cartography != 0 or super(B3Tile)._sub_hasdata(self))

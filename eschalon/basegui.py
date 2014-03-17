@@ -720,7 +720,7 @@ class BaseGUI(object):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
         elif (self.curitemtype == self.ITEM_MAP):
-            obj = self.map.squares[self.sq_y][self.sq_x].scripts[self.curitem[1]].items[self.curitem[0]]
+            obj = self.map.tiles[self.sq_y][self.sq_x].scripts[self.curitem[1]].items[self.curitem[0]]
             origobj = obj
         else:
             obj = self.char
@@ -1130,7 +1130,7 @@ class BaseGUI(object):
         self.imgsel_clean = []
         self.imgsel_window = self.get_widget("item_imgsel_window")
         if (self.curitemtype == self.ITEM_MAP):
-            self.imgsel_window.set_transient_for(self.squarewindow)
+            self.imgsel_window.set_transient_for(self.tilewindow)
         else:
             self.imgsel_window.set_transient_for(self.itemwindow)
         self.imgsel_widget = widget

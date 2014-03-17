@@ -58,7 +58,7 @@ if (gtk.check_version(2, 18, 0) is not None):
 
 from eschalon.map import Map
 from eschalon.item import Item
-from eschalon.square import Square
+from eschalon.tile import Tile
 from eschalon.basegui import BaseGUI
 from eschalon.smartdraw import SmartDraw
 from eschalon.mapscript import Mapscript
@@ -247,7 +247,7 @@ class MapGUI(BaseGUI):
         self.sq_y = -1
         self.sq_x_prev = -1
         self.sq_y_prev = -1
-        self.cleansquares = []
+        self.cleantiles = []
 
         self.mapinit = False
         self.undo = None
@@ -259,8 +259,8 @@ class MapGUI(BaseGUI):
         self.builder.add_from_file(self.datafile('itemgui.ui'))
         self.window = self.get_widget('mainwindow')
         self.itemwindow = self.get_widget('itemwindow')
-        self.squarewindow = self.get_widget('squarewindow')
-        self.itemwindow.set_transient_for(self.squarewindow)
+        self.tilewindow = self.get_widget('tilewindow')
+        self.itemwindow.set_transient_for(self.tilewindow)
         self.propswindow = self.get_widget('globalpropswindow')
         self.drawstatuswindow = self.get_widget('drawstatus_window')
         self.drawstatusbar = self.get_widget('drawstatus_bar')
@@ -437,16 +437,16 @@ class MapGUI(BaseGUI):
 
         # Some more vars to make sure exist
         self.guicache = None
-        self.squarebuf = None
-        self.blanksquare = None
-        self.basicsquare = None
+        self.tilebuf = None
+        self.blanktile = None
+        self.basictile = None
         self.updating_map_checkboxes = False
         self.populating_entity_tab = False
 
-        # Blank pixbuf to use in the square editing window
-        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.square_width, self.gfx.square_height*5)
+        # Blank pixbuf to use in the tile editing window
+        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height*5)
 
-        # Load in our mouse map (to determine which square we're pointing at)
+        # Load in our mouse map (to determine which tile we're pointing at)
         self.mousemap = {}
         for zoom in self.zoom_levels:
             mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
@@ -672,7 +672,7 @@ class MapGUI(BaseGUI):
             on_motion=self.objsel_on_motion,
             on_expose=self.objsel_on_expose)
         self.register_widget('objselwindow', self.objsel_window)
-        self.objsel_window.set_transient_for(self.squarewindow)
+        self.objsel_window.set_transient_for(self.tilewindow)
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
@@ -888,12 +888,12 @@ class MapGUI(BaseGUI):
             self.get_widget('decalimg_image').set_size_request(64, 32)
             self.get_widget('wallimg_image').set_size_request(64, 160)
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
-            self.get_widget('ent_square_img').set_size_request(128, 128)
+            self.get_widget('ent_tile_img').set_size_request(128, 128)
             self.get_widget('fill_map_img').set_size_request(64, 32)
             self.propswindow.set_size_request(410, 760)
 
         # Entity death script editor launcher
-        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.squarewindow, True)
+        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
 
         # Create our entity status values box
         if c.book > 1:
@@ -982,7 +982,7 @@ class MapGUI(BaseGUI):
                 'on_entid_changed': self.on_entid_changed,
                 'on_scriptid_changed': self.on_scriptid_changed,
                 'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
-                'on_singleval_square_changed_int': self.on_singleval_square_changed_int,
+                'on_singleval_tile_changed_int': self.on_singleval_tile_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
                 'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
@@ -1002,7 +1002,7 @@ class MapGUI(BaseGUI):
                 'on_walldecal_changed': self.on_walldecal_changed,
                 'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
                 'on_colorsel_clicked': self.on_colorsel_clicked,
-                'on_squarewindow_close': self.on_squarewindow_close,
+                'on_tilewindow_close': self.on_tilewindow_close,
                 'on_prop_button_clicked': self.on_prop_button_clicked,
                 'on_propswindow_close': self.on_propswindow_close,
                 'on_prefs': self.on_prefs,
@@ -1361,11 +1361,11 @@ class MapGUI(BaseGUI):
         # though perhaps that needs to get revisited at some point.
         if self.undo.have_undo():
             history = self.undo.get_undo()
-            self.store_hugegfx_state(self.map.squares[history.y][history.x])
+            self.store_hugegfx_state(self.map.tiles[history.y][history.x])
             for (x, y) in self.undo.undo():
-                self.redraw_square(x, y)
+                self.redraw_tile(x, y)
             self.update_undo_gui()
-            if self.check_hugegfx_state(self.map.squares[history.y][history.x]):
+            if self.check_hugegfx_state(self.map.tiles[history.y][history.x]):
                 self.draw_map()
 
     def on_redo(self, widget=None):
@@ -1373,11 +1373,11 @@ class MapGUI(BaseGUI):
         # See on_undo() for some notes about the hugegfx stuff
         if self.undo.have_redo():
             history = self.undo.get_redo()
-            self.store_hugegfx_state(self.map.squares[history.y][history.x])
+            self.store_hugegfx_state(self.map.tiles[history.y][history.x])
             for (x, y) in self.undo.redo():
-                self.redraw_square(x, y)
+                self.redraw_tile(x, y)
             self.update_undo_gui()
-            if self.check_hugegfx_state(self.map.squares[history.y][history.x]):
+            if self.check_hugegfx_state(self.map.tiles[history.y][history.x]):
                 self.draw_map()
 
     def on_fill(self, widget=None):
@@ -1397,24 +1397,24 @@ class MapGUI(BaseGUI):
             # inside the loop itself
             if self.get_widget('fill_map_overwrite').get_active():
                 if len(pool) < 2:
-                    for row in self.map.squares:
-                        for square in row:
-                            square.floorimg = val
+                    for row in self.map.tiles:
+                        for tile in row:
+                            tile.floorimg = val
                 else:
-                    for row in self.map.squares:
-                        for square in row:
-                            square.floorimg = random.choice(pool)
+                    for row in self.map.tiles:
+                        for tile in row:
+                            tile.floorimg = random.choice(pool)
             else:
                 if len(pool) < 2:
-                    for row in self.map.squares:
-                        for square in row:
-                            if square.floorimg == 0:
-                                square.floorimg = val
+                    for row in self.map.tiles:
+                        for tile in row:
+                            if tile.floorimg == 0:
+                                tile.floorimg = val
                 else:
-                    for row in self.map.squares:
-                        for square in row:
-                            if square.floorimg == 0:
-                                square.floorimg = random.choice(pool)
+                    for row in self.map.tiles:
+                        for tile in row:
+                            if tile.floorimg == 0:
+                                tile.floorimg = random.choice(pool)
             self.draw_map()
 
             # Clear out "Undo" - we're not hooking into this yet.
@@ -1537,7 +1537,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (labelname[:9] == 'item_name'):
                 (varname, item_num) = labelname.rsplit('_', 1)
@@ -1551,7 +1551,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             script.__dict__[labelname] = int(widget.get_value())
 
@@ -1573,20 +1573,20 @@ class MapGUI(BaseGUI):
             else:
                 sliderloot.set_markup('Loot Level (0-10):')
 
-    def update_ent_square_img(self):
-        entity = self.map.squares[self.sq_y][self.sq_x].entity
+    def update_ent_tile_img(self):
+        entity = self.map.tiles[self.sq_y][self.sq_x].entity
         entbuf = self.gfx.get_entity(entity.entid, entity.direction, None, True)
         if (entbuf is None):
-            self.get_widget('ent_square_img').set_from_stock(gtk.STOCK_MISSING_IMAGE, 2)
+            self.get_widget('ent_tile_img').set_from_stock(gtk.STOCK_MISSING_IMAGE, 2)
         else:
-            self.get_widget('ent_square_img').set_from_pixbuf(entbuf)
+            self.get_widget('ent_tile_img').set_from_pixbuf(entbuf)
 
     def on_entid_changed(self, widget):
         """ Special case for changing the entity ID. """
         idx = widget.get_active()
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
-        entity = self.map.squares[self.sq_y][self.sq_x].entity
+        entity = self.map.tiles[self.sq_y][self.sq_x].entity
         entity.entid = entid
         if (entid in c.entitytable):
             # We set the button out here in case we were editing a Global map and
@@ -1606,33 +1606,33 @@ class MapGUI(BaseGUI):
                 self.get_widget('health').set_value(health)
                 self.get_widget('movement').set_value(c.entitytable[entid].movement)
                 self.get_widget('friendly').set_value(c.entitytable[entid].friendly)
-            self.update_ent_square_img()
+            self.update_ent_tile_img()
 
     def on_ent_status_changed(self, widget):
         """ What to do when an entity status value changes. """
         wname = widget.get_name()
         (shortname, idx) = wname.rsplit('_', 1)
         idx = int(idx)
-        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent = self.map.tiles[self.sq_y][self.sq_x].entity
         ent.statuses[idx] = int(widget.get_value())
 
     def on_direction_changed(self, widget):
         """ Special case for changing the entity direction. """
         wname = widget.get_name()
-        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent = self.map.tiles[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_active() + 1
-        self.update_ent_square_img()
+        self.update_ent_tile_img()
 
     def on_singleval_ent_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent = self.map.tiles[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = int(widget.get_value())
 
     def on_singleval_ent_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent = self.map.tiles[self.sq_y][self.sq_x].entity
         ent.__dict__[wname] = widget.get_text()
 
     def on_singleval_map_changed_int(self, widget):
@@ -1658,18 +1658,18 @@ class MapGUI(BaseGUI):
         val = model.get_value(iter, 1)
         self.map.__dict__[wname] = val
 
-    def on_dropdown_idx_square_changed(self, widget):
+    def on_dropdown_idx_tile_changed(self, widget):
         """ Update the appropriate bit in memory. """
 
-    def on_singleval_square_changed_int(self, widget):
+    def on_singleval_tile_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        square = self.map.squares[self.sq_y][self.sq_x]
-        square.__dict__[wname] = int(widget.get_value())
+        tile = self.map.tiles[self.sq_y][self.sq_x]
+        tile.__dict__[wname] = int(widget.get_value())
 
     def on_floor_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed_int(widget)
+        self.on_singleval_tile_changed_int(widget)
         pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -1695,7 +1695,7 @@ class MapGUI(BaseGUI):
 
     def on_decal_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        self.on_singleval_square_changed_int(widget)
+        self.on_singleval_tile_changed_int(widget)
         pixbuf = self.gfx.get_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -1714,7 +1714,7 @@ class MapGUI(BaseGUI):
     def on_wall_changed(self, widget, do_spin_update=True):
         """ Update the appropriate image when necessary. """
         if do_spin_update:
-            self.on_singleval_square_changed_int(widget)
+            self.on_singleval_tile_changed_int(widget)
         (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
@@ -1731,7 +1731,7 @@ class MapGUI(BaseGUI):
             self.get_widget('draw_wall_img').set_from_pixbuf(pixbuf)
 
     def on_walldecal_changed(self, widget):
-        self.on_singleval_square_changed_int(widget)
+        self.on_singleval_tile_changed_int(widget)
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
@@ -1748,60 +1748,60 @@ class MapGUI(BaseGUI):
         else:
             self.get_widget('draw_walldecal_img').set_from_pixbuf(pixbuf)
 
-    def on_squarewindow_close(self, widget, event=None):
+    def on_tilewindow_close(self, widget, event=None):
         """
-        Closes the square-editing window.  Our primary goal here is to redraw the
-        square that was just edited.  That's all out in its own function though, so
+        Closes the tile-editing window.  Our primary goal here is to redraw the
+        tile that was just edited.  That's all out in its own function though, so
         we're just doing some housekeeping mostly.
         """
-        # Populate our undo object with the new square
+        # Populate our undo object with the new tile
         self.undo.finish()
 
         # All the "fun" stuff ends up happening in here.
-        self.redraw_square(self.sq_x, self.sq_y)
+        self.redraw_tile(self.sq_x, self.sq_y)
         
         # ... update our GUI stuff for Undo
         self.update_undo_gui()
 
         # Close out the window
-        self.squarewindow.hide()
+        self.tilewindow.hide()
 
         # Check for hugegfx changes
         if c.book > 1:
-            if self.check_hugegfx_state(self.map.squares[self.sq_y][self.sq_x]):
+            if self.check_hugegfx_state(self.map.tiles[self.sq_y][self.sq_x]):
                 self.draw_map()
 
         return True
 
-    def redraw_square(self, x, y):
+    def redraw_tile(self, x, y):
         """
-        Redraw a single square, and any dependant squares nearby as well.
+        Redraw a single tile, and any dependant tiles nearby as well.
 
         Because we don't really keep composite caches
-        around (should we?) this entails drawing all the squares behind the square we
-        just edited, the square itself, and then four more "levels" of squares below, as
+        around (should we?) this entails drawing all the tiles behind the tile we
+        just edited, the tile itself, and then four more "levels" of tiles below, as
         well, because objects may be obscuring the one we just edited.  Because of the
-        isometric presentation, this means that we'd be redrawing 29 total squares,
-        assuming that everything fits exactly into our square width.
+        isometric presentation, this means that we'd be redrawing 29 total tiles,
+        assuming that everything fits exactly into our tile width.
 
         Unfortunately, now that we support entities, some of those are wider than the
-        square width, so we're going to redraw even more than that, for a total of 67
-        squares.
+        tile width, so we're going to redraw even more than that, for a total of 67
+        tiles.
 
         Note that we could cut down on that number by doing some logic - ie: we really
-        would only have to draw the bottom-most square if it contained the tallest tree
+        would only have to draw the bottom-most tile if it contained the tallest tree
         graphic, and there's no need to draw the floor or floor decals on any tile below
         the one we just edited.  Still, because this is a user-initiated action, I don't
         think it's really worth it to optimize that out.  I don't think the extra processing
         will be noticeable.
 
         Note that the we-don't-have-to-draw-everything angle becomes even bigger now that
-        we're widening the field to support entities.  The outermost 20 squares that we're
+        we're widening the field to support entities.  The outermost 20 tiles that we're
         drawing only have to be drawn if there's an entity in there which is wider than
-        the ordinary square, and even then we'd *only* have to draw the entity (to say nothing
+        the ordinary tile, and even then we'd *only* have to draw the entity (to say nothing
         of the fact that very few of those larger entities actually draw to the full edge of
-        the entity graphic for all cases).  Additionally, if the square we just edited didn't
-        contain an entity at any point, we'd be able to lop off a bunch squares in the first
+        the entity graphic for all cases).  Additionally, if the tile we just edited didn't
+        contain an entity at any point, we'd be able to lop off a bunch tiles in the first
         place.  Still, I'm guessing that it doesn't really matter much.  Perhaps it'll become
         necessary to do this more intelligently once I've got some actual drawing-type
         functionality in place.
@@ -1829,37 +1829,37 @@ class MapGUI(BaseGUI):
         over_ctx.paint()
 
         # Grab some local vars
-        squares = self.map.squares
+        tiles = self.map.tiles
         huge_gfx_rows = self.huge_gfx_rows
         global_offset_x = global_x+1
         global_offset_y = self.z_halfheight*(y-8)+1
 
         # Loop through and composite the new image area
         for i in range(10):
-            # Draw tier 1 squares first, then tier 2
+            # Draw tier 1 tiles first, then tier 2
             if (tier_1_y > -1 and tier_1_y < 200):
                 for (tier_i, tier_x) in enumerate(tier_1_x):
                     yval = self.z_halfheight+((i-5)*self.z_height)
                     if (tier_x > -1 and tier_x < 100):
-                        (op_buf, offset) = self.draw_square(tier_x, tier_1_y, False, False)
+                        (op_buf, offset) = self.draw_tile(tier_x, tier_1_y, False, False)
                         over_ctx.set_source_surface(op_buf, ((-3+(2*tier_i))*self.z_halfwidth)-offset+self.z_halfwidth, yval)
                         over_ctx.paint()
                 # Redraw any "huge" graphics in this row
                 if c.book > 1:
                     for gfx_x in huge_gfx_rows[tier_1_y]:
-                        self.draw_huge_gfx(squares[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                        self.draw_huge_gfx(tiles[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             if (i < 9):
                 if (tier_2_y > -1 and tier_2_y < 200):
                     for (tier_i, tier_x) in enumerate(tier_2_x):
                         if (tier_x > -1 and tier_x < 100):
-                            (op_buf, offset) = self.draw_square(tier_x, tier_2_y, False, False)
+                            (op_buf, offset) = self.draw_tile(tier_x, tier_2_y, False, False)
                             over_ctx.set_source_surface(op_buf, ((-1+tier_i)*self.z_width)-offset+self.z_halfwidth, (i-4)*self.z_height)
                             over_ctx.paint()
                 # Redraw any "huge" graphics in this row
                 if c.book > 1:
                     if tier_2_y < 200:
                         for gfx_x in huge_gfx_rows[tier_2_y]:
-                            self.draw_huge_gfx(squares[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                            self.draw_huge_gfx(tiles[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             tier_1_y = tier_1_y + 2
             tier_2_y = tier_2_y + 2
 
@@ -1867,14 +1867,14 @@ class MapGUI(BaseGUI):
         # big graphics go.
         for yval in range(tier_1_y-1, 200):
             for gfx_x in huge_gfx_rows[yval]:
-                self.draw_huge_gfx(squares[yval][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                self.draw_huge_gfx(tiles[yval][gfx_x], over_ctx, global_offset_x, global_offset_y)
 
         # Now superimpose that onto our main map image
         self.guicache_ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
         self.guicache_ctx.paint()
         self.ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
         self.ctx.paint()
-        self.cleansquares.append((x, y))
+        self.cleantiles.append((x, y))
         self.maparea.queue_draw()
 
         return True
@@ -1885,7 +1885,7 @@ class MapGUI(BaseGUI):
 
     def set_zoom_vars(self, scalenum):
         """
-        Set a bunch of parameters we use to draw, based on how wide our squares should be.
+        Set a bunch of parameters we use to draw, based on how wide our tiles should be.
         This also incidentally sets the sensitivity flag on our zoom buttons.
         """
         width = self.zoom_levels[scalenum]
@@ -1898,15 +1898,15 @@ class MapGUI(BaseGUI):
         self.z_mapsize_x = self.z_width*101
         self.z_mapsize_y = int(self.z_mapsize_x/2)
 
-        # These vars help speed up square drawing
+        # These vars help speed up tile drawing
         self.z_2xheight = self.z_height*2
         self.z_3xheight = self.z_height*3
         self.z_4xheight = self.z_height*4
         self.z_5xheight = self.z_height*5
 
-        # Our squarebuf size (the one we draw squares onto) may vary based on book
-        self.z_squarebuf_w = int(self.z_width * self.gfx.squarebuf_mult)
-        self.z_squarebuf_offset = int((self.z_squarebuf_w - self.z_width)/2)
+        # Our tilebuf size (the one we draw tiles onto) may vary based on book
+        self.z_tilebuf_w = int(self.z_width * self.gfx.tilebuf_mult)
+        self.z_tilebuf_offset = int((self.z_tilebuf_w - self.z_width)/2)
 
         # Clean up our zoom icons
         if (scalenum == 0):
@@ -2044,23 +2044,23 @@ class MapGUI(BaseGUI):
             # It's also important to append the previous value FIRST, so that our graphic clean-up
             # doesn't clobber a freshly-drawn mouse pointer
             if (self.sq_x_prev != -1):
-                self.cleansquares.append((self.sq_x_prev, self.sq_y_prev))
+                self.cleantiles.append((self.sq_x_prev, self.sq_y_prev))
                 # We should just really check for over-wide entities here, but for now we'll
                 # just do some excessive redrawing.
-                if (self.map.squares[self.sq_y_prev][self.sq_x_prev].entity is not None):
+                if (self.map.tiles[self.sq_y_prev][self.sq_x_prev].entity is not None):
                     if (self.sq_x_prev != 0):
-                        self.cleansquares.append((self.sq_x_prev-1, self.sq_y_prev))
+                        self.cleantiles.append((self.sq_x_prev-1, self.sq_y_prev))
                     if (self.sq_x_prev != 99):
-                        self.cleansquares.append((self.sq_x_prev+1, self.sq_y_prev))
-            self.cleansquares.append((self.sq_x, self.sq_y))
+                        self.cleantiles.append((self.sq_x_prev+1, self.sq_y_prev))
+            self.cleantiles.append((self.sq_x, self.sq_y))
             self.sq_x_prev = self.sq_x
             self.sq_y_prev = self.sq_y
 
             # Draw if we're supposed to
             if (self.drawing):
-                self.action_draw_square(self.sq_x, self.sq_y)
+                self.action_draw_tile(self.sq_x, self.sq_y)
             elif (self.erasing):
-                self.action_erase_square(self.sq_x, self.sq_y)
+                self.action_erase_tile(self.sq_x, self.sq_y)
 
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.sq_x, self.sq_y))
 
@@ -2127,7 +2127,7 @@ class MapGUI(BaseGUI):
     def script_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
         varname = '%s_%d' % (name, page)
         entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250, hbox)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             if (name[:9] == 'item_name'):
                 (varname, itemnum) = name.rsplit('_', 1)
@@ -2173,7 +2173,7 @@ class MapGUI(BaseGUI):
         if signal is None:
             signal = self.on_script_int_changed
         entry = func(table, row, varname, text, tooltip, signal)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             entry.set_value(script.__dict__[name])
 
@@ -2199,7 +2199,7 @@ class MapGUI(BaseGUI):
         entry.set_name('%s_%d' % (name, page))
         for value in values:
             entry.append_text(value)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         if (script is not None):
             entry.set_active(script.__dict__[name])
         if (signal is not None):
@@ -2218,7 +2218,7 @@ class MapGUI(BaseGUI):
         entry = gtk.CheckButton()
         entry.show()
         entry.set_name('%s_%X_%d' % (name, flagval, page))
-        scriptval = self.map.squares[self.sq_y][self.sq_x].scripts[page].__dict__[name]
+        scriptval = self.map.tiles[self.sq_y][self.sq_x].scripts[page].__dict__[name]
         entry.set_active((scriptval & flagval == flagval))
         entry.connect('toggled', self.on_script_flag_changed)
         if (tooltip is not None):
@@ -2254,7 +2254,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (name, flagval, page) = wname.rsplit('_', 2)
         page = int(page)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         self.on_flag_changed(name, flagval, widget, script)
 
     def on_barrier_changed(self, widget):
@@ -2262,12 +2262,12 @@ class MapGUI(BaseGUI):
         What to do when our barrier dropdown is changed.
         """
         model = widget.get_model()
-        self.map.squares[self.sq_y][self.sq_x].wall = model[widget.get_active()][1]
+        self.map.tiles[self.sq_y][self.sq_x].wall = model[widget.get_active()][1]
 
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
-        item = self.map.squares[self.sq_y][self.sq_x].scripts[page].items[num]
+        item = self.map.tiles[self.sq_y][self.sq_x].scripts[page].items[num]
         self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
 
     def on_script_dropdown_changed(self, widget):
@@ -2275,7 +2275,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (varname, page) = wname.rsplit('_', 2)
         page = int(page)
-        script = self.map.squares[self.sq_y][self.sq_x].scripts[page]
+        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
         script.__dict__[varname] = widget.get_active()
 
     def on_mapitem_clicked(self, widget, doshow=True):
@@ -2285,7 +2285,7 @@ class MapGUI(BaseGUI):
         num = int(num)
         page = int(page)
         self.curitem = (num, page)
-        self.populate_itemform_from_item(self.map.squares[self.sq_y][self.sq_x].scripts[page].items[num])
+        self.populate_itemform_from_item(self.map.tiles[self.sq_y][self.sq_x].scripts[page].items[num])
         self.get_widget('item_notebook').set_current_page(0)
         if (doshow):
             self.itemwindow.show()
@@ -2304,7 +2304,7 @@ class MapGUI(BaseGUI):
         (varname, num, page, action) = wname.rsplit('_', 3)
         num = int(num)
         page = int(page)
-        items = self.map.squares[self.sq_y][self.sq_x].scripts[page].items
+        items = self.map.tiles[self.sq_y][self.sq_x].scripts[page].items
         if (action == 'cut'):
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_copy' % (num, page)))
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_delete' % (num, page)))
@@ -2337,7 +2337,7 @@ class MapGUI(BaseGUI):
         Given a script, adds a new tab to the script notebook, with
         all the necessary inputs.
         """
-        square = self.map.squares[self.sq_y][self.sq_x]
+        tile = self.map.tiles[self.sq_y][self.sq_x]
         curpages = self.script_notebook.get_n_pages()
 
         # Label for the notebook
@@ -2384,16 +2384,16 @@ class MapGUI(BaseGUI):
 
         # Script editor launcher
         hbox = entry.get_property('parent')
-        self.setup_script_editor_launcher(hbox, entry, self.squarewindow, True)
+        self.setup_script_editor_launcher(hbox, entry, self.tilewindow, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
-        if (square.scripts[curpages].trap in c.traptable.keys()):
+        if (tile.scripts[curpages].trap in c.traptable.keys()):
             self.script_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
         else:
             self.script_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
-        if (square.scripts[curpages].state in c.containertable.keys()):
+        if (tile.scripts[curpages].state in c.containertable.keys()):
             self.script_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
         else:
             self.script_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
@@ -2405,7 +2405,7 @@ class MapGUI(BaseGUI):
             self.script_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
             # If we ever get more flags, this'll have to change
-            if (square.scripts[curpages].flags & ~0x40 == 0):
+            if (tile.scripts[curpages].flags & ~0x40 == 0):
                 self.script_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
                 self.script_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
@@ -2417,7 +2417,7 @@ class MapGUI(BaseGUI):
             self.script_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
 
             # Condition is special, we're using an hbox here
-            scr = self.map.squares[self.sq_y][self.sq_x].scripts[curpages]
+            scr = self.map.tiles[self.sq_y][self.sq_x].scripts[curpages]
             self.script_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
@@ -2463,7 +2463,7 @@ class MapGUI(BaseGUI):
         contents_box.pack_start(cinput, False, False)
 
         # Contents Inputs (varies based on savefile status)
-        if (square.scripts[curpages].savegame):
+        if (tile.scripts[curpages].savegame):
             for num in range(8):
                 self.script_input_label(curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num+1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
@@ -2511,7 +2511,7 @@ class MapGUI(BaseGUI):
 
         # Update our text labels and tooltips appropriately
         # for scriptid type 6
-        self.update_script_type_strings(curpages, square.scriptid)
+        self.update_script_type_strings(curpages, tile.scriptid)
 
         # ... and update our "other" label
         self.on_locklevel_changed(self.get_widget('lock_%d' % (curpages)))
@@ -2531,7 +2531,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (button_name, page) = wname.rsplit('_', 1)
         page = int(page)
-        square = self.map.squares[self.sq_y][self.sq_x]
+        tile = self.map.tiles[self.sq_y][self.sq_x]
 
         # We'll have to remove this regardless, so do it now.
         self.map.delscript(self.sq_x, self.sq_y, page)
@@ -2541,9 +2541,9 @@ class MapGUI(BaseGUI):
         # This is in theory more lame than renumbering stuff, but to accurately
         # renumber everything, we'd have to change the names of all the widgets
         # in there.  Which would be even more lame.
-        if (page < len(square.scripts)):
+        if (page < len(tile.scripts)):
             self.clear_script_notebook()
-            for script in self.map.squares[self.sq_y][self.sq_x].scripts:
+            for script in self.map.tiles[self.sq_y][self.sq_x].scripts:
                 self.append_script_notebook(script)
 
         # ... and possibly clean out our note
@@ -2554,37 +2554,37 @@ class MapGUI(BaseGUI):
         Called when a new script is added.  Creates a new
         Script object and handles adding it to the notebook.
         """
-        square = self.map.squares[self.sq_y][self.sq_x]
+        tile = self.map.tiles[self.sq_y][self.sq_x]
         script = Mapscript.new(c.book, self.map.is_savegame())
         script.tozero(self.sq_x, self.sq_y)
         self.map.scripts.append(script)
-        square.addscript(script)
+        tile.addscript(script)
         self.append_script_notebook(script)
         self.script_notebook.show()
         self.update_object_note()
 
     def on_healthmaxbutton_clicked(self, widget):
         """ Set the entity's health to its maximum. """
-        entid = self.map.squares[self.sq_y][self.sq_x].entity.entid
+        entid = self.map.tiles[self.sq_y][self.sq_x].entity.entid
         if (entid in c.entitytable):
             health = c.entitytable[entid].health
             self.get_widget('health').set_value(health)
 
     def on_setinitial_clicked(self, widget):
         """ Set the entity's "initial" location to the current (x,y) """
-        ent = self.map.squares[self.sq_y][self.sq_x].entity
+        ent = self.map.tiles[self.sq_y][self.sq_x].entity
         ent.set_initial(self.sq_x, self.sq_y)
         self.get_widget('initial_loc').set_value(ent.initial_loc)
 
     def on_entity_toggle(self, widget):
-        square = self.map.squares[self.sq_y][self.sq_x]
-        if (square.entity is None):
+        tile = self.map.tiles[self.sq_y][self.sq_x]
+        if (tile.entity is None):
             # create a new entity and toggle
             ent = Entity.new(c.book, self.map.is_savegame())
             ent.tozero(self.sq_x, self.sq_y)
             self.map.entities.append(ent)
-            square.addentity(ent)
-            self.populate_entity_tab(square)
+            tile.addentity(ent)
+            self.populate_entity_tab(tile)
             self.set_entity_toggle_button(False)
             # Also trigger on_entid_changed, to prepopulate
             # what information we can.
@@ -2612,43 +2612,43 @@ class MapGUI(BaseGUI):
         else:
             text_1.set_text('Description')
             text_2.set_text('Extra Text')
-            obj_1.set_tooltip_text('A basic description of the square.')
+            obj_1.set_tooltip_text('A basic description of the tile.')
             obj_2.set_tooltip_text('More descriptive text (such as on signs or gravestones).')
 
-    def update_all_scriptid_type_strings(self, square):
-        """ Update the form text for all scripts on a square. """
+    def update_all_scriptid_type_strings(self, tile):
+        """ Update the form text for all scripts on a tile. """
         for idx in range(self.script_notebook.get_n_pages()):
-            self.update_script_type_strings(idx, square.scriptid)
+            self.update_script_type_strings(idx, tile.scriptid)
 
     def on_scriptid_changed(self, widget):
         """ Process changing our object/script ID. """
-        self.on_singleval_square_changed_int(widget)
-        square = self.map.squares[self.sq_y][self.sq_x]
-        self.update_all_scriptid_type_strings(square)
+        self.on_singleval_tile_changed_int(widget)
+        tile = self.map.tiles[self.sq_y][self.sq_x]
+        self.update_all_scriptid_type_strings(tile)
         self.update_object_note()
 
     def on_scriptid_dd_changed(self, widget):
         """ Process changing our object/script type dropdown. """
-        square = self.map.squares[self.sq_y][self.sq_x]
-        square.scriptid = self.object_type_list_rev[widget.get_active()]
-        self.update_all_scriptid_type_strings(square)
+        tile = self.map.tiles[self.sq_y][self.sq_x]
+        tile.scriptid = self.object_type_list_rev[widget.get_active()]
+        self.update_all_scriptid_type_strings(tile)
         self.update_object_note()
 
-    def populate_squarewindow_from_square(self, square):
-        """ Populates the square editing screen from a given square. """
+    def populate_tilewindow_from_tile(self, tile):
+        """ Populates the tile editing screen from a given tile. """
 
         # Make sure we start out on the right page
-        self.get_widget('square_notebook').set_current_page(0)
+        self.get_widget('tile_notebook').set_current_page(0)
 
         # First the main items.  Wall stuff first.
-        if square.wall in self.wallvals:
+        if tile.wall in self.wallvals:
             self.get_widget('wall_label').hide()
             self.get_widget('wall').hide()
             self.get_widget('barrier_label').show()
             self.get_widget('barrier').show()
             model = self.get_widget('barrier').get_model()
             for (idx, row) in enumerate(model):
-                if (row[1] == square.wall):
+                if (row[1] == tile.wall):
                     self.get_widget('barrier').set_active(idx)
                     break
         else:
@@ -2656,79 +2656,79 @@ class MapGUI(BaseGUI):
             self.get_widget('barrier').hide()
             self.get_widget('wall_label').show()
             self.get_widget('wall').show()
-            self.get_widget('wall').set_value(square.wall)
+            self.get_widget('wall').set_value(tile.wall)
 
         # ... and now the rest
-        self.get_widget('floorimg').set_value(square.floorimg)
-        self.get_widget('decalimg').set_value(square.decalimg)
-        self.get_widget('wallimg').set_value(square.wallimg)
-        self.get_widget('walldecalimg').set_value(square.walldecalimg)
+        self.get_widget('floorimg').set_value(tile.floorimg)
+        self.get_widget('decalimg').set_value(tile.decalimg)
+        self.get_widget('wallimg').set_value(tile.wallimg)
+        self.get_widget('walldecalimg').set_value(tile.walldecalimg)
         if c.book == 1:
-            self.get_widget('unknown5').set_value(square.unknown5)
+            self.get_widget('unknown5').set_value(tile.unknown5)
         else:
-            self.get_widget('square_flag').set_value(square.square_flag)
+            self.get_widget('tile_flag').set_value(tile.tile_flag)
             if c.book == 3:
-                self.get_widget('cartography').set_value(square.cartography)
+                self.get_widget('cartography').set_value(tile.cartography)
 
         # Now entites, if needed
-        if (square.entity is None):
+        if (tile.entity is None):
             self.set_entity_toggle_button(True)
         else:
             self.set_entity_toggle_button(False)
-            self.populate_entity_tab(square)
+            self.populate_entity_tab(tile)
 
         # ... and scripts (first the ID)
-        if (square.scriptid in c.objecttypetable):
+        if (tile.scriptid in c.objecttypetable):
             self.get_widget('scriptid_num_align').hide()
             self.get_widget('scriptid_dd_align').show()
-            self.get_widget('scriptid_dd').set_active(self.object_type_list[square.scriptid])
+            self.get_widget('scriptid_dd').set_active(self.object_type_list[tile.scriptid])
         else:
             self.get_widget('scriptid_num_align').show()
             self.get_widget('scriptid_dd_align').hide()
-            self.get_widget('scriptid').set_value(square.scriptid)
+            self.get_widget('scriptid').set_value(tile.scriptid)
 
         # ... now the scripts themselves.
         self.clear_script_notebook()
-        if (len(square.scripts) > 0):
+        if (len(tile.scripts) > 0):
             self.get_widget('script_add_button').hide()
-            for script in square.scripts:
+            for script in tile.scripts:
                 self.append_script_notebook(script)
             self.script_notebook.show()
         else:
             self.get_widget('script_add_button').show()
             self.script_notebook.hide()
 
-    def populate_entity_tab(self, square):
-        """ Populates the entity tab of the square editing screen. """
+    def populate_entity_tab(self, tile):
+        """ Populates the entity tab of the tile editing screen. """
         self.populating_entity_tab = True
-        if (square.entity.entid in c.entitytable):
-            if (c.entitytable[square.entity.entid].name in self.entitykeys):
-                idx = self.entitykeys.index(c.entitytable[square.entity.entid].name)
+        if (tile.entity.entid in c.entitytable):
+            if (c.entitytable[tile.entity.entid].name in self.entitykeys):
+                idx = self.entitykeys.index(c.entitytable[tile.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
                 self.errordialog('Entity Error', 'The application encountered an entity '
                         'type that we don\'t know anything about.  The values on the entity '
-                        'tab may not be accurate', self.squarewindow)
+                        'tab may not be accurate', self.tilewindow)
                 self.get_widget('entid').set_active(0)
         else:
             self.errordialog('Entity Error', 'The application encountered an entity '
                     'type that we don\'t know anything about.  The values on the entity '
-                    'tab may not be accurate', self.squarewindow)
+                    'tab may not be accurate', self.tilewindow)
             self.get_widget('entid').set_active(0)
         self.populating_entity_tab = False
-        self.get_widget('direction').set_active(square.entity.direction-1)
-        self.get_widget('entscript').set_text(square.entity.entscript)
+        self.get_widget('direction').set_active(tile.entity.direction-1)
+        self.get_widget('entscript').set_text(tile.entity.entscript)
         if (self.map.is_savegame()):
-            self.get_widget('friendly').set_value(square.entity.friendly)
-            self.get_widget('health').set_value(square.entity.health)
-            self.get_widget('ent_unknownc1').set_value(square.entity.ent_unknownc1)
-            self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
-            self.get_widget('initial_loc').set_value(square.entity.initial_loc)
-            self.get_widget('movement').set_value(square.entity.movement)
+            self.get_widget('friendly').set_value(tile.entity.friendly)
+            self.get_widget('health').set_value(tile.entity.health)
+            self.get_widget('ent_unknownc1').set_value(tile.entity.ent_unknownc1)
+            self.get_widget('ent_zero1').set_value(tile.entity.ent_zero1)
+            self.get_widget('initial_loc').set_value(tile.entity.initial_loc)
+            self.get_widget('movement').set_value(tile.entity.movement)
             if c.book == 1:
-                self.get_widget('ent_zero2').set_value(square.entity.ent_zero2)
+                self.get_widget('ent_zero2').set_value(tile.entity.ent_zero2)
             else:
-                for (idx, val) in enumerate(square.entity.statuses):
+                for (idx, val) in enumerate(tile.entity.statuses):
                     self.get_widget('ent_status_%d' % (idx)).set_value(val)
             self.get_widget('entity_scroll').get_vadjustment().set_value(0)
 
@@ -2738,37 +2738,37 @@ class MapGUI(BaseGUI):
         be an object or not.  Also shows or hides the "Add Object" button
         as needed.
         """
-        square = self.map.squares[self.sq_y][self.sq_x]
+        tile = self.map.tiles[self.sq_y][self.sq_x]
         note = self.get_widget('object_note')
 
         # First the button
-        if (len(square.scripts) > 0):
+        if (len(tile.scripts) > 0):
             self.get_widget('script_add_button').hide()
         else:
             self.get_widget('script_add_button').show()
 
         # Now the actual note
-        if (len(square.scripts) > 1):
+        if (len(tile.scripts) > 1):
             note.set_markup('<b>Warning:</b> There are three instances in the master map files where more than one object is defined for a tile, but doing so is discouraged.  Only one of the objects will actually be used by the game engine.')
             note.show()
         elif c.book == 1:
-            if (square.scriptid > 0 and square.scriptid < 25):
-                if (len(square.scripts) > 0):
+            if (tile.scriptid > 0 and tile.scriptid < 25):
+                if (len(tile.scripts) > 0):
                     note.hide()
                 else:
                     note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                     note.show()
             else:
-                if (len(square.scripts) > 0):
+                if (len(tile.scripts) > 0):
                     note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                     note.show()
                 else:
                     note.hide()
         else:
-            if square.scriptid == 0 and len(square.scripts) > 0:
+            if tile.scriptid == 0 and len(tile.scripts) > 0:
                 note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                 note.show()
-            elif square.scriptid != 19 and square.scriptid != 0 and len(square.scripts) == 0:
+            elif tile.scriptid != 19 and tile.scriptid != 0 and len(tile.scripts) == 0:
                 note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                 note.show()
             else:
@@ -2777,43 +2777,43 @@ class MapGUI(BaseGUI):
     def open_floorsel(self, widget):
         """ Show the floor selection window. """
         self.imgsel_launch(self.get_widget('floorimg'),
-                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 
     def open_draw_floorsel(self, widget):
         """ Show the floor selection window for our drawing widget. """
         self.imgsel_launch(self.draw_floor_spin,
-                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 
     def open_fill_floorsel(self, widget):
         """ Show the floor selection window for our "fill" widget. """
         self.imgsel_launch(self.fill_map_spin,
-                self.gfx.square_width, self.gfx.square_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
                 self.gfx.get_floor, True, 1)
 
     def open_decalsel(self, widget):
         """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
-                self.gfx.square_width, self.gfx.square_height, self.gfx.decal_cols, self.gfx.decal_rows,
+                self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
                 self.gfx.get_decal, True, 1)
 
     def open_draw_decalsel(self, widget):
         """ Show the decal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_decal_spin,
-                self.gfx.square_width, self.gfx.square_height, self.gfx.decal_cols, self.gfx.decal_rows,
+                self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
                 self.gfx.get_decal, True, 1)
 
     def open_walldecalsel(self, widget):
         """ Show the wall decal selection window. """
         self.imgsel_launch(self.get_widget('walldecalimg'),
-                self.gfx.square_width, self.gfx.square_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
+                self.gfx.tile_width, self.gfx.tile_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
                 self.gfx.get_object_decal, True, 1)
 
     def open_draw_walldecalsel(self, widget):
         """ Show the walldecal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_walldecal_spin,
-                self.gfx.square_width, self.gfx.square_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
+                self.gfx.tile_width, self.gfx.tile_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
                 self.gfx.get_object_decal, True, 1)
 
     def objsel_fix_pixbuf(self, pixbuf):
@@ -3067,22 +3067,22 @@ class MapGUI(BaseGUI):
             self.diff_y = 0
             self.maparea.window.set_cursor(self.cursor_move_drag)
         if (action == self.ACTION_EDIT):
-            if (self.sq_y < len(self.map.squares)):
-                if (self.sq_x < len(self.map.squares[self.sq_y])):
+            if (self.sq_y < len(self.map.tiles)):
+                if (self.sq_x < len(self.map.tiles[self.sq_y])):
                     if c.book > 1:
-                        self.store_hugegfx_state(self.map.squares[self.sq_y][self.sq_x])
+                        self.store_hugegfx_state(self.map.tiles[self.sq_y][self.sq_x])
                     self.undo.store(self.sq_x, self.sq_y)
-                    self.populate_squarewindow_from_square(self.map.squares[self.sq_y][self.sq_x])
-                    self.get_widget('squarelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
-                    self.squarewindow.show()
+                    self.populate_tilewindow_from_tile(self.map.tiles[self.sq_y][self.sq_x])
+                    self.get_widget('tilelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.sq_x, self.sq_y))
+                    self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
-            self.action_draw_square(self.sq_x, self.sq_y)
+            self.action_draw_tile(self.sq_x, self.sq_y)
         elif (action == self.ACTION_ERASE):
             self.erasing = True
-            self.action_erase_square(self.sq_x, self.sq_y)
+            self.action_erase_tile(self.sq_x, self.sq_y)
         elif (action == self.ACTION_OBJECT):
-            self.action_place_object_square(self.sq_x, self.sq_y)
+            self.action_place_object_tile(self.sq_x, self.sq_y)
         elif (action == self.ACTION_SCRIPT_ED):
             self.action_script_edit(self.sq_x, self.sq_y)
 
@@ -3118,42 +3118,42 @@ class MapGUI(BaseGUI):
         # to back out *some* data at least?
         self.undo.cancel()
 
-        # Redraw our square anyway, just in case changes have taken place
-        self.redraw_square(x, y)
+        # Redraw our tile anyway, just in case changes have taken place
+        self.redraw_tile(x, y)
 
         # Reset our state vars (this generally won't happen automatically, because
         # we arrested the mouse with the new window)
         self.on_released()
 
-    def action_draw_square(self, x, y):
-        """ What to do when we're drawing on a square on the map."""
+    def action_draw_tile(self, x, y):
+        """ What to do when we're drawing on a tile on the map."""
 
         # First store our undo state
         self.undo.store(x, y)
         self.undo.set_text('Draw')
         
         try:
-            # Grab our square object
-            square = self.map.squares[y][x]
+            # Grab our tile object
+            tile = self.map.tiles[y][x]
             if c.book > 1:
-                self.store_hugegfx_state(square)
+                self.store_hugegfx_state(tile)
 
             # Now draw anything that the user's requesed
             if (self.draw_floor_checkbox.get_active()):
-                square.floorimg = int(self.draw_floor_spin.get_value())
+                tile.floorimg = int(self.draw_floor_spin.get_value())
             if (self.draw_decal_checkbox.get_active()):
-                square.decalimg = int(self.draw_decal_spin.get_value())
+                tile.decalimg = int(self.draw_decal_spin.get_value())
             if (self.draw_wall_checkbox.get_active()):
-                square.wallimg = int(self.draw_wall_spin.get_value())
+                tile.wallimg = int(self.draw_wall_spin.get_value())
             if (self.draw_walldecal_checkbox.get_active()):
-                square.walldecalimg = int(self.draw_walldecal_spin.get_value())
+                tile.walldecalimg = int(self.draw_walldecal_spin.get_value())
 
             # Check to see if we should change the "wall" flag
             if (self.draw_barrier.get_active()):
                 if (self.draw_barrier_seethrough.get_active()):
-                    square.wall = 5
+                    tile.wall = 5
                 else:
-                    square.wall = 1
+                    tile.wall = 1
             elif (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
                 # TODO: it would be nice to check to see if we really should be updating
                 # barriers here...  as it is, if you leave all the "drawing" checkboxes off
@@ -3161,38 +3161,38 @@ class MapGUI(BaseGUI):
                 # Ah well.  For now I'm just going to let it do that.
                 #if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                 #        self.draw_decal_checkbox.get_active()):
-                if (square.walldecalimg in self.smartdraw.wall_list['walldecal_seethrough']):
-                    square.wall = 5
-                elif (c.book > 1 and square.wallimg in self.smartdraw.wall_list['wall_restrict']):
-                    square.wall = 2
-                elif (square.wallimg in self.smartdraw.wall_list['wall_blocked']):
-                    square.wall = 1
-                elif (square.wallimg in self.smartdraw.wall_list['wall_seethrough']):
-                    square.wall = 5
-                elif (square.decalimg in self.smartdraw.wall_list['decal_blocked']):
-                    square.wall = 1
-                elif (square.decalimg in self.smartdraw.wall_list['decal_seethrough']):
-                    square.wall = 5
-                elif (square.floorimg in self.smartdraw.wall_list['floor_seethrough']):
-                    square.wall = 5
+                if (tile.walldecalimg in self.smartdraw.wall_list['walldecal_seethrough']):
+                    tile.wall = 5
+                elif (c.book > 1 and tile.wallimg in self.smartdraw.wall_list['wall_restrict']):
+                    tile.wall = 2
+                elif (tile.wallimg in self.smartdraw.wall_list['wall_blocked']):
+                    tile.wall = 1
+                elif (tile.wallimg in self.smartdraw.wall_list['wall_seethrough']):
+                    tile.wall = 5
+                elif (tile.decalimg in self.smartdraw.wall_list['decal_blocked']):
+                    tile.wall = 1
+                elif (tile.decalimg in self.smartdraw.wall_list['decal_seethrough']):
+                    tile.wall = 5
+                elif (tile.floorimg in self.smartdraw.wall_list['floor_seethrough']):
+                    tile.wall = 5
                 else:
-                    square.wall = 0
+                    tile.wall = 0
 
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.map.square_relative(x, y, dir))
-                affected_squares = self.smartdraw.draw_wall(square)
-                if (affected_squares is not None):
+                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_wall(tile)
+                if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Draw')
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_squares) = self.smartdraw.draw_smart_complex_wall(square, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_wall(tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Wall Draw (%s)' % (text))
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
 
             # Handle "smart" floors if needed
             if (self.draw_floor_checkbox.get_active() and
@@ -3200,49 +3200,49 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.map.square_relative(x, y, dir))
-                affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
-                if (affected_squares is not None):
+                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
+                if (affected_tiles is not None):
                     self.undo.set_text('Smart Draw')
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
             if (self.draw_floor_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_squares) = self.smartdraw.draw_smart_complex_floor(square, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_floor(tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
 
             # Handles "smart" decals if needed
             if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_floor.get_active()):
-                self.smartdraw.draw_decal(square)
+                self.smartdraw.draw_decal(tile)
             if (self.draw_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
-                self.smartdraw.draw_walldecal(square)
+                self.smartdraw.draw_walldecal(tile)
 
             # Smart decals (triggered by the floor checkbox for now)
             if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_squares) = self.smartdraw.draw_smart_complex_decal(square, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_decal(tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
 
             # And then close off our undo and redraw if needed
             if (self.undo.finish()):
-                self.redraw_square(x, y)
+                self.redraw_tile(x, y)
                 self.update_undo_gui()
 
             # Check for hugegfx changes
             if c.book > 1:
-                if self.check_hugegfx_state(square):
+                if self.check_hugegfx_state(tile):
                     self.draw_map()
 
         except Exception:
 
             self.handle_editing_exception(x, y, sys.exc_info())
 
-    def action_erase_square(self, x, y):
-        """ What to do when we're erasing on a square on the map."""
+    def action_erase_tile(self, x, y):
+        """ What to do when we're erasing on a tile on the map."""
 
         # TODO: Figure out if we really should do any of the smartdraw
         # stuff here.  I'm not so sure.  And anyway, I suspect that
@@ -3254,48 +3254,48 @@ class MapGUI(BaseGUI):
 
         try:
             
-            # Grab our square object
-            square = self.map.squares[y][x]
+            # Grab our tile object
+            tile = self.map.tiles[y][x]
             if c.book > 1:
-                self.store_hugegfx_state(square)
+                self.store_hugegfx_state(tile)
 
             # Now erase anything that the user's requesed
             if (self.erase_barrier.get_active()):
-                square.wall = 0
+                tile.wall = 0
             if (self.erase_floor_checkbox.get_active()):
                 if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                    if (square.floorimg in self.smartdraw.wall_list['floor_seethrough']):
-                        square.wall = 0
-                square.floorimg = 0
+                    if (tile.floorimg in self.smartdraw.wall_list['floor_seethrough']):
+                        tile.wall = 0
+                tile.floorimg = 0
             if (self.erase_decal_checkbox.get_active()):
                 if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                    if (square.decalimg in self.smartdraw.wall_list['decal_blocked']+self.smartdraw.wall_list['decal_seethrough']):
-                        square.wall = 0
-                square.decalimg = 0
+                    if (tile.decalimg in self.smartdraw.wall_list['decal_blocked']+self.smartdraw.wall_list['decal_seethrough']):
+                        tile.wall = 0
+                tile.decalimg = 0
             if (self.erase_wall_checkbox.get_active()):
                 if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                    if (square.wallimg in self.smartdraw.wall_list['wall_blocked']+self.smartdraw.wall_list['wall_seethrough']):
-                        square.wall = 0
-                square.wallimg = 0
+                    if (tile.wallimg in self.smartdraw.wall_list['wall_blocked']+self.smartdraw.wall_list['wall_seethrough']):
+                        tile.wall = 0
+                tile.wallimg = 0
             if (self.erase_walldecal_checkbox.get_active()):
-                square.walldecalimg = 0
+                tile.walldecalimg = 0
             if (self.erase_entity_checkbox.get_active()):
                 self.map.delentity(x, y)
             if (self.erase_object_checkbox.get_active()):
-                num = len(square.scripts)
+                num = len(tile.scripts)
                 for i in range(num):
                     self.map.delscript(x, y, 0)
-                square.scriptid = 0
+                tile.scriptid = 0
 
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.map.square_relative(x, y, dir))
-                affected_squares = self.smartdraw.draw_wall(square)
-                if (affected_squares is not None):
+                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_wall(tile)
+                if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Erase')
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
 
             # Handle "smart" floors if needed
             if (self.erase_floor_checkbox.get_active() and
@@ -3303,26 +3303,26 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.map.square_relative(x, y, dir))
-                affected_squares = self.smartdraw.draw_floor(square, self.draw_straight_paths.get_active())
-                if (affected_squares is not None):
+                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
+                if (affected_tiles is not None):
                     self.undo.set_text('Smart Erase')
-                    for adjsquare in affected_squares:
-                        self.redraw_square(adjsquare.x, adjsquare.y)
+                    for adjtile in affected_tiles:
+                        self.redraw_tile(adjtile.x, adjtile.y)
 
             # Handles "smart" wall decals if needed
             # This just randomizes, so don't bother here.
             #if (self.erase_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
-            #    self.smartdraw.draw_walldecal(square)
+            #    self.smartdraw.draw_walldecal(tile)
 
             # And then close off our undo and redraw if needed
             if (self.undo.finish()):
-                self.redraw_square(x, y)
+                self.redraw_tile(x, y)
                 self.update_undo_gui()
 
             # Check for hugegfx changes
             if c.book > 1:
-                if self.check_hugegfx_state(square):
+                if self.check_hugegfx_state(tile):
                     self.draw_map()
 
         except Exception:
@@ -3339,8 +3339,8 @@ class MapGUI(BaseGUI):
         objcat = model.get_value(iter, 2)
         return self.smartdraw.premade_objects.get(objcat, objidx)
 
-    def action_place_object_square(self, x, y):
-        """ What to do when we're told to place an object on a square on the map."""
+    def action_place_object_tile(self, x, y):
+        """ What to do when we're told to place an object on a tile on the map."""
 
         # Make sure we know what we're drawing
         obj = self.get_cur_object_placement()
@@ -3351,31 +3351,31 @@ class MapGUI(BaseGUI):
 
         try:
 
-            # It's possible that our object placement may touch adjacent squares, as well.
+            # It's possible that our object placement may touch adjacent tiles, as well.
             # Load those in now.
             for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                self.undo.add_additional(self.map.square_relative(x, y, dir))
+                self.undo.add_additional(self.map.tile_relative(x, y, dir))
             
-            # Grab our square object
-            square = self.map.squares[y][x]
+            # Grab our tile object
+            tile = self.map.tiles[y][x]
             if c.book > 1:
-                self.store_hugegfx_state(square)
+                self.store_hugegfx_state(tile)
 
             # Let's just implement this in SmartDraw
-            additionals = self.smartdraw.place_object(square, obj)
+            additionals = self.smartdraw.place_object(tile, obj)
 
-            # Redraw any additional squares here
-            for add_square in additionals:
-                self.redraw_square(add_square.x, add_square.y)
+            # Redraw any additional tiles here
+            for add_tile in additionals:
+                self.redraw_tile(add_tile.x, add_tile.y)
 
             # And then close off our undo and redraw if needed
             if (self.undo.finish()):
-                self.redraw_square(x, y)
+                self.redraw_tile(x, y)
                 self.update_undo_gui()
 
             # Check our hugegfx state and redraw if need be
             if c.book > 1:
-                if self.check_hugegfx_state(square):
+                if self.check_hugegfx_state(tile):
                     self.draw_map()
 
         except Exception:
@@ -3425,8 +3425,8 @@ class MapGUI(BaseGUI):
     def highlight_uncheck_all(self, widget):
         self.highlight_check_set_to(False)
 
-    # Assumes that the context is squarebuf_ctx, hence the hardcoded width/height
-    # We're passing it in so we're not constantly referencing self.squarebuf_ctx
+    # Assumes that the context is tilebuf_ctx, hence the hardcoded width/height
+    # We're passing it in so we're not constantly referencing self.tilebuf_ctx
     def composite_simple(self, context, surface, color):
         context.save()
         context.set_operator(cairo.OPERATOR_ATOP)
@@ -3435,8 +3435,8 @@ class MapGUI(BaseGUI):
         context.fill()
         context.restore()
 
-    def draw_square(self, x, y, usecache=False, do_main_paint=True):
-        """ Draw a single square of the map. """
+    def draw_tile(self, x, y, usecache=False, do_main_paint=True):
+        """ Draw a single tile of the map. """
 
         # TODO: Layers are pretty inefficient and slow here, IMO
         barrier = False
@@ -3445,22 +3445,22 @@ class MapGUI(BaseGUI):
         entity = False
 
         # Use local vars instead of continually calling out
-        square = self.map.squares[y][x]
-        sq_ctx = self.squarebuf_ctx
+        tile = self.map.tiles[y][x]
+        sq_ctx = self.tilebuf_ctx
         main_ctx = self.ctx
 
         if (do_main_paint and x == self.sq_x and y == self.sq_y):
             pointer = (1, 1, 1, 0.5)
 
-        if (square.entity is not None):
+        if (tile.entity is not None):
             if self.map.is_savegame():
-                if (square.entity.friendly == 1):
+                if (tile.entity.friendly == 1):
                     entity = (0, 1, 0, 0.5)
                 else:
                     entity = (1, 0, 0, 0.5)
             else:
-                if square.entity.entid in c.entitytable:
-                    if c.entitytable[square.entity.entid].friendly == 1:
+                if tile.entity.entid in c.entitytable:
+                    if c.entitytable[tile.entity.entid].friendly == 1:
                         entity = (0, 1, 0, 0.5)
                     else:
                         entity = (1, 0, 0, 0.5)
@@ -3468,32 +3468,32 @@ class MapGUI(BaseGUI):
                     entity = (1, 0, 0, 0.5)
 
         if c.book == 1:
-            if (square.scriptid != 0 and len(square.scripts) > 0):
+            if (tile.scriptid != 0 and len(tile.scripts) > 0):
                 script = (1, 1, 0, 0.5)
-            elif (square.scriptid != 0 and len(square.scripts) == 0):
+            elif (tile.scriptid != 0 and len(tile.scripts) == 0):
                 script = (0, .784, .784, 0.5)
-            elif (square.scriptid == 0 and len(square.scripts) > 0):
+            elif (tile.scriptid == 0 and len(tile.scripts) > 0):
                 # afaik, this doesn't happen.  should use something other than red here, though
                 script = (1, 0, 0, 0.5)
         else:
-            if (square.scriptid == 0 and len(square.scripts) > 0):
+            if (tile.scriptid == 0 and len(tile.scripts) > 0):
                 # afaik, this doesn't happen.  should use something other than red here, though
                 script = (1, 0, 0, 0.5)
-            elif (square.scriptid >= 25 and square.scriptid < 50):
+            elif (tile.scriptid >= 25 and tile.scriptid < 50):
                 script = (0, .784, .784, 0.5)
-            elif (square.scriptid > 0 and len(square.scripts) == 0):
+            elif (tile.scriptid > 0 and len(tile.scripts) == 0):
                 # This shouldn't happen either
                 script = (1, 0, 0, 0.5)
-            elif square.scriptid > 0:
+            elif tile.scriptid > 0:
                 script = (1, 1, 0, 0.5)
 
-        if (square.wall == 1):
+        if (tile.wall == 1):
             barrier = (.784, .784, .784, 0.5)
-        elif (square.wall == 2):
+        elif (tile.wall == 2):
             barrier = (.41, .75, .83, 0.5)
-        elif (square.wall == 5):
+        elif (tile.wall == 5):
             barrier = (.684, .684, .950, 0.5)
-        elif (square.floorimg == 126 and not self.floor_toggle.get_active()):
+        elif (tile.floorimg == 126 and not self.floor_toggle.get_active()):
             barrier = (0, 0, .784, 0.5)
 
         # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
@@ -3532,7 +3532,7 @@ class MapGUI(BaseGUI):
         if (do_main_paint and usecache and not pointer):
             main_ctx.save()
             main_ctx.set_operator(cairo.OPERATOR_SOURCE)
-            main_ctx.rectangle(x1-self.z_squarebuf_offset, top, self.z_squarebuf_w, height)
+            main_ctx.rectangle(x1-self.z_tilebuf_offset, top, self.z_tilebuf_w, height)
             main_ctx.set_source_surface(self.guicache, 0, 0)
             main_ctx.fill()
             main_ctx.restore()
@@ -3542,10 +3542,10 @@ class MapGUI(BaseGUI):
         sq_ctx.save()
         sq_ctx.set_operator(cairo.OPERATOR_SOURCE)
         if (do_main_paint and usecache):
-            # If we're the pointer, always overlay our black square
-            sq_ctx.set_source_surface(self.basicsquare)
+            # If we're the pointer, always overlay our black tile
+            sq_ctx.set_source_surface(self.basictile)
         else:
-            sq_ctx.set_source_surface(self.blanksquare)
+            sq_ctx.set_source_surface(self.blanktile)
         sq_ctx.paint()
         sq_ctx.restore()
 
@@ -3553,34 +3553,34 @@ class MapGUI(BaseGUI):
         drawn = False
 
         # Draw the floor tile
-        if (square.floorimg > 0 and self.floor_toggle.get_active()):
-            pixbuf = self.gfx.get_floor(square.floorimg, self.curzoom)
+        if (tile.floorimg > 0 and self.floor_toggle.get_active()):
+            pixbuf = self.gfx.get_floor(tile.floorimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_4xheight)
                 sq_ctx.paint()
                 drawn = True
 
         # Draw the floor decal
-        if (square.decalimg > 0 and self.decal_toggle.get_active()):
-            pixbuf = self.gfx.get_decal(square.decalimg, self.curzoom)
+        if (tile.decalimg > 0 and self.decal_toggle.get_active()):
+            pixbuf = self.gfx.get_decal(tile.decalimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_4xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_4xheight)
                 sq_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
-                if ((self.req_book == 1 and square.decalimg == 52) or
-                    (self.req_book == 2 and square.decalimg == 101)):
+                if ((self.req_book == 1 and tile.decalimg == 52) or
+                    (self.req_book == 2 and tile.decalimg == 101)):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         # TODO: in book 2, campfire wall objects will overwrite some of our campfire flame
                         # (note that the campfire wall object will NOT provide an in-game flame on its own)
-                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
+                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_tilebuf_offset
                         yoffset = int(self.z_height*0.4)
                         sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
                         sq_ctx.paint()
 
         # Draw "walls," though only if we should
-        wallid = square.wallimg
+        wallid = tile.wallimg
         if wallid > 0:
             try:
                 walltype = self.gfx.wall_types[wallid]
@@ -3593,13 +3593,13 @@ class MapGUI(BaseGUI):
             if (walltype == self.gfx.TYPE_OBJ and self.object_toggle.get_active()):
                 (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
                 if (pixbuf is not None):
-                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
                     sq_ctx.paint()
                     drawn = True
-                    if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+                    if (self.req_book == 2 and (tile.wallimg == 349 or tile.wallimg == 350)):
                         pixbuf = self.gfx.get_flame(self.curzoom)
                         if (pixbuf is not None):
-                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_squarebuf_offset
+                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_tilebuf_offset
                             yoffset = int(self.z_height*0.3)
                             sq_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
                             sq_ctx.paint()
@@ -3608,7 +3608,7 @@ class MapGUI(BaseGUI):
             elif (walltype == self.gfx.TYPE_WALL and self.wall_toggle.get_active()):
                 (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
                 if (pixbuf is not None):
-                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
                     sq_ctx.paint()
                     drawn = True
 
@@ -3616,56 +3616,56 @@ class MapGUI(BaseGUI):
             elif (walltype == self.gfx.TYPE_TREE and self.tree_toggle.get_active()):
                 (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.map.tree_set)
                 if (pixbuf is not None):
-                    sq_ctx.set_source_surface(pixbuf, offset+self.z_squarebuf_offset, self.z_height*(4-pixheight))
+                    sq_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
                     sq_ctx.paint()
                     drawn = True
 
         # Draw a zapper
-        if (self.req_book > 1 and square.scriptid == 19 and self.object_toggle.get_active()):
+        if (self.req_book > 1 and tile.scriptid == 19 and self.object_toggle.get_active()):
             pixbuf = self.gfx.get_zapper(self.curzoom)
             if pixbuf is not None:
-                xoffset = self.z_squarebuf_offset
+                xoffset = self.z_tilebuf_offset
                 yoffset = 0
                 sq_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
                 sq_ctx.paint()
 
         # Draw the object decal
-        if (square.walldecalimg > 0 and self.objectdecal_toggle.get_active()):
-            pixbuf = self.gfx.get_object_decal(square.walldecalimg, self.curzoom)
+        if (tile.walldecalimg > 0 and self.objectdecal_toggle.get_active()):
+            pixbuf = self.gfx.get_object_decal(tile.walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                sq_ctx.set_source_surface(pixbuf, self.z_squarebuf_offset, self.z_2xheight)
+                sq_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_2xheight)
                 sq_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
-                if ((self.req_book == 1 and (square.walldecalimg == 17 or square.walldecalimg == 18)) or
-                    (self.req_book == 2 and (square.walldecalimg == 2 or square.walldecalimg == 4))):
+                if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
+                    (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         xoffset = int(pixbuf.get_width()*0.3)
                         yoffset = int(self.z_height/4)
                         if (self.req_book == 2):
                             yoffset -= 1
-                        if (square.walldecalimg == 17 or square.walldecalimg == 2):
-                            sq_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset+self.z_squarebuf_offset, self.z_2xheight+yoffset)
+                        if (tile.walldecalimg == 17 or tile.walldecalimg == 2):
+                            sq_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset+self.z_tilebuf_offset, self.z_2xheight+yoffset)
                         else:
-                            sq_ctx.set_source_surface(pixbuf, xoffset+self.z_squarebuf_offset, self.z_2xheight+yoffset)
+                            sq_ctx.set_source_surface(pixbuf, xoffset+self.z_tilebuf_offset, self.z_2xheight+yoffset)
                         sq_ctx.paint()
 
         # Draw the entity if needed
         # We switch to using op_ctx and op_surf because we may not be drawing on sq_ctx
         # from this point on, depending on entity width
-        op_surf = self.squarebuf
+        op_surf = self.tilebuf
         op_ctx = sq_ctx
         op_xoffset = 0
-        if (square.entity is not None and self.entity_toggle.get_active()):
-            ent_img = self.gfx.get_entity(square.entity.entid, square.entity.direction, self.curzoom)
+        if (tile.entity is not None and self.entity_toggle.get_active()):
+            ent_img = self.gfx.get_entity(tile.entity.entid, tile.entity.direction, self.curzoom)
             if (ent_img is not None):
-                if (ent_img.get_width() > self.z_squarebuf_w):
-                    # This whole bit here will copy our squarebuf into a larger surface, centered
+                if (ent_img.get_width() > self.z_tilebuf_w):
+                    # This whole bit here will copy our tilebuf into a larger surface, centered
                     # (so, transparent on the side)
                     self.ent_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
                     self.ent_ctx = cairo.Context(self.ent_surf)
-                    op_xoffset = int((ent_img.get_width()-self.z_squarebuf_w)/2)
+                    op_xoffset = int((ent_img.get_width()-self.z_tilebuf_w)/2)
                     self.ent_ctx.set_source_surface(op_surf, op_xoffset, 0)
                     self.ent_ctx.paint()
                     op_surf = self.ent_surf
@@ -3679,16 +3679,16 @@ class MapGUI(BaseGUI):
                 drawn = True
 
         # Now, before we do highlights, see if we've drawn anything.  If not, 
-        # overlay our basic black square, so that highlighting shows up if it
+        # overlay our basic black tile, so that highlighting shows up if it
         # needs to.  If we *have* drawn something, just let it be.  (We do this
         # primarily to avoid graphical glitches on cliff-face graphics, where
-        # having the black square overlay makes things look bad.)  Additionally
+        # having the black tile overlay makes things look bad.)  Additionally
         # only do it if we would have done some highlighting.
         drawbarrier = (barrier and self.barrier_hi_toggle.get_active())
         drawscript = (script and self.script_hi_toggle.get_active())
         drawentity = (entity and self.entity_hi_toggle.get_active())
         if (not drawn and (drawbarrier or drawscript or drawentity)):
-            sq_ctx.set_source_surface(self.basicsquare)
+            sq_ctx.set_source_surface(self.basictile)
             sq_ctx.paint()
 
         # Draw Barrier Highlights
@@ -3708,25 +3708,25 @@ class MapGUI(BaseGUI):
             if (usecache):
                 # We only get here when we're the pointer
                 self.composite_simple(op_ctx, op_surf, pointer)
-                main_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_squarebuf_offset, top-buftop)
+                main_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_tilebuf_offset, top-buftop)
                 main_ctx.paint()
             else:
                 # This is only for the initial map population
-                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_squarebuf_offset, top-buftop)
+                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_tilebuf_offset, top-buftop)
                 self.guicache_ctx.paint()
 
-        return (op_surf, op_xoffset+self.z_squarebuf_offset)
+        return (op_surf, op_xoffset+self.z_tilebuf_offset)
 
-    def draw_huge_gfx(self, square, ctx=None, xoff=None, yoff=None):
+    def draw_huge_gfx(self, tile, ctx=None, xoff=None, yoff=None):
         """
         Draws a "huge" graphic image on our map (like Hammerlorne, etc).
         Only used in Book 2.
         """
-        if square.scriptid == 21 and len(square.scripts) > 0:
-            img = self.gfx.get_huge_gfx(square.scripts[0].extratext, self.curzoom)
+        if tile.scriptid == 21 and len(tile.scripts) > 0:
+            img = self.gfx.get_huge_gfx(tile.scripts[0].extratext, self.curzoom)
             if img:
-                x = square.x
-                y = square.y
+                x = tile.x
+                y = tile.y
                 # TODO: xpad processing should be abstracted somehow when we're drawing whole rows
                 # (for instance, when initially loading the map)
                 if (y % 2 == 1):
@@ -3748,23 +3748,23 @@ class MapGUI(BaseGUI):
 
     def update_composite(self):
         """
-        Updates the composite image in the individual square-editing window.
-        This duplicates some code from draw_square() but there are some differences
+        Updates the composite image in the individual tile-editing window.
+        This duplicates some code from draw_tile() but there are some differences
         I'd rather not have to deal with in there (ie: we're always fully-zoomed-in
         here, we don't want to do any highlighting, entities won't actually get
         drawn, etc, etc).
         """
 
         # Grab our variables and clear out the pixbuf
-        square = self.map.squares[self.sq_y][self.sq_x]
+        tile = self.map.tiles[self.sq_y][self.sq_x]
         comp_pixbuf = self.comp_pixbuf
         comp_pixbuf.fill(0)
 
         # Sizing vars
-        width = self.gfx.square_width
+        width = self.gfx.tile_width
         width_x2 = width*2
         height_x4 = width_x2
-        height = self.gfx.square_height
+        height = self.gfx.tile_height
         height_x2 = width
         height_x3 = height*3
 
@@ -3785,64 +3785,64 @@ class MapGUI(BaseGUI):
         torchsconcexoff2 = int((5/52.0)*width)
 
         # Now do all the actual compositing
-        if (square.floorimg > 0):
-            pixbuf = self.gfx.get_floor(square.floorimg, width, True)
+        if (tile.floorimg > 0):
+            pixbuf = self.gfx.get_floor(tile.floorimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
                         0, height_x4,
                         width, height,
                         0, height_x4,
                         1, 1, gtk.gdk.INTERP_NEAREST, 255)
-        if (square.decalimg > 0):
-            pixbuf = self.gfx.get_decal(square.decalimg, width, True)
+        if (tile.decalimg > 0):
+            pixbuf = self.gfx.get_decal(tile.decalimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
                         0, height_x4,
                         width, height,
                         0, height_x4,
                         1, 1, gtk.gdk.INTERP_NEAREST, 255)
-            if ((self.req_book == 1 and square.decalimg == 52) or
-                (self.req_book == 2 and square.decalimg == 101) or
-                (self.req_book == 3 and square.decalimg == 101)):
+            if ((self.req_book == 1 and tile.decalimg == 52) or
+                (self.req_book == 2 and tile.decalimg == 101) or
+                (self.req_book == 3 and tile.decalimg == 101)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
                             torchwidth-1, torchdecalyoff,
                             torchwidth, torchheight,
                             torchwidth-1, torchdecalyoff,
                             1, 1, gtk.gdk.INTERP_NEAREST, 255)
-        if (square.wallimg > 0):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(square.wallimg, width, True, self.map.tree_set)
+        if (tile.wallimg > 0):
+            (pixbuf, pixheight, offset) = self.gfx.get_object(tile.wallimg, width, True, self.map.tree_set)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
                         0, height*(4-pixheight),
                         width, height*(pixheight+1),
                         offset, height*(4-pixheight),
                         1, 1, gtk.gdk.INTERP_NEAREST, 255)
-            if (self.req_book == 2 and (square.wallimg == 349 or square.wallimg == 350)):
+            if (self.req_book == 2 and (tile.wallimg == 349 or tile.wallimg == 350)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
                             torchwidth-1, torchwallyoff,
                             torchwidth, torchwallyoff2,
                             torchwidth-1, torchwallyoff,
                             1, 1, gtk.gdk.INTERP_NEAREST, 255)
-        if (square.walldecalimg > 0):
-            pixbuf = self.gfx.get_object_decal(square.walldecalimg, width, True)
+        if (tile.walldecalimg > 0):
+            pixbuf = self.gfx.get_object_decal(tile.walldecalimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
                         0, height_x2,
                         width, height_x3,
                         0, height_x2,
                         1, 1, gtk.gdk.INTERP_NEAREST, 255)
-            if ((self.req_book == 1 and (square.walldecalimg == 17 or square.walldecalimg == 18)) or
-                (self.req_book == 2 and (square.walldecalimg == 2 or square.walldecalimg == 4))):
+            if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
+                (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                 if (torchbuf is not None):
-                    if (square.walldecalimg == 17 or square.walldecalimg == 2):
+                    if (tile.walldecalimg == 17 or tile.walldecalimg == 2):
                         torchbuf.composite(comp_pixbuf,
                                 torchsconcexoff, torchsconceyoff,
                                 torchwidth, torchsconceyoff2,
                                 torchsconcexoff, torchsconceyoff,
                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
-                    elif (square.walldecalimg == 18 or square.walldecalimg == 4):
+                    elif (tile.walldecalimg == 18 or tile.walldecalimg == 4):
                         torchbuf.composite(comp_pixbuf,
                                 torchsconcexoff2, torchsconceyoff,
                                 torchwidth, torchsconceyoff2,
@@ -3872,35 +3872,35 @@ class MapGUI(BaseGUI):
         sys.exit(0)
         return False
 
-    def store_hugegfx_state(self, square):
+    def store_hugegfx_state(self, tile):
         """
-        Stores whether or not there's a current hugegfx on the given square
-        (and stores the graphic name).  Used before a square is edited.
+        Stores whether or not there's a current hugegfx on the given tile
+        (and stores the graphic name).  Used before a tile is edited.
         """
-        if (square.wallimg == 1000 and square.scriptid == 21 and len(square.scripts) != 0):
-            self.cur_hugegfx_state = square.scripts[0].extratext
+        if (tile.wallimg == 1000 and tile.scriptid == 21 and len(tile.scripts) != 0):
+            self.cur_hugegfx_state = tile.scripts[0].extratext
         else:
             self.cur_hugegfx_state = None
 
-    def check_hugegfx_state(self, square):
+    def check_hugegfx_state(self, tile):
         """
-        Compares the current state of the given square versus our stored
+        Compares the current state of the given tile versus our stored
         hugegfx state (see store_hugegfx_state()).  Will return True if
         a redraw of the map is needed.
 
         Will also upkeep our self.huge_gfx_rows list
         """
-        if (square.wallimg == 1000 and square.scriptid == 21 and len(square.scripts) != 0):
-            new_hugegfx_state = square.scripts[0].extratext
+        if (tile.wallimg == 1000 and tile.scriptid == 21 and len(tile.scripts) != 0):
+            new_hugegfx_state = tile.scripts[0].extratext
         else:
             new_hugegfx_state = None
         if (new_hugegfx_state != self.cur_hugegfx_state):
             if new_hugegfx_state is None:
-                self.huge_gfx_rows[square.y].remove(square.x)
+                self.huge_gfx_rows[tile.y].remove(tile.x)
             elif self.cur_hugegfx_state is None:
-                if square.x not in self.huge_gfx_rows[square.y]:
-                    self.huge_gfx_rows[square.y].append(square.x)
-                    self.huge_gfx_rows[square.y].sort()
+                if tile.x not in self.huge_gfx_rows[tile.y]:
+                    self.huge_gfx_rows[tile.y].append(tile.x)
+                    self.huge_gfx_rows[tile.y].sort()
             return True
         else:
             return False
@@ -3933,8 +3933,8 @@ class MapGUI(BaseGUI):
         self.ctx.set_source_rgba(0, 0, 0, 1)
         self.ctx.paint()
 
-        self.squarebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
-        self.squarebuf_ctx = cairo.Context(self.squarebuf)
+        self.tilebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        self.tilebuf_ctx = cairo.Context(self.tilebuf)
         self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
         self.guicache_ctx = cairo.Context(self.guicache)
         # Here, for PNG exports
@@ -3966,43 +3966,43 @@ class MapGUI(BaseGUI):
             self.erase_object_checkbox.set_active(False)
 
         # Set up a "blank" tile to draw everything else on top of
-        self.blanksquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
-        sq_ctx = cairo.Context(self.blanksquare)
+        self.blanktile = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        sq_ctx = cairo.Context(self.blanktile)
         sq_ctx.save()
         sq_ctx.set_operator(cairo.OPERATOR_CLEAR)
         sq_ctx.paint()
         sq_ctx.restore()
 
-        # Set up a default square with just a black tile, for otherwise-empty tiles
-        self.basicsquare = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_squarebuf_w, self.z_5xheight)
-        basic_ctx = cairo.Context(self.basicsquare)
+        # Set up a default tile with just a black tile, for otherwise-empty tiles
+        self.basictile = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        basic_ctx = cairo.Context(self.basictile)
         basic_ctx.set_source_rgba(0, 0, 0, 1)
-        basic_ctx.move_to(self.z_squarebuf_offset+0, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_squarebuf_offset+self.z_halfwidth, self.z_4xheight)
-        basic_ctx.line_to(self.z_squarebuf_offset+self.z_width, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_squarebuf_offset+self.z_halfwidth, self.z_5xheight)
+        basic_ctx.move_to(self.z_tilebuf_offset+0, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_tilebuf_offset+self.z_halfwidth, self.z_4xheight)
+        basic_ctx.line_to(self.z_tilebuf_offset+self.z_width, self.z_4xheight+self.z_halfheight)
+        basic_ctx.line_to(self.z_tilebuf_offset+self.z_halfwidth, self.z_5xheight)
         basic_ctx.close_path()
         basic_ctx.fill()
 
-        # Draw the squares
+        # Draw the tiles
         self.huge_gfx_rows = []
         # TODO: for editing's sake, we may want to abstract this huge_gfx_rows maintenance
         # to a helper func (with an _add and _remove or whatever)
         #time_c = time.time()
         for i in range(200):
             self.huge_gfx_rows.append([])
-        for y in range(len(self.map.squares)):
+        for y in range(len(self.map.tiles)):
             huge_gfxes = []
-            for x in range(len(self.map.squares[y])):
-                self.draw_square(x, y)
-                if self.map.squares[y][x].scriptid == 21:
-                    huge_gfxes.append(self.map.squares[y][x])
+            for x in range(len(self.map.tiles[y])):
+                self.draw_tile(x, y)
+                if self.map.tiles[y][x].scriptid == 21:
+                    huge_gfxes.append(self.map.tiles[y][x])
             if self.req_book > 1 and self.huge_gfx_toggle.get_active():
-                for square in huge_gfxes:
-                    self.draw_huge_gfx(square)
-                    self.huge_gfx_rows[y].append(square.x)
+                for tile in huge_gfxes:
+                    self.draw_huge_gfx(tile)
+                    self.huge_gfx_rows[y].append(tile.x)
             if (y % 10 == 0):
-                self.drawstatusbar.set_fraction(y/float(len(self.map.squares)))
+                self.drawstatusbar.set_fraction(y/float(len(self.map.tiles)))
                 while gtk.events_pending():
                     gtk.main_iteration()
         #time_d = time.time()
@@ -4038,9 +4038,9 @@ class MapGUI(BaseGUI):
         # Don't bother to do anything unless we've been initialized
         if (self.mapinit):
 
-            # Redraw what squares need to be redrawn
-            for (x, y) in self.cleansquares:
-                self.draw_square(x, y, True)
+            # Redraw what tiles need to be redrawn
+            for (x, y) in self.cleantiles:
+                self.draw_tile(x, y, True)
 
             # Render to the window (this is duplicated above, in draw_map)
             self.maparea.window.draw_drawable(
@@ -4051,4 +4051,4 @@ class MapGUI(BaseGUI):
                     self.z_mapsize_x, self.z_mapsize_y)
 
             # Make sure our to-clean list is empty
-            self.cleansquares = []
+            self.cleantiles = []

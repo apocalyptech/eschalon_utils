@@ -3778,7 +3778,7 @@ to modify the global map files.</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="has_tooltip">True</property>
-                                    <property name="tooltip_text" translatable="yes">This will automatically fill in more than one square if needed, to complete a more "complex" object.</property>
+                                    <property name="tooltip_text" translatable="yes">This will automatically fill in more than one tile if needed, to complete a more "complex" object.</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
@@ -4325,12 +4325,12 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
       <action-widget response="-5">slowzip_saveas_ok</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkAdjustment" id="square_flag_adjust">
+  <object class="GtkAdjustment" id="tile_flag_adjust">
     <property name="upper">4294967295</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkWindow" id="squarewindow">
+  <object class="GtkWindow" id="tilewindow">
     <property name="width_request">500</property>
     <property name="height_request">720</property>
     <property name="can_focus">False</property>
@@ -4339,13 +4339,13 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
     <property name="transient_for">mainwindow</property>
-    <signal name="delete-event" handler="on_squarewindow_close" swapped="no"/>
+    <signal name="delete-event" handler="on_tilewindow_close" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="GtkLabel" id="squarelabel">
+          <object class="GtkLabel" id="tilelabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -4360,7 +4360,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
           </packing>
         </child>
         <child>
-          <object class="GtkNotebook" id="square_notebook">
+          <object class="GtkNotebook" id="tile_notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
@@ -4752,7 +4752,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment15</property>
-                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                            <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -4903,13 +4903,13 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="square_flag_label">
+                      <object class="GtkLabel" id="tile_flag_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
-                        <property name="label" translatable="yes">Square Flag</property>
+                        <property name="label" translatable="yes">Tile Flag</property>
                         <property name="use_markup">True</property>
                       </object>
                       <packing>
@@ -4928,7 +4928,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                         <property name="xalign">0</property>
                         <property name="xscale">0</property>
                         <child>
-                          <object class="GtkSpinButton" id="square_flag">
+                          <object class="GtkSpinButton" id="tile_flag">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -4937,8 +4937,8 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="secondary_icon_activatable">False</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
-                            <property name="adjustment">square_flag_adjust</property>
-                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                            <property name="adjustment">tile_flag_adjust</property>
+                            <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -4985,7 +4985,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment17</property>
-                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                            <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -5026,7 +5026,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="tooltip_text" translatable="yes">The level of cartography skill that this square has been explored with</property>
+                            <property name="tooltip_text" translatable="yes">The level of cartography skill that this tile has been explored with</property>
                             <property name="invisible_char">●</property>
                             <property name="invisible_char_set">True</property>
                             <property name="primary_icon_activatable">False</property>
@@ -5034,7 +5034,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">cartography_adjustment</property>
-                            <signal name="value-changed" handler="on_singleval_square_changed_int" swapped="no"/>
+                            <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -5350,7 +5350,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
                                             <property name="can_focus">False</property>
                                             <property name="resize_mode">queue</property>
                                             <child>
-                                              <object class="GtkImage" id="ent_square_img">
+                                              <object class="GtkImage" id="ent_tile_img">
                                                 <property name="width_request">104</property>
                                                 <property name="height_request">104</property>
                                                 <property name="visible">True</property>
@@ -6084,7 +6084,7 @@ another direction, Eschalon will crash.</property>
                 <property name="receives_default">True</property>
                 <property name="border_width">5</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_squarewindow_close" swapped="no"/>
+                <signal name="clicked" handler="on_tilewindow_close" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

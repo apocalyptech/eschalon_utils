@@ -385,12 +385,12 @@ class B1Gfx(Gfx):
     book = 1
     wall_types = {}
     wall_gfx_group = {}
-    squarebuf_mult = 1
+    tilebuf_mult = 1
     item_dim = 42
     item_cols = 10
     item_rows = 24
-    square_width = 52
-    square_height = 26
+    tile_width = 52
+    tile_height = 26
     floor_cols = 6
     floor_rows = 32
     decal_cols = 6
@@ -594,7 +594,7 @@ class B1Gfx(Gfx):
             df.close()
             self.flamecache = B1GfxEntCache(flamedata, 1, 1)
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
@@ -607,7 +607,7 @@ class B1Gfx(Gfx):
                 self.entcache[entnum] = B1GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
@@ -631,12 +631,12 @@ class B2Gfx(Gfx):
     book = 2
     wall_types = {}
     wall_gfx_group = {}
-    squarebuf_mult = 1.5
+    tilebuf_mult = 1.5
     item_dim = 50
     item_cols = 10
     item_rows = 10
-    square_width = 64
-    square_height = 32
+    tile_width = 64
+    tile_height = 32
     floor_cols = 8
     floor_rows = 16
     decal_cols = 16
@@ -849,7 +849,7 @@ class B2Gfx(Gfx):
             if (objnum in self.treemap):
                 # note the size difference for Book 2 trees (50% wider)
                 if not size:
-                    size = self.square_width
+                    size = self.tile_width
                 offset = -int(size/4)
                 size = int(size * 1.5)
                 return (self.treecache[treeset].getimg(self.treemap[objnum], size, gdk), 4, offset)
@@ -878,7 +878,7 @@ class B2Gfx(Gfx):
             # much point to having a separate Book 1 and Book 2 flame graphic.
             self.flamecache = SingleImageGfxCache(flamedata, 52.0)
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_zapper(self, size=None, gdk=False):
@@ -891,7 +891,7 @@ class B2Gfx(Gfx):
             df.close()
             self.zappercache = SingleImageGfxCache(zapperdata)
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.zappercache.getimg(1, int(size*self.zappercache.size_scale), gdk)
 
     def get_huge_gfx(self, file, size=None, gdk=False):
@@ -907,7 +907,7 @@ class B2Gfx(Gfx):
             except LoadException:
                 return None
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
@@ -920,7 +920,7 @@ class B2Gfx(Gfx):
             self.entcache[entnum] = B2GfxEntCache(ent, self.readfile(filename))
         cache = self.entcache[entnum]
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
@@ -967,12 +967,12 @@ class B3Gfx(Gfx):
     book = 3
     wall_types = {}
     wall_gfx_group = {}
-    squarebuf_mult = 1.5
+    tilebuf_mult = 1.5
     item_dim = 50
     item_cols = 10
     item_rows = 10
-    square_width = 64
-    square_height = 32
+    tile_width = 64
+    tile_height = 32
     floor_cols = 8
     floor_rows = 16
     decal_cols = 16
@@ -1180,7 +1180,7 @@ class B3Gfx(Gfx):
             if (objnum in self.treemap):
                 # note the size difference for Book 2 trees (50% wider)
                 if not size:
-                    size = self.square_width
+                    size = self.tile_width
                 offset = -int(size/4)
                 size = int(size * 1.5)
                 return (self.treecache[treeset].getimg(self.treemap[objnum], size, gdk), 4, offset)
@@ -1209,7 +1209,7 @@ class B3Gfx(Gfx):
             # much point to having a separate Book 1 and Book 2 flame graphic.
             self.flamecache = SingleImageGfxCache(flamedata, 52.0)
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_zapper(self, size=None, gdk=False):
@@ -1222,7 +1222,7 @@ class B3Gfx(Gfx):
             df.close()
             self.zappercache = SingleImageGfxCache(zapperdata)
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.zappercache.getimg(1, int(size*self.zappercache.size_scale), gdk)
 
     def get_huge_gfx(self, file, size=None, gdk=False):
@@ -1238,7 +1238,7 @@ class B3Gfx(Gfx):
             except LoadException:
                 return None
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return self.hugegfxcache[file].getimg(1, int(size*self.hugegfxcache[file].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
@@ -1251,7 +1251,7 @@ class B3Gfx(Gfx):
             self.entcache[entnum] = B3GfxEntCache(ent, self.readfile(filename))
         cache = self.entcache[entnum]
         if (size is None):
-            size = self.square_width
+            size = self.tile_width
         return cache.getimg(direction, int(size*cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):

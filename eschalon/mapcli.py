@@ -77,16 +77,16 @@ class MapCLI(object):
             print "Savegame IDs: %d, %d, %d" % (map.savegame_1, map.savegame_2, map.savegame_3)
         print
 
-    def display_squares(self, unknowns=False):
-        """ Print out a textual representation of the map's squares."""
+    def display_tiles(self, unknowns=False):
+        """ Print out a textual representation of the map's tiles."""
         map = self.map
-        for y in range(len(map.squares)):
+        for y in range(len(map.tiles)):
             print 'Row %d:' % y
             print
-            for x in range(len(map.squares[y])):
-                if (map.squares[y][x].hasdata() != 0):
+            for x in range(len(map.tiles[y])):
+                if (map.tiles[y][x].hasdata() != 0):
                     print ' * Cell %d:' % x
-                    print map.squares[y][x].display(unknowns)
+                    print map.tiles[y][x].display(unknowns)
                     print 
         pass
 
@@ -103,12 +103,12 @@ class MapCLI(object):
         """ Print out a little ascii map. """
         map = self.map
         i = 0
-        for row in map.squares:
+        for row in map.tiles:
             i = i +1
             if (i % 2 == 0):
                 sys.stdout.write(' ')
-            for square in row:
-                if (square.wall > 0):
+            for tile in row:
+                if (tile.wall > 0):
                     sys.stdout.write('* ')
                 else:
                     sys.stdout.write('  ')
@@ -131,8 +131,8 @@ class MapCLI(object):
 
         self.display_header()
 
-        if (listoptions['squares']):
-            self.display_squares(unknowns)
+        if (listoptions['tiles']):
+            self.display_tiles(unknowns)
 
         if (listoptions['objects']):
             self.display_scripts(unknowns)
