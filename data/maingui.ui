@@ -2111,7 +2111,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <child>
                                                   <object class="GtkLabel" id="permstatuses_00000080_label">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes">Insane</property>
+                                                    <property name="label" translatable="yes">Tapeworms</property>
                                                   </object>
                                                 </child>
                                               </object>
@@ -2131,7 +2131,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <child>
                                                   <object class="GtkLabel" id="permstatuses_00000100_label">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes">Tapeworms</property>
+                                                    <property name="label" translatable="yes">Deadman's Thirst</property>
                                                   </object>
                                                 </child>
                                               </object>
@@ -2150,7 +2150,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <child>
                                                   <object class="GtkLabel" id="permstatuses_00000200_label">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes">Troll Fever</property>
+                                                    <property name="label" translatable="yes">Bloodboil</property>
                                                   </object>
                                                 </child>
                                               </object>
@@ -2171,7 +2171,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <child>
                                                   <object class="GtkLabel" id="permstatuses_00000400_label">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes">Eye Rot</property>
+                                                    <property name="label" translatable="yes">Brain Mold</property>
                                                   </object>
                                                 </child>
                                               </object>
@@ -2192,7 +2192,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                                 <child>
                                                   <object class="GtkLabel" id="permstatuses_00000800_label">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes">Fleshblight</property>
+                                                    <property name="label" translatable="yes">The Shambles</property>
                                                   </object>
                                                 </child>
                                               </object>
