@@ -1,160 +1,7 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <!-- interface-requires gtk+ 2.12 -->
+  <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Elements</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Toxins</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Magick</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Resist Disease</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="liststore2">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Strength</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Dexterity</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Endurance</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Speed</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Intelligence</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Wisdom</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Perception</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Concentration</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="liststore3">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">(none)</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Alchemy</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Divination</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Elemental</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Light Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Heavy Armor</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Shields</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cartography</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Dodge</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Hide in Shadows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Lore</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Meditation</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Mercantile</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Move Silently</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Pick Locks</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">SkullDuggery</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Spot Hidden</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Survival</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Unarmed Combat</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bludgeoning Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Bows</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Cleaving Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Short Bladed Weapons</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Swords</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thrown Weapons</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="item_subcategory_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="item_category_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkListStore" id="atrr_modified_1_store">
     <columns>
       <!-- column-name item -->
@@ -162,12 +9,6 @@
     </columns>
   </object>
   <object class="GtkListStore" id="atrr_modified_2_store">
-    <columns>
-      <!-- column-name item -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="atrr_modified_3_store">
     <columns>
       <!-- column-name item -->
       <column type="gchararray"/>
@@ -349,17 +190,163 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="bonus_3_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="bonus_value_1_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="bonus_value_2_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="bonus_value_3_adj">
+    <property name="lower">-2147483648</property>
+    <property name="upper">2147483647</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="cur_hp_adj">
+    <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_armor_adj">
+    <property name="lower">-5</property>
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_attr_modifier_adj">
+    <property name="lower">-5</property>
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_basearmor_adjustment">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_basedamage_adjustment">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="item_category_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="item_damage_adj">
+    <property name="lower">-5</property>
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_duration_adj">
+    <property name="upper">65536</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_hitpoint_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_mana_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_picid_adjustment">
+    <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_quantity_adj">
+    <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_rarity_adjustment">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_skill_modifier_adj">
+    <property name="lower">-5</property>
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkListStore" id="item_subcategory_store">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkAdjustment" id="item_tohit_adj">
+    <property name="lower">-5</property>
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_unknown1_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_unknown2_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_unknown3_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_unknown4_adj">
+    <property name="upper">255</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_unknownint_adj">
+    <property name="upper">4294967295</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_value_adjustment">
+    <property name="upper">65535</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="item_weight_adjustment">
+    <property name="upper">65535</property>
+    <property name="step_increment">0.10000000000000001</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="itemwindow">
     <property name="width_request">470</property>
     <property name="height_request">400</property>
+    <property name="can_focus">False</property>
     <property name="title" translatable="yes">Edit Item Details</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
-    <signal name="delete_event" handler="on_item_close_clicked"/>
+    <signal name="delete-event" handler="on_item_close_clicked" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox6">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <child>
           <object class="GtkNotebook" id="item_notebook">
             <property name="visible">True</property>
@@ -367,10 +354,12 @@
             <child>
               <object class="GtkVBox" id="vbox7">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label53">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                     <property name="xalign">0</property>
                     <property name="ypad">5</property>
@@ -379,21 +368,25 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkAlignment" id="alignment2">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkTable" id="table12">
                         <property name="visible">True</property>
-                        <property name="n_rows">10</property>
+                        <property name="can_focus">False</property>
+                        <property name="n_rows">12</property>
                         <property name="n_columns">2</property>
                         <child>
                           <object class="GtkLabel" id="item_name_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -405,8 +398,9 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="type_label">
+                          <object class="GtkLabel" id="category_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -420,8 +414,9 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="subtype_label">
+                          <object class="GtkLabel" id="subcategory_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -437,6 +432,7 @@
                         <child>
                           <object class="GtkLabel" id="pictureid_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -453,6 +449,7 @@
                         <child>
                           <object class="GtkLabel" id="value_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -468,6 +465,7 @@
                         <child>
                           <object class="GtkLabel" id="weight_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -483,6 +481,7 @@
                         <child>
                           <object class="GtkLabel" id="basedamage_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -498,6 +497,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment99">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -508,8 +508,12 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
-                                <signal name="changed" handler="on_singleval_changed_str"/>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -523,15 +527,17 @@
                         <child>
                           <object class="GtkAlignment" id="alignment100">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
                             <child>
-                              <object class="GtkComboBox" id="type">
+                              <object class="GtkComboBox" id="category">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">It's possible this isn't a complete list; please let me know if you discover something missing.</property>
                                 <property name="model">item_category_store</property>
-                                <signal name="changed" handler="on_type_dropdown_changed"/>
+                                <signal name="changed" handler="on_category_dropdown_changed" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext5"/>
                                   <attributes>
@@ -552,15 +558,17 @@
                         <child>
                           <object class="GtkAlignment" id="alignment101">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
                             <child>
-                              <object class="GtkComboBox" id="subtype">
+                              <object class="GtkComboBox" id="subcategory">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">The subcategory field is typically only used for weapons and armor, to specify the actual type of item.</property>
                                 <property name="model">item_subcategory_store</property>
-                                <signal name="changed" handler="on_dropdown_changed"/>
+                                <signal name="changed" handler="on_dropdown_changed" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                   <attributes>
@@ -581,40 +589,50 @@
                         <child>
                           <object class="GtkAlignment" id="alignment102">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <child>
                               <object class="GtkHBox" id="hbox23">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pictureid">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">item_picid_adjustment</property>
-                                    <signal name="value_changed" handler="on_singleval_changed_int_itempic"/>
+                                    <signal name="value-changed" handler="on_singleval_changed_int_itempic" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkAlignment" id="alignment19">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="left_padding">11</property>
                                     <child>
                                       <object class="GtkButton" id="itemgui_picid_button">
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
-                                        <signal name="clicked" handler="open_itemsel"/>
+                                        <property name="use_action_appearance">False</property>
+                                        <signal name="clicked" handler="open_itemsel" swapped="no"/>
                                         <child>
                                           <object class="GtkImage" id="item_pic_image">
                                             <property name="width_request">42</property>
                                             <property name="height_request">42</property>
                                             <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
                                             <property name="stock">gtk-missing-image</property>
                                           </object>
                                         </child>
@@ -623,12 +641,14 @@
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkAlignment" id="b2_item_picid_notealign">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="yscale">0</property>
                                     <property name="left_padding">11</property>
@@ -637,6 +657,8 @@
                                     </child>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -654,6 +676,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment103">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -662,9 +685,13 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_value_adjustment</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -679,6 +706,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment104">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -687,10 +715,14 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_weight_adjustment</property>
                                 <property name="digits">1</property>
-                                <signal name="value_changed" handler="on_singleval_changed_float"/>
+                                <signal name="value-changed" handler="on_singleval_changed_float" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -705,6 +737,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment105">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -713,9 +746,13 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_basedamage_adjustment</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -730,6 +767,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment106">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -738,9 +776,13 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_basearmor_adjustment</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -755,6 +797,7 @@
                         <child>
                           <object class="GtkLabel" id="basearmor_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -768,12 +811,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="visibility_label">
+                          <object class="GtkLabel" id="rarity_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
-                            <property name="label" translatable="yes">Visibility:</property>
+                            <property name="label" translatable="yes">Rarity:</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
@@ -785,17 +829,22 @@
                         <child>
                           <object class="GtkAlignment" id="alignment117">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
                             <child>
-                              <object class="GtkSpinButton" id="visibility">
+                              <object class="GtkSpinButton" id="rarity">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">item_visibility_adjustment</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <property name="adjustment">item_rarity_adjustment</property>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -810,6 +859,7 @@
                         <child>
                           <object class="GtkLabel" id="cur_hp_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -825,9 +875,11 @@
                         <child>
                           <object class="GtkHBox" id="hbox1">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkAlignment" id="alignment3">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
@@ -836,37 +888,46 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cur_hp_adj</property>
-                                    <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                    <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment4">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="left_padding">10</property>
                                 <property name="right_padding">10</property>
                                 <child>
                                   <object class="GtkLabel" id="max_hp_label">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="label" translatable="yes">out of</property>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment5">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
@@ -875,14 +936,19 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">max_hp_adj</property>
-                                    <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                    <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -893,6 +959,98 @@
                             <property name="top_attach">9</property>
                             <property name="bottom_attach">10</property>
                             <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="quest_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">3</property>
+                            <property name="label" translatable="yes">Quest item?</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">10</property>
+                            <property name="bottom_attach">11</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment14">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">0</property>
+                            <property name="xscale">0</property>
+                            <child>
+                              <object class="GtkSpinButton" id="quest">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="invisible_char">●</property>
+                                <property name="invisible_char_set">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <property name="adjustment">itme_quest_adj</property>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">10</property>
+                            <property name="bottom_attach">11</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="material_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">3</property>
+                            <property name="label" translatable="yes">Material</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">11</property>
+                            <property name="bottom_attach">12</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment15">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">0</property>
+                            <property name="xscale">0</property>
+                            <child>
+                              <object class="GtkSpinButton" id="material">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="invisible_char">●</property>
+                                <property name="invisible_char_set">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <property name="adjustment">item_unknown1_adj</property>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">11</property>
+                            <property name="bottom_attach">12</property>
                           </packing>
                         </child>
                       </object>
@@ -909,6 +1067,7 @@
             <child type="tab">
               <object class="GtkLabel" id="label50">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Basic Information</property>
               </object>
               <packing>
@@ -918,10 +1077,12 @@
             <child>
               <object class="GtkVBox" id="item_b1_modifier_box">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label55">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                     <property name="xalign">0</property>
                     <property name="ypad">5</property>
@@ -930,30 +1091,36 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkTable" id="table13">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="n_rows">9</property>
                     <property name="n_columns">3</property>
                     <child>
                       <object class="GtkHBox" id="hbox13">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label56">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment109">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -962,13 +1129,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_skill_modifier_adj</property>
-                                <signal name="value_changed" handler="on_modifier_changed"/>
+                                <signal name="value-changed" handler="on_modifier_changed" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -976,22 +1148,26 @@
                           <object class="GtkLabel" id="label57">
                             <property name="width_request">10</property>
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment110">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkComboBox" id="skill_modified">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
                                 <property name="model">liststore3</property>
-                                <signal name="changed" handler="on_modifier_changed"/>
+                                <signal name="changed" handler="on_modifier_changed" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext3"/>
                                   <attributes>
@@ -1003,6 +1179,7 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">3</property>
                           </packing>
                         </child>
@@ -1017,19 +1194,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox12">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label58">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment107">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1038,13 +1219,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_attr_modifier_adj</property>
-                                <signal name="value_changed" handler="on_modifier_changed"/>
+                                <signal name="value-changed" handler="on_modifier_changed" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1052,22 +1238,26 @@
                           <object class="GtkLabel" id="label59">
                             <property name="width_request">10</property>
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment108">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkComboBox" id="attr_modified">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
                                 <property name="model">liststore2</property>
-                                <signal name="changed" handler="on_modifier_changed"/>
+                                <signal name="changed" handler="on_modifier_changed" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                   <attributes>
@@ -1079,6 +1269,7 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">3</property>
                           </packing>
                         </child>
@@ -1093,6 +1284,7 @@
                     <child>
                       <object class="GtkLabel" id="skill_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1110,6 +1302,7 @@
                     <child>
                       <object class="GtkLabel" id="attr_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1128,11 +1321,12 @@
                       <object class="GtkLabel" id="label60">
                         <property name="width_request">20</property>
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                       </object>
                       <packing>
                         <property name="bottom_attach">9</property>
-                        <property name="x_options"></property>
+                        <property name="x_options"/>
                       </packing>
                     </child>
                     <child>
@@ -1140,8 +1334,9 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="draw_indicator">True</property>
-                        <signal name="toggled" handler="on_checkbox_bit_changed"/>
+                        <signal name="toggled" handler="on_checkbox_bit_changed" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left_attach">2</property>
@@ -1151,6 +1346,7 @@
                     <child>
                       <object class="GtkLabel" id="flags_0003_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1166,6 +1362,7 @@
                     <child>
                       <object class="GtkLabel" id="incr_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1183,26 +1380,31 @@
                     <child>
                       <object class="GtkHBox" id="hbox14">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label61">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+20% </property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment111">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkComboBox" id="incr">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="has_tooltip">True</property>
                                 <property name="model">liststore1</property>
-                                <signal name="changed" handler="on_dropdown_changed"/>
+                                <signal name="changed" handler="on_dropdown_changed" swapped="no"/>
                                 <child>
                                   <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                   <attributes>
@@ -1214,6 +1416,7 @@
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1228,6 +1431,7 @@
                     <child>
                       <object class="GtkLabel" id="hitpoint_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1245,19 +1449,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox15">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label62">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment112">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1266,12 +1474,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_hitpoint_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1286,6 +1500,7 @@
                     <child>
                       <object class="GtkLabel" id="mana_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1303,6 +1518,7 @@
                     <child>
                       <object class="GtkLabel" id="tohit_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1320,6 +1536,7 @@
                     <child>
                       <object class="GtkLabel" id="damage_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1337,6 +1554,7 @@
                     <child>
                       <object class="GtkLabel" id="armor_label">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                         <property name="xalign">1</property>
                         <property name="xpad">3</property>
@@ -1354,19 +1572,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox16">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label63">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment113">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1375,12 +1597,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_mana_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1395,19 +1623,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox17">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label64">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment114">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1416,12 +1648,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_tohit_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1436,19 +1674,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox18">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label65">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment115">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1457,12 +1699,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_damage_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1477,19 +1725,23 @@
                     <child>
                       <object class="GtkHBox" id="hbox19">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkLabel" id="label66">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="label" translatable="yes">+</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment116">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -1498,12 +1750,18 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_armor_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -1530,6 +1788,7 @@
             <child type="tab">
               <object class="GtkLabel" id="item_b1_modifier_tab">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Modifiers</property>
               </object>
               <packing>
@@ -1540,10 +1799,12 @@
             <child>
               <object class="GtkVBox" id="item_b2_modifier_box">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label2">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="ypad">5</property>
                     <property name="label" translatable="yes">&lt;b&gt;Modifiers&lt;/b&gt;</property>
@@ -1558,17 +1819,20 @@
                 <child>
                   <object class="GtkAlignment" id="alignment6">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="yalign">0</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkTable" id="table2">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="n_rows">5</property>
                         <property name="n_columns">2</property>
                         <child>
-                          <object class="GtkLabel" id="attr_modifier_1_label">
+                          <object class="GtkLabel" id="bonus_value_1_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -1581,8 +1845,9 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="attr_modifier_2_label">
+                          <object class="GtkLabel" id="bonus_value_2_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -1597,8 +1862,9 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="attr_modifier_3_label">
+                          <object class="GtkLabel" id="bonus_value_3_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -1615,48 +1881,59 @@
                         <child>
                           <object class="GtkHBox" id="hbox2">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">+</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment7">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <object class="GtkSpinButton" id="attr_modifier_1">
+                                  <object class="GtkSpinButton" id="bonus_value_1">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
-                                    <property name="adjustment">attr_modifier_1_adj</property>
-                                    <signal name="value_changed" handler="on_b2_modifier_changed"/>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <property name="adjustment">bonus_value_1_adj</property>
+                                    <signal name="value-changed" handler="on_b2_bonus_changed" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment8">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="left_padding">10</property>
                                 <child>
-                                  <object class="GtkComboBox" id="attr_modified_1">
+                                  <object class="GtkComboBox" id="bonus_1">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="model">atrr_modified_1_store</property>
-                                    <signal name="changed" handler="on_b2_modifier_changed"/>
+                                    <signal name="changed" handler="on_b2_bonus_changed" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext6"/>
                                       <attributes>
@@ -1668,6 +1945,7 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -1681,48 +1959,59 @@
                         <child>
                           <object class="GtkHBox" id="hbox3">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label4">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">+</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment9">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <object class="GtkSpinButton" id="attr_modifier_2">
+                                  <object class="GtkSpinButton" id="bonus_value_2">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
-                                    <property name="adjustment">attr_modifier_2_adj</property>
-                                    <signal name="value_changed" handler="on_b2_modifier_changed"/>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <property name="adjustment">bonus_value_2_adj</property>
+                                    <signal name="value-changed" handler="on_b2_bonus_changed" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment10">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="left_padding">10</property>
                                 <child>
-                                  <object class="GtkComboBox" id="attr_modified_2">
+                                  <object class="GtkComboBox" id="bonus_2">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="model">atrr_modified_2_store</property>
-                                    <signal name="changed" handler="on_b2_modifier_changed"/>
+                                    <signal name="changed" handler="on_b2_bonus_changed" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext7"/>
                                       <attributes>
@@ -1734,6 +2023,7 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -1749,48 +2039,59 @@
                         <child>
                           <object class="GtkHBox" id="hbox4">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="attr_modified_plusminus_3">
+                              <object class="GtkLabel" id="bonus_plusminus_3">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">+/-</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment11">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="xalign">0</property>
                                 <property name="xscale">0</property>
                                 <child>
-                                  <object class="GtkSpinButton" id="attr_modifier_3">
+                                  <object class="GtkSpinButton" id="bonus_value_3">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="invisible_char">&#x25CF;</property>
-                                    <property name="adjustment">attr_modifier_3_adj</property>
-                                    <signal name="value_changed" handler="on_b2_modifier_changed"/>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <property name="adjustment">bonus_value_3_adj</property>
+                                    <signal name="value-changed" handler="on_b2_bonus_changed" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment12">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="left_padding">10</property>
                                 <child>
-                                  <object class="GtkComboBox" id="attr_modified_3">
+                                  <object class="GtkComboBox" id="bonus_3">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="model">atrr_modified_3_store</property>
-                                    <signal name="changed" handler="on_b2_modifier_changed"/>
+                                    <property name="model">bonus_3_store</property>
+                                    <signal name="changed" handler="on_b2_bonus_changed" swapped="no"/>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext8"/>
                                       <attributes>
@@ -1802,6 +2103,7 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">2</property>
                               </packing>
                             </child>
@@ -1817,6 +2119,7 @@
                         <child>
                           <object class="GtkLabel" id="b2_modifier_spacer_1_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                           </object>
                           <packing>
                             <property name="top_attach">3</property>
@@ -1828,6 +2131,7 @@
                         <child>
                           <object class="GtkLabel" id="b2_modifier_spacer_2_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                           </object>
                           <packing>
                             <property name="top_attach">4</property>
@@ -1838,6 +2142,7 @@
                         <child>
                           <object class="GtkAlignment" id="b2_modifier_3_infoalign">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="xalign">0</property>
                             <property name="bottom_padding">5</property>
                             <child>
@@ -1870,7 +2175,7 @@
                                     <property name="model">b2_reagent_magic_store</property>
                                     <property name="search_column">0</property>
                                     <property name="fixed_height_mode">True</property>
-                                    <signal name="button_press_event" handler="on_b2_item_attr3_treeview_clicked"/>
+                                    <signal name="button-press-event" handler="on_b2_item_attr3_treeview_clicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
@@ -1878,6 +2183,7 @@
                             <child type="tab">
                               <object class="GtkLabel" id="label5">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Reagents</property>
                               </object>
                               <packing>
@@ -1901,7 +2207,7 @@
                                     <property name="model">b2_potion_magic_store</property>
                                     <property name="search_column">0</property>
                                     <property name="fixed_height_mode">True</property>
-                                    <signal name="button_press_event" handler="on_b2_item_attr3_treeview_clicked"/>
+                                    <signal name="button-press-event" handler="on_b2_item_attr3_treeview_clicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
@@ -1912,6 +2218,7 @@
                             <child type="tab">
                               <object class="GtkLabel" id="label6">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes">Potions</property>
                               </object>
                               <packing>
@@ -1937,6 +2244,8 @@
                     </child>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -1948,6 +2257,7 @@
             <child type="tab">
               <object class="GtkLabel" id="item_b2_modifier_tab">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Modifiers</property>
               </object>
               <packing>
@@ -1958,10 +2268,12 @@
             <child>
               <object class="GtkVBox" id="vbox9">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="border_width">12</property>
                 <child>
                   <object class="GtkLabel" id="label67">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                     <property name="xalign">0</property>
                     <property name="ypad">5</property>
@@ -1970,21 +2282,25 @@
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkAlignment" id="alignment13">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="left_padding">20</property>
                     <child>
                       <object class="GtkTable" id="table14">
                         <property name="visible">True</property>
-                        <property name="n_rows">8</property>
+                        <property name="can_focus">False</property>
+                        <property name="n_rows">9</property>
                         <property name="n_columns">2</property>
                         <child>
                           <object class="GtkLabel" id="duration_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -1998,6 +2314,7 @@
                         <child>
                           <object class="GtkLabel" id="canstack_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -2013,6 +2330,7 @@
                         <child>
                           <object class="GtkLabel" id="quantity_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -2028,25 +2346,11 @@
                         <child>
                           <object class="GtkLabel" id="script_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
                             <property name="label" translatable="yes">Action Script:</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                            <property name="x_options">GTK_FILL</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="zero1_label">
-                            <property name="visible">True</property>
-                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="xalign">1</property>
-                            <property name="xpad">3</property>
-                            <property name="label" translatable="yes">&lt;i&gt;(unknown integer):&lt;/i&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
@@ -2056,8 +2360,25 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="zero1_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">3</property>
+                            <property name="label" translatable="yes">&lt;i&gt;(unknown integer):&lt;/i&gt;</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">7</property>
+                            <property name="bottom_attach">8</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkLabel" id="emptystr_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
@@ -2065,14 +2386,15 @@
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
-                            <property name="top_attach">5</property>
-                            <property name="bottom_attach">6</property>
+                            <property name="top_attach">8</property>
+                            <property name="bottom_attach">9</property>
                             <property name="x_options">GTK_FILL</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment118">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -2082,9 +2404,13 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">Used for lanterns, and possibly other similar objects</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_duration_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -2098,8 +2424,9 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="draw_indicator">True</property>
-                            <signal name="toggled" handler="on_checkbox_changed"/>
+                            <signal name="toggled" handler="on_checkbox_changed" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -2111,6 +2438,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment119">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -2119,9 +2447,13 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_quantity_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -2135,6 +2467,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment120">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -2142,6 +2475,7 @@
                             <child>
                               <object class="GtkHBox" id="script_hbox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkEntry" id="script">
                                     <property name="width_request">250</property>
@@ -2149,10 +2483,16 @@
                                     <property name="can_focus">True</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="tooltip_text" translatable="yes">Definitely be careful while editing this field.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
-                                    <signal name="changed" handler="on_singleval_changed_str"/>
+                                    <property name="invisible_char">●</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2162,8 +2502,8 @@
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
-                            <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
+                            <property name="top_attach">4</property>
+                            <property name="bottom_attach">5</property>
                             <property name="x_options">GTK_FILL</property>
                             <property name="y_options">GTK_FILL</property>
                           </packing>
@@ -2171,6 +2511,7 @@
                         <child>
                           <object class="GtkAlignment" id="alignment121">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -2180,22 +2521,27 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">The use of this field is unknown, though it's always been zero on my save files.  Best to leave this alone.</property>
-                                <property name="invisible_char">&#x25CF;</property>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">item_unknownint_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="right_attach">2</property>
-                            <property name="top_attach">4</property>
-                            <property name="bottom_attach">5</property>
+                            <property name="top_attach">7</property>
+                            <property name="bottom_attach">8</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment122">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
@@ -2207,8 +2553,104 @@
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                 <property name="tooltip_text" translatable="yes">The use of this string is unknown.  It's been an empty string on all of my savegames.  Best to leave alone.</property>
-                                <property name="invisible_char">&#x25CF;</property>
-                                <signal name="changed" handler="on_singleval_changed_str"/>
+                                <property name="invisible_char">●</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">8</property>
+                            <property name="bottom_attach">9</property>
+                            <property name="x_options">GTK_FILL</property>
+                            <property name="y_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="is_projectile_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">3</property>
+                            <property name="label" translatable="yes">Is a projectile:</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="is_projectile">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="on_checkbox_changed" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="spell_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">1</property>
+                            <property name="xpad">3</property>
+                            <property name="label" translatable="yes">Spell:</property>
+                            <property name="use_markup">True</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">5</property>
+                            <property name="bottom_attach">6</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                            <property name="xalign">0</property>
+                            <property name="xscale">0</property>
+                            <property name="yscale">0</property>
+                            <child>
+                              <object class="GtkHBox" id="spell_hbox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkEntry" id="spell">
+                                    <property name="width_request">250</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                    <property name="invisible_char">●</property>
+                                    <property name="invisible_char_set">True</property>
+                                    <property name="primary_icon_activatable">False</property>
+                                    <property name="secondary_icon_activatable">False</property>
+                                    <property name="primary_icon_sensitive">True</property>
+                                    <property name="secondary_icon_sensitive">True</property>
+                                    <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -2222,12 +2664,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="unknownflag_label">
+                          <object class="GtkLabel" id="spell_power_label">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">1</property>
                             <property name="xpad">3</property>
-                            <property name="label" translatable="yes">&lt;i&gt;(unknown flag):&lt;/i&gt;</property>
+                            <property name="label" translatable="yes">Spell power:</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
@@ -2237,20 +2680,25 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkAlignment" id="alignment14">
+                          <object class="GtkAlignment" id="alignment16">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                             <property name="xalign">0</property>
                             <property name="xscale">0</property>
                             <child>
-                              <object class="GtkSpinButton" id="unknownflag">
+                              <object class="GtkSpinButton" id="spell_power">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="tooltip_text" translatable="yes">This flag has always been zero for me, except on the Plasma Wand, where it was 1</property>
-                                <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">itme_unknownflag_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
+                                <property name="invisible_char">●</property>
+                                <property name="invisible_char_set">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <property name="adjustment">spell_power_adj</property>
+                                <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -2259,46 +2707,6 @@
                             <property name="right_attach">2</property>
                             <property name="top_attach">6</property>
                             <property name="bottom_attach">7</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="itemunknownc1_label">
-                            <property name="visible">True</property>
-                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="xalign">1</property>
-                            <property name="xpad">3</property>
-                            <property name="label" translatable="yes">&lt;i&gt;(unknown byte 1):&lt;/i&gt;</property>
-                            <property name="use_markup">True</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">7</property>
-                            <property name="bottom_attach">8</property>
-                            <property name="x_options">GTK_FILL</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkAlignment" id="alignment15">
-                            <property name="visible">True</property>
-                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="xalign">0</property>
-                            <property name="xscale">0</property>
-                            <child>
-                              <object class="GtkSpinButton" id="itemunknownc1">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                <property name="tooltip_text" translatable="yes">This is usually zero for things in my inventory, often 1 or 2 for weapons and armor found in Merchant inventories (though not always).</property>
-                                <property name="invisible_char">&#x25CF;</property>
-                                <property name="adjustment">item_unknown1_adj</property>
-                                <signal name="value_changed" handler="on_singleval_changed_int"/>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">7</property>
-                            <property name="bottom_attach">8</property>
                           </packing>
                         </child>
                       </object>
@@ -2318,6 +2726,7 @@
             <child type="tab">
               <object class="GtkLabel" id="label52">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Misc Attributes</property>
               </object>
               <packing>
@@ -2327,17 +2736,23 @@
             </child>
           </object>
           <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkHBox" id="hbox11">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkLabel" id="label49">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
               </object>
               <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -2348,156 +2763,179 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="border_width">5</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_item_close_clicked"/>
+                <signal name="clicked" handler="on_item_close_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
       </object>
     </child>
   </object>
-  <object class="GtkAdjustment" id="item_unknownint_adj">
-    <property name="upper">4294967295</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_quantity_adj">
-    <property name="upper">65535</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_duration_adj">
-    <property name="upper">65536</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_armor_adj">
-    <property name="lower">-5</property>
+  <object class="GtkAdjustment" id="itme_quest_adj">
     <property name="upper">255</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="item_damage_adj">
-    <property name="lower">-5</property>
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Elements</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Toxins</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Magick</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Resist Disease</col>
+      </row>
+    </data>
   </object>
-  <object class="GtkAdjustment" id="item_tohit_adj">
-    <property name="lower">-5</property>
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+  <object class="GtkListStore" id="liststore2">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Strength</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Dexterity</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Endurance</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Speed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Intelligence</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Wisdom</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Perception</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Concentration</col>
+      </row>
+    </data>
   </object>
-  <object class="GtkAdjustment" id="item_mana_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_hitpoint_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_attr_modifier_adj">
-    <property name="lower">-5</property>
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_skill_modifier_adj">
-    <property name="lower">-5</property>
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_visibility_adjustment">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_basearmor_adjustment">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_basedamage_adjustment">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_weight_adjustment">
-    <property name="upper">65535</property>
-    <property name="step_increment">0.10000000000000001</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_value_adjustment">
-    <property name="upper">65535</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_picid_adjustment">
-    <property name="upper">65535</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="cur_hp_adj">
-    <property name="upper">65535</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+  <object class="GtkListStore" id="liststore3">
+    <columns>
+      <!-- column-name item -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">(none)</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Alchemy</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Divination</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Elemental</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Light Armor</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Heavy Armor</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Shields</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cartography</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Dodge</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Hide in Shadows</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Lore</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Meditation</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Mercantile</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Move Silently</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Pick Locks</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">SkullDuggery</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Spot Hidden</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Survival</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Unarmed Combat</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bludgeoning Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bows</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Cleaving Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Short Bladed Weapons</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Swords</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Thrown Weapons</col>
+      </row>
+    </data>
   </object>
   <object class="GtkAdjustment" id="max_hp_adj">
     <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="attr_modifier_1_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="attr_modifier_2_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="attr_modifier_3_adj">
-    <property name="lower">-2147483648</property>
-    <property name="upper">2147483647</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="itme_unknownflag_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_unknown1_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_unknown2_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_unknown3_adj">
-    <property name="upper">255</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="item_unknown4_adj">
-    <property name="upper">255</property>
+  <object class="GtkAdjustment" id="spell_power_adj">
+    <property name="upper">65535</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>

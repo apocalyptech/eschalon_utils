@@ -715,16 +715,16 @@ class B2Gfx(Gfx):
             }
         self.zappercache = None
 
-        # Item type graphic file lookups
-        self.itemtype_gfxcache_idx = {}
+        # Item category graphic file lookups
+        self.itemcategory_gfxcache_idx = {}
         for num in range(50):
-            self.itemtype_gfxcache_idx[num] = 'misc'
+            self.itemcategory_gfxcache_idx[num] = 'misc'
         for num in range(1, 3):
-            self.itemtype_gfxcache_idx[num] = 'weapons'
+            self.itemcategory_gfxcache_idx[num] = 'weapons'
         for num in range(3, 11):
-            self.itemtype_gfxcache_idx[num] = 'armor'
+            self.itemcategory_gfxcache_idx[num] = 'armor'
         for num in range(11, 16) + [17]:
-            self.itemtype_gfxcache_idx[num] = 'magic'
+            self.itemcategory_gfxcache_idx[num] = 'magic'
         
         # Store our gamedir
         self.gamedir = prefs.get_str('paths', 'gamedir_b2')
@@ -732,7 +732,7 @@ class B2Gfx(Gfx):
         # Finally call the parent constructor
         super(B2Gfx, self).__init__(prefs, datadir)
 
-    def item_overlayfunc(self, surface, width, height, cols, type):
+    def item_overlayfunc(self, surface, width, height, cols, category):
         """
         In Book 2, the Weapon and Armor graphics don't have a background, which looks
         a little odd in the GUI.  So we construct them based on the given elements in
@@ -741,7 +741,7 @@ class B2Gfx(Gfx):
 
         # First load in the background and its frame
         frame = self.readfile('icon_frame.png')
-        background = self.readfile('%s_icon_blank.png' % (type))
+        background = self.readfile('%s_icon_blank.png' % (category))
         framesurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(frame))
         backsurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(background))
 
@@ -805,10 +805,10 @@ class B2Gfx(Gfx):
             raise LoadException('We haven\'t initialized ourselves yet')
 
     def get_item(self, item, size=None, gdk=True):
-        if item.type not in self.itemtype_gfxcache_idx:
+        if item.category not in self.itemcategory_gfxcache_idx:
             idx = 'misc'
         else:
-            idx = self.itemtype_gfxcache_idx[item.type]
+            idx = self.itemcategory_gfxcache_idx[item.category]
         if (self.itemcache[idx] is None):
             self.itemcache[idx] = GfxCache(self.readfile('%s_sheet.png' % (idx)), 50, 50, 10, self.itemcache_overlayfunc[idx])
         return self.itemcache[idx].getimg(item.pictureid+1, size, gdk)
@@ -1051,16 +1051,16 @@ class B3Gfx(Gfx):
             }
         self.zappercache = None
 
-        # Item type graphic file lookups
-        self.itemtype_gfxcache_idx = {}
+        # Item category graphic file lookups
+        self.itemcategory_gfxcache_idx = {}
         for num in range(50):
-            self.itemtype_gfxcache_idx[num] = 'misc'
+            self.itemcategory_gfxcache_idx[num] = 'misc'
         for num in range(1, 3):
-            self.itemtype_gfxcache_idx[num] = 'weapons'
+            self.itemcategory_gfxcache_idx[num] = 'weapons'
         for num in range(3, 11):
-            self.itemtype_gfxcache_idx[num] = 'armor'
+            self.itemcategory_gfxcache_idx[num] = 'armor'
         for num in range(11, 16) + [17]:
-            self.itemtype_gfxcache_idx[num] = 'magic'
+            self.itemcategory_gfxcache_idx[num] = 'magic'
         
         # Store our gamedir
         self.gamedir = prefs.get_str('paths', 'gamedir_b3')
@@ -1068,7 +1068,7 @@ class B3Gfx(Gfx):
         # Finally call the parent constructor
         super(B3Gfx, self).__init__(prefs, datadir)
 
-    def item_overlayfunc(self, surface, width, height, cols, type):
+    def item_overlayfunc(self, surface, width, height, cols, category):
         """
         In Book 2, the Weapon and Armor graphics don't have a background, which looks
         a little odd in the GUI.  So we construct them based on the given elements in
@@ -1077,7 +1077,7 @@ class B3Gfx(Gfx):
 
         # First load in the background and its frame
         frame = self.readfile('icon_frame.png')
-        background = self.readfile('%s_icon_blank.png' % (type))
+        background = self.readfile('%s_icon_blank.png' % (category))
         framesurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(frame))
         backsurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(background))
 
@@ -1136,10 +1136,10 @@ class B3Gfx(Gfx):
             raise LoadException('We haven\'t initialized ourselves yet')
 
     def get_item(self, item, size=None, gdk=True):
-        if item.type not in self.itemtype_gfxcache_idx:
+        if item.category not in self.itemcategory_gfxcache_idx:
             idx = 'misc'
         else:
-            idx = self.itemtype_gfxcache_idx[item.type]
+            idx = self.itemcategory_gfxcache_idx[item.category]
         if (self.itemcache[idx] is None):
             self.itemcache[idx] = GfxCache(self.readfile('%s_sheet.png' % (idx)), 50, 50, 10, self.itemcache_overlayfunc[idx])
         return self.itemcache[idx].getimg(item.pictureid+1, size, gdk)

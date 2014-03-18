@@ -319,11 +319,11 @@ class BaseGUI(object):
                 'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
                 'on_singleval_changed_float': self.on_singleval_changed_float,
                 'on_dropdown_changed': self.on_dropdown_changed,
-                'on_type_dropdown_changed': self.on_type_dropdown_changed,
+                'on_category_dropdown_changed': self.on_category_dropdown_changed,
                 'on_checkbox_changed': self.on_checkbox_changed,
                 'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
                 'on_modifier_changed': self.on_modifier_changed,
-                'on_b2_modifier_changed': self.on_b2_modifier_changed,
+                'on_b2_bonus_changed': self.on_b2_bonus_changed,
                 'on_item_close_clicked': self.on_item_close_clicked,
                 'open_itemsel': self.open_itemsel,
                 'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
@@ -420,17 +420,17 @@ class BaseGUI(object):
         self.register_widget('item_imgsel_window', self.imgsel_window)
 
         ###
-        ### Item Type and Subtype dropdowns
+        ### Item Category and Subcategory dropdowns
         ###
-        type_dd = self.get_widget('type')
-        type_dd.get_model().clear()
-        for type in c.typetable.values():
-            type_dd.append_text(type)
-        subtype_dd = self.get_widget('subtype')
-        subtype_dd.get_model().clear()
-        subtype_dd.append_text('(none)')
-        for subtype in c.skilltable.values():
-            subtype_dd.append_text(subtype)
+        category_dd = self.get_widget('category')
+        category_dd.get_model().clear()
+        for category in c.categorytable.values():
+            category_dd.append_text(category)
+        subcategory_dd = self.get_widget('subcategory')
+        subcategory_dd.get_model().clear()
+        subcategory_dd.append_text('(none)')
+        for subcategory in c.skilltable.values():
+            subcategory_dd.append_text(subcategory)
 
         ###
         ### Item attribute modifier dropdowns
@@ -440,7 +440,7 @@ class BaseGUI(object):
         if book > 1:
             boxes = []
             for i in range(1, 4):
-                boxes.append(self.get_widget('attr_modified_%d' % (i)))
+                boxes.append(self.get_widget('bonus_%d' % (i)))
             attributes = c.itemeffecttable.values()
             for box in boxes:
                 box.get_model().clear()
@@ -468,10 +468,10 @@ class BaseGUI(object):
         ### Fix some tooltips
         ###
         if book == 1:
-            self.get_widget('visibility').set_tooltip_text('This is generally 1 for ordinary items, and 3 for items which the character hasn\'t identified yet.  Other values\' meanings are unknown.');
+            self.get_widget('rarity').set_tooltip_text('This is generally 1 for ordinary items, and 3 for items which the character hasn\'t identified yet.  Other values\' meanings are unknown.');
             self.get_widget('quantity').set_tooltip_text('This value only makes sense when \'Can Stack\' is checked, above.  Ordinarily zero for items which can\'t be stacked.');
         else:
-            self.get_widget('visibility').set_tooltip_text('This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
+            self.get_widget('rarity').set_tooltip_text('This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
             self.get_widget('quantity').set_tooltip_text('This is usually 1 even if \'Can Stack\' is set to No.')
 
         ###
@@ -710,16 +710,16 @@ class BaseGUI(object):
 
     def get_comp_objects(self):
         """ Get the objects to compare against while checking for form changes. """
-        if (self.curitemtype == self.ITEM_EQUIP):
+        if (self.curitemcategory == self.ITEM_EQUIP):
             obj = self.char.__dict__[self.curitem]
             origobj = self.origchar.__dict__[self.curitem]
-        elif (self.curitemtype == self.ITEM_INV):
+        elif (self.curitemcategory == self.ITEM_INV):
             obj = self.char.inventory[self.curitem[0]][self.curitem[1]]
             origobj = self.origchar.inventory[self.curitem[0]][self.curitem[1]]
-        elif (self.curitemtype == self.ITEM_READY):
+        elif (self.curitemcategory == self.ITEM_READY):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
-        elif (self.curitemtype == self.ITEM_MAP):
+        elif (self.curitemcategory == self.ITEM_MAP):
             obj = self.map.squares[self.sq_y][self.sq_x].scripts[self.curitem[1]].items[self.curitem[0]]
             origobj = obj
         else:
@@ -732,7 +732,7 @@ class BaseGUI(object):
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_text()
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
@@ -741,7 +741,7 @@ class BaseGUI(object):
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = int(widget.get_value())
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
@@ -751,7 +751,7 @@ class BaseGUI(object):
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_value()
         # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
 
@@ -770,13 +770,13 @@ class BaseGUI(object):
         wname = widget.get_name()
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active()
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
     
-    def on_type_dropdown_changed(self, widget):
+    def on_category_dropdown_changed(self, widget):
         """
-        What to do when the item type dropdown is changed.
+        What to do when the item category dropdown is changed.
         Only has an actual effect in Book 2, though technically Book 1 will go through
         the motions as well.
         """
@@ -792,7 +792,7 @@ class BaseGUI(object):
             obj.__dict__[wname] = 1
         else:
             obj.__dict__[wname] = 0
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
@@ -807,14 +807,14 @@ class BaseGUI(object):
             obj.__dict__[shortname] = obj.__dict__[shortname] | mask
         else:
             obj.__dict__[shortname] = obj.__dict__[shortname] & ~mask
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[shortname] & mask), wname, labelwidget, label)
 
     def on_modifier_changed(self, widget):
         """ What to do when our attr or skill modifier changes. """
         wname = widget.get_name()
-        (which, type) = wname.rsplit('_', 1)
+        (which, category) = wname.rsplit('_', 1)
         modifiertext = '%s_modifier' % (which)
         modifiedtext = '%s_modified' % (which)
         modifier = int(self.get_widget(modifiertext).get_value())
@@ -824,51 +824,51 @@ class BaseGUI(object):
             obj.__dict__[modifiertext] = modifier
         elif (wname == modifiedtext):
             obj.__dict__[modifiedtext] = modified
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(which)
             self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
                 origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
 
-    def on_b2_modifier_changed(self, widget):
+    def on_b2_bonus_changed(self, widget):
         """ What to do when a book 2 item attribute changes. """
         if c.book == 1:
             return
         wname = widget.get_name()
         num = int(wname.split('_')[-1])
-        modifiertext = 'attr_modifier_%d' % (num)
-        modifiedtext = 'attr_modified_%d' % (num)
-        modifier = int(self.get_widget(modifiertext).get_value())
-        modified = self.get_widget(modifiedtext).get_active()
+        bonusvaluetext = 'bonus_value_%d' % (num)
+        bonustext = 'bonus_%d' % (num)
+        bonusvalue = int(self.get_widget(bonusvaluetext).get_value())
+        bonus = self.get_widget(bonustext).get_active()
         (obj, origobj) = self.get_comp_objects()
-        if (wname == modifiertext):
-            obj.__dict__[modifiertext] = modifier
-        elif (wname == modifiedtext):
-            obj.__dict__[modifiedtext] = modified
+        if (wname == bonusvaluetext):
+            obj.__dict__[bonusvaluetext] = bonusvalue
+        elif (wname == bonustext):
+            obj.__dict__[bonustext] = bonus
         if num == 3:
-            if obj.attr_modifier_3 < 0:
-                self.get_widget('attr_modified_plusminus_3').set_text('')
+            if obj.bonus_value_3 < 0:
+                self.get_widget('bonus_plusminus_3').set_text('')
             else:
-                self.get_widget('attr_modified_plusminus_3').set_text('+')
-        if (self.curitemtype != self.ITEM_MAP):
-            (labelwidget, label) = self.get_label_cache(modifiertext)
-            self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
-                origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), modifiertext, labelwidget, label)
+                self.get_widget('bonus_plusminus_3').set_text('+')
+        if (self.curitemcategory != self.ITEM_MAP):
+            (labelwidget, label) = self.get_label_cache(bonusvaluetext)
+            self.set_changed_widget((origobj.__dict__[bonusvaluetext] == obj.__dict__[bonusvaluetext] and
+                origobj.__dict__[bonustext] == obj.__dict__[bonustext]), bonusvaluetext, labelwidget, label)
 
     def on_item_close_clicked(self, widget=None, event=None, dohide=True):
-        if (self.curitemtype == self.ITEM_EQUIP):
+        if (self.curitemcategory == self.ITEM_EQUIP):
             self.populate_equip_button(self.curitem)
-        elif (self.curitemtype == self.ITEM_INV):
+        elif (self.curitemcategory == self.ITEM_INV):
             self.populate_inv_button(self.curitem[0], self.curitem[1])
-        elif (self.curitemtype == self.ITEM_READY):
+        elif (self.curitemcategory == self.ITEM_READY):
             self.populate_ready_button(self.curitem)
-        elif (self.curitemtype == self.ITEM_MAP):
+        elif (self.curitemcategory == self.ITEM_MAP):
             self.populate_mapitem_button(self.curitem[0], self.curitem[1])
-        if (self.curitemtype != self.ITEM_MAP):
+        if (self.curitemcategory != self.ITEM_MAP):
             for name in self.itemchanged.keys():
                 (labelwidget, label) = self.get_label_cache(name)
                 self.set_changed_widget(True, name, labelwidget, label, False)
             self.itemchanged = {}
-            self.curitemtype = self.ITEM_NONE
+            self.curitemcategory = self.ITEM_NONE
         if (dohide):
             self.itemwindow.hide()
         return True
@@ -877,8 +877,8 @@ class BaseGUI(object):
         str = ''
         if (item.item_name == ''):
             str = '<i>(None)</i>'
-        elif (item.type == 0):
-            str = '<i>%s (no Type specified)</i>' % (item.item_name)
+        elif (item.category == 0):
+            str = '<i>%s (no Category specified)</i>' % (item.item_name)
         else:
             if (item.canstack and item.quantity>1):
                 str = '<i>(%d)</i> ' % (item.quantity)
@@ -902,8 +902,8 @@ class BaseGUI(object):
         """ Populates the Item GUI from the given object. """
 
         self.get_widget('item_name').set_text(item.item_name)
-        self.get_widget('type').set_active(item.type)
-        self.get_widget('subtype').set_active(item.subtype)
+        self.get_widget('category').set_active(item.category)
+        self.get_widget('subcategory').set_active(item.subcategory)
         self.get_widget('pictureid').set_value(item.pictureid)
         self.get_widget('value').set_value(item.value)
         self.get_widget('weight').set_value(item.weight)
@@ -928,29 +928,32 @@ class BaseGUI(object):
             self.get_widget('tohit').set_value(item.tohit)
             self.get_widget('damage').set_value(item.damage)
             self.get_widget('armor').set_value(item.armor)
+            self.get_widget('duration').set_value(item.duration)
+            self.get_widget('zero1').set_value(item.zero1)
+            self.get_widget('emptystr').set_text(item.emptystr)
         else:
             self.get_widget('cur_hp').set_value(item.cur_hp)
             self.get_widget('max_hp').set_value(item.max_hp)
-            self.get_widget('attr_modifier_1').set_value(item.attr_modifier_1)
-            self.get_widget('attr_modified_1').set_active(item.attr_modified_1)
-            self.get_widget('attr_modifier_2').set_value(item.attr_modifier_2)
-            self.get_widget('attr_modified_2').set_active(item.attr_modified_2)
-            self.get_widget('attr_modifier_3').set_value(item.attr_modifier_3)
-            self.get_widget('attr_modified_3').set_active(item.attr_modified_3)
-            self.get_widget('unknownflag').set_value(item.unknownflag)
-            self.get_widget('itemunknownc1').set_value(item.itemunknownc1)
+            self.get_widget('bonus_1').set_active(item.bonus_1)
+            self.get_widget('bonus_value_1').set_value(item.bonus_value_1)
+            self.get_widget('bonus_2').set_active(item.bonus_2)
+            self.get_widget('bonus_value_2').set_value(item.bonus_value_2)
+            self.get_widget('bonus_3').set_active(item.bonus_3)
+            self.get_widget('bonus_value_3').set_value(item.bonus_value_3)
+            self.get_widget('quest').set_value(item.quest)
+            self.get_widget('material').set_value(item.material)
+            self.get_widget('spell').set_text(item.spell)
+            self.get_widget('spell_power').set_value(item.spell_power)
+            if (item.is_projectile):
+                self.get_widget('is_projectile').set_active(True)
 
-        self.get_widget('visibility').set_value(item.visibility)
-        if item.book == 1:
-            self.get_widget('duration').set_value(item.duration)
+        self.get_widget('rarity').set_value(item.rarity)
         if (item.canstack):
             self.get_widget('canstack').set_active(True)
         else:
             self.get_widget('canstack').set_active(False)
         self.get_widget('quantity').set_value(item.quantity)
         self.get_widget('script').set_text(item.script)
-        self.get_widget('zero1').set_value(item.zero1)
-        self.get_widget('emptystr').set_text(item.emptystr)
 
         # Now let's manually throw our 'changed' procedures
         # This will almost always result in duplicate calls because of the
@@ -964,27 +967,39 @@ class BaseGUI(object):
         # controls from here, because of the compound check function
         if item.book == 1:
             strvals = [ 'item_name', 'script', 'emptystr' ]
-            dropdownvals = [ 'type', 'subtype', 'incr' ]
+            dropdownvals = [ 'category', 'subcategory', 'incr' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
                     'hitpoint', 'mana', 'tohit', 'damage', 'armor',
-                    'visibility', 'duration', 'quantity', 'zero1' ]
+                    'rarity', 'duration', 'quantity', 'zero1' ]
             floatvals = [ 'weight' ]
             checkboxvals = [ 'canstack' ]
             checkboxbitvals = [ 'flags_0003' ]
             modifiervals = [ 'attr_modifier', 'skill_modifier' ]
             b2modifiervals = [ ]
-        else:
-            strvals = [ 'item_name', 'script', 'emptystr' ]
-            dropdownvals = [ 'type', 'subtype' ]
+        elif item.book == 2:
+            strvals = [ 'item_name', 'script', 'spell' ]
+            dropdownvals = [ 'category', 'subcategory' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
-                    'visibility', 'quantity', 'zero1',
+                    'rarity', 'quantity',
                     'cur_hp', 'max_hp',
-                    'unknownflag', 'itemunknownc1' ]
+                    'quest', 'material', 'spell_power' ]
             floatvals = [ 'weight' ]
-            checkboxvals = [ 'canstack' ]
+            checkboxvals = [ 'canstack', 'is_projectile' ]
             checkboxbitvals = [ ]
             modifiervals = [ ]
-            b2modifiervals = [ 'attr_modifier_1', 'attr_modifier_2', 'attr_modifier_3' ]
+            b2modifiervals = [ 'bonus_value_1', 'bonus_value_2', 'bonus_value_3' ]
+        elif item.book == 3:
+            strvals = [ 'item_name', 'script', 'spell' ]
+            dropdownvals = [ 'category' ]
+            intvals = [ 'value', 'basedamage', 'basearmor',
+                    'rarity', 'quantity',
+                    'cur_hp', 'max_hp',
+                    'quest', 'material', 'spell_power' ]
+            floatvals = [ 'weight' ]
+            checkboxvals = [ 'canstack', 'is_projectile' ]
+            checkboxbitvals = [ ]
+            modifiervals = [ ]
+            b2modifiervals = [ 'bonus_value_1', 'bonus_value_2', 'bonus_value_3' ]
         for val in strvals:
             self.on_singleval_changed_str(self.get_widget(val))
         for val in dropdownvals:
@@ -1000,7 +1015,7 @@ class BaseGUI(object):
         for val in modifiervals:
             self.on_modifier_changed(self.get_widget(val))
         for val in b2modifiervals:
-            self.on_b2_modifier_changed(self.get_widget(val))
+            self.on_b2_bonus_changed(self.get_widget(val))
         self.on_singleval_changed_int_itempic(self.get_widget('pictureid'))
 
     def gui_item_label(self, label, name):
@@ -1129,7 +1144,7 @@ class BaseGUI(object):
         self.imgsel_init = False
         self.imgsel_clean = []
         self.imgsel_window = self.get_widget("item_imgsel_window")
-        if (self.curitemtype == self.ITEM_MAP):
+        if (self.curitemcategory == self.ITEM_MAP):
             self.imgsel_window.set_transient_for(self.squarewindow)
         else:
             self.imgsel_window.set_transient_for(self.itemwindow)
@@ -1347,4 +1362,4 @@ class BaseGUI(object):
         """
         if event.type == gtk.gdk._2BUTTON_PRESS:
             (model, iter) = widget.get_selection().get_selected()
-            self.get_widget('attr_modifier_3').set_value(model.get_value(iter, 1))
+            self.get_widget('bonus_value_3').set_value(model.get_value(iter, 1))

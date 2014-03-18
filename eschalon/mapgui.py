@@ -350,7 +350,7 @@ class MapGUI(BaseGUI):
             }
 
         # Initialize item stuff
-        self.curitemtype = self.ITEM_MAP
+        self.curitemcategory = self.ITEM_MAP
         self.curitem = ''
         self.itemclipboard = None
 
