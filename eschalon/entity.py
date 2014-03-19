@@ -37,10 +37,9 @@ class Entity(object):
         self.movement = -1
 
         self.friendly = -1
-        self.ent_unknownc1 = -1
+        self.frame = -1
         self.health = -1
         self.initial_loc = -1
-        self.ent_zero1 = -1
 
     def tozero(self, x, y):
         """ Zeroes out the entity object.  Apart from x and y, which are passed in. """
@@ -52,10 +51,9 @@ class Entity(object):
         if (self.savegame):
             self.movement = 1
             self.friendly = 0
-            self.ent_unknownc1 = 0
+            self.frame = 0
             self.health = 0
             self.initial_loc = 0
-            self.ent_zero1 = 0
             self.set_initial(x, y)
 
         # Call out to superclass zeroing
@@ -78,10 +76,9 @@ class Entity(object):
         newentity.direction = self.direction
         newentity.entscript = self.entscript
         newentity.friendly = self.friendly
-        newentity.ent_unknownc1 = self.ent_unknownc1
+        newentity.frame = self.frame
         newentity.health = self.health
         newentity.initial_loc = self.initial_loc
-        newentity.ent_zero1 = self.ent_zero1
         newentity.movement = self.movement
 
         # Call out to superclass replication
@@ -110,10 +107,9 @@ class Entity(object):
                 self.entscript == entity.entscript and
                 self.savegame == entity.savegame and
                 self.friendly == entity.friendly and
-                self.ent_unknownc1 == entity.ent_unknownc1 and
+                self.frame == entity.frame and
                 self.health == entity.health and
                 self.initial_loc == entity.initial_loc and
-                self.ent_zero1 == entity.ent_zero1 and
                 self.movement == entity.movement)
 
     def _sub_equals(self, entity):
@@ -158,12 +154,7 @@ class Entity(object):
                         ret.append("\t%s: %d" % (statusstr, status))
             if (unknowns):
                 if self.book == 1:
-                    ret.append("\tUnknown value 1 (generally 0 or 1): %d" % self.ent_unknownc1)
-                else:
-                    ret.append("\tUnknown value 1: %d" % self.ent_unknownc1)
-                ret.append("\tUsually Zero (1): %d" % self.ent_zero1)
-                if self.book == 1:
-                    ret.append("\tUsually Zero (2): %d" % self.ent_zero2)
+                    ret.append("\tUsually Zero: %d" % self.ent_zero2)
         else:
             ret.append( "\t(No extra attributes - this is the base map definition file)")
 
@@ -247,9 +238,8 @@ class B1Entity(Entity):
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
             self.health = df.readint()
-            self.ent_unknownc1 = df.readuchar()
-            self.initial_loc = df.readshort()
-            self.ent_zero1 = df.readuchar()
+            self.frame = df.readuchar()
+            self.initial_loc = df.readint()
             self.ent_zero2 = df.readuchar()
 
     def write(self, df):
@@ -264,9 +254,8 @@ class B1Entity(Entity):
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)
-            df.writeuchar(self.ent_unknownc1)
-            df.writeshort(self.initial_loc)
-            df.writeuchar(self.ent_zero1)
+            df.writeuchar(self.frame)
+            df.writeint(self.initial_loc)
             df.writeuchar(self.ent_zero2)
 
 class B2Entity(Entity):
@@ -275,6 +264,7 @@ class B2Entity(Entity):
     """
 
     book = 2
+    num_statuses = 26
     form_elements = [
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
@@ -302,12 +292,12 @@ class B2Entity(Entity):
         To-zero for B1 elements
         """
         self.statuses = []
-        for i in range(26):
+        for i in range(self.num_statuses):
             self.statuses.append(0)
 
     def _sub_replicate(self, newentity):
         """
-        Replication for B1 elements
+        Replication for B2 elements
         """
         newentity.statuses = []
         for status in self.statuses:
@@ -315,7 +305,7 @@ class B2Entity(Entity):
 
     def _sub_equals(self, entity):
         """
-        Equality function for B1
+        Equality function for B2
         """
         if len(self.statuses) != len(entity.statuses):
             return False
@@ -343,11 +333,10 @@ class B2Entity(Entity):
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
             self.health = df.readint()
-            self.ent_unknownc1 = df.readuchar()
-            self.initial_loc = df.readshort()
-            self.ent_zero1 = df.readshort()
+            self.frame = df.readuchar()
+            self.initial_loc = df.readint()
             self.statuses = []
-            for i in range(26):
+            for i in range(self.num_statuses):
                 self.statuses.append(df.readint())
 
     def write(self, df):
@@ -362,18 +351,18 @@ class B2Entity(Entity):
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)
-            df.writeuchar(self.ent_unknownc1)
-            df.writeshort(self.initial_loc)
-            df.writeshort(self.ent_zero1)
+            df.writeuchar(self.frame)
+            df.writeint(self.initial_loc)
             for status in self.statuses:
                 df.writeint(status)
 
-class B3Entity(Entity):
+class B3Entity(B2Entity):
     """
     Entity structure for Book 3
     """
 
     book = 3
+    num_statuses = 30
     form_elements = [
             'huge_gfx_button',
             'decalpref_snow', 'decalpref_lava',
@@ -393,78 +382,3 @@ class B3Entity(Entity):
 
     def __init__(self, savegame):
         super(B3Entity, self).__init__(savegame)
-
-        # B2/3-specific vars
-        self.statuses = []
-
-    def _sub_tozero(self):
-        """
-        To-zero for B1 elements
-        """
-        self.statuses = []
-        for i in range(30):
-            self.statuses.append(0)
-
-    def _sub_replicate(self, newentity):
-        """
-        Replication for B1 elements
-        """
-        newentity.statuses = []
-        for status in self.statuses:
-            newentity.statuses.append(status)
-
-    def _sub_equals(self, entity):
-        """
-        Equality function for B1
-        """
-        if len(self.statuses) != len(entity.statuses):
-            return False
-        for (mystatus, newstatus) in zip(self.statuses, entity.statuses):
-            if mystatus != newstatus:
-                return False
-        return True
-
-    def read(self, df):
-        """ Given a file descriptor, read in the entity. """
-
-        # We throw an exception because there seems to be an arbitrary
-        # number of entities in the file, and no 'entity count' anywhere.
-        # TODO: verify that the count isn't in the main map file.
-        if (df.eof()):
-            raise FirstItemLoadException('Reached EOF')
-
-        # ... everything else
-        self.entid = df.readuchar()
-        self.x = df.readuchar()
-        self.y = df.readuchar()
-        self.direction = df.readuchar()
-        self.entscript = df.readstr()
-        if (self.savegame):
-            self.friendly = df.readuchar()
-            self.movement = df.readuchar()
-            self.health = df.readint()
-            self.ent_unknownc1 = df.readuchar()
-            self.initial_loc = df.readshort()
-            self.ent_zero1 = df.readshort()
-            self.statuses = []
-            for i in range(30):
-                self.statuses.append(df.readint())
-
-    def write(self, df):
-        """ Write the entity to the file. """
-
-        df.writeuchar(self.entid)
-        df.writeuchar(self.x)
-        df.writeuchar(self.y)
-        df.writeuchar(self.direction)
-        df.writestr(self.entscript)
-        if (self.savegame):
-            df.writeuchar(self.friendly)
-            df.writeuchar(self.movement)
-            df.writeint(self.health)
-            df.writeuchar(self.ent_unknownc1)
-            df.writeshort(self.initial_loc)
-            df.writeshort(self.ent_zero1)
-            for status in self.statuses:
-                df.writeint(status)
-

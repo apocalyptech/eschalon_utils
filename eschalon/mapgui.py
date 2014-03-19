@@ -2721,8 +2721,7 @@ class MapGUI(BaseGUI):
         if (self.map.is_savegame()):
             self.get_widget('friendly').set_value(square.entity.friendly)
             self.get_widget('health').set_value(square.entity.health)
-            self.get_widget('ent_unknownc1').set_value(square.entity.ent_unknownc1)
-            self.get_widget('ent_zero1').set_value(square.entity.ent_zero1)
+            self.get_widget('frame').set_value(square.entity.frame)
             self.get_widget('initial_loc').set_value(square.entity.initial_loc)
             self.get_widget('movement').set_value(square.entity.movement)
             if c.book == 1:
