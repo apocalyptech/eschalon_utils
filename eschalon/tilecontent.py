@@ -23,13 +23,15 @@ from eschalon import constants as c
 from eschalon.item import Item
 from eschalon.savefile import FirstItemLoadException
 
-class Mapscript(object):
+class Tilecontent(object):
     """
-    A class to hold data about a particular mapscript on a map.
-    Calling this a "script" is something of a misnomer, actually.  These
+    A class to hold data about a particular tilecontent on a map.
+    This is basically just a collection of extra properties on the tile
+    which make it more interesting.  In the GUI we refer to these as
+    "objects," but that name wouldn't play nicely with code.  These
     objects are typically used to describe torch sconces, containers (barrels,
     chests, and the like), traps, and level exits (stairs, ladders, dungeon
-    exits, etc).  I'm just keeping the name rather than rename it, though.
+    exits, etc).
     """
 
     def __init__(self, savegame=True):
@@ -74,54 +76,54 @@ class Mapscript(object):
         pass
 
     def replicate(self):
-        newmapscript = Mapscript.new(self.book, self.savegame)
+        newtilecontent = Tilecontent.new(self.book, self.savegame)
 
         # Simple Values
-        newmapscript.savegame = self.savegame
-        newmapscript.x = self.x
-        newmapscript.y = self.y
-        newmapscript.description = self.description
-        newmapscript.extratext = self.extratext
-        newmapscript.lock = self.lock
-        newmapscript.trap = self.trap
-        newmapscript.state = self.state
-        newmapscript.script = self.script
+        newtilecontent.savegame = self.savegame
+        newtilecontent.x = self.x
+        newtilecontent.y = self.y
+        newtilecontent.description = self.description
+        newtilecontent.extratext = self.extratext
+        newtilecontent.lock = self.lock
+        newtilecontent.trap = self.trap
+        newtilecontent.state = self.state
+        newtilecontent.script = self.script
 
         # Items
         for item in self.items:
-            newmapscript.items.append(item.replicate())
+            newtilecontent.items.append(item.replicate())
 
         # Call out to superclass replication
-        self._sub_replicate(newmapscript)
+        self._sub_replicate(newtilecontent)
 
         # ... aaand return our new object
-        return newmapscript
+        return newtilecontent
 
-    def _sub_replicate(self, newmapscript):
+    def _sub_replicate(self, newtilecontent):
         """
         Stub for superclasses to override, to replicate specific vars
         """
         pass
 
-    def equals(self, script):
+    def equals(self, tilecontent):
         """
-        Compare ourselves to another script object.  We're just
+        Compare ourselves to another tilecontent object.  We're just
         checking if our values are the same, NOT if we're *actually*
         the same object.  Returns true for equality, false for inequality.
         """
-        return (self._sub_equal(script) and
-                self.x == script.x and
-                self.y == script.y and
-                self.description == script.description and
-                self.extratext == script.extratext and
-                self.lock == script.lock and
-                self.trap == script.trap and
-                self.state == script.state and
-                self.script == script.script and
-                self.savegame == script.savegame and
-                self.items_equal(script.items))
+        return (self._sub_equal(tilecontent) and
+                self.x == tilecontent.x and
+                self.y == tilecontent.y and
+                self.description == tilecontent.description and
+                self.extratext == tilecontent.extratext and
+                self.lock == tilecontent.lock and
+                self.trap == tilecontent.trap and
+                self.state == tilecontent.state and
+                self.script == tilecontent.script and
+                self.savegame == tilecontent.savegame and
+                self.items_equal(tilecontent.items))
 
-    def _sub_equal(self, script):
+    def _sub_equal(self, tilecontent):
         """
         Stub for superclasses to implement
         """
@@ -145,13 +147,13 @@ class Mapscript(object):
         Static method to initialize the correct object
         """
         if book == 1:
-            return B1Mapscript(savegame)
+            return B1Tilecontent(savegame)
         elif book == 2:
-            return B2Mapscript(savegame)
+            return B2Tilecontent(savegame)
         elif book == 3:
-            return B3Mapscript(savegame)
+            return B3Tilecontent(savegame)
 
-class B1Mapscript(Mapscript):
+class B1Tilecontent(Tilecontent):
     """
     Object structure for Book 1
     """
@@ -159,7 +161,7 @@ class B1Mapscript(Mapscript):
     book = 1
 
     def __init__(self, savegame):
-        super(B1Mapscript, self).__init__(savegame)
+        super(B1Tilecontent, self).__init__(savegame)
 
         # B1-specific vars
         self.zeroi1 = -1
@@ -184,38 +186,39 @@ class B1Mapscript(Mapscript):
         self.other = 0
         self.unknownh3 = 0
 
-    def _sub_replicate(self, newmapscript):
+    def _sub_replicate(self, newtilecontent):
         """
         Replication!
         """
-        newmapscript.zeroi1 = self.zeroi1
-        newmapscript.zeroh1 = self.zeroh1
-        newmapscript.sturdiness = self.sturdiness
-        newmapscript.flags = self.flags
-        newmapscript.zeroi2 = self.zeroi2
-        newmapscript.zeroi3 = self.zeroi3
-        newmapscript.other = self.other
-        newmapscript.unknownh3 = self.unknownh3
+        newtilecontent.zeroi1 = self.zeroi1
+        newtilecontent.zeroh1 = self.zeroh1
+        newtilecontent.sturdiness = self.sturdiness
+        newtilecontent.flags = self.flags
+        newtilecontent.zeroi2 = self.zeroi2
+        newtilecontent.zeroi3 = self.zeroi3
+        newtilecontent.other = self.other
+        newtilecontent.unknownh3 = self.unknownh3
 
-    def _sub_equal(self, script):
+    def _sub_equal(self, tilecontent):
         """
         Whether our B1-specific vars are equal
         """
-        return (self.zeroi1 == script.zeroi1 and
-                self.zeroh1 == script.zeroh1 and
-                self.sturdiness == script.sturdiness and
-                self.flags == script.flags and
-                self.zeroi2 == script.zeroi2 and
-                self.zeroi3 == script.zeroi3 and
-                self.other == script.other and
-                self.unknownh3 == script.unknownh3)
+        return (self.zeroi1 == tilecontent.zeroi1 and
+                self.zeroh1 == tilecontent.zeroh1 and
+                self.sturdiness == tilecontent.sturdiness and
+                self.flags == tilecontent.flags and
+                self.zeroi2 == tilecontent.zeroi2 and
+                self.zeroi3 == tilecontent.zeroi3 and
+                self.other == tilecontent.other and
+                self.unknownh3 == tilecontent.unknownh3)
 
     def read(self, df):
-        """ Given a file descriptor, read in the mapscript. """
+        """ Given a file descriptor, read in the tilecontent. """
 
         # We throw an exception because there seems to be an arbitrary
-        # number of scripts at the end of the map file, and no 'script count' anywhere.
-        # So we have to just keep loading scripts until EOF,
+        # number of tilecontents at the end of the map file, and no
+        # 'tilecontent count' anywhere.  So we have to just keep loading
+        # tilecontents until EOF,
         if (df.eof()):
             raise FirstItemLoadException('Reached EOF')
 
@@ -249,7 +252,7 @@ class B1Mapscript(Mapscript):
                 self.items[num].item_name = df.readstr()
 
     def write(self, df):
-        """ Write the mapscript to the file. """
+        """ Write the tilecontent to the file. """
 
         df.writeint((self.y*100)+self.x)
         df.writestr(self.description)
@@ -315,7 +318,7 @@ class B1Mapscript(Mapscript):
 
         return "\n".join(ret)
 
-class B2Mapscript(Mapscript):
+class B2Tilecontent(Tilecontent):
     """
     Object structure for Book 2
     """
@@ -323,7 +326,7 @@ class B2Mapscript(Mapscript):
     book = 2
 
     def __init__(self, savegame):
-        super(B2Mapscript, self).__init__(savegame)
+        super(B2Tilecontent, self).__init__(savegame)
 
         self.cur_condition = -1
         self.max_condition = -1
@@ -339,30 +342,31 @@ class B2Mapscript(Mapscript):
         self.on_empty = 0
         self.slider_loot = 0
 
-    def _sub_replicate(self, newmapscript):
+    def _sub_replicate(self, newtilecontent):
         """
         Replication!
         """
-        newmapscript.cur_condition = self.cur_condition
-        newmapscript.max_condition = self.max_condition
-        newmapscript.on_empty = self.on_empty
-        newmapscript.slider_loot = self.slider_loot
+        newtilecontent.cur_condition = self.cur_condition
+        newtilecontent.max_condition = self.max_condition
+        newtilecontent.on_empty = self.on_empty
+        newtilecontent.slider_loot = self.slider_loot
 
-    def _sub_equal(self, script):
+    def _sub_equal(self, tilecontent):
         """
         Whether our B2-specific vars are equal
         """
-        return (self.cur_condition == script.cur_condition and
-                self.max_condition == script.max_condition and
-                self.on_empty == script.on_empty and
-                self.slider_loot == script.slider_loot)
+        return (self.cur_condition == tilecontent.cur_condition and
+                self.max_condition == tilecontent.max_condition and
+                self.on_empty == tilecontent.on_empty and
+                self.slider_loot == tilecontent.slider_loot)
 
     def read(self, df):
-        """ Given a file descriptor, read in the mapscript. """
+        """ Given a file descriptor, read in the tilecontent. """
 
         # We throw an exception because there seems to be an arbitrary
-        # number of scripts at the end of the map file, and no 'script count' anywhere.
-        # So we have to just keep loading scripts until EOF,
+        # number of tilecontents at the end of the map file, and no
+        # 'tilecontent count' anywhere.  So we have to just keep loading
+        # tilecontents until EOF,
         if (df.eof()):
             raise FirstItemLoadException('Reached EOF')
 
@@ -392,7 +396,7 @@ class B2Mapscript(Mapscript):
                 self.items[num].item_name = df.readstr()
 
     def write(self, df):
-        """ Write the mapscript to the file. """
+        """ Write the tilecontent to the file. """
 
         df.writeint((self.y*100)+self.x)
         df.writestr(self.description)
@@ -445,7 +449,7 @@ class B2Mapscript(Mapscript):
 
         return "\n".join(ret)
 
-class B3Mapscript(B2Mapscript):
+class B3Tilecontent(B2Tilecontent):
     """
     Object structure for Book 3
     """

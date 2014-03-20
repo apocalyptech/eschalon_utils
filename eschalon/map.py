@@ -23,7 +23,7 @@ import struct
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalon.tile import Tile
-from eschalon.mapscript import Mapscript
+from eschalon.tilecontent import Tilecontent
 from eschalon.entity import Entity
 
 class Map(object):
@@ -78,7 +78,7 @@ class Map(object):
             for j in range(100):
                 self.tiles[i].append(Tile.new(c.book, j, i))
 
-        self.scripts = []
+        self.tilecontents = []
         self.entities = []
 
         self.df = df
@@ -93,8 +93,8 @@ class Map(object):
                 tile.savegame = savegame
         for entity in self.entities:
             entity.savegame = savegame
-        for script in self.scripts:
-            script.savegame = savegame
+        for tilecontent in self.tilecontents:
+            tilecontent.savegame = savegame
 
     def check_map_extension(self):
         """
@@ -139,7 +139,7 @@ class Map(object):
             for j in range(100):
                 newmap.tiles[i][j] = self.tiles[i][j].replicate()
 
-        # At this point, scripts and entities have been replicated as well;
+        # At this point, tilecontents and entities have been replicated as well;
         # loop through our list to repopulate from the new objects, so that
         # our referential comparisons still work on the new copy.
         for entity in self.entities:
@@ -150,20 +150,20 @@ class Map(object):
                     newmap.entities.append(newmap.tiles[entity.y][entity.x].entity)
                 else:
                     newmap.entities.append(entity.replicate())
-        scriptidxtemp = {}
-        for script in self.scripts:
-            if (script is None):
-                newmap.scripts.append(None)
+        tilecontentidxtemp = {}
+        for tilecontent in self.tilecontents:
+            if (tilecontent is None):
+                newmap.tilecontents.append(None)
             else:
-                if (script.y < len(newmap.tiles) and script.x < len(newmap.tiles[script.y])):
-                    key = '%d%02d' % (script.y, script.x)
-                    if (key in scriptidxtemp):
-                        scriptidxtemp[key] += 1
+                if (tilecontent.y < len(newmap.tiles) and tilecontent.x < len(newmap.tiles[tilecontent.y])):
+                    key = '%d%02d' % (tilecontent.y, tilecontent.x)
+                    if (key in tilecontentidxtemp):
+                        tilecontentidxtemp[key] += 1
                     else:
-                        scriptidxtemp[key] = 0
-                    newmap.scripts.append(newmap.tiles[script.y][script.x].scripts[scriptidxtemp[key]])
+                        tilecontentidxtemp[key] = 0
+                    newmap.tilecontents.append(newmap.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentidxtemp[key]])
                 else:
-                    newmap.scripts.append(script.replicate())
+                    newmap.tilecontents.append(tilecontent.replicate())
 
         # Call out to superclass replication
         self._sub_replicate(newmap)
@@ -193,31 +193,31 @@ class Map(object):
             self.cursqcol = 0
             self.cursqrow = self.cursqrow + 1
 
-    def addscript(self):
-        """ Add a mapscript. """
+    def addtilecontent(self):
+        """ Add a tilecontent. """
         try:
-            script = Mapscript.new(c.book, self.is_savegame())
-            script.read(self.df)
-            # Note that once we start deleting scripts, you'll have to update both constructs here.
+            tilecontent = Tilecontent.new(c.book, self.is_savegame())
+            tilecontent.read(self.df)
+            # Note that once we start deleting tilecontents, you'll have to update both constructs here.
             # Something along the lines of this should do:
-            #   self.map.tiles[y][x].scripts.remove(script)
-            #   self.scripts.remove(script)
+            #   self.map.tiles[y][x].tilecontents.remove(tilecontent)
+            #   self.tilecontents.remove(tilecontent)
             # ... does that object then get put into a garbage collector or something?  Do we have to
             # set that to None at some point, manually?
-            self.scripts.append(script)
-            if (script.x >= 0 and script.x < 100 and script.y >= 0 and script.y < 200):
-                self.tiles[script.y][script.x].addscript(script)
+            self.tilecontents.append(tilecontent)
+            if (tilecontent.x >= 0 and tilecontent.x < 100 and tilecontent.y >= 0 and tilecontent.y < 200):
+                self.tiles[tilecontent.y][tilecontent.x].addtilecontent(tilecontent)
             return True
         except FirstItemLoadException, e:
             return False
 
-    def delscript(self, x, y, idx):
-        """ Deletes a mapscript, both from the associated tile, and our internal list. """
+    def deltilecontent(self, x, y, idx):
+        """ Deletes a tilecontent, both from the associated tile, and our internal list. """
         tile = self.tiles[y][x]
-        script = tile.scripts[idx]
-        if (script is not None):
-            self.scripts.remove(script)
-            self.tiles[y][x].delscript(script)
+        tilecontent = tile.tilecontents[idx]
+        if (tilecontent is not None):
+            self.tilecontents.remove(tilecontent)
+            self.tiles[y][x].deltilecontent(tilecontent)
 
     def addentity(self):
         """ Add an entity. """
@@ -437,9 +437,9 @@ class B1Map(Map):
             for i in range(200*100):
                 self.addtile()
 
-            # Scripts...  Just keep going until EOF
+            # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addscript()):
+                while (self.addtilecontent()):
                     pass
             except FirstItemLoadException, e:
                 pass
@@ -507,9 +507,9 @@ class B1Map(Map):
             for tile in row:
                 tile.write(self.df)
 
-        # Scripts
-        for script in self.scripts:
-            script.write(self.df)
+        # Tilecontents
+        for tilecontent in self.tilecontents:
+            tilecontent.write(self.df)
 
         # Any extra data we might have
         if (len(self.extradata) > 0):
@@ -647,9 +647,9 @@ class B2Map(Map):
             for i in range(200*100):
                 self.addtile()
 
-            # Scripts...  Just keep going until EOF
+            # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addscript()):
+                while (self.addtilecontent()):
                     pass
             except FirstItemLoadException, e:
                 pass
@@ -719,9 +719,9 @@ class B2Map(Map):
             for tile in row:
                 tile.write(self.df)
 
-        # Scripts
-        for script in self.scripts:
-            script.write(self.df)
+        # Tilecontents
+        for tilecontent in self.tilecontents:
+            tilecontent.write(self.df)
 
         # Any extra data we might have
         if (len(self.extradata) > 0):
@@ -845,9 +845,9 @@ class B3Map(B2Map):
             for i in range(200*100):
                 self.addtile()
 
-            # Scripts...  Just keep going until EOF
+            # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addscript()):
+                while (self.addtilecontent()):
                     pass
             except FirstItemLoadException, e:
                 pass
@@ -922,9 +922,9 @@ class B3Map(B2Map):
             for tile in row:
                 tile.write(self.df)
 
-        # Scripts
-        for script in self.scripts:
-            script.write(self.df)
+        # Tilecontents
+        for tilecontent in self.tilecontents:
+            tilecontent.write(self.df)
 
         # Any extra data we might have
         if (len(self.extradata) > 0):

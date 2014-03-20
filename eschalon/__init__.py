@@ -31,7 +31,7 @@ authors = [ 'Main Code - CJ Kucera',
 __all__ = [ 'app_name', 'version', 'url', 'authors'
         'Savefile', 'Item', 'B1Unknowns', 'B2Unknowns',
         'Character', 'MainGUI', 'LoadException',
-        'Tile', 'Mapscript', 'Undo',
+        'Tile', 'Tilecontent', 'Undo',
         'constants' ]
 
 from eschalon.constantsb1 import B1Constants

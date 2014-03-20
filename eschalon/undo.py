@@ -29,7 +29,7 @@ class Additional(object):
     attributes that we'll be modifying.
     """
 
-    # TODO: For now, nothing which uses this touches scripts.  Something
+    # TODO: For now, nothing which uses this touches tilecontents.  Something
     # may end up doing that in the future, though.  If so, make sure to
     # update this.
 
@@ -103,7 +103,7 @@ class UndoHistory(object):
         self.additional = []
         self.mainchanged = False
         self.oldtile = map.tiles[y][x].replicate()
-        (self.old_entidx, self.old_scriptidx) = self.grab_idx(map, map.tiles[y][x])
+        (self.old_entidx, self.old_tilecontentidx) = self.grab_idx(map, map.tiles[y][x])
 
     def set_new(self, map):
         """ Update this record's 'new' tile record """
@@ -123,7 +123,7 @@ class UndoHistory(object):
         newtile = map.tiles[self.y][self.x]
         if (not self.oldtile.equals(newtile)):
             self.newtile = newtile.replicate()
-            (self.new_entidx, self.new_scriptidx) = self.grab_idx(map, newtile)
+            (self.new_entidx, self.new_tilecontentidx) = self.grab_idx(map, newtile)
             self.mainchanged = True
             retval = True
 
@@ -134,23 +134,23 @@ class UndoHistory(object):
         """
         Given a map and a tile, return a tuple containing the index of
         the tile's entity (if appropriate) and a list of indexes of the
-        tile's scripts (if appropriate)
+        tile's tilecontents (if appropriate)
         """
         entidx = None
-        scriptidxes = []
+        tilecontentidxes = []
         if (tile.entity):
             if (tile.entity in map.entities):
                 entidx = map.entities.index(tile.entity)
             else:
                 raise Exception('Entity in tile not linked in master map list')
-        scriptcount = 0
-        for script in tile.scripts:
-            scriptcount += 1
-            if (script in map.scripts):
-                scriptidxes.append(map.scripts.index(script))
+        tilecontentcount = 0
+        for tilecontent in tile.tilecontents:
+            tilecontentcount += 1
+            if (tilecontent in map.tilecontents):
+                tilecontentidxes.append(map.tilecontents.index(tilecontent))
             else:
-                raise Exception('Script %d in tile not linked in master map list' % (scriptcount))
-        return (entidx, scriptidxes)
+                raise Exception('Script %d in tile not linked in master map list' % (tilecontentcount))
+        return (entidx, tilecontentidxes)
 
     def set_text(self, text):
         self.text = text
@@ -284,8 +284,8 @@ class Undo(object):
             retval = []
             if (obj.mainchanged):
                 self.process_changes(obj.x, obj.y, obj.oldtile,
-                        obj.new_entidx, obj.new_scriptidx,
-                        obj.old_entidx, obj.old_scriptidx)
+                        obj.new_entidx, obj.new_tilecontentidx,
+                        obj.old_entidx, obj.old_tilecontentidx)
                 retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx+1].additional:
                 add_obj.undo(self.map.tiles[add_obj.y][add_obj.x])
@@ -305,8 +305,8 @@ class Undo(object):
             retval = []
             if (obj.mainchanged):
                 self.process_changes(obj.x, obj.y, obj.newtile,
-                        obj.old_entidx, obj.old_scriptidx,
-                        obj.new_entidx, obj.new_scriptidx)
+                        obj.old_entidx, obj.old_tilecontentidx,
+                        obj.new_entidx, obj.new_tilecontentidx)
                 retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx].additional:
                 add_obj.redo(self.map.tiles[add_obj.y][add_obj.x])
@@ -315,10 +315,10 @@ class Undo(object):
         else:
             return []
 
-    def process_changes(self, x, y, totile, from_entidx, from_scriptidx, to_entidx, to_scriptidx):
+    def process_changes(self, x, y, totile, from_entidx, from_tilecontentidx, to_entidx, to_tilecontentidx):
         """
         Actually make the change in self.map, given from/to vars.  Mostly
-        this is just necessary so that our entity and script links stay
+        this is just necessary so that our entity and tilecontent links stay
         populated like they should.
         """
 
@@ -332,12 +332,12 @@ class Undo(object):
             self.map.entities.insert(to_entidx, self.map.tiles[y][x].entity)
 
         # ... and now Scripts
-        idxes = from_scriptidx[:]
+        idxes = from_tilecontentidx[:]
         idxes.reverse()
         for idx in idxes:
-            del self.map.scripts[idx]
-        for (i, idx) in enumerate(to_scriptidx):
-            self.map.scripts.insert(idx, self.map.tiles[y][x].scripts[i])
+            del self.map.tilecontents[idx]
+        for (i, idx) in enumerate(to_tilecontentidx):
+            self.map.tilecontents.insert(idx, self.map.tiles[y][x].tilecontents[i])
 
     def report(self):
         """
@@ -346,19 +346,19 @@ class Undo(object):
         at all since I just used it for debugging while figuring things out, so it
         may very well fail right now.  Nothing in the code actually calls this.
         """
-        print '%d total scripts in map' % (len(self.map.scripts))
-        scriptcounters = {}
-        for script in self.map.scripts:
-            tileval = script.y*100+script.x
-            if (tileval not in scriptcounters):
-                scriptcounters[tileval] = -1
-            scriptcounters[tileval] += 1
-            tilescript = self.map.tiles[script.y][script.x].scripts[scriptcounters[tileval]]
-            if (tilescript == script):
+        print '%d total tilecontents in map' % (len(self.map.tilecontents))
+        tilecontentcounters = {}
+        for tilecontent in self.map.tilecontents:
+            tileval = tilecontent.y*100+tilecontent.x
+            if (tileval not in tilecontentcounters):
+                tilecontentcounters[tileval] = -1
+            tilecontentcounters[tileval] += 1
+            tiletilecontent = self.map.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentcounters[tileval]]
+            if (tiletilecontent == tilecontent):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
-            print ' * (%d, %d), script %d, %s' % (script.x, script.y, scriptcounters[tileval]+1, matched)
+            print ' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval]+1, matched)
         print
         print '%d total entities in map' % (len(self.map.entities))
         for entity in self.map.entities:

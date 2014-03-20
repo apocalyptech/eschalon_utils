@@ -23,7 +23,7 @@ from eschalon import constants as c
 from eschalon.map import Map
 from eschalon.tile import Tile
 from eschalon.entity import Entity
-from eschalon.mapscript import Mapscript
+from eschalon.tilecontent import Tilecontent
 
 class ComplexObjStep(object):
     """
@@ -97,14 +97,14 @@ class PremadeObject(object):
         self.name = name
         self.tile = Tile.new(c.book, -1, -1)
         self.tile.savegame = True
-        self.mapscript = None
+        self.tilecontent = None
         self.entity = None
         self.do_wall = False
         self.do_floorimg = False
         self.do_decalimg = False
         self.do_wallimg = False
         self.do_walldecalimg = False
-        self.do_script = False
+        self.do_tilecontent = False
         self.do_entity = False
         self.do_loot = False
         self.do_lock = False
@@ -140,15 +140,15 @@ class PremadeObject(object):
     def use_trap(self):
         self.do_trap = True
 
-    def set_script(self, scriptid):
-        self.do_script = True
-        self.tile.scriptid = scriptid
+    def set_tilecontent(self, tilecontentid):
+        self.do_tilecontent = True
+        self.tile.tilecontentid = tilecontentid
 
-    def create_scriptobj(self, initcontents='random'):
-        self.mapscript = Mapscript.new(c.book, True)
-        self.mapscript.tozero(-1, -1)
+    def create_tilecontentobj(self, initcontents='random'):
+        self.tilecontent = Tilecontent.new(c.book, True)
+        self.tilecontent.tozero(-1, -1)
         if initcontents is not None:
-            self.mapscript.items[0].item_name = initcontents
+            self.tilecontent.items[0].item_name = initcontents
 
     def create_entity(self):
         self.entity = Entity.new(c.book, True)
@@ -173,23 +173,23 @@ class PremadeObject(object):
             tile.wallimg = self.tile.wallimg
         if self.do_walldecalimg:
             tile.walldecalimg = self.tile.walldecalimg
-        if self.do_script:
-            tile.scriptid = self.tile.scriptid
-            for i in range(len(tile.scripts)):
-                map.delscript(tile.x, tile.y, 0)
-            if self.mapscript is not None:
-                tile.addscript(self.mapscript.replicate())
-                map.scripts.append(tile.scripts[0])
-                tile.scripts[0].x = tile.x
-                tile.scripts[0].y = tile.y
+        if self.do_tilecontent:
+            tile.tilecontentid = self.tile.tilecontentid
+            for i in range(len(tile.tilecontents)):
+                map.deltilecontent(tile.x, tile.y, 0)
+            if self.tilecontent is not None:
+                tile.addtilecontent(self.tilecontent.replicate())
+                map.tilecontents.append(tile.tilecontents[0])
+                tile.tilecontents[0].x = tile.x
+                tile.tilecontents[0].y = tile.y
                 if self.do_lock:
-                    tile.scripts[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
+                    tile.tilecontents[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
                 if self.do_trap:
                     iter = gui.get_widget('objectplace_trap_combo').get_active_iter()
-                    tile.scripts[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
+                    tile.tilecontents[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
                 if c.book > 1:
                     if self.do_loot:
-                        tile.scripts[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
+                        tile.tilecontents[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
 
         if self.do_entity:
             if self.entity is not None:
@@ -249,8 +249,8 @@ class PremadeObjectCollection(object):
         for objects in self.collection.values():
             for obj in objects:
                 obj.tile.savegame = savegame
-                if obj.mapscript is not None:
-                    obj.mapscript.savegame = savegame
+                if obj.tilecontent is not None:
+                    obj.tilecontent.savegame = savegame
                 if obj.entity is not None:
                     obj.entity.savegame = savegame
 
@@ -1375,12 +1375,12 @@ class B1SmartDraw(SmartDraw):
                     obj.set_decalimg(decalimg)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
-                    obj.set_script(5)
-                    obj.create_scriptobj(None)
-                    obj.mapscript.description = text
-                    obj.mapscript.state = statenum
-                    obj.mapscript.flags = 0x40
-                    obj.mapscript.sturdiness = 89
+                    obj.set_tilecontent(5)
+                    obj.create_tilecontentobj(None)
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.flags = 0x40
+                    obj.tilecontent.sturdiness = 89
                     if statenum == 1:
                         obj.use_lock()
                         obj.use_trap()
@@ -1404,12 +1404,12 @@ class B1SmartDraw(SmartDraw):
                     obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
-                    obj.set_script(3)
-                    obj.create_scriptobj('Random')
-                    obj.mapscript.description = text
-                    obj.mapscript.state = statenum
-                    obj.mapscript.flags = 0x40
-                    obj.mapscript.sturdiness = 89
+                    obj.set_tilecontent(3)
+                    obj.create_tilecontentobj('Random')
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.flags = 0x40
+                    obj.tilecontent.sturdiness = 89
                     if statenum == 1:
                         obj.use_lock()
                         obj.use_trap()
@@ -1429,12 +1429,12 @@ class B1SmartDraw(SmartDraw):
                 obj = self.premade_objects.new('%s - %s' % (desc, state))
                 obj.set_wall(5)
                 obj.set_wallimg(cur)
-                obj.set_script(3)
-                obj.create_scriptobj('Random')
-                obj.mapscript.description = text
-                obj.mapscript.state = statenum
-                obj.mapscript.flags = 0x40
-                obj.mapscript.sturdiness = 89
+                obj.set_tilecontent(3)
+                obj.create_tilecontentobj('Random')
+                obj.tilecontent.description = text
+                obj.tilecontent.state = statenum
+                obj.tilecontent.flags = 0x40
+                obj.tilecontent.sturdiness = 89
                 if statenum == 1:
                     obj.use_lock()
                     obj.use_trap()
@@ -1451,10 +1451,10 @@ class B1SmartDraw(SmartDraw):
             obj.set_wallimg(wallimg)
             obj.use_lock()
             obj.use_trap()
-            obj.set_script(3)
-            obj.create_scriptobj('Empty')
-            obj.mapscript.description = 'a coffin.'
-            obj.mapscript.state = statenum
+            obj.set_tilecontent(3)
+            obj.create_tilecontentobj('Empty')
+            obj.tilecontent.description = 'a coffin.'
+            obj.tilecontent.state = statenum
 
         # Coffins (still "other containers")
         for (wallimg, name, text) in [
@@ -1468,28 +1468,28 @@ class B1SmartDraw(SmartDraw):
             obj.set_wallimg(wallimg)
             obj.use_lock()
             obj.use_trap()
-            obj.set_script(1)
-            obj.create_scriptobj('Empty')
-            obj.mapscript.description = text
+            obj.set_tilecontent(1)
+            obj.create_tilecontentobj('Empty')
+            obj.tilecontent.description = text
 
         obj = self.premade_objects.new('Open Barrel')
         obj.set_wall(1)
         obj.set_wallimg(5)
-        obj.set_script(1)
-        obj.create_scriptobj('Random')
-        obj.mapscript.description = 'a storage barrel of decent quality.'
-        obj.mapscript.flags = 0x40
-        obj.mapscript.sturdiness = 89
+        obj.set_tilecontent(1)
+        obj.create_tilecontentobj('Random')
+        obj.tilecontent.description = 'a storage barrel of decent quality.'
+        obj.tilecontent.flags = 0x40
+        obj.tilecontent.sturdiness = 89
         obj.use_trap()
 
         obj = self.premade_objects.new('Sealed Barrel')
         obj.set_wall(1)
         obj.set_wallimg(3)
-        obj.set_script(11)
-        obj.create_scriptobj('Random')
-        obj.mapscript.description = 'a sealed storage barrel of decent quality.'
-        obj.mapscript.flags = 0x40
-        obj.mapscript.sturdiness = 89
+        obj.set_tilecontent(11)
+        obj.create_tilecontentobj('Random')
+        obj.tilecontent.description = 'a sealed storage barrel of decent quality.'
+        obj.tilecontent.flags = 0x40
+        obj.tilecontent.sturdiness = 89
         obj.use_trap()
 
         # Signs
@@ -1507,18 +1507,18 @@ class B1SmartDraw(SmartDraw):
             obj = self.premade_objects.new(name)
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
-            obj.set_script(10)
-            obj.create_scriptobj(None)
-            obj.mapscript.description=text
+            obj.set_tilecontent(10)
+            obj.create_tilecontentobj(None)
+            obj.tilecontent.description=text
         for (name, walldecalimg, text) in [
                 ('Plaque \\', 37, 'a plaque affixed to the wall.'),
                 ('Plaque /', 38, 'a plaque affixed to the wall.'),
                 ]:
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
-            obj.set_script(9)
-            obj.create_scriptobj(None)
-            obj.mapscript.description=text
+            obj.set_tilecontent(9)
+            obj.create_tilecontentobj(None)
+            obj.tilecontent.description=text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -1526,26 +1526,26 @@ class B1SmartDraw(SmartDraw):
         obj = self.premade_objects.new('Powder Keg')
         obj.set_wall(1)
         obj.set_wallimg(39)
-        obj.set_script(15)
-        obj.create_scriptobj(None)
-        obj.mapscript.description = 'a keg of blackpowder.'
-        obj.mapscript.flags = 0x40 
-        obj.mapscript.sturdiness = 89
+        obj.set_tilecontent(15)
+        obj.create_tilecontentobj(None)
+        obj.tilecontent.description = 'a keg of blackpowder.'
+        obj.tilecontent.flags = 0x40 
+        obj.tilecontent.sturdiness = 89
 
         obj = self.premade_objects.new('Well')
         obj.set_wall(1)
         obj.set_wallimg(43)
-        obj.set_script(7)
-        obj.create_scriptobj(None)
-        obj.mapscript.description = 'a well.'
-        obj.mapscript.script = 'condition (There is a rope going down the well. Pull it up?) (Yes) (No) ; message(Ah! Very refreshing!) ; Heal 1 0'
+        obj.set_tilecontent(7)
+        obj.create_tilecontentobj(None)
+        obj.tilecontent.description = 'a well.'
+        obj.tilecontent.script = 'condition (There is a rope going down the well. Pull it up?) (Yes) (No) ; message(Ah! Very refreshing!) ; Heal 1 0'
 
         for (id, dir) in [(17, '/'), (18, '\\')]:
             obj = self.premade_objects.new('Sconce %s' % (dir))
             obj.set_walldecalimg(id)
-            obj.set_script(13)
-            obj.create_scriptobj()
-            obj.mapscript.description = 'a sconce.'
+            obj.set_tilecontent(13)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description = 'a sconce.'
 
         # Levers
         cur = 19
@@ -1554,21 +1554,21 @@ class B1SmartDraw(SmartDraw):
                 obj = self.premade_objects.new('Lever (%s) %s' % (text, dir))
                 obj.set_wall(5)
                 obj.set_wallimg(cur)
-                obj.set_script(7)
-                obj.create_scriptobj()
-                obj.mapscript.description = 'a wooden lever.'
-                obj.mapscript.state = toggle
-                obj.mapscript.script = 'toggle_switch'
+                obj.set_tilecontent(7)
+                obj.create_tilecontentobj()
+                obj.tilecontent.description = 'a wooden lever.'
+                obj.tilecontent.state = toggle
+                obj.tilecontent.script = 'toggle_switch'
                 cur += 1
 
         # Sound Generators
         self.premade_objects.add_category('Sound/Light Generators')
         obj = self.premade_objects.new('Light Source')
-        obj.set_script(25)
+        obj.set_tilecontent(25)
         for (id, name) in c.objecttypetable.items():
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
-                obj.set_script(id)
+                obj.set_tilecontent(id)
 
         # TODO: code duplication from the main setup screen routine
         monsters = {}
@@ -1905,12 +1905,12 @@ class B2SmartDraw(SmartDraw):
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
-                    obj.set_script(5)
-                    obj.create_scriptobj('random')
-                    obj.mapscript.description = text
-                    obj.mapscript.state = statenum
-                    obj.mapscript.cur_condition = cond
-                    obj.mapscript.max_condition = cond
+                    obj.set_tilecontent(5)
+                    obj.create_tilecontentobj('random')
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.cur_condition = cond
+                    obj.tilecontent.max_condition = cond
                     if statenum == 1:
                         obj.use_trap()
                         obj.use_lock()
@@ -1938,12 +1938,12 @@ class B2SmartDraw(SmartDraw):
                     obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
-                    obj.set_script(2)
-                    obj.create_scriptobj(contents)
-                    obj.mapscript.description = text
-                    obj.mapscript.state = statenum
-                    obj.mapscript.cur_condition = cond
-                    obj.mapscript.max_condition = cond
+                    obj.set_tilecontent(2)
+                    obj.create_tilecontentobj(contents)
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.cur_condition = cond
+                    obj.tilecontent.max_condition = cond
                     obj.use_loot()
                     if statenum == 1:
                         obj.use_trap()
@@ -1954,21 +1954,21 @@ class B2SmartDraw(SmartDraw):
         obj = self.premade_objects.new('Open Barrel')
         obj.set_wall(5)
         obj.set_wallimg(13)
-        obj.set_script(1)
-        obj.create_scriptobj()
-        obj.mapscript.description = 'a sturdy oaken barrel.'
-        obj.mapscript.cur_condition = 80
-        obj.mapscript.max_condition = 80
+        obj.set_tilecontent(1)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a sturdy oaken barrel.'
+        obj.tilecontent.cur_condition = 80
+        obj.tilecontent.max_condition = 80
         obj.use_loot()
 
         obj = self.premade_objects.new('Sealed Barrel')
         obj.set_wall(5)
         obj.set_wallimg(14)
-        obj.set_script(11)
-        obj.create_scriptobj()
-        obj.mapscript.description = 'a sturdy oak sealed barrel.'
-        obj.mapscript.cur_condition = 90
-        obj.mapscript.max_condition = 90
+        obj.set_tilecontent(11)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a sturdy oak sealed barrel.'
+        obj.tilecontent.cur_condition = 90
+        obj.tilecontent.max_condition = 90
         obj.use_loot()
 
         # Signs
@@ -1988,9 +1988,9 @@ class B2SmartDraw(SmartDraw):
             obj = self.premade_objects.new(name)
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
-            obj.set_script(10)
-            obj.create_scriptobj()
-            obj.mapscript.description=text
+            obj.set_tilecontent(10)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description=text
         for (name, walldecalimg, text) in [
                 ('Plaque /', 61, 'a plaque affixed to the wall.'),
                 ('Plaque \\', 62, 'a plaque affixed to the wall.'),
@@ -2003,9 +2003,9 @@ class B2SmartDraw(SmartDraw):
                 ]:
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
-            obj.set_script(9)
-            obj.create_scriptobj()
-            obj.mapscript.description=text
+            obj.set_tilecontent(9)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description=text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -2013,33 +2013,33 @@ class B2SmartDraw(SmartDraw):
         obj = self.premade_objects.new('Powder Keg')
         obj.set_wall(5)
         obj.set_wallimg(32)
-        obj.set_script(15)
-        obj.create_scriptobj()
-        obj.mapscript.description = 'a keg of black powder.'
-        obj.mapscript.cur_condition = 5
-        obj.mapscript.max_condition = 5
+        obj.set_tilecontent(15)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a keg of black powder.'
+        obj.tilecontent.cur_condition = 5
+        obj.tilecontent.max_condition = 5
 
         obj = self.premade_objects.new('Well')
         obj.set_wall(1)
         obj.set_wallimg(57)
-        obj.set_script(16)
-        obj.create_scriptobj()
-        obj.mapscript.description = 'a well.'
+        obj.set_tilecontent(16)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a well.'
 
         for (id, dir) in [(39, '\\'), (40, '/')]:
             obj = self.premade_objects.new('Archery Target %s' % (dir))
             obj.set_wall(1)
             obj.set_wallimg(id)
-            obj.set_script(17)
-            obj.create_scriptobj()
-            obj.mapscript.description = 'a target.'
+            obj.set_tilecontent(17)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description = 'a target.'
 
         for (id, dir) in [(2, '/'), (4, '\\')]:
             obj = self.premade_objects.new('Sconce %s' % (dir))
             obj.set_walldecalimg(id)
-            obj.set_script(12)
-            obj.create_scriptobj()
-            obj.mapscript.description = 'a sconce.'
+            obj.set_tilecontent(12)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description = 'a sconce.'
 
         # Levers
         cur = 65
@@ -2048,16 +2048,16 @@ class B2SmartDraw(SmartDraw):
                 obj = self.premade_objects.new('Lever (%s) %s' % (text, dir))
                 obj.set_wall(5)
                 obj.set_wallimg(cur)
-                obj.set_script(7)
-                obj.create_scriptobj()
-                obj.mapscript.description = 'a wooden lever.'
-                obj.mapscript.state = toggle
-                obj.mapscript.script = 'toggle_switch'
+                obj.set_tilecontent(7)
+                obj.create_tilecontentobj()
+                obj.tilecontent.description = 'a wooden lever.'
+                obj.tilecontent.state = toggle
+                obj.tilecontent.script = 'toggle_switch'
                 cur += 1
         
         # Zapper
         obj = self.premade_objects.new('Zapper')
-        obj.set_script(19)
+        obj.set_tilecontent(19)
 
         # Large Graphics
         self.premade_objects.add_category('Large Graphics')
@@ -2075,26 +2075,26 @@ class B2SmartDraw(SmartDraw):
             if wall is not None:
                 obj.set_wall(wall)
             obj.set_wallimg(1000)
-            obj.set_script(21)
-            obj.create_scriptobj(None)
-            obj.mapscript.description = 'Big Graphic Object #0'
-            obj.mapscript.extratext = image
+            obj.set_tilecontent(21)
+            obj.create_tilecontentobj(None)
+            obj.tilecontent.description = 'Big Graphic Object #0'
+            obj.tilecontent.extratext = image
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')
         for (id, name) in c.objecttypetable.items():
             if name[:13] == 'Light Source ':
                 obj = self.premade_objects.new(name)
-                obj.set_script(id)
-                obj.create_scriptobj(None)
+                obj.set_tilecontent(id)
+                obj.create_tilecontentobj(None)
 
         # Sound Generators
         self.premade_objects.add_category('Sound Generators')
         for (id, name) in c.objecttypetable.items():
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
-                obj.set_script(id)
-                obj.create_scriptobj(None)
+                obj.set_tilecontent(id)
+                obj.create_tilecontentobj(None)
 
         # TODO: code duplication from the main setup screen routine
         monsters = {}

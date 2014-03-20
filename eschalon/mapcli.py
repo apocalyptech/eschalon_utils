@@ -90,13 +90,13 @@ class MapCLI(object):
                     print 
         pass
 
-    def display_scripts(self, unknowns=False):
-        """ Print out a textual representation of the map's scripts."""
+    def display_tilecontents(self, unknowns=False):
+        """ Print out a textual representation of the map's tilecontents."""
         i = 0
-        for script in self.map.scripts:
+        for tilecontent in self.map.tilecontents:
             i = i + 1
             print 'Object Number %d' % i
-            print script.display(unknowns)
+            print tilecontent.display(unknowns)
             print
 
     def display_txtmap(self):
@@ -135,7 +135,7 @@ class MapCLI(object):
             self.display_tiles(unknowns)
 
         if (listoptions['objects']):
-            self.display_scripts(unknowns)
+            self.display_tilecontents(unknowns)
 
         if (listoptions['txtmap']):
             print "Note: you need a really small font and a rather large console"

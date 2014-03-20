@@ -720,7 +720,7 @@ class BaseGUI(object):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
         elif (self.curitemcategory == self.ITEM_MAP):
-            obj = self.map.tiles[self.sq_y][self.sq_x].scripts[self.curitem[1]].items[self.curitem[0]]
+            obj = self.map.tiles[self.sq_y][self.sq_x].tilecontents[self.curitem[1]].items[self.curitem[0]]
             origobj = obj
         else:
             obj = self.char

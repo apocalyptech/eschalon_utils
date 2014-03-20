@@ -2759,7 +2759,7 @@ to modify the global map files.</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckMenuItem" id="script_hi_button">
+                      <object class="GtkCheckMenuItem" id="tilecontent_hi_button">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">When active, objects will be highlighted on the map</property>
@@ -5927,7 +5927,7 @@ another direction, Eschalon will crash.</property>
                         <property name="can_focus">False</property>
                         <property name="left_padding">14</property>
                         <child>
-                          <object class="GtkLabel" id="scriptid_label">
+                          <object class="GtkLabel" id="tilecontentid_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -5945,7 +5945,7 @@ another direction, Eschalon will crash.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkAlignment" id="scriptid_num_align">
+                      <object class="GtkAlignment" id="tilecontentid_num_align">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -5954,7 +5954,7 @@ another direction, Eschalon will crash.</property>
                         <property name="top_padding">5</property>
                         <property name="bottom_padding">5</property>
                         <child>
-                          <object class="GtkSpinButton" id="scriptid">
+                          <object class="GtkSpinButton" id="tilecontentid">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -5964,7 +5964,7 @@ another direction, Eschalon will crash.</property>
                             <property name="primary_icon_sensitive">True</property>
                             <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment7</property>
-                            <signal name="value-changed" handler="on_scriptid_changed" swapped="no"/>
+                            <signal name="value-changed" handler="on_tilecontentid_changed" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -5975,7 +5975,7 @@ another direction, Eschalon will crash.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkAlignment" id="scriptid_dd_align">
+                      <object class="GtkAlignment" id="tilecontentid_dd_align">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
@@ -5984,13 +5984,13 @@ another direction, Eschalon will crash.</property>
                         <property name="top_padding">5</property>
                         <property name="bottom_padding">5</property>
                         <child>
-                          <object class="GtkComboBox" id="scriptid_dd">
+                          <object class="GtkComboBox" id="tilecontentid_dd">
                             <property name="width_request">350</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="has_tooltip">True</property>
                             <property name="tooltip_text" translatable="yes">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.</property>
-                            <signal name="changed" handler="on_scriptid_dd_changed" swapped="no"/>
+                            <signal name="changed" handler="on_tilecontentid_dd_changed" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -6014,14 +6014,14 @@ another direction, Eschalon will crash.</property>
                     <property name="xscale">0</property>
                     <property name="bottom_padding">7</property>
                     <child>
-                      <object class="GtkButton" id="script_add_button">
+                      <object class="GtkButton" id="tilecontent_add_button">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="has_tooltip">True</property>
                         <property name="tooltip_markup">The object type is used to trigger certain predefined actions within the game engine.  For most types, there will be an associated object if the type is specified.  Light sources and sound generators do not have an associated object.  There is never an object without an associated type.  &lt;b&gt;Note:&lt;/b&gt; There are three instances in the game of a single tile having more than one object, so we support having multiple objects here (only one of the objects will actually used by the game engine).  You're strongly advised to limit yourself to one.</property>
                         <property name="use_action_appearance">False</property>
-                        <signal name="clicked" handler="on_script_add" swapped="no"/>
+                        <signal name="clicked" handler="on_tilecontent_add" swapped="no"/>
                         <child>
                           <object class="GtkHBox" id="hbox13">
                             <property name="visible">True</property>
@@ -6076,7 +6076,7 @@ another direction, Eschalon will crash.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkNotebook" id="script_notebook">
+                  <object class="GtkNotebook" id="tilecontent_notebook">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                   </object>

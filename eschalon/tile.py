@@ -34,9 +34,9 @@ class Tile(object):
         self.decalimg = 0
         self.wallimg = 0
         self.walldecalimg = 0
-        self.scriptid = 0
+        self.tilecontentid = 0
 
-        self.scripts = []
+        self.tilecontents = []
         self.entity = None
         self.savegame = False
 
@@ -50,11 +50,11 @@ class Tile(object):
         newtile.decalimg = self.decalimg
         newtile.wallimg = self.wallimg
         newtile.walldecalimg = self.walldecalimg
-        newtile.scriptid = self.scriptid
+        newtile.tilecontentid = self.tilecontentid
 
         # Arrays
-        for script in self.scripts:
-            newtile.scripts.append(script.replicate())
+        for tilecontent in self.tilecontents:
+            newtile.tilecontents.append(tilecontent.replicate())
         
         # Objects
         if (self.entity is not None):
@@ -86,9 +86,9 @@ class Tile(object):
                 self.decalimg == tile.decalimg and
                 self.wallimg == tile.wallimg and
                 self.walldecalimg == tile.walldecalimg and
-                self.scriptid == tile.scriptid and
+                self.tilecontentid == tile.tilecontentid and
                 self.entity_equals(tile.entity) and
-                self.scripts_equal(tile.scripts))
+                self.tilecontents_equal(tile.tilecontents))
 
     def _sub_equals(self, entity):
         """
@@ -109,15 +109,15 @@ class Tile(object):
             else:
                 return self.entity.equals(entity)
 
-    def scripts_equal(self, scripts):
+    def tilecontents_equal(self, tilecontents):
         """
-        Compare the contents of our scripts to the contents of the
-        given scripts.
+        Compare the contents of our tilecontents to the contents of the
+        given tilecontents.
         """
-        if (len(self.scripts) != len(scripts)):
+        if (len(self.tilecontents) != len(tilecontents)):
             return False
-        for (myscript, compscript) in zip(self.scripts, scripts):
-            if (not myscript.equals(compscript)):
+        for (mytilecontent, comptilecontent) in zip(self.tilecontents, tilecontents):
+            if (not mytilecontent.equals(comptilecontent)):
                 return False
         return True
 
@@ -126,24 +126,24 @@ class Tile(object):
         return (self._sub_hasdata() or
                 self.wall != 0 or self.floorimg != 0 or
                 self.decalimg != 0 or self.wallimg != 0 or
-                self.walldecalimg != 0 or self.scriptid != 0)
+                self.walldecalimg != 0 or self.tilecontentid != 0)
 
     def _sub_hasdata(self):
         """ Stub for superclasses to define. """
         pass
     
-    def addscript(self, script):
+    def addtilecontent(self, tilecontent):
         """
-        Add a script to our script list.  Just an internal construct which isn't actually
+        Add a tilecontent to our tilecontent list.  Just an internal construct which isn't actually
         stored on disk.
         """
-        self.scripts.append(script)
+        self.tilecontents.append(tilecontent)
 
-    def delscript(self, script):
+    def deltilecontent(self, tilecontent):
         """
-        Remove a script.
+        Remove a tilecontent.
         """
-        self.scripts.remove(script)
+        self.tilecontents.remove(tilecontent)
 
     def addentity(self, entity):
         """
@@ -167,10 +167,10 @@ class Tile(object):
         ret.append("    Decal Image: %d" % self.decalimg)
         ret.append("    Wall Image: %d" % self.wallimg)
         ret.append("    Wall Decal Image: %d" % self.walldecalimg)
-        if (self.scriptid in c.objecttypetable):
-            ret.append("    Object Type: %s" % c.objecttypetable[self.scriptid])
+        if (self.tilecontentid in c.objecttypetable):
+            ret.append("    Object Type: %s" % c.objecttypetable[self.tilecontentid])
         else:
-            ret.append("    Object Type: %d" % self.scriptid)
+            ret.append("    Object Type: %d" % self.tilecontentid)
         if (unknowns):
             if self.book == 1:
                 ret.append("    Unknown 5: %d" % self.unknown5)
@@ -186,11 +186,11 @@ class Tile(object):
             ret.append(self.entity.display(unknowns))
             ret.append('')
 
-        # Display any scripts we may have
-        for script in self.scripts:
+        # Display any tilecontents we may have
+        for tilecontent in self.tilecontents:
             ret.append('')
             ret.append("  Associated Object:")
-            ret.append(script.display(unknowns))
+            ret.append(tilecontent.display(unknowns))
         ret.append('')
 
         # Return
@@ -231,7 +231,7 @@ class B1Tile(Tile):
         self.wallimg = df.readuchar()
         self.unknown5 = df.readuchar()
         self.walldecalimg = df.readuchar()
-        self.scriptid = df.readuchar()
+        self.tilecontentid = df.readuchar()
 
     def write(self, df):
         """ Write the tile to the file. """
@@ -242,7 +242,7 @@ class B1Tile(Tile):
         df.writeuchar(self.wallimg)
         df.writeuchar(self.unknown5)
         df.writeuchar(self.walldecalimg)
-        df.writeuchar(self.scriptid)
+        df.writeuchar(self.tilecontentid)
 
     def _sub_replicate(self, newtile):
         """
@@ -283,7 +283,7 @@ class B2Tile(Tile):
         self.decalimg = df.readuchar()
         self.wallimg = df.readshort()
         self.walldecalimg = df.readuchar()
-        self.scriptid = df.readuchar()
+        self.tilecontentid = df.readuchar()
         if self.savegame:
             self.tile_flag = df.readint()
 
@@ -295,7 +295,7 @@ class B2Tile(Tile):
         df.writeuchar(self.decalimg)
         df.writeshort(self.wallimg)
         df.writeuchar(self.walldecalimg)
-        df.writeuchar(self.scriptid)
+        df.writeuchar(self.tilecontentid)
         if self.savegame:
             df.writeint(self.tile_flag)
 
@@ -338,7 +338,7 @@ class B3Tile(B2Tile):
         self.decalimg = df.readuchar()
         self.wallimg = df.readshort()
         self.walldecalimg = df.readuchar()
-        self.scriptid = df.readuchar()
+        self.tilecontentid = df.readuchar()
         if self.savegame:
             self.tile_flag = df.readint()
             self.cartography = df.readint()
@@ -351,7 +351,7 @@ class B3Tile(B2Tile):
         df.writeuchar(self.decalimg)
         df.writeshort(self.wallimg)
         df.writeuchar(self.walldecalimg)
-        df.writeuchar(self.scriptid)
+        df.writeuchar(self.tilecontentid)
         if self.savegame:
             df.writeint(self.tile_flag)
             df.writeint(self.cartography)

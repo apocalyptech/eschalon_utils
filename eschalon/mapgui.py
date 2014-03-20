@@ -61,7 +61,7 @@ from eschalon.item import Item
 from eschalon.tile import Tile
 from eschalon.basegui import BaseGUI
 from eschalon.smartdraw import SmartDraw
-from eschalon.mapscript import Mapscript
+from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 from eschalon import app_name, version, url, authors
@@ -280,9 +280,9 @@ class MapGUI(BaseGUI):
         self.entity_toggle = self.get_widget('entity_button')
         self.huge_gfx_toggle = self.get_widget('huge_gfx_button')
         self.barrier_hi_toggle = self.get_widget('barrier_hi_button')
-        self.script_hi_toggle = self.get_widget('script_hi_button')
+        self.tilecontent_hi_toggle = self.get_widget('tilecontent_hi_button')
         self.entity_hi_toggle = self.get_widget('entity_hi_button')
-        self.script_notebook = self.get_widget('script_notebook')
+        self.tilecontent_notebook = self.get_widget('tilecontent_notebook')
         self.itemsel = self.get_widget('itemselwindow')
         self.floorsel = self.get_widget('floorselwindow')
         self.composite_area = self.get_widget('composite_area')
@@ -830,10 +830,10 @@ class MapGUI(BaseGUI):
         self.populate_comboboxentry('random_sound2_combo', randsoundlist)
         self.populate_comboboxentry('skybox_combo', skyboxlist)
 
-        # And populate our object/script type dropdown as well
+        # And populate our object/tilecontent type dropdown as well
         self.object_type_list = {}
         self.object_type_list_rev = {}
-        typebox = self.get_widget('scriptid_dd')
+        typebox = self.get_widget('tilecontentid_dd')
         self.useful_combobox(typebox)
         for (typeidx, (val, text)) in enumerate(c.objecttypetable.items()):
             typebox.append_text('%d - %s' % (val, text))
@@ -980,8 +980,8 @@ class MapGUI(BaseGUI):
                 'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
                 'on_setinitial_clicked': self.on_setinitial_clicked,
                 'on_entid_changed': self.on_entid_changed,
-                'on_scriptid_changed': self.on_scriptid_changed,
-                'on_scriptid_dd_changed': self.on_scriptid_dd_changed,
+                'on_tilecontentid_changed': self.on_tilecontentid_changed,
+                'on_tilecontentid_dd_changed': self.on_tilecontentid_dd_changed,
                 'on_singleval_tile_changed_int': self.on_singleval_tile_changed_int,
                 'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
                 'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
@@ -992,7 +992,7 @@ class MapGUI(BaseGUI):
                 'on_map_flag_changed': self.on_map_flag_changed,
                 'on_barrier_changed': self.on_barrier_changed,
                 'on_entity_toggle': self.on_entity_toggle,
-                'on_script_add': self.on_script_add,
+                'on_tilecontent_add': self.on_tilecontent_add,
                 'on_floor_changed': self.on_floor_changed,
                 'on_draw_floor_changed': self.on_draw_floor_changed,
                 'on_decal_changed': self.on_decal_changed,
@@ -1532,32 +1532,32 @@ class MapGUI(BaseGUI):
             self.populate_color_selection()
         dialog.destroy()
 
-    def on_script_str_changed(self, widget):
-        """ When a script string changes. """
+    def on_tilecontent_str_changed(self, widget):
+        """ When a tilecontent string changes. """
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        if (tilecontent is not None):
             if (labelname[:9] == 'item_name'):
                 (varname, item_num) = labelname.rsplit('_', 1)
                 item_num = int(item_num)
-                script.items[item_num].item_name = widget.get_text()
+                tilecontent.items[item_num].item_name = widget.get_text()
             else:
-                script.__dict__[labelname] = widget.get_text()
+                tilecontent.__dict__[labelname] = widget.get_text()
 
-    def on_script_int_changed(self, widget):
-        """ When a script integer changes. """
+    def on_tilecontent_int_changed(self, widget):
+        """ When a tilecontent integer changes. """
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
-            script.__dict__[labelname] = int(widget.get_value())
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        if (tilecontent is not None):
+            tilecontent.__dict__[labelname] = int(widget.get_value())
 
     def on_locklevel_changed(self, widget):
         """ When our lock level changes. """
-        self.on_script_int_changed(widget)
+        self.on_tilecontent_int_changed(widget)
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         if c.book == 1:
@@ -2098,7 +2098,7 @@ class MapGUI(BaseGUI):
         table.attach(label, 0, 1, row, row+1, gtk.FILL, gtk.FILL)
         return label
 
-    def script_input_label(self, page, table, row, name, text):
+    def tilecontent_input_label(self, page, table, row, name, text):
         self.input_label(table, row, '%s_%d' % (name, page), text)
 
     def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None, hbox=False):
@@ -2124,17 +2124,17 @@ class MapGUI(BaseGUI):
         table.attach(align, 1, 2, row, row+1)
         return entry
 
-    def script_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
+    def tilecontent_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
         varname = '%s_%d' % (name, page)
-        entry = self.input_text(table, row, varname, text, tooltip, self.on_script_str_changed, 250, hbox)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
+        entry = self.input_text(table, row, varname, text, tooltip, self.on_tilecontent_str_changed, 250, hbox)
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        if (tilecontent is not None):
             if (name[:9] == 'item_name'):
                 (varname, itemnum) = name.rsplit('_', 1)
                 itemnum = int(itemnum)
-                entry.set_text(script.items[itemnum].item_name)
+                entry.set_text(tilecontent.items[itemnum].item_name)
             else:
-                entry.set_text(script.__dict__[name])
+                entry.set_text(tilecontent.__dict__[name])
         return entry
 
     def prop_unknown_input_text(self, table, num, row, tooltip=None):
@@ -2168,14 +2168,14 @@ class MapGUI(BaseGUI):
     def input_int(self, table, row, name, text, tooltip=None, signal=None):
         return self.input_spin(table, row, name, text, 0xFFFFFFFF, tooltip, signal)
 
-    def script_input_spin(self, func, page, table, row, name, text, tooltip=None, signal=None):
+    def tilecontent_input_spin(self, func, page, table, row, name, text, tooltip=None, signal=None):
         varname = '%s_%d' % (name, page)
         if signal is None:
-            signal = self.on_script_int_changed
+            signal = self.on_tilecontent_int_changed
         entry = func(table, row, varname, text, tooltip, signal)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
-            entry.set_value(script.__dict__[name])
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        if (tilecontent is not None):
+            entry.set_value(tilecontent.__dict__[name])
 
     def prop_unknown_input_spin(self, func, type, table, num, row, tooltip=None, signal=None, prefix=''):
         textdict = {
@@ -2190,7 +2190,7 @@ class MapGUI(BaseGUI):
             signal = self.on_singleval_map_changed_int
         entry = func(table, row, varname, text, tooltip, signal)
 
-    def script_input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
+    def tilecontent_input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
@@ -2199,9 +2199,9 @@ class MapGUI(BaseGUI):
         entry.set_name('%s_%d' % (name, page))
         for value in values:
             entry.append_text(value)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        if (script is not None):
-            entry.set_active(script.__dict__[name])
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        if (tilecontent is not None):
+            entry.set_active(tilecontent.__dict__[name])
         if (signal is not None):
             entry.connect('changed', signal)
         else:
@@ -2211,16 +2211,16 @@ class MapGUI(BaseGUI):
         align.add(entry)
         table.attach(align, 1, 2, row, row+1)
 
-    def script_input_flag(self, page, table, row, name, flagval, text, tooltip=None):
+    def tilecontent_input_flag(self, page, table, row, name, flagval, text, tooltip=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
         align = gtk.Alignment(0, 0.5, 0, 1)
         align.show()
         entry = gtk.CheckButton()
         entry.show()
         entry.set_name('%s_%X_%d' % (name, flagval, page))
-        scriptval = self.map.tiles[self.sq_y][self.sq_x].scripts[page].__dict__[name]
-        entry.set_active((scriptval & flagval == flagval))
-        entry.connect('toggled', self.on_script_flag_changed)
+        tilecontentval = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page].__dict__[name]
+        entry.set_active((tilecontentval & flagval == flagval))
+        entry.connect('toggled', self.on_tilecontent_flag_changed)
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
@@ -2246,7 +2246,7 @@ class MapGUI(BaseGUI):
         (name, flagval) = wname.rsplit('_', 1)
         self.on_flag_changed(name, flagval, widget, self.map)
 
-    def on_script_flag_changed(self, widget):
+    def on_tilecontent_flag_changed(self, widget):
         """
         What to do whan a bit field changes.  Currently just the
         destructible flag.
@@ -2254,8 +2254,8 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (name, flagval, page) = wname.rsplit('_', 2)
         page = int(page)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        self.on_flag_changed(name, flagval, widget, script)
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        self.on_flag_changed(name, flagval, widget, tilecontent)
 
     def on_barrier_changed(self, widget):
         """
@@ -2267,16 +2267,16 @@ class MapGUI(BaseGUI):
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
-        item = self.map.tiles[self.sq_y][self.sq_x].scripts[page].items[num]
+        item = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page].items[num]
         self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
 
-    def on_script_dropdown_changed(self, widget):
+    def on_tilecontent_dropdown_changed(self, widget):
         """ Handle the trap dropdown change. """
         wname = widget.get_name()
         (varname, page) = wname.rsplit('_', 2)
         page = int(page)
-        script = self.map.tiles[self.sq_y][self.sq_x].scripts[page]
-        script.__dict__[varname] = widget.get_active()
+        tilecontent = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page]
+        tilecontent.__dict__[varname] = widget.get_active()
 
     def on_mapitem_clicked(self, widget, doshow=True):
         """ What to do when our item button is clicked. """
@@ -2285,7 +2285,7 @@ class MapGUI(BaseGUI):
         num = int(num)
         page = int(page)
         self.curitem = (num, page)
-        self.populate_itemform_from_item(self.map.tiles[self.sq_y][self.sq_x].scripts[page].items[num])
+        self.populate_itemform_from_item(self.map.tiles[self.sq_y][self.sq_x].tilecontents[page].items[num])
         self.get_widget('item_notebook').set_current_page(0)
         if (doshow):
             self.itemwindow.show()
@@ -2304,7 +2304,7 @@ class MapGUI(BaseGUI):
         (varname, num, page, action) = wname.rsplit('_', 3)
         num = int(num)
         page = int(page)
-        items = self.map.tiles[self.sq_y][self.sq_x].scripts[page].items
+        items = self.map.tiles[self.sq_y][self.sq_x].tilecontents[page].items
         if (action == 'cut'):
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_copy' % (num, page)))
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_delete' % (num, page)))
@@ -2321,7 +2321,7 @@ class MapGUI(BaseGUI):
         else:
             raise Exception('invalid action')
 
-    def script_group_box(self, markup):
+    def tilecontent_group_box(self, markup):
         box = gtk.VBox()
         box.show()
         header = gtk.Label()
@@ -2332,13 +2332,13 @@ class MapGUI(BaseGUI):
         box.pack_start(header, False, False)
         return box
 
-    def append_script_notebook(self, script):
+    def append_tilecontent_notebook(self, tilecontent):
         """
-        Given a script, adds a new tab to the script notebook, with
+        Given a tilecontent, adds a new tab to the tilecontent notebook, with
         all the necessary inputs.
         """
         tile = self.map.tiles[self.sq_y][self.sq_x]
-        curpages = self.script_notebook.get_n_pages()
+        curpages = self.tilecontent_notebook.get_n_pages()
 
         # Label for the notebook
         label = gtk.Label('Object #%d' % (curpages+1))
@@ -2350,8 +2350,8 @@ class MapGUI(BaseGUI):
         remove_align.set_border_width(8)
         remove_button = gtk.Button()
         remove_button.show()
-        remove_button.set_name('script_remove_button_%d' % (curpages))
-        remove_button.connect('clicked', self.on_script_del)
+        remove_button.set_name('tilecontent_remove_button_%d' % (curpages))
+        remove_button.connect('clicked', self.on_tilecontent_del)
         remove_button_box = gtk.HBox()
         remove_button_box.show()
         rm_img = gtk.image_new_from_stock(gtk.STOCK_REMOVE, 4)
@@ -2365,7 +2365,7 @@ class MapGUI(BaseGUI):
         remove_align.add(remove_button)
 
         # Basic Information
-        basic_box = self.script_group_box('<b>Basic Information</b>')
+        basic_box = self.tilecontent_group_box('<b>Basic Information</b>')
         binput = gtk.Table(10, 2)
         binput.show()
 
@@ -2376,49 +2376,49 @@ class MapGUI(BaseGUI):
         basic_box.pack_start(align, False, False)
 
         # Basic Inputs
-        self.script_input_text(curpages, binput, 0, 'description', '(to update)',
+        self.tilecontent_input_text(curpages, binput, 0, 'description', '(to update)',
                 '(to update)')
-        self.script_input_text(curpages, binput, 1, 'extratext', '(to update)',
+        self.tilecontent_input_text(curpages, binput, 1, 'extratext', '(to update)',
                 '(to update)')
-        entry = self.script_input_text(curpages, binput, 2, 'script', 'Script', None, True)
+        entry = self.tilecontent_input_text(curpages, binput, 2, 'script', 'Script', None, True)
 
         # Script editor launcher
         hbox = entry.get_property('parent')
         self.setup_script_editor_launcher(hbox, entry, self.tilewindow, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
-        if (tile.scripts[curpages].trap in c.traptable.keys()):
-            self.script_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_script_dropdown_changed)
+        if (tile.tilecontents[curpages].trap in c.traptable.keys()):
+            self.tilecontent_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_tilecontent_dropdown_changed)
         else:
-            self.script_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
-        if (tile.scripts[curpages].state in c.containertable.keys()):
-            self.script_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_script_dropdown_changed)
+        if (tile.tilecontents[curpages].state in c.containertable.keys()):
+            self.tilecontent_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_tilecontent_dropdown_changed)
         else:
-            self.script_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
         # Note that row 6 is lock level, but we're skipping it right here
 
         if c.book == 1:
             # Book 1-specific values
-            self.script_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
             # If we ever get more flags, this'll have to change
-            if (tile.scripts[curpages].flags & ~0x40 == 0):
-                self.script_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+            if (tile.tilecontents[curpages].flags & ~0x40 == 0):
+                self.tilecontent_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
-                self.script_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+                self.tilecontent_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
 
-            self.script_input_spin(self.input_uchar, curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
         else:
             # Book 2-specific values
-            self.script_input_spin(self.input_short, curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
-            self.script_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
+            self.tilecontent_input_spin(self.input_short, curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
 
             # Condition is special, we're using an hbox here
-            scr = self.map.tiles[self.sq_y][self.sq_x].scripts[curpages]
-            self.script_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
+            scr = self.map.tiles[self.sq_y][self.sq_x].tilecontents[curpages]
+            self.tilecontent_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
             self.register_widget('cur_condition_%d' % (curpages), curentry)
@@ -2433,11 +2433,11 @@ class MapGUI(BaseGUI):
             hbox.add(curentry)
             hbox.add(maxlabel)
             hbox.add(maxentry)
-            if (script is not None):
+            if (tilecontent is not None):
                 curentry.set_value(scr.cur_condition)
                 maxentry.set_value(scr.max_condition)
-            curentry.connect('value-changed', self.on_script_int_changed)
-            maxentry.connect('value-changed', self.on_script_int_changed)
+            curentry.connect('value-changed', self.on_tilecontent_int_changed)
+            maxentry.connect('value-changed', self.on_tilecontent_int_changed)
             align = gtk.Alignment(0, 0.5, 0, 1)
             align.add(hbox)
             align.show_all()
@@ -2449,10 +2449,10 @@ class MapGUI(BaseGUI):
             locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
         else:
             locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
-        self.script_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
+        self.tilecontent_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
 
         # Contents
-        contents_box = self.script_group_box('<b>Contents</b> <i>(If Container)</i>')
+        contents_box = self.tilecontent_group_box('<b>Contents</b> <i>(If Container)</i>')
         cinput = gtk.Table(8, 3)
         self.register_widget('itemtable_%d' % (curpages), cinput, True)
         cinput.show()
@@ -2463,18 +2463,18 @@ class MapGUI(BaseGUI):
         contents_box.pack_start(cinput, False, False)
 
         # Contents Inputs (varies based on savefile status)
-        if (tile.scripts[curpages].savegame):
+        if (tile.tilecontents[curpages].savegame):
             for num in range(8):
-                self.script_input_label(curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num+1))
+                self.tilecontent_input_label(curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num+1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
                         2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND)
                 self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
-                self.script_input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
+                self.tilecontent_input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
 
         # Unknowns
-        unknown_box = self.script_group_box('<b>Unknowns</b>')
+        unknown_box = self.tilecontent_group_box('<b>Unknowns</b>')
         uinput = gtk.Table(5, 3)
         uinput.show()
         spacer = gtk.Label('')
@@ -2485,11 +2485,11 @@ class MapGUI(BaseGUI):
 
         # Data in Unknowns block
         if c.book == 1:
-            self.script_input_spin(self.input_short, curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
-            self.script_input_spin(self.input_short, curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
-            self.script_input_spin(self.input_int, curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
-            self.script_input_spin(self.input_int, curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
-            self.script_input_spin(self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
+            self.tilecontent_input_spin(self.input_short, curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
+            self.tilecontent_input_spin(self.input_short, curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
+            self.tilecontent_input_spin(self.input_int, curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
+            self.tilecontent_input_spin(self.input_int, curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
+            self.tilecontent_input_spin(self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()
@@ -2510,23 +2510,23 @@ class MapGUI(BaseGUI):
         sw.add(vp)
 
         # Update our text labels and tooltips appropriately
-        # for scriptid type 6
-        self.update_script_type_strings(curpages, tile.scriptid)
+        # for tilecontentid type 6
+        self.update_tilecontent_type_strings(curpages, tile.tilecontentid)
 
         # ... and update our "other" label
         self.on_locklevel_changed(self.get_widget('lock_%d' % (curpages)))
 
-        self.script_notebook.append_page(sw, label)
+        self.tilecontent_notebook.append_page(sw, label)
 
-    def clear_script_notebook(self):
-        """ Clears out the script notebook. """
-        for i in range(self.script_notebook.get_n_pages()):
-            self.script_notebook.remove_page(0)
+    def clear_tilecontent_notebook(self):
+        """ Clears out the tilecontent notebook. """
+        for i in range(self.tilecontent_notebook.get_n_pages()):
+            self.tilecontent_notebook.remove_page(0)
 
-    def on_script_del(self, widget):
+    def on_tilecontent_del(self, widget):
         """
-        Called to remove a script.  This needs to handle renumbering the
-        remaining scripts if necessary, too.
+        Called to remove a tilecontent.  This needs to handle renumbering the
+        remaining tilecontents if necessary, too.
         """
         wname = widget.get_name()
         (button_name, page) = wname.rsplit('_', 1)
@@ -2534,33 +2534,33 @@ class MapGUI(BaseGUI):
         tile = self.map.tiles[self.sq_y][self.sq_x]
 
         # We'll have to remove this regardless, so do it now.
-        self.map.delscript(self.sq_x, self.sq_y, page)
-        self.script_notebook.remove_page(page)
+        self.map.deltilecontent(self.sq_x, self.sq_y, page)
+        self.tilecontent_notebook.remove_page(page)
 
         # If we didn't just lop off the last one, redraw the whole notebook.
         # This is in theory more lame than renumbering stuff, but to accurately
         # renumber everything, we'd have to change the names of all the widgets
         # in there.  Which would be even more lame.
-        if (page < len(tile.scripts)):
-            self.clear_script_notebook()
-            for script in self.map.tiles[self.sq_y][self.sq_x].scripts:
-                self.append_script_notebook(script)
+        if (page < len(tile.tilecontents)):
+            self.clear_tilecontent_notebook()
+            for tilecontent in self.map.tiles[self.sq_y][self.sq_x].tilecontents:
+                self.append_tilecontent_notebook(tilecontent)
 
         # ... and possibly clean out our note
         self.update_object_note()
 
-    def on_script_add(self, widget):
+    def on_tilecontent_add(self, widget):
         """
-        Called when a new script is added.  Creates a new
+        Called when a new tilecontent is added.  Creates a new
         Script object and handles adding it to the notebook.
         """
         tile = self.map.tiles[self.sq_y][self.sq_x]
-        script = Mapscript.new(c.book, self.map.is_savegame())
-        script.tozero(self.sq_x, self.sq_y)
-        self.map.scripts.append(script)
-        tile.addscript(script)
-        self.append_script_notebook(script)
-        self.script_notebook.show()
+        tilecontent = Tilecontent.new(c.book, self.map.is_savegame())
+        tilecontent.tozero(self.sq_x, self.sq_y)
+        self.map.tilecontents.append(tilecontent)
+        tile.addtilecontent(tilecontent)
+        self.append_tilecontent_notebook(tilecontent)
+        self.tilecontent_notebook.show()
         self.update_object_note()
 
     def on_healthmaxbutton_clicked(self, widget):
@@ -2594,16 +2594,16 @@ class MapGUI(BaseGUI):
             self.map.delentity(self.sq_x, self.sq_y)
             self.set_entity_toggle_button(True)
 
-    def update_script_type_strings(self, page, scriptid):
+    def update_tilecontent_type_strings(self, page, tilecontentid):
         """
-        Update the text for scripts on a single page, given the
-        scriptid passed-in.
+        Update the text for tilecontents on a single page, given the
+        tilecontentid passed-in.
         """
         text_1 = self.get_widget('description_%d_label' % page)
         text_2 = self.get_widget('extratext_%d_label' % page)
         obj_1 = self.get_widget('description_%d' % page)
         obj_2 = self.get_widget('extratext_%d' % page)
-        if (c.book == 1 and scriptid == 6):
+        if (c.book == 1 and tilecontentid == 6):
             text_1.set_text('Map Link')
             text_2.set_text('Map Coordinates')
             obj_1.set_tooltip_text('Name of the map to send the player to.')
@@ -2615,23 +2615,23 @@ class MapGUI(BaseGUI):
             obj_1.set_tooltip_text('A basic description of the tile.')
             obj_2.set_tooltip_text('More descriptive text (such as on signs or gravestones).')
 
-    def update_all_scriptid_type_strings(self, tile):
-        """ Update the form text for all scripts on a tile. """
-        for idx in range(self.script_notebook.get_n_pages()):
-            self.update_script_type_strings(idx, tile.scriptid)
+    def update_all_tilecontentid_type_strings(self, tile):
+        """ Update the form text for all tilecontents on a tile. """
+        for idx in range(self.tilecontent_notebook.get_n_pages()):
+            self.update_tilecontent_type_strings(idx, tile.tilecontentid)
 
-    def on_scriptid_changed(self, widget):
-        """ Process changing our object/script ID. """
+    def on_tilecontentid_changed(self, widget):
+        """ Process changing our object/tilecontent ID. """
         self.on_singleval_tile_changed_int(widget)
         tile = self.map.tiles[self.sq_y][self.sq_x]
-        self.update_all_scriptid_type_strings(tile)
+        self.update_all_tilecontentid_type_strings(tile)
         self.update_object_note()
 
-    def on_scriptid_dd_changed(self, widget):
-        """ Process changing our object/script type dropdown. """
+    def on_tilecontentid_dd_changed(self, widget):
+        """ Process changing our object/tilecontent type dropdown. """
         tile = self.map.tiles[self.sq_y][self.sq_x]
-        tile.scriptid = self.object_type_list_rev[widget.get_active()]
-        self.update_all_scriptid_type_strings(tile)
+        tile.tilecontentid = self.object_type_list_rev[widget.get_active()]
+        self.update_all_tilecontentid_type_strings(tile)
         self.update_object_note()
 
     def populate_tilewindow_from_tile(self, tile):
@@ -2677,26 +2677,26 @@ class MapGUI(BaseGUI):
             self.set_entity_toggle_button(False)
             self.populate_entity_tab(tile)
 
-        # ... and scripts (first the ID)
-        if (tile.scriptid in c.objecttypetable):
-            self.get_widget('scriptid_num_align').hide()
-            self.get_widget('scriptid_dd_align').show()
-            self.get_widget('scriptid_dd').set_active(self.object_type_list[tile.scriptid])
+        # ... and tilecontents (first the ID)
+        if (tile.tilecontentid in c.objecttypetable):
+            self.get_widget('tilecontentid_num_align').hide()
+            self.get_widget('tilecontentid_dd_align').show()
+            self.get_widget('tilecontentid_dd').set_active(self.object_type_list[tile.tilecontentid])
         else:
-            self.get_widget('scriptid_num_align').show()
-            self.get_widget('scriptid_dd_align').hide()
-            self.get_widget('scriptid').set_value(tile.scriptid)
+            self.get_widget('tilecontentid_num_align').show()
+            self.get_widget('tilecontentid_dd_align').hide()
+            self.get_widget('tilecontentid').set_value(tile.tilecontentid)
 
-        # ... now the scripts themselves.
-        self.clear_script_notebook()
-        if (len(tile.scripts) > 0):
-            self.get_widget('script_add_button').hide()
-            for script in tile.scripts:
-                self.append_script_notebook(script)
-            self.script_notebook.show()
+        # ... now the tilecontents themselves.
+        self.clear_tilecontent_notebook()
+        if (len(tile.tilecontents) > 0):
+            self.get_widget('tilecontent_add_button').hide()
+            for tilecontent in tile.tilecontents:
+                self.append_tilecontent_notebook(tilecontent)
+            self.tilecontent_notebook.show()
         else:
-            self.get_widget('script_add_button').show()
-            self.script_notebook.hide()
+            self.get_widget('tilecontent_add_button').show()
+            self.tilecontent_notebook.hide()
 
     def populate_entity_tab(self, tile):
         """ Populates the entity tab of the tile editing screen. """
@@ -2741,33 +2741,33 @@ class MapGUI(BaseGUI):
         note = self.get_widget('object_note')
 
         # First the button
-        if (len(tile.scripts) > 0):
-            self.get_widget('script_add_button').hide()
+        if (len(tile.tilecontents) > 0):
+            self.get_widget('tilecontent_add_button').hide()
         else:
-            self.get_widget('script_add_button').show()
+            self.get_widget('tilecontent_add_button').show()
 
         # Now the actual note
-        if (len(tile.scripts) > 1):
+        if (len(tile.tilecontents) > 1):
             note.set_markup('<b>Warning:</b> There are three instances in the master map files where more than one object is defined for a tile, but doing so is discouraged.  Only one of the objects will actually be used by the game engine.')
             note.show()
         elif c.book == 1:
-            if (tile.scriptid > 0 and tile.scriptid < 25):
-                if (len(tile.scripts) > 0):
+            if (tile.tilecontentid > 0 and tile.tilecontentid < 25):
+                if (len(tile.tilecontents) > 0):
                     note.hide()
                 else:
                     note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                     note.show()
             else:
-                if (len(tile.scripts) > 0):
+                if (len(tile.tilecontents) > 0):
                     note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                     note.show()
                 else:
                     note.hide()
         else:
-            if tile.scriptid == 0 and len(tile.scripts) > 0:
+            if tile.tilecontentid == 0 and len(tile.tilecontents) > 0:
                 note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                 note.show()
-            elif tile.scriptid != 19 and tile.scriptid != 0 and len(tile.scripts) == 0:
+            elif tile.tilecontentid != 19 and tile.tilecontentid != 0 and len(tile.tilecontents) == 0:
                 note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                 note.show()
             else:
@@ -3281,10 +3281,10 @@ class MapGUI(BaseGUI):
             if (self.erase_entity_checkbox.get_active()):
                 self.map.delentity(x, y)
             if (self.erase_object_checkbox.get_active()):
-                num = len(tile.scripts)
+                num = len(tile.tilecontents)
                 for i in range(num):
-                    self.map.delscript(x, y, 0)
-                tile.scriptid = 0
+                    self.map.deltilecontent(x, y, 0)
+                tile.tilecontentid = 0
 
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
@@ -3416,7 +3416,7 @@ class MapGUI(BaseGUI):
         self.draw_check_set_to(False)
 
     def highlight_check_set_to(self, status):
-        return self.mass_update_checkboxes(status, [self.barrier_hi_toggle, self.script_hi_toggle, self.entity_hi_toggle])
+        return self.mass_update_checkboxes(status, [self.barrier_hi_toggle, self.tilecontent_hi_toggle, self.entity_hi_toggle])
 
     def highlight_check_all(self, widget):
         self.highlight_check_set_to(True)
@@ -3439,7 +3439,7 @@ class MapGUI(BaseGUI):
 
         # TODO: Layers are pretty inefficient and slow here, IMO
         barrier = False
-        script = False
+        tilecontent = False
         pointer = False
         entity = False
 
@@ -3467,24 +3467,24 @@ class MapGUI(BaseGUI):
                     entity = (1, 0, 0, 0.5)
 
         if c.book == 1:
-            if (tile.scriptid != 0 and len(tile.scripts) > 0):
-                script = (1, 1, 0, 0.5)
-            elif (tile.scriptid != 0 and len(tile.scripts) == 0):
-                script = (0, .784, .784, 0.5)
-            elif (tile.scriptid == 0 and len(tile.scripts) > 0):
+            if (tile.tilecontentid != 0 and len(tile.tilecontents) > 0):
+                tilecontent = (1, 1, 0, 0.5)
+            elif (tile.tilecontentid != 0 and len(tile.tilecontents) == 0):
+                tilecontent = (0, .784, .784, 0.5)
+            elif (tile.tilecontentid == 0 and len(tile.tilecontents) > 0):
                 # afaik, this doesn't happen.  should use something other than red here, though
-                script = (1, 0, 0, 0.5)
+                tilecontent = (1, 0, 0, 0.5)
         else:
-            if (tile.scriptid == 0 and len(tile.scripts) > 0):
+            if (tile.tilecontentid == 0 and len(tile.tilecontents) > 0):
                 # afaik, this doesn't happen.  should use something other than red here, though
-                script = (1, 0, 0, 0.5)
-            elif (tile.scriptid >= 25 and tile.scriptid < 50):
-                script = (0, .784, .784, 0.5)
-            elif (tile.scriptid > 0 and len(tile.scripts) == 0):
+                tilecontent = (1, 0, 0, 0.5)
+            elif (tile.tilecontentid >= 25 and tile.tilecontentid < 50):
+                tilecontent = (0, .784, .784, 0.5)
+            elif (tile.tilecontentid > 0 and len(tile.tilecontents) == 0):
                 # This shouldn't happen either
-                script = (1, 0, 0, 0.5)
-            elif tile.scriptid > 0:
-                script = (1, 1, 0, 0.5)
+                tilecontent = (1, 0, 0, 0.5)
+            elif tile.tilecontentid > 0:
+                tilecontent = (1, 1, 0, 0.5)
 
         if (tile.wall == 1):
             barrier = (.784, .784, .784, 0.5)
@@ -3620,7 +3620,7 @@ class MapGUI(BaseGUI):
                     drawn = True
 
         # Draw a zapper
-        if (self.req_book > 1 and tile.scriptid == 19 and self.object_toggle.get_active()):
+        if (self.req_book > 1 and tile.tilecontentid == 19 and self.object_toggle.get_active()):
             pixbuf = self.gfx.get_zapper(self.curzoom)
             if pixbuf is not None:
                 xoffset = self.z_tilebuf_offset
@@ -3684,9 +3684,9 @@ class MapGUI(BaseGUI):
         # having the black tile overlay makes things look bad.)  Additionally
         # only do it if we would have done some highlighting.
         drawbarrier = (barrier and self.barrier_hi_toggle.get_active())
-        drawscript = (script and self.script_hi_toggle.get_active())
+        drawtilecontent = (tilecontent and self.tilecontent_hi_toggle.get_active())
         drawentity = (entity and self.entity_hi_toggle.get_active())
-        if (not drawn and (drawbarrier or drawscript or drawentity)):
+        if (not drawn and (drawbarrier or drawtilecontent or drawentity)):
             sq_ctx.set_source_surface(self.basictile)
             sq_ctx.paint()
 
@@ -3694,9 +3694,9 @@ class MapGUI(BaseGUI):
         if (drawbarrier):
             self.composite_simple(op_ctx, op_surf, barrier)
 
-        # Draw Script Highlights
-        if (drawscript):
-            self.composite_simple(op_ctx, op_surf, script)
+        # Draw Tilecontent Highlights
+        if (drawtilecontent):
+            self.composite_simple(op_ctx, op_surf, tilecontent)
 
         # Draw Entity Highlights
         if (drawentity):
@@ -3721,8 +3721,8 @@ class MapGUI(BaseGUI):
         Draws a "huge" graphic image on our map (like Hammerlorne, etc).
         Only used in Book 2.
         """
-        if tile.scriptid == 21 and len(tile.scripts) > 0:
-            img = self.gfx.get_huge_gfx(tile.scripts[0].extratext, self.curzoom)
+        if tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
+            img = self.gfx.get_huge_gfx(tile.tilecontents[0].extratext, self.curzoom)
             if img:
                 x = tile.x
                 y = tile.y
@@ -3876,8 +3876,8 @@ class MapGUI(BaseGUI):
         Stores whether or not there's a current hugegfx on the given tile
         (and stores the graphic name).  Used before a tile is edited.
         """
-        if (tile.wallimg == 1000 and tile.scriptid == 21 and len(tile.scripts) != 0):
-            self.cur_hugegfx_state = tile.scripts[0].extratext
+        if (tile.wallimg == 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
+            self.cur_hugegfx_state = tile.tilecontents[0].extratext
         else:
             self.cur_hugegfx_state = None
 
@@ -3889,8 +3889,8 @@ class MapGUI(BaseGUI):
 
         Will also upkeep our self.huge_gfx_rows list
         """
-        if (tile.wallimg == 1000 and tile.scriptid == 21 and len(tile.scripts) != 0):
-            new_hugegfx_state = tile.scripts[0].extratext
+        if (tile.wallimg == 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
+            new_hugegfx_state = tile.tilecontents[0].extratext
         else:
             new_hugegfx_state = None
         if (new_hugegfx_state != self.cur_hugegfx_state):
@@ -3958,7 +3958,7 @@ class MapGUI(BaseGUI):
             self.erase_barrier.set_active(False)
 
         # ... and also for objects
-        if (self.script_hi_toggle.get_active()):
+        if (self.tilecontent_hi_toggle.get_active()):
             self.erase_object_checkbox.set_sensitive(True)
         else:
             self.erase_object_checkbox.set_sensitive(False)
@@ -3994,7 +3994,7 @@ class MapGUI(BaseGUI):
             huge_gfxes = []
             for x in range(len(self.map.tiles[y])):
                 self.draw_tile(x, y)
-                if self.map.tiles[y][x].scriptid == 21:
+                if self.map.tiles[y][x].tilecontentid == 21:
                     huge_gfxes.append(self.map.tiles[y][x])
             if self.req_book > 1 and self.huge_gfx_toggle.get_active():
                 for tile in huge_gfxes:
