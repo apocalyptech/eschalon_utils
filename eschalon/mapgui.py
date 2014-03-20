@@ -350,7 +350,7 @@ class MapGUI(BaseGUI):
             }
 
         # Initialize item stuff
-        self.curitemtype = self.ITEM_MAP
+        self.curitemcategory = self.ITEM_MAP
         self.curitem = ''
         self.itemclipboard = None
 
@@ -2721,8 +2721,7 @@ class MapGUI(BaseGUI):
         if (self.map.is_savegame()):
             self.get_widget('friendly').set_value(tile.entity.friendly)
             self.get_widget('health').set_value(tile.entity.health)
-            self.get_widget('ent_unknownc1').set_value(tile.entity.ent_unknownc1)
-            self.get_widget('ent_zero1').set_value(tile.entity.ent_zero1)
+            self.get_widget('frame').set_value(tile.entity.frame)
             self.get_widget('initial_loc').set_value(tile.entity.initial_loc)
             self.get_widget('movement').set_value(tile.entity.movement)
             if c.book == 1:

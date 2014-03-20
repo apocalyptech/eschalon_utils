@@ -75,7 +75,7 @@ class B2Constants:
             0x1A: 'Thrown Weapons'
         }
 
-    typetable = {
+    categorytable = {
             0x00: '(none)',
             0x01: 'Weapon',
             0x02: 'Arrow',

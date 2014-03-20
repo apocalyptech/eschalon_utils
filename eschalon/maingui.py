@@ -381,7 +381,7 @@ class MainGUI(BaseGUI):
         self.changed = {}
 
         # Support for our item screens
-        self.curitemtype = self.ITEM_NONE
+        self.curitemcategory = self.ITEM_NONE
         self.curitem = ''
         self.itemchanged = {}
         self.itemclipboard = None
@@ -411,16 +411,16 @@ class MainGUI(BaseGUI):
         """
         Check to see if our item is changed, and if so, do the appropriate thing on the main form.
         """
-        if self.curitemtype == self.ITEM_EQUIP:
+        if self.curitemcategory == self.ITEM_EQUIP:
             (labelwidget, label) = self.get_label_cache(self.curitem)
             labelname = labelwidget.get_name()
             (labelname, foo) = labelname.rsplit('_', 1)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
-        elif self.curitemtype == self.ITEM_INV:
+        elif self.curitemcategory == self.ITEM_INV:
             labelname = 'inv_%d_%d' % (self.curitem[0], self.curitem[1])
             (labelwidget, label) = self.get_label_cache(labelname)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
-        elif self.curitemtype == self.ITEM_READY:
+        elif self.curitemcategory == self.ITEM_READY:
             labelname = 'ready_%d' % (self.curitem)
             (labelwidget, label) = self.get_label_cache(labelname)
             self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
@@ -430,7 +430,7 @@ class MainGUI(BaseGUI):
     def set_changed_widget(self, unchanged, name, labelwidget, label, doitem=True):
         """ Mark a label as changed or unchanged, on the GUI. """
         if (unchanged):
-            if (not doitem or self.curitemtype == self.ITEM_NONE):
+            if (not doitem or self.curitemcategory == self.ITEM_NONE):
                 if self.changed.has_key(name):
                     del self.changed[name]
             else:
@@ -439,7 +439,7 @@ class MainGUI(BaseGUI):
                 self.check_item_changed()
             return labelwidget.set_markup(label)
         else:
-            if (not doitem or self.curitemtype == self.ITEM_NONE):
+            if (not doitem or self.curitemcategory == self.ITEM_NONE):
                 self.changed[name] = True
             else:
                 self.itemchanged[name] = True
@@ -618,7 +618,7 @@ class MainGUI(BaseGUI):
         (foo, row, col, bar) = wname.rsplit('_', 3)
         row = int(row)
         col = int(col)
-        self.curitemtype = self.ITEM_INV
+        self.curitemcategory = self.ITEM_INV
         self.curitem = (row, col)
         self.populate_itemform_from_item(self.char.inventory[row][col])
         self.get_widget('item_notebook').set_current_page(0)
@@ -629,7 +629,7 @@ class MainGUI(BaseGUI):
         """ What to do when our equipped-item button is clicked. """
         wname = widget.get_name()
         (equipname, foo) = wname.rsplit('_', 1)
-        self.curitemtype = self.ITEM_EQUIP
+        self.curitemcategory = self.ITEM_EQUIP
         self.curitem = equipname
         self.populate_itemform_from_item(self.char.__dict__[equipname])
         self.get_widget('item_notebook').set_current_page(0)
@@ -641,7 +641,7 @@ class MainGUI(BaseGUI):
         wname = widget.get_name()
         (foo, num, bar) = wname.rsplit('_', 2)
         num = int(num)
-        self.curitemtype = self.ITEM_READY
+        self.curitemcategory = self.ITEM_READY
         self.curitem = num
         self.populate_itemform_from_item(self.char.readyitems[num])
         self.get_widget('item_notebook').set_current_page(0)
