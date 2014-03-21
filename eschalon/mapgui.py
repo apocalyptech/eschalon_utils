@@ -955,6 +955,11 @@ class MapGUI(BaseGUI):
         dialog = NewMapDialog()
         self.register_widget('map_new_map_dialog', dialog)
 
+        # Increase the height of our tilewindow, if gtk thinks we have room.
+        if gtk.gdk.screen_height() > 900:
+            (cur_width, cur_height) = self.tilewindow.get_size_request()
+            self.tilewindow.set_size_request(cur_width, 800)
+
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,
                 'on_new': self.on_new,
