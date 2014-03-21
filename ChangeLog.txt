@@ -2,6 +2,9 @@
 
 *eschalon_utils-1.0.0 ()
 
+   21 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Fix Character Editor Hitpoint and Mana Point fields for Books 2 and 3
+
    16-20 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Update "Parallax 1" and "Parallax 2" to be X and Y instead
    Allow "Cloud Offset X/Y" to be edited in the GUI
