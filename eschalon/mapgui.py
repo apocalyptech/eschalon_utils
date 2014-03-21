@@ -894,6 +894,11 @@ class MapGUI(BaseGUI):
         # Entity death script editor launcher
         self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
 
+        # Global Props window script editor launchers
+        self.setup_script_editor_launcher(self.get_widget('entrancescript_hbox'), self.get_widget('entrancescript'), self.propswindow, True)
+        self.setup_script_editor_launcher(self.get_widget('returnscript_hbox'), self.get_widget('returnscript'), self.propswindow, True)
+        self.setup_script_editor_launcher(self.get_widget('exitscript_hbox'), self.get_widget('exitscript'), self.propswindow, True)
+
         # Create our entity status values box
         if c.book > 1:
             container = self.get_widget('entity_data_main_vbox')
@@ -958,6 +963,8 @@ class MapGUI(BaseGUI):
         if gtk.gdk.screen_height() > 900:
             (cur_width, cur_height) = self.tilewindow.get_size_request()
             self.tilewindow.set_size_request(cur_width, 800)
+            (cur_width, cur_height) = self.propswindow.get_size_request()
+            self.propswindow.set_size_request(cur_width, 750)
 
         # Dictionary of signals.
         dic = { 'gtk_main_quit': self.gtk_main_quit,

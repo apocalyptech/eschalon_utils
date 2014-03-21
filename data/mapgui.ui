@@ -128,12 +128,12 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="cloud_y_adj">
+  <object class="GtkAdjustment" id="cloud_x_adj">
     <property name="upper">4294967296</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="cloud_x_adj">
+  <object class="GtkAdjustment" id="cloud_y_adj">
     <property name="upper">4294967296</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -619,6 +619,15 @@
                                   <object class="GtkComboBoxEntry" id="exit_west_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry2">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -641,6 +650,15 @@
                                   <object class="GtkComboBoxEntry" id="exit_south_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry4">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -663,6 +681,15 @@
                                   <object class="GtkComboBoxEntry" id="exit_east_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry6">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -685,6 +712,15 @@
                                   <object class="GtkComboBoxEntry" id="exit_north_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry8">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -854,16 +890,27 @@
                                 <property name="xalign">0</property>
                                 <property name="right_padding">8</property>
                                 <child>
-                                  <object class="GtkEntry" id="entrancescript">
+                                  <object class="GtkHBox" id="entrancescript_hbox">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This script is run once, the first time a character enters the map.</property>
-                                    <property name="invisible_char">●</property>
-                                    <property name="primary_icon_activatable">False</property>
-                                    <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
-                                    <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkEntry" id="entrancescript">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This script is run once, the first time a character enters the map.</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                        <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -872,7 +919,6 @@
                                 <property name="right_attach">2</property>
                                 <property name="top_attach">7</property>
                                 <property name="bottom_attach">8</property>
-                                <property name="x_options">GTK_FILL</property>
                                 <property name="y_options">GTK_FILL</property>
                               </packing>
                             </child>
@@ -1263,17 +1309,28 @@
                                 <property name="xalign">0</property>
                                 <property name="right_padding">8</property>
                                 <child>
-                                  <object class="GtkEntry" id="returnscript">
+                                  <object class="GtkHBox" id="returnscript_hbox">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This script is run each time the character enters the map.</property>
-                                    <property name="invisible_char">●</property>
-                                    <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_activatable">False</property>
-                                    <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
-                                    <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkEntry" id="returnscript">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This script is run each time the character enters the map.</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="invisible_char_set">True</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                        <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1307,17 +1364,28 @@
                                 <property name="xalign">0</property>
                                 <property name="right_padding">8</property>
                                 <child>
-                                  <object class="GtkEntry" id="exitscript">
+                                  <object class="GtkHBox" id="exitscript_hbox">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="tooltip_text" translatable="yes">This script is run each time the character leaves the map.</property>
-                                    <property name="invisible_char">●</property>
-                                    <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_activatable">False</property>
-                                    <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
-                                    <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                    <property name="can_focus">False</property>
+                                    <child>
+                                      <object class="GtkEntry" id="exitscript">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="tooltip_text" translatable="yes">This script is run each time the character leaves the map.</property>
+                                        <property name="invisible_char">●</property>
+                                        <property name="invisible_char_set">True</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                        <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1512,6 +1580,15 @@
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                     </child>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry10">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1534,6 +1611,15 @@
                                   <object class="GtkComboBoxEntry" id="atmos_sound_day_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry12">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1556,6 +1642,15 @@
                                   <object class="GtkComboBoxEntry" id="music2_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry14">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1579,6 +1674,15 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_markup">Note that having an empty value here will crash Eschalon</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry16">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1784,6 +1888,15 @@
                                   <object class="GtkComboBoxEntry" id="random_sound1_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry18">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1851,6 +1964,15 @@
                                   <object class="GtkComboBoxEntry" id="atmos_sound_night_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry20">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -1901,6 +2023,15 @@
                                   <object class="GtkComboBoxEntry" id="random_sound2_combo">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="comboboxentry-entry22">
+                                        <property name="can_focus">False</property>
+                                        <property name="primary_icon_activatable">False</property>
+                                        <property name="secondary_icon_activatable">False</property>
+                                        <property name="primary_icon_sensitive">True</property>
+                                        <property name="secondary_icon_sensitive">True</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -2037,6 +2168,9 @@
                             <property name="can_focus">False</property>
                             <property name="n_rows">2</property>
                             <property name="n_columns">2</property>
+                            <child>
+                              <placeholder/>
+                            </child>
                             <child>
                               <placeholder/>
                             </child>
