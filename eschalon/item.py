@@ -569,6 +569,7 @@ class B3Item(B2Item):
 
     book = 3
     form_elements = [ 'item_b2_modifier_box',
+            'subcategory_label', 'subcategory',
             'cur_hp_label', 'cur_hp',
             'max_hp_label', 'max_hp',
             'quest', 'quest_label',

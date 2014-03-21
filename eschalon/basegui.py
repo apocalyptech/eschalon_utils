@@ -990,7 +990,7 @@ class BaseGUI(object):
             b2modifiervals = [ 'bonus_value_1', 'bonus_value_2', 'bonus_value_3' ]
         elif item.book == 3:
             strvals = [ 'item_name', 'script', 'spell' ]
-            dropdownvals = [ 'category' ]
+            dropdownvals = [ 'category', 'subcategory' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
                     'rarity', 'quantity',
                     'cur_hp', 'max_hp',
