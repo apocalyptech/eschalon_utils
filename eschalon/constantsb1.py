@@ -204,7 +204,7 @@ class B1Constants:
         }
 
     # Right now this is the only one that appears to exist
-    scriptflags = {
+    tilecontentflags = {
             0x40: 'destructible'
         }
 
