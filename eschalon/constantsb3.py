@@ -405,7 +405,7 @@ class B3Constants:
             5: 'toggle 2'
         }
 
-    objecttypetable = {
+    tilecontenttypetable = {
             0: '(none)',
             1: 'Container (no open/close change - barrels, etc)',
             2: 'Container (chests, dressers, etc)',

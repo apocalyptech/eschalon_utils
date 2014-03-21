@@ -167,8 +167,8 @@ class Tile(object):
         ret.append("    Decal Image: %d" % self.decalimg)
         ret.append("    Wall Image: %d" % self.wallimg)
         ret.append("    Wall Decal Image: %d" % self.walldecalimg)
-        if (self.tilecontentid in c.objecttypetable):
-            ret.append("    Object Type: %s" % c.objecttypetable[self.tilecontentid])
+        if (self.tilecontentid in c.tilecontenttypetable):
+            ret.append("    Object Type: %s" % c.tilecontenttypetable[self.tilecontentid])
         else:
             ret.append("    Object Type: %d" % self.tilecontentid)
         if (unknowns):

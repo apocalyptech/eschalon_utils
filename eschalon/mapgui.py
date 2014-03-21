@@ -835,7 +835,7 @@ class MapGUI(BaseGUI):
         self.object_type_list_rev = {}
         typebox = self.get_widget('tilecontentid_dd')
         self.useful_combobox(typebox)
-        for (typeidx, (val, text)) in enumerate(c.objecttypetable.items()):
+        for (typeidx, (val, text)) in enumerate(c.tilecontenttypetable.items()):
             typebox.append_text('%d - %s' % (val, text))
             self.object_type_list[val] = typeidx
             self.object_type_list_rev[typeidx] = val
@@ -2678,7 +2678,7 @@ class MapGUI(BaseGUI):
             self.populate_entity_tab(tile)
 
         # ... and tilecontents (first the ID)
-        if (tile.tilecontentid in c.objecttypetable):
+        if (tile.tilecontentid in c.tilecontenttypetable):
             self.get_widget('tilecontentid_num_align').hide()
             self.get_widget('tilecontentid_dd_align').show()
             self.get_widget('tilecontentid_dd').set_active(self.object_type_list[tile.tilecontentid])
