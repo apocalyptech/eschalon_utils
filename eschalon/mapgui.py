@@ -895,9 +895,10 @@ class MapGUI(BaseGUI):
         self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
 
         # Global Props window script editor launchers
-        self.setup_script_editor_launcher(self.get_widget('entrancescript_hbox'), self.get_widget('entrancescript'), self.propswindow, True)
-        self.setup_script_editor_launcher(self.get_widget('returnscript_hbox'), self.get_widget('returnscript'), self.propswindow, True)
-        self.setup_script_editor_launcher(self.get_widget('exitscript_hbox'), self.get_widget('exitscript'), self.propswindow, True)
+        if c.book > 1:
+            self.setup_script_editor_launcher(self.get_widget('entrancescript_hbox'), self.get_widget('entrancescript'), self.propswindow, True)
+            self.setup_script_editor_launcher(self.get_widget('returnscript_hbox'), self.get_widget('returnscript'), self.propswindow, True)
+            self.setup_script_editor_launcher(self.get_widget('exitscript_hbox'), self.get_widget('exitscript'), self.propswindow, True)
 
         # Create our entity status values box
         if c.book > 1:
