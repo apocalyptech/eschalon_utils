@@ -2108,7 +2108,8 @@ class MapGUI(BaseGUI):
 
     def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None, hbox=False):
         self.input_label(table, row, name, text)
-        align = gtk.Alignment(0, 0.5, 0, 1)
+        align = gtk.Alignment(0, 0.5, 1, 1)
+        align.set_padding(0, 0, 0, 8)
         align.show()
         entry = gtk.Entry()
         entry.show()
@@ -2121,7 +2122,7 @@ class MapGUI(BaseGUI):
             entry.set_tooltip_text(tooltip)
         if hbox:
             hbox = gtk.HBox()
-            hbox.pack_start(entry, False)
+            hbox.pack_start(entry, True, True)
             hbox.show()
             align.add(hbox)
         else:
