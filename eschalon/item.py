@@ -419,7 +419,8 @@ class B2Item(Item):
             'spell', 'spell_label',
             'spell_power', 'spell_power_label',
             'is_projectile', 'is_projectile_label',
-            'b2_item_picid_notealign'
+            'b2_item_picid_notealign',
+            'quantity_label_b23',
             ]
 
     def __init__(self, zero=False):

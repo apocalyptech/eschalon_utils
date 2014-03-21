@@ -375,7 +375,7 @@
                               <object class="GtkTable" id="table12">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="n_rows">23</property>
+                                <property name="n_rows">24</property>
                                 <property name="n_columns">2</property>
                                 <child>
                                   <object class="GtkLabel" id="item_name_label">
@@ -550,7 +550,7 @@
                                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                         <property name="tooltip_text" translatable="yes">The subcategory field is typically only used for weapons and armor, to specify the actual type of item.</property>
                                         <property name="model">item_subcategory_store</property>
-                                        <signal name="changed" handler="on_dropdown_changed" swapped="no"/>
+                                        <signal name="changed" handler="on_item_dropdown_changed" swapped="no"/>
                                         <child>
                                           <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                           <attributes>
@@ -672,7 +672,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_value_adjustment</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -703,7 +703,7 @@
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_weight_adjustment</property>
                                         <property name="digits">1</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_float" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_float" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -749,7 +749,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_rarity_adjustment</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -796,7 +796,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">itme_quest_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -830,7 +830,7 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="toggled" handler="on_checkbox_changed" swapped="no"/>
+                                    <signal name="toggled" handler="on_item_checkbox_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -861,20 +861,51 @@
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                     <property name="xalign">0</property>
-                                    <property name="xscale">0</property>
                                     <child>
-                                      <object class="GtkSpinButton" id="quantity">
+                                      <object class="GtkHBox" id="hbox5">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                        <property name="invisible_char">●</property>
-                                        <property name="invisible_char_set">True</property>
-                                        <property name="primary_icon_activatable">False</property>
-                                        <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
-                                        <property name="adjustment">item_quantity_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <property name="can_focus">False</property>
+                                        <child>
+                                          <object class="GtkSpinButton" id="quantity">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                            <property name="invisible_char">●</property>
+                                            <property name="invisible_char_set">True</property>
+                                            <property name="primary_icon_activatable">False</property>
+                                            <property name="secondary_icon_activatable">False</property>
+                                            <property name="primary_icon_sensitive">True</property>
+                                            <property name="secondary_icon_sensitive">True</property>
+                                            <property name="adjustment">item_quantity_adj</property>
+                                            <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkAlignment" id="quantity_align_b23">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="xalign">0</property>
+                                            <property name="xscale">0</property>
+                                            <property name="left_padding">8</property>
+                                            <child>
+                                              <object class="GtkLabel" id="quantity_label_b23">
+                                                <property name="can_focus">False</property>
+                                                <property name="label" translatable="yes">&lt;i&gt;(This value should always be greater than zero)&lt;/i&gt;</property>
+                                                <property name="use_markup">True</property>
+                                              </object>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">True</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -920,7 +951,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_basedamage_adjustment</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -967,7 +998,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_basearmor_adjustment</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -1018,7 +1049,7 @@
                                             <property name="primary_icon_sensitive">True</property>
                                             <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">cur_hp_adj</property>
-                                            <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                            <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -1067,7 +1098,7 @@
                                             <property name="primary_icon_sensitive">True</property>
                                             <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">max_hp_adj</property>
-                                            <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                            <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                           </object>
                                         </child>
                                       </object>
@@ -1121,7 +1152,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_unknown1_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -1167,7 +1198,7 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_duration_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -1217,7 +1248,7 @@
                                             <property name="secondary_icon_activatable">False</property>
                                             <property name="primary_icon_sensitive">True</property>
                                             <property name="secondary_icon_sensitive">True</property>
-                                            <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
+                                            <signal name="changed" handler="on_item_singleval_changed_str" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -1247,8 +1278,8 @@
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">18</property>
-                                    <property name="bottom_attach">19</property>
+                                    <property name="top_attach">19</property>
+                                    <property name="bottom_attach">20</property>
                                     <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
@@ -1259,13 +1290,13 @@
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">It's unknown whether this value is actually used by the engine.</property>
                                     <property name="draw_indicator">True</property>
-                                    <signal name="toggled" handler="on_checkbox_changed" swapped="no"/>
+                                    <signal name="toggled" handler="on_item_checkbox_changed" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">18</property>
-                                    <property name="bottom_attach">19</property>
+                                    <property name="top_attach">19</property>
+                                    <property name="bottom_attach">20</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1279,8 +1310,8 @@
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">19</property>
-                                    <property name="bottom_attach">20</property>
+                                    <property name="top_attach">20</property>
+                                    <property name="bottom_attach">21</property>
                                     <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
@@ -1309,7 +1340,7 @@
                                             <property name="secondary_icon_activatable">False</property>
                                             <property name="primary_icon_sensitive">True</property>
                                             <property name="secondary_icon_sensitive">True</property>
-                                            <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
+                                            <signal name="changed" handler="on_item_singleval_changed_str" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="expand">True</property>
@@ -1323,8 +1354,8 @@
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">19</property>
-                                    <property name="bottom_attach">20</property>
+                                    <property name="top_attach">20</property>
+                                    <property name="bottom_attach">21</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options">GTK_FILL</property>
                                   </packing>
@@ -1340,8 +1371,8 @@
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">20</property>
-                                    <property name="bottom_attach">21</property>
+                                    <property name="top_attach">21</property>
+                                    <property name="bottom_attach">22</property>
                                     <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
@@ -1365,15 +1396,15 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">spell_power_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">20</property>
-                                    <property name="bottom_attach">21</property>
+                                    <property name="top_attach">21</property>
+                                    <property name="bottom_attach">22</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1387,8 +1418,8 @@
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">21</property>
-                                    <property name="bottom_attach">22</property>
+                                    <property name="top_attach">22</property>
+                                    <property name="bottom_attach">23</property>
                                     <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
@@ -1411,15 +1442,15 @@
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">item_unknownint_adj</property>
-                                        <signal name="value-changed" handler="on_singleval_changed_int" swapped="no"/>
+                                        <signal name="value-changed" handler="on_item_singleval_changed_int" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">21</property>
-                                    <property name="bottom_attach">22</property>
+                                    <property name="top_attach">22</property>
+                                    <property name="bottom_attach">23</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1433,8 +1464,8 @@
                                     <property name="use_markup">True</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">22</property>
-                                    <property name="bottom_attach">23</property>
+                                    <property name="top_attach">23</property>
+                                    <property name="bottom_attach">24</property>
                                     <property name="x_options">GTK_FILL</property>
                                   </packing>
                                 </child>
@@ -1458,15 +1489,15 @@
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
                                         <property name="secondary_icon_sensitive">True</property>
-                                        <signal name="changed" handler="on_singleval_changed_str" swapped="no"/>
+                                        <signal name="changed" handler="on_item_singleval_changed_str" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">22</property>
-                                    <property name="bottom_attach">23</property>
+                                    <property name="top_attach">23</property>
+                                    <property name="bottom_attach">24</property>
                                     <property name="x_options">GTK_FILL</property>
                                     <property name="y_options">GTK_FILL</property>
                                   </packing>
@@ -1499,6 +1530,22 @@
                                   </object>
                                   <packing>
                                     <property name="right_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label7">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                                    <property name="xalign">0</property>
+                                    <property name="ypad">10</property>
+                                    <property name="label" translatable="yes">&lt;b&gt;Unused Attributes&lt;/b&gt; &lt;i&gt;(these are ignored by the game)&lt;/i&gt;</property>
+                                    <property name="use_markup">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">18</property>
+                                    <property name="bottom_attach">19</property>
                                   </packing>
                                 </child>
                               </object>

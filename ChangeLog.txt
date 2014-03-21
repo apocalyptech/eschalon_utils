@@ -6,6 +6,7 @@
    Fix Character Editor Hitpoint and Mana Point fields for Books 2 and 3
    Moved all fields from the "Misc Attributes" tab on the item edit
       window to the main tab, and removed "Misc Attributes"
+   Automatically set item quantity to 1 when creating items, for Books 2+3
 
    16-20 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Update "Parallax 1" and "Parallax 2" to be X and Y instead
