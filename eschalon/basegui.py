@@ -946,6 +946,8 @@ class BaseGUI(object):
             self.get_widget('spell_power').set_value(item.spell_power)
             if (item.is_projectile):
                 self.get_widget('is_projectile').set_active(True)
+            else:
+                self.get_widget('is_projectile').set_active(False)
 
         self.get_widget('rarity').set_value(item.rarity)
         if (item.canstack):
@@ -976,7 +978,7 @@ class BaseGUI(object):
             checkboxbitvals = [ 'flags_0003' ]
             modifiervals = [ 'attr_modifier', 'skill_modifier' ]
             b2modifiervals = [ ]
-        else item.book == 2:
+        else:
             strvals = [ 'item_name', 'script', 'spell' ]
             dropdownvals = [ 'category', 'subcategory' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
