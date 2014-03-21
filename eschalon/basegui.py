@@ -976,19 +976,7 @@ class BaseGUI(object):
             checkboxbitvals = [ 'flags_0003' ]
             modifiervals = [ 'attr_modifier', 'skill_modifier' ]
             b2modifiervals = [ ]
-        elif item.book == 2:
-            strvals = [ 'item_name', 'script', 'spell' ]
-            dropdownvals = [ 'category', 'subcategory' ]
-            intvals = [ 'value', 'basedamage', 'basearmor',
-                    'rarity', 'quantity',
-                    'cur_hp', 'max_hp',
-                    'quest', 'material', 'spell_power' ]
-            floatvals = [ 'weight' ]
-            checkboxvals = [ 'canstack', 'is_projectile' ]
-            checkboxbitvals = [ ]
-            modifiervals = [ ]
-            b2modifiervals = [ 'bonus_value_1', 'bonus_value_2', 'bonus_value_3' ]
-        elif item.book == 3:
+        else item.book == 2:
             strvals = [ 'item_name', 'script', 'spell' ]
             dropdownvals = [ 'category', 'subcategory' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
