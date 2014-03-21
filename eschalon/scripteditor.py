@@ -150,10 +150,10 @@ class MapSelector(gtk.Dialog):
         self.orig_dragging = self.mapgui.dragging
         self.orig_drawing = self.mapgui.drawing
         self.orig_erasing = self.mapgui.erasing
-        self.orig_sq_x = self.mapgui.sq_x
-        self.orig_sq_y = self.mapgui.sq_y
-        self.orig_sq_x_prev = self.mapgui.sq_x_prev
-        self.orig_sq_y_prev = self.mapgui.sq_y_prev
+        self.orig_tile_x = self.mapgui.tile_x
+        self.orig_tile_y = self.mapgui.tile_y
+        self.orig_tile_x_prev = self.mapgui.tile_x_prev
+        self.orig_tile_y_prev = self.mapgui.tile_y_prev
         self.orig_cleantiles = self.mapgui.cleantiles
         self.orig_ctx = self.mapgui.ctx
         self.orig_edit_mode = self.mapgui.edit_mode
@@ -171,10 +171,10 @@ class MapSelector(gtk.Dialog):
             self.mapgui.dragging = self.orig_dragging
             self.mapgui.drawing = self.orig_drawing
             self.mapgui.erasing = self.orig_erasing
-            self.mapgui.sq_x = self.orig_sq_x
-            self.mapgui.sq_y = self.orig_sq_y
-            self.mapgui.sq_x_prev = self.orig_sq_x_prev
-            self.mapgui.sq_y_prev = self.orig_sq_y_prev
+            self.mapgui.tile_x = self.orig_tile_x
+            self.mapgui.tile_y = self.orig_tile_y
+            self.mapgui.tile_x_prev = self.orig_tile_x_prev
+            self.mapgui.tile_y_prev = self.orig_tile_y_prev
             self.mapgui.cleantiles = self.orig_cleantiles
             self.mapgui.ctx = self.orig_ctx
             self.mapgui.edit_mode = self.orig_edit_mode
@@ -214,7 +214,7 @@ class MapSelector(gtk.Dialog):
         """
         This will be from a click in our selection window, which means that
         we can now get out of here and return our new coordinates.
-        self.sq_x and self.sq_y will have the coordinates for us to process.
+        self.tile_x and self.tile_y will have the coordinates for us to process.
         """
         self.response(gtk.RESPONSE_OK)
 
@@ -670,8 +670,8 @@ class ScriptEditor(object):
                 self.cur_focus == self.rows[self.cur_focus.rownum]):
             selector = MapSelector(self.mapgui, self.window)
             resp = selector.run()
-            new_x = selector.mapgui.sq_x
-            new_y = selector.mapgui.sq_y
+            new_x = selector.mapgui.tile_x
+            new_y = selector.mapgui.tile_y
             selector.restore_mapgui()
             selector.hide()
             if resp == gtk.RESPONSE_OK:
