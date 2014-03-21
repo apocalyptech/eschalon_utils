@@ -10,6 +10,7 @@
    Increase height of tile editing window on displays which are big
       enough, and add a scrollbar for displays which aren't.
    Adjust textbox GUI elements to resize properly with the windows
+   GUI Tweaks to Map Global Properties window
 
    16-20 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Update "Parallax 1" and "Parallax 2" to be X and Y instead

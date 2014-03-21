@@ -890,7 +890,6 @@ class MapGUI(BaseGUI):
             self.get_widget('walldecalimg_image').set_size_request(64, 96)
             self.get_widget('ent_tile_img').set_size_request(128, 128)
             self.get_widget('fill_map_img').set_size_request(64, 32)
-            self.propswindow.set_size_request(410, 760)
 
         # Entity death script editor launcher
         self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
