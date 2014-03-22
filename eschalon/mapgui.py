@@ -2737,9 +2737,7 @@ class MapGUI(BaseGUI):
             self.get_widget('frame').set_value(tile.entity.frame)
             self.get_widget('initial_loc').set_value(tile.entity.initial_loc)
             self.get_widget('movement').set_value(tile.entity.movement)
-            if c.book == 1:
-                self.get_widget('ent_zero2').set_value(tile.entity.ent_zero2)
-            else:
+            if c.book > 1:
                 for (idx, val) in enumerate(tile.entity.statuses):
                     self.get_widget('ent_status_%d' % (idx)).set_value(val)
             self.get_widget('entity_scroll').get_vadjustment().set_value(0)

@@ -152,9 +152,6 @@ class Entity(object):
                         else:
                             statusstr = 'Unknown Status "%d"' % (i)
                         ret.append("\t%s: %d" % (statusstr, status))
-            if (unknowns):
-                if self.book == 1:
-                    ret.append("\tUsually Zero: %d" % self.ent_zero2)
         else:
             ret.append( "\t(No extra attributes - this is the base map definition file)")
 
@@ -179,7 +176,6 @@ class B1Entity(Entity):
 
     book = 1
     form_elements = [
-            'ent_zero2_label', 'ent_zero2',
             'wall_01_label', 'wall_01',
             'wall_04_label', 'wall_04',
             'exit_north_label', 'exit_north_combo',
@@ -194,30 +190,6 @@ class B1Entity(Entity):
             'unknown5_label', 'unknown5',
             'map_b1_outsideflag_label', 'map_b1_outsideflag',
             ]
-
-    def __init__(self, savegame):
-        super(B1Entity, self).__init__(savegame)
-
-        # B1-specific elements
-        self.ent_zero2 = -1
-
-    def _sub_tozero(self):
-        """
-        To-zero for B1 elements
-        """
-        self.ent_zero2 = 0
-
-    def _sub_replicate(self, newentity):
-        """
-        Replication for B1 elements
-        """
-        newentity.ent_zero2 = self.ent_zero2
-
-    def _sub_equals(self, entity):
-        """
-        Equality function for B1
-        """
-        return (self.ent_zero2 == entity.ent_zero2)
 
     def read(self, df):
         """ Given a file descriptor, read in the entity. """
@@ -240,7 +212,6 @@ class B1Entity(Entity):
             self.health = df.readint()
             self.frame = df.readuchar()
             self.initial_loc = df.readint()
-            self.ent_zero2 = df.readuchar()
 
     def write(self, df):
         """ Write the entity to the file. """
@@ -256,7 +227,6 @@ class B1Entity(Entity):
             df.writeint(self.health)
             df.writeuchar(self.frame)
             df.writeint(self.initial_loc)
-            df.writeuchar(self.ent_zero2)
 
 class B2Entity(Entity):
     """
