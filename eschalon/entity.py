@@ -65,8 +65,11 @@ class Entity(object):
         """
         pass
 
-    def replicate(self):
-        newentity = Entity.new(self.book, self.savegame)
+    def replicate(self, book = None):
+        if not book:
+            newentity = Entity.new(self.book, self.savegame)
+        else:
+            newentity = Entity.new(book, self.savegame)
 
         # Simple Values
         newentity.savegame = self.savegame
@@ -82,12 +85,12 @@ class Entity(object):
         newentity.movement = self.movement
 
         # Call out to superclass replication
-        self._sub_replicate(newentity)
+        self._sub_replicate(newentity, book)
 
         # ... aaand return our new object
         return newentity
 
-    def _sub_replicate(self, newentity):
+    def _sub_replicate(self, newentity, book = None):
         """
         Stub for superclasses to override, to replicate specific vars
         """
@@ -207,11 +210,18 @@ class B1Entity(Entity):
         """
         self.ent_zero2 = 0
 
-    def _sub_replicate(self, newentity):
+    def _sub_replicate(self, newentity, book = 1):
         """
         Replication for B1 elements
         """
-        newentity.ent_zero2 = self.ent_zero2
+        if book == 1:
+            newentity.ent_zero2 = self.ent_zero2
+        elif book == 3:
+            if self.entid in c.b3_entity_conversions:
+                newentity.entid = c.b3_entity_conversions[self.entid]
+            else:
+                newentity.entid = 0
+
 
     def _sub_equals(self, entity):
         """
@@ -295,7 +305,7 @@ class B2Entity(Entity):
         for i in range(self.num_statuses):
             self.statuses.append(0)
 
-    def _sub_replicate(self, newentity):
+    def _sub_replicate(self, newentity, book = 2):
         """
         Replication for B2 elements
         """

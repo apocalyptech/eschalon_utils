@@ -158,7 +158,7 @@ def main(argv=None):
         from eschalon.mapgui import MapGUI
         prog = MapGUI(options, Prefs(), 3)
     else:
-        prog = MapCLI(options, Prefs(), 3)
+        prog = MapCLI(options, Prefs())
 
     # ... and run it
     return prog.run()

@@ -40,8 +40,11 @@ class Tile(object):
         self.entity = None
         self.savegame = False
 
-    def replicate(self):
-        newtile = Tile.new(self.book, self.x, self.y)
+    def replicate(self, book = None):
+        if (book):
+            newtile = Tile.new(book, self.x, self.y)
+        else:
+            newtile = Tile.new(self.book, self.x, self.y)
         newtile.savegame = self.savegame
 
         # Simple Values
@@ -54,19 +57,19 @@ class Tile(object):
 
         # Arrays
         for tilecontent in self.tilecontents:
-            newtile.tilecontents.append(tilecontent.replicate())
+            newtile.tilecontents.append(tilecontent.replicate(book))
         
         # Objects
         if (self.entity is not None):
-            newtile.entity = self.entity.replicate()
+            newtile.entity = self.entity.replicate(book)
 
         # Call out to superclass replication
-        self._sub_replicate(newtile)
+        self._sub_replicate(newtile, book)
 
         # ... aaand return our new object
         return newtile
 
-    def _sub_replicate(self, newentity):
+    def _sub_replicate(self, newentity, book = None):
         """
         Stub for superclasses to override, to replicate specific vars
         """
@@ -244,11 +247,46 @@ class B1Tile(Tile):
         df.writeuchar(self.walldecalimg)
         df.writeuchar(self.tilecontentid)
 
-    def _sub_replicate(self, newtile):
+    def _sub_replicate(self, newtile, book = 1):
         """
         Replication for B1 elements
         """
-        newtile.unknown5 = self.unknown5
+        if book == 1:
+            newtile.unknown5 = self.unknown5
+        elif book == 3:
+            if self.floorimg in c.b3_floor_conversions:
+                newtile.floorimg = c.b3_floor_conversions[self.floorimg]
+            elif self.floorimg in c.b3_floor_to_decal:
+                newtile.floorimg = 0
+                newtile.decalimg = c.b3_floor_to_decal[self.floorimg]
+            else:
+                newtile.floorimg = 0
+
+            if self.wallimg in c.b3_wall_conversions:
+                newtile.wallimg = c.b3_wall_conversions[self.wallimg]
+            elif self.wallimg in c.b3_wall_to_decal:
+                newtile.wallimg = 0
+                newtile.walldecalimg = c.b3_wall_to_decal[self.wallimg]
+            else:
+                newtile.wallimg = 0
+
+            if self.decalimg in c.b3_floor_decal_conversions:
+                newtile.decalimg = c.b3_floor_decal_conversions[self.decalimg]
+            elif self.decalimg in c.b3_floor_decal_to_wall:
+                newtile.decalimg = 0
+                newtile.wallimg = c.b3_floor_decal_to_wall[self.decalimg]
+            else:
+                newtile.decalimg = 0
+
+            if self.walldecalimg in c.b3_wall_decal_conversions:
+                newtile.walldecalimg = c.b3_wall_decal_conversions[self.walldecalimg]
+            else:
+                newtile.walldecalimg = 0
+
+            if self.tilecontentid in c.b3_tilecontent_conversions:
+                newtile.tilecontentid = c.b3_tilecontent_conversions[self.tilecontentid]
+            else:
+                newtile.tilecontentid = 0
 
     def _sub_equals(self, tile):
         """
@@ -299,7 +337,7 @@ class B2Tile(Tile):
         if self.savegame:
             df.writeint(self.tile_flag)
 
-    def _sub_replicate(self, newtile):
+    def _sub_replicate(self, newtile, book = 2):
         """
         Replication for B2 elements
         """
@@ -356,11 +394,11 @@ class B3Tile(B2Tile):
             df.writeint(self.tile_flag)
             df.writeint(self.cartography)
 
-    def _sub_replicate(self, newtile):
+    def _sub_replicate(self, newtile, book = 3):
         """
         Replication for B3 elements
         """
-        super(B3Tile, self)._sub_replicate(newtile)
+        super(B3Tile, self)._sub_replicate(newtile, book)
         newtile.cartography = self.cartography
 
     def _sub_equals(self, tile):

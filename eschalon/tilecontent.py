@@ -75,8 +75,11 @@ class Tilecontent(object):
         """
         pass
 
-    def replicate(self):
-        newtilecontent = Tilecontent.new(self.book, self.savegame)
+    def replicate(self, book = None):
+        if not book:
+            newtilecontent = Tilecontent.new(self.book, self.savegame)
+        else:
+            newtilecontent = Tilecontent.new(book, self.savegame)
 
         # Simple Values
         newtilecontent.savegame = self.savegame
@@ -91,15 +94,15 @@ class Tilecontent(object):
 
         # Items
         for item in self.items:
-            newtilecontent.items.append(item.replicate())
+            newtilecontent.items.append(item.replicate(book))
 
         # Call out to superclass replication
-        self._sub_replicate(newtilecontent)
+        self._sub_replicate(newtilecontent, book)
 
         # ... aaand return our new object
         return newtilecontent
 
-    def _sub_replicate(self, newtilecontent):
+    def _sub_replicate(self, newtilecontent, book = None):
         """
         Stub for superclasses to override, to replicate specific vars
         """
@@ -186,18 +189,26 @@ class B1Tilecontent(Tilecontent):
         self.other = 0
         self.unknownh3 = 0
 
-    def _sub_replicate(self, newtilecontent):
+    def _sub_replicate(self, newtilecontent, book = 1):
         """
         Replication!
         """
-        newtilecontent.zeroi1 = self.zeroi1
-        newtilecontent.zeroh1 = self.zeroh1
-        newtilecontent.sturdiness = self.sturdiness
-        newtilecontent.flags = self.flags
-        newtilecontent.zeroi2 = self.zeroi2
-        newtilecontent.zeroi3 = self.zeroi3
-        newtilecontent.other = self.other
-        newtilecontent.unknownh3 = self.unknownh3
+        if book == 1:
+            newtilecontent.zeroi1 = self.zeroi1
+            newtilecontent.zeroh1 = self.zeroh1
+            newtilecontent.sturdiness = self.sturdiness
+            newtilecontent.flags = self.flags
+            newtilecontent.zeroi2 = self.zeroi2
+            newtilecontent.zeroi3 = self.zeroi3
+            newtilecontent.other = self.other
+            newtilecontent.unknownh3 = self.unknownh3
+        else:
+            newtilecontent.cur_condition = self.sturdiness
+            newtilecontent.max_condition = self.sturdiness
+            newtilecontent.on_empty = 0
+            # Need to set this based on the tilecontentid of the parent
+            # tile - how to get to that from here?
+            newtilecontent.slider_loot = 0
 
     def _sub_equal(self, tilecontent):
         """
@@ -342,7 +353,7 @@ class B2Tilecontent(Tilecontent):
         self.on_empty = 0
         self.slider_loot = 0
 
-    def _sub_replicate(self, newtilecontent):
+    def _sub_replicate(self, newtilecontent, book = 2):
         """
         Replication!
         """

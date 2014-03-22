@@ -75,7 +75,7 @@ class Item(object):
         """
         pass
 
-    def replicate(self):
+    def replicate(self, book = None):
 
         newitem = Item.new(self.book)
 
@@ -93,11 +93,11 @@ class Item(object):
         newitem.rarity = self.rarity
 
         # Call out to superclass replication
-        self._sub_replicate(newitem)
+        self._sub_replicate(newitem, book)
 
         return newitem
 
-    def _sub_replicate(self, newitem):
+    def _sub_replicate(self, newitem, book = None):
         """
         Stub for superclasses to override, to replicate specific vars
         """
@@ -333,7 +333,7 @@ class B1Item(Item):
         df.writeint(self.zero1)
         df.writeint(self.duration)
 
-    def _sub_replicate(self, newitem):
+    def _sub_replicate(self, newitem, book = 1):
         """
         Replicate Book 1 specific item vars
         """
@@ -500,7 +500,7 @@ class B2Item(Item):
         df.writeuchar(self.spell_power)
         df.writeuchar(self.is_projectile)
 
-    def _sub_replicate(self, newitem):
+    def _sub_replicate(self, newitem, book = 2):
         """
         Replicate Book 2 specific item vars
         """

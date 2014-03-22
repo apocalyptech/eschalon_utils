@@ -976,7 +976,7 @@ class BaseGUI(object):
             checkboxbitvals = [ 'flags_0003' ]
             modifiervals = [ 'attr_modifier', 'skill_modifier' ]
             b2modifiervals = [ ]
-        else item.book == 2:
+        else:
             strvals = [ 'item_name', 'script', 'spell' ]
             dropdownvals = [ 'category', 'subcategory' ]
             intvals = [ 'value', 'basedamage', 'basearmor',
