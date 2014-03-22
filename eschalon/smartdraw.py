@@ -1565,7 +1565,7 @@ class B1SmartDraw(SmartDraw):
         self.premade_objects.add_category('Sound/Light Generators')
         obj = self.premade_objects.new('Light Source')
         obj.set_tilecontent(25)
-        for (id, name) in c.objecttypetable.items():
+        for (id, name) in c.tilecontenttypetable.items():
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2082,7 +2082,7 @@ class B2SmartDraw(SmartDraw):
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')
-        for (id, name) in c.objecttypetable.items():
+        for (id, name) in c.tilecontenttypetable.items():
             if name[:13] == 'Light Source ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2090,7 +2090,7 @@ class B2SmartDraw(SmartDraw):
 
         # Sound Generators
         self.premade_objects.add_category('Sound Generators')
-        for (id, name) in c.objecttypetable.items():
+        for (id, name) in c.tilecontenttypetable.items():
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)

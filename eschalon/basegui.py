@@ -315,12 +315,17 @@ class BaseGUI(object):
         """ Returns the signals that need to be attached for items. """
         return {
                 'on_singleval_changed_str': self.on_singleval_changed_str,
+                'on_item_singleval_changed_str': self.on_item_singleval_changed_str,
                 'on_singleval_changed_int': self.on_singleval_changed_int,
+                'on_item_singleval_changed_int': self.on_item_singleval_changed_int,
                 'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
                 'on_singleval_changed_float': self.on_singleval_changed_float,
+                'on_item_singleval_changed_float': self.on_item_singleval_changed_float,
                 'on_dropdown_changed': self.on_dropdown_changed,
+                'on_item_dropdown_changed': self.on_item_dropdown_changed,
                 'on_category_dropdown_changed': self.on_category_dropdown_changed,
                 'on_checkbox_changed': self.on_checkbox_changed,
+                'on_item_checkbox_changed': self.on_item_checkbox_changed,
                 'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
                 'on_modifier_changed': self.on_modifier_changed,
                 'on_b2_bonus_changed': self.on_b2_bonus_changed,
@@ -720,7 +725,7 @@ class BaseGUI(object):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
         elif (self.curitemcategory == self.ITEM_MAP):
-            obj = self.map.tiles[self.sq_y][self.sq_x].tilecontents[self.curitem[1]].items[self.curitem[0]]
+            obj = self.map.tiles[self.tile_y][self.tile_x].tilecontents[self.curitem[1]].items[self.curitem[0]]
             origobj = obj
         else:
             obj = self.char
@@ -736,6 +741,13 @@ class BaseGUI(object):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
 
+    def on_item_singleval_changed_str(self, widget):
+        """ What to do when a string value changes on the item edit screen. """
+        self.on_singleval_changed_str(widget)
+        if widget.get_text() != '':
+            (obj, origobj) = self.get_comp_objects()
+            self.set_item_quantity_nonzero(obj)
+
     def on_singleval_changed_int(self, widget):
         """ What to do when an int value changes. """
         wname = widget.get_name()
@@ -744,6 +756,13 @@ class BaseGUI(object):
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+
+    def on_item_singleval_changed_int(self, widget):
+        """ What to do when an int value changes on our item screen. """
+        self.on_singleval_changed_int(widget)
+        if widget.get_name() != 'quantity' and int(widget.get_value()) > 0:
+            (obj, origobj) = self.get_comp_objects()
+            self.set_item_quantity_nonzero(obj)
 
     def on_singleval_changed_float(self, widget):
         """ What to do when an int value changes. """
@@ -755,6 +774,13 @@ class BaseGUI(object):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
 
+    def on_item_singleval_changed_float(self, widget):
+        """ What to do when an int value changes on our item screen. """
+        self.on_singleval_changed_float(widget)
+        if widget.get_value() > .000001 or widget.get_value() < -.000001:
+            (obj, origobj) = self.get_comp_objects()
+            self.set_item_quantity_nonzero(obj)
+
     def update_itempic_image(self):
         if (self.gfx is not None):
             (obj, origobj) = self.get_comp_objects()
@@ -762,9 +788,18 @@ class BaseGUI(object):
 
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
-        self.on_singleval_changed_int(widget)
+        self.on_item_singleval_changed_int(widget)
         self.update_itempic_image()
-    
+
+    def set_item_quantity_nonzero(self, item):
+        """
+        Books II and III will exhibit strange behavior if an item's quantity is set to zero, and
+        requiring the user to set it every time would be annoying.  This will set the quantity
+        to 1 if we're passed an item object with a quantity of zero.
+        """
+        if c.book > 1 and item.quantity == 0:
+            self.get_widget('quantity').set_value(1)
+
     def on_dropdown_changed(self, widget):
         """ What to do when a dropdown is changed """
         wname = widget.get_name()
@@ -774,13 +809,20 @@ class BaseGUI(object):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
     
+    def on_item_dropdown_changed(self, widget):
+        """ What to do when a dropdown changes on our item screen """
+        self.on_dropdown_changed(widget)
+        if widget.get_active() != 0:
+            (obj, origobj) = self.get_comp_objects()
+            self.set_item_quantity_nonzero(obj)
+    
     def on_category_dropdown_changed(self, widget):
         """
         What to do when the item category dropdown is changed.
         Only has an actual effect in Book 2, though technically Book 1 will go through
         the motions as well.
         """
-        self.on_dropdown_changed(widget)
+        self.on_item_dropdown_changed(widget)
         self.update_itempic_image()
 
     def on_checkbox_changed(self, widget):
@@ -795,6 +837,13 @@ class BaseGUI(object):
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+
+    def on_item_checkbox_changed(self, widget):
+        """ What to do when a regular checkbox changes on our item edit screen. """
+        self.on_checkbox_changed(widget)
+        if widget.get_active():
+            (obj, origobj) = self.get_comp_objects()
+            self.set_item_quantity_nonzero(obj)
 
     def on_checkbox_bit_changed(self, widget):
         """ What to do when a checkbox changes, and it's a bitfield. """
@@ -946,6 +995,8 @@ class BaseGUI(object):
             self.get_widget('spell_power').set_value(item.spell_power)
             if (item.is_projectile):
                 self.get_widget('is_projectile').set_active(True)
+            else:
+                self.get_widget('is_projectile').set_active(False)
 
         self.get_widget('rarity').set_value(item.rarity)
         if (item.canstack):

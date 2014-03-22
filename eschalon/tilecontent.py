@@ -312,7 +312,7 @@ class B1Tilecontent(Tilecontent):
         ret.append("\tSturdiness: %d" % self.sturdiness)
         if (self.flags != 0):
             ret.append("\tFlags:")
-            for (flag, flagtext) in c.scriptflags.items():
+            for (flag, flagtext) in c.tilecontentflags.items():
                 if (self.flags & flag == flag):
                     ret.append("\t\t* %s" % flagtext)
 
