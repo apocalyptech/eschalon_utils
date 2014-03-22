@@ -980,7 +980,7 @@ class B3Gfx(Gfx):
     obj_a_width = 64
     obj_a_height = 64
     obj_a_cols = 16
-    obj_a_rows = 10
+    obj_a_rows = 11
     obj_a_offset = 1
     obj_c_width = 64
     obj_c_height = 96
