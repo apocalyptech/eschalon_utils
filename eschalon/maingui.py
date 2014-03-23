@@ -1117,6 +1117,15 @@ class MainGUI(BaseGUI):
         table.show_all()
 
         ###
+        ### Character Effects (permanent)
+        ###
+        if c.book > 1:
+            for (statusid, statuslabel) in c.permstatustable.items():
+                widget = self.get_widget('permstatuses_%0.8X_label' % (statusid))
+                if widget:
+                    widget.set_text(statuslabel)
+
+        ###
         ### Spell Checkboxes
         ###
         # TODO: should we alphabetize these?
