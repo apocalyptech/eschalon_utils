@@ -2,6 +2,10 @@
 
 *eschalon_utils-1.0.0 ()
 
+   22 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Various bugfixes for Books 1 and 2
+   Updated Smartdraw definitions for Book 3
+
    21 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Fix Character Editor Hitpoint and Mana Point fields for Books 2 and 3
    Moved all fields from the "Misc Attributes" tab on the item edit
