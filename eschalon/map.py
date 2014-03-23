@@ -334,25 +334,37 @@ class Map(object):
         """
         df = Savefile(filename)
 
-        # Book 1 files start with 10 strings, Book 2 with 9, and Book 3 with
-        # more.  To see what kind of file we have, read 11 strings and check
-        # whether the last two are ASCII-only
+        # Book 1 files start with 10 strings
+        # Book 2 files start with 9 strings, followed by a uchar whose value
+        #   will always be 1 (the "loadhook" var, presumably)
+        # Book 3 files start with 12 strings, the first of which is a version,
+        #   which so far is always 0.992.
+        #
+        # So, to figure out dynamically what kind of file we're loading:
+        #   1) Read 9 strings, remember the first one
+        #   2) Read the next uchar - if it's 1, then we're editing Book 2
+        #   3) If the first string is "0.992", then we're editing Book 3
+        #   4) Otherwise, we're editing Book 1
+        #
+        # Theoretically, that way even if a Book 2 map happens to use a
+        # mapname of 0.992, in an effort to be cheeky.
         if book is None:
             try:
                 df.open_r()
-                strings = []
-                for i in range(11):
-                    strings.append(df.readstr())
+                first_string = df.readstr()
+                for i in range(8):
+                    df.readstr()
+                nextbyte = df.readuchar()
                 df.close()
             except (IOError, struct.error), e:
                 raise LoadException(str(e))
 
-            if not Map.is_ascii(strings[9]):
+            if nextbyte == 1:
                 book = 2
-            elif not Map.is_ascii(strings[10]):
-                book = 1
-            else:
+            elif first_string == '0.992':
                 book = 3
+            else:
+                book = 1
 
         # See if we're required to conform to a specific book
         if (req_book is not None and book != req_book):
