@@ -1103,8 +1103,10 @@ class SmartDraw(object):
         """
         if book == 1:
             return B1SmartDraw()
-        else:
+        elif book == 2:
             return B2SmartDraw()
+        else:
+            return B3SmartDraw()
 
 class B1SmartDraw(SmartDraw):
     """
@@ -2061,24 +2063,15 @@ class B2SmartDraw(SmartDraw):
 
         # Large Graphics
         self.premade_objects.add_category('Large Graphics')
-        for (wall, name, image) in [
-                (1, 'Hammerlorne Tower', 'hammerlorne.png'),
-                (1, 'Wagon', 'wagon.png'),
-                (None, 'Docked Ship #1', 'docked_ship_1.png'),
-                (None, 'Docked Ship #2', 'corsair.png'),
-                (None, 'Shipwreck', 'sunk_boat.png'),
-                (5, 'Draco Skeleton', 'draco.png'),
-                (1, 'Taurax Statue', 'taurax_statue.png'),
-                (1, 'Stone Head Doorway', 'head_dun.png'),
-                ]:
-            obj = self.premade_objects.new(name)
-            if wall is not None:
-                obj.set_wall(wall)
+        for big_gfx in c.big_gfx_list:
+            obj = self.premade_objects.new(big_gfx.name)
+            if big_gfx.barrier is not None:
+                obj.set_wall(big_gfx.barrier)
             obj.set_wallimg(1000)
             obj.set_tilecontent(21)
             obj.create_tilecontentobj(None)
             obj.tilecontent.description = 'Big Graphic Object #0'
-            obj.tilecontent.extratext = image
+            obj.tilecontent.extratext = big_gfx.image
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')
@@ -2125,3 +2118,10 @@ class B2SmartDraw(SmartDraw):
                 ent.health = ent_entry.health
                 ent.movement = ent_entry.movement
                 ent.entscript = ent_entry.entscript
+
+class B3SmartDraw(B2SmartDraw):
+    """
+    SmartDraw for Book 3.  At the moment this is only a copy of Book 2.
+    """
+
+    book = 3

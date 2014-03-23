@@ -439,6 +439,25 @@ class B2Constants:
             50: 'Breakable Wall',
         }
 
+    # I'm not fond of the way we're defining this class in multiple constants files
+    class BigGfxHelper(object):
+        def __init__(self, image, name, barrier):
+            self.image = image
+            self.name = name
+            self.barrier = barrier
+
+    big_gfx_list = [
+            BigGfxHelper('hammerlorne.png', 'Hammerlorne Tower', 1),
+            BigGfxHelper('wagon.png', 'Wagon', 1),
+            BigGfxHelper('docked_ship_1.png', 'Docked Ship #1', None),
+            BigGfxHelper('corsair.png', 'Docked Ship #2', None),
+            BigGfxHelper('sunk_boat.png', 'Shipwreck', None),
+            BigGfxHelper('draco.png', 'Draco Skeleton', 5),
+            BigGfxHelper('taurax_statue.png', 'Taurax Statue', 1),
+            BigGfxHelper('head_dun.png', 'Stone Head Doorway', 1),
+        ]
+
+    # I'm not fond of the way we're defining this class in multiple constants files
     class EntHelper(object):
         def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames, movement=1, entscript=''):
             self.name = name

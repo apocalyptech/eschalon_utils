@@ -451,6 +451,36 @@ class B3Constants:
             44: 'Sound Generator (Electric Field)',
         }
 
+    # I'm not fond of the way we're defining this class in multiple constants files
+    class BigGfxHelper(object):
+        def __init__(self, image, name, barrier):
+            self.image = image
+            self.name = name
+            self.barrier = barrier
+
+    big_gfx_list = [
+            BigGfxHelper('sgfx_wagon.png', 'Wagon', 1),
+            BigGfxHelper('sgfx_docked_ship_1.png', 'Docked Ship #1', None),
+            BigGfxHelper('sgfx_corsair.png', 'Docked Ship #2', None),
+            BigGfxHelper('sgfx_sunk_boat.png', 'Shipwreck', None),
+            BigGfxHelper('sgfx_wrecked_ship_top.png', 'Wrecked Ship (top)', None),
+            BigGfxHelper('sgfx_wrecked_ship_middle.png', 'Wrecked Ship (middle)', None),
+            BigGfxHelper('sgfx_wrecked_ship_bottom.png', 'Wrecked Ship (bottom)', None),
+            BigGfxHelper('sgfx_fishbones.png', 'Fish Skeleton', 1),
+            BigGfxHelper('sgfx_dead_megafish.png', 'Megafish Skeleton', 1),
+            BigGfxHelper('sgfx_father_tree_1.png', 'Ulgolek (dying)', 1),
+            BigGfxHelper('sgfx_father_tree_2.png', 'Ulgolek (healed)', 1),
+            BigGfxHelper('sgfx_gears.png', 'Dwarven Gears', 1),
+            BigGfxHelper('sgfx_mpart1.png', 'Orakur Machinery Cube', 1),
+            BigGfxHelper('sgfx_mpart2.png', 'Orakur Machinery Scraps', 1),
+            BigGfxHelper('sgfx_orerry.png', 'Orrery', 1),
+            BigGfxHelper('sgfx_raft.png', 'Raft', 5),
+            BigGfxHelper('sgfx_rockhammer_sign.png', 'Rockhammer Sign', None),
+            BigGfxHelper('sgfx_skull_entrance.png', 'Omentor Temple Entrance', None),
+            BigGfxHelper('sgfx_swarm_nest.png', 'Swarm Nest', 1),
+        ]
+
+    # I'm not fond of the way we're defining this class in multiple constants files
     class EntHelper(object):
         def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames, movement=1, entscript=''):
             self.name = name
