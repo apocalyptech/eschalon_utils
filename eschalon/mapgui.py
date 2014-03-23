@@ -517,16 +517,20 @@ class MapGUI(BaseGUI):
             script = row['Script'].strip()
             if script == '*':
                 script = ''
-            c.entitytable[int(row['ID'])] = c.EntHelper(name,
-                int(row['HP']),
-                '%s.png' % (row['file']),
-                int(row['Dirs']),
-                int(row['Align']),
-                width,
-                height,
-                int(row['Frame']),
-                int(row['Move']),
-                script)
+            # In the event of multiple IDs found in the file, Eschalon itself will favor
+            # the first, so we should check for this.
+            ent_id_int = int(row['ID'])
+            if ent_id_int not in c.entitytable.keys():
+                c.entitytable[int(row['ID'])] = c.EntHelper(name,
+                    int(row['HP']),
+                    '%s.png' % (row['file']),
+                    int(row['Dirs']),
+                    int(row['Align']),
+                    width,
+                    height,
+                    int(row['Frame']),
+                    int(row['Move']),
+                    script)
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
