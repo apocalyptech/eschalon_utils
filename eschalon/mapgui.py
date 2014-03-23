@@ -1160,7 +1160,7 @@ class MapGUI(BaseGUI):
                 return self.on_new()
 
         # Now create a new map
-        self.map = Map.load('', self.req_book, self.req_book)
+        self.map = Map.load('', self.req_book)
         self.map.set_savegame(dialog.new_savegame_radio.get_active())
         
         # A few values need to be set to avoid crashes
@@ -1251,7 +1251,7 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map.load(filename, None, self.req_book)
+            map = Map.load(filename, self.req_book)
             map.read()
         except LoadException, e:
             self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
