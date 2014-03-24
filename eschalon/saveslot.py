@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
+import time
 import glob
 from eschalon.map import Map
 from eschalon.savefile import Savefile, LoadException
@@ -60,6 +61,10 @@ class Saveslot(object):
         # Make sure we really are a directory
         if not os.path.isdir(directory):
             raise LoadException('%s is not a directory' % (directory))
+
+        # Store our modification time
+        self.timestamp_epoch = os.path.getmtime(directory)
+        self.timestamp = time.strftime('%a %b %d, %Y, %I:%M %p', time.gmtime(self.timestamp_epoch))
 
         # Find the save name
         self.savename_loc = os.path.join(directory, 'savename')
@@ -137,6 +142,7 @@ class Saveslot(object):
         else:
             df.readuchar()
         self.charname = df.readstr()
+        self.char_loaded = True
         df.close()
 
     def print_info(self):

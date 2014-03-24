@@ -20,6 +20,7 @@
 
 import os
 import sys
+import glob
 
 # Load GTK Deps
 try:
@@ -52,8 +53,141 @@ from eschalon.basegui import BaseGUI
 from eschalon.character import Character, B1Character, B2Character, B3Character
 from eschalon.item import Item, B1Item, B2Item, B3Item
 from eschalon.savefile import LoadException
+from eschalon.saveslot import Saveslot
 from eschalon import constants as c
 from eschalon import app_name, version, url, authors
+
+class CharLoaderDialog(gtk.Dialog):
+    """
+    A dialog to load a character.  Embeds FileChooserWidget in one tab of
+    a notebook, but also tries to be "smart" about things.
+    """
+
+    def __init__(self, starting_path, savegame_dir, transient=None):
+        super(CharLoaderDialog, self).__init__(
+                flags = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                    gtk.STOCK_OK, gtk.RESPONSE_OK))
+
+        # Various defaults for the dialog
+        self.set_size_request(950, 680)
+        self.set_default_size(950, 680)
+        self.set_title('Open Eschalon Book %d Character File' % (c.book))
+        self.set_default_response(gtk.RESPONSE_OK)
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+
+        # Grab a list of savegames for use in the dialog
+        hide_savegames = False
+        slotdirs = glob.glob(os.path.join(savegame_dir, 'slot*'))
+        self.slots = []
+        for slotdir in slotdirs:
+            try:
+                slot = Saveslot(slotdir, c.book)
+                slot.load_charname()
+                self.slots.append(slot)
+            except:
+                # If there's an error, just don't show the slot
+                pass
+        self.slots.sort()
+        if len(self.slots) == 0:
+            hide_savegames = True
+
+        # Savegame combobox/liststore
+        COL_IDX = 0
+        COL_SLOTNAME = 1
+        COL_SAVENAME = 2
+        COL_CHARNAME = 3
+        COL_DATE = 4
+        COL_DATE_EPOCH = 5
+        self.save_dir_store = gtk.ListStore(int, str, str, str, str, int)
+        self.save_dir_tv = gtk.TreeView(self.save_dir_store)
+        col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=COL_SLOTNAME)
+        col.set_sort_column_id(COL_IDX)
+        self.save_dir_tv.append_column(col)
+        col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=COL_SAVENAME)
+        col.set_sort_column_id(COL_SAVENAME)
+        self.save_dir_tv.append_column(col)
+        col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=COL_CHARNAME)
+        col.set_sort_column_id(COL_CHARNAME)
+        self.save_dir_tv.append_column(col)
+        col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=COL_DATE)
+        col.set_sort_column_id(COL_DATE_EPOCH)
+        self.save_dir_tv.append_column(col)
+        for (idx, slot) in enumerate(self.slots):
+            self.save_dir_store.append((idx,
+                '<b>%s</b>' % (slot.slotname_short()),
+                slot.savename,
+                slot.charname,
+                slot.timestamp,
+                slot.timestamp_epoch))
+
+        # Main Title
+        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align.set_padding(20, 20, 15, 15)
+        label = gtk.Label()
+        label.set_markup('<big><b>Eschalon Book %d Character Editor v%s</b></big>' % (c.book, version))
+        self.title_align.add(label)
+        self.vbox.pack_start(self.title_align, False, False)
+
+        # Main Notebook
+        notebook_align = gtk.Alignment(0, 0, 1, 1)
+        notebook_align.set_padding(5, 5, 10, 10)
+        self.open_notebook = gtk.Notebook()
+        self.open_notebook.set_tab_pos(gtk.POS_LEFT)
+        notebook_align.add(self.open_notebook)
+        self.vbox.pack_start(notebook_align, True, True)
+
+        # Loading from our save dir
+        save_dir_align = gtk.Alignment(0, 0, 1, 1)
+        save_dir_align.set_padding(5, 5, 5, 5)
+        save_vbox = gtk.VBox()
+        vp = gtk.Viewport()
+        vp.set_shadow_type(gtk.SHADOW_OUT)
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.add(self.save_dir_tv)
+        vp.add(sw)
+        save_vbox.pack_start(vp, True, True)
+        note_align = gtk.Alignment(0, 0, 0, 0)
+        note_align.set_padding(5, 2, 2, 2)
+        note_label = gtk.Label()
+        note_label.set_markup('<i>Reading from %s</i>' % (savegame_dir))
+        note_align.add(note_label)
+        save_vbox.pack_start(note_align, False, False)
+        save_dir_align.add(save_vbox)
+        self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
+
+        # Loading from an arbitrary location
+        arbitrary_align = gtk.Alignment(0, 0, 1, 1)
+        arbitrary_align.set_padding(5, 5, 5, 5)
+        self.chooser = gtk.FileChooserWidget()
+        arbitrary_align.add(self.chooser)
+        self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
+
+        # Starting path for chooser
+        if starting_path and starting_path != '' and os.path.isdir(starting_path):
+            self.chooser.set_current_folder(starting_path)
+
+        # Filename filters for chooser
+        filter = gtk.FileFilter()
+        filter.set_name("Character Files")
+        filter.add_pattern("char")
+        filter.add_pattern("char.*")
+        self.chooser.add_filter(filter)
+
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        self.chooser.add_filter(filter)
+
+        # Show everything
+        self.show_all()
+
+        # ... or NOT
+        if hide_savegames:
+            save_dir_align.hide()
 
 class MainGUI(BaseGUI):
 
@@ -227,15 +361,6 @@ class MainGUI(BaseGUI):
         # Blank out the main area
         self.mainbook.set_sensitive(False)
 
-        # Create the dialog
-        dialog = gtk.FileChooserDialog('Open New Character File...', None,
-                                       gtk.FILE_CHOOSER_ACTION_OPEN,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
-        dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-
         # Figure out what our initial path should be
         path = ''
         if (self.char == None):
@@ -244,20 +369,11 @@ class MainGUI(BaseGUI):
         else:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
 
-        # Set the initial path
-        if (path and path != '' and os.path.isdir(path)):
-            dialog.set_current_folder(path)
-
-        filter = gtk.FileFilter()
-        filter.set_name("Character Files")
-        filter.add_pattern("char")
-        filter.add_pattern("char.*")
-        dialog.add_filter(filter)
-
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        dialog.add_filter(filter)
+        dialog = CharLoaderDialog(starting_path=path,
+                savegame_dir=self.get_current_savegame_dir(),
+                transient=self.window)
+        test = dialog.run()
+        sys.exit(0)
 
         # Run the dialog and process its return values
         rundialog = True
