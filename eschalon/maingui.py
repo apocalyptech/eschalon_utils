@@ -63,7 +63,32 @@ class CharLoaderDialog(gtk.Dialog):
     a notebook, but also tries to be "smart" about things.
     """
 
-    def __init__(self, starting_path, savegame_dir, transient=None):
+    # Treeview column indexes
+    COL_IDX = 0
+    COL_SLOTNAME = 1
+    COL_SAVENAME = 2
+    COL_CHARNAME = 3
+    COL_DATE = 4
+    COL_DATE_EPOCH = 5
+    COL_FILENAME = 6
+
+    # Load-source constants
+    SOURCE_SAVES = 0
+    SOURCE_OTHER = 1
+
+    def __init__(self, starting_path, savegame_dir, transient=None, last_source=None):
+        """
+        Constructor to set up everything
+
+        starting_path is the default path to use for our FileChooserWidget
+        savegame_dir is the default path to use for our custom "smart" chooser
+        transient is a window that we should be "transient" for
+        last_source is the last source we loaded from - this should be None on the
+           first run, but passed in on subsequent calls (though of course it's not
+           actually necessary)
+        """
+
+        # Call back to the stock gtk Dialog stuff
         super(CharLoaderDialog, self).__init__(
                 flags = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -95,25 +120,20 @@ class CharLoaderDialog(gtk.Dialog):
             hide_savegames = True
 
         # Savegame combobox/liststore
-        COL_IDX = 0
-        COL_SLOTNAME = 1
-        COL_SAVENAME = 2
-        COL_CHARNAME = 3
-        COL_DATE = 4
-        COL_DATE_EPOCH = 5
-        self.save_dir_store = gtk.ListStore(int, str, str, str, str, int)
+        self.save_dir_store = gtk.ListStore(int, str, str, str, str, int, str)
         self.save_dir_tv = gtk.TreeView(self.save_dir_store)
-        col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=COL_SLOTNAME)
-        col.set_sort_column_id(COL_IDX)
+        self.save_dir_tv.connect('row-activated', self.save_dir_activated)
+        col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
+        col.set_sort_column_id(self.COL_IDX)
         self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=COL_SAVENAME)
-        col.set_sort_column_id(COL_SAVENAME)
+        col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
+        col.set_sort_column_id(self.COL_SAVENAME)
         self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=COL_CHARNAME)
-        col.set_sort_column_id(COL_CHARNAME)
+        col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
+        col.set_sort_column_id(self.COL_CHARNAME)
         self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=COL_DATE)
-        col.set_sort_column_id(COL_DATE_EPOCH)
+        col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.COL_DATE)
+        col.set_sort_column_id(self.COL_DATE_EPOCH)
         self.save_dir_tv.append_column(col)
         for (idx, slot) in enumerate(self.slots):
             self.save_dir_store.append((idx,
@@ -121,7 +141,8 @@ class CharLoaderDialog(gtk.Dialog):
                 slot.savename,
                 slot.charname,
                 slot.timestamp,
-                slot.timestamp_epoch))
+                slot.timestamp_epoch,
+                slot.char_loc))
 
         # Main Title
         self.title_align = gtk.Alignment(.5, 0, 0, 0)
@@ -163,6 +184,7 @@ class CharLoaderDialog(gtk.Dialog):
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
         arbitrary_align.set_padding(5, 5, 5, 5)
         self.chooser = gtk.FileChooserWidget()
+        self.chooser.connect('file-activated', self.chooser_file_activated)
         arbitrary_align.add(self.chooser)
         self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
 
@@ -188,6 +210,53 @@ class CharLoaderDialog(gtk.Dialog):
         # ... or NOT
         if hide_savegames:
             save_dir_align.hide()
+
+        # Default to our last-used page, if specified
+        # This apparently has to be done after the widgets are visible
+        if last_source is not None:
+            if last_source == self.SOURCE_SAVES and not hide_savegames:
+                self.open_notebook.set_current_page(0)
+            elif last_source == self.SOURCE_OTHER:
+                self.open_notebook.set_current_page(1)
+
+    def get_filename(self):
+        """
+        Gets the selected filename, or None
+        """
+        if self.open_notebook.get_current_page() == 0:
+            (model, treeiter) = self.save_dir_tv.get_selection().get_selected()
+            if model and treeiter:
+                (filename,) = model.get(treeiter, self.COL_FILENAME)
+                return filename
+            else:
+                return None
+        else:
+            return self.chooser.get_filename()
+
+    def get_file_source(self):
+        """
+        Gets the "source" tab where our savegame selection came from.  The value
+        will be somewhat meaningless to anything outside the dialog, but we'll
+        want to know what was used "last time."
+        """
+        if self.open_notebook.get_current_page() == 0:
+            return self.SOURCE_SAVES
+        else:
+            return self.SOURCE_OTHER
+
+    def chooser_file_activated(self, widget):
+        """
+        Called when the user double-clicks or hits enter on a selected file
+        on our internal FileChooserWidget
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def save_dir_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on an item in our
+        savegame TreeView.
+        """
+        self.response(gtk.RESPONSE_OK)
 
 class MainGUI(BaseGUI):
 
@@ -320,6 +389,7 @@ class MainGUI(BaseGUI):
 
         # If we were given a filename, load it.  If not, display the load dialog
         self.changed = {}
+        self.last_char_source = None
         if (self.options['filename'] == None):
             if (not self.on_load()):
                 return
@@ -369,24 +439,25 @@ class MainGUI(BaseGUI):
         else:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
 
+        # Run the dialog and process its return values
         dialog = CharLoaderDialog(starting_path=path,
                 savegame_dir=self.get_current_savegame_dir(),
-                transient=self.window)
-        test = dialog.run()
-        sys.exit(0)
-
-        # Run the dialog and process its return values
+                transient=self.window,
+                last_source=self.last_char_source)
         rundialog = True
         while (rundialog):
             rundialog = False
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
-                if (not self.load_from_file(dialog.get_filename())):
+                if (not dialog.get_filename() or not self.load_from_file(dialog.get_filename())):
                     rundialog = True
             else:
                 # Check to see if this was the initial load, started without a filename
                 if (self.char == None):
                     return False
+        
+        # If we got here, we've successfully chosen and loaded a character
+        self.last_char_source = dialog.get_file_source()
 
         # Clean up
         dialog.destroy()
