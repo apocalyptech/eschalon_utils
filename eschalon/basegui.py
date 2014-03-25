@@ -659,7 +659,6 @@ class BaseGUI(object):
             gui_gamedir.set_current_folder(cur_gamedir)
         if cur_savegamedir != '':
             gui_savegamedir.set_current_folder(cur_savegamedir)
-        self.prefs_warn_global.set_active(self.prefsobj.get_bool('mapgui', 'warn_global_map'))
         self.prefs_warn_slowzip.set_active(self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
         #self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
@@ -667,7 +666,6 @@ class BaseGUI(object):
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
             self.prefsobj.set_int('mapgui', 'default_zoom', int(self.prefs_default_zoom.get_value()))
-            self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
             self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
 
             # Save our new game directory.  We actually only want to save under two conditions:

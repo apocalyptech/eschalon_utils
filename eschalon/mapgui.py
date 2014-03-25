@@ -764,7 +764,6 @@ class MapGUI(BaseGUI):
         self.map_exception_view = self.get_widget('map_exception_view')
         self.activity_label = self.get_widget('activity_label')
         self.draw_frame = self.get_widget('draw_frame')
-        self.globalwarndialog = self.get_widget('globalwarndialog')
         self.globalwarn_check = self.get_widget('globalwarn_check')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
@@ -1694,17 +1693,6 @@ class MapGUI(BaseGUI):
 
         # Set up our other GUI elements
         self.setup_new_map_gui()
-
-        # If we appear to be editing a global map file and haven't
-        # been told otherwise, show a dialog warning the user
-        warn = self.prefs.get_bool('mapgui', 'warn_global_map')
-        if (not map.is_savegame() and warn and filename.find(self.get_current_gamedir()) != -1):
-            self.globalwarn_check.set_active(warn)
-            resp = self.globalwarndialog.run()
-            self.globalwarndialog.hide()
-            if (self.globalwarn_check.get_active() != warn):
-                self.prefs.set_bool('mapgui', 'warn_global_map', self.globalwarn_check.get_active())
-                self.prefs.save()
 
         # Return success
         return True

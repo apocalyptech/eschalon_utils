@@ -4,6 +4,7 @@
 
    24-25 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    "Smart" loading dialogs which understand map/character names
+   Removed Global Map file warnings
 
    22 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Various bugfixes for Books 1 and 2
