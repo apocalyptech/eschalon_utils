@@ -2,6 +2,9 @@
 
 *eschalon_utils-1.0.0 ()
 
+   24-25 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   "Smart" loading dialogs which understand map/character names
+
    22 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Various bugfixes for Books 1 and 2
    Updated Smartdraw definitions for Book 3

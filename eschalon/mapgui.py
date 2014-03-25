@@ -68,6 +68,85 @@ from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 from eschalon import app_name, version, url, authors
 
+class MapNewDialog(gtk.Dialog):
+    """
+    A simple dialog to ask a user whether to create a new Global
+    or Savegame map.
+    """
+
+    # "New" button values
+    NEW_GLOBAL = 0
+    NEW_SAVEGAME = 1
+
+    def __init__(self, transient=None):
+        """
+        Constructor to set up everything
+        """
+        super(MapNewDialog, self).__init__(
+                flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+
+        # Various defaults for the dialog
+        self.set_size_request(500, 150)
+        self.set_title('New Eschalon Book %d Map' % (c.book))
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.button_hit = None
+
+        # Main Title
+        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align.set_padding(20, 20, 15, 15)
+        label = gtk.Label()
+        label.set_markup('<big><b>Choose the type of map to create:</b></big>')
+        self.title_align.add(label)
+        self.vbox.pack_start(self.title_align, False, False)
+
+        # Buttons
+        self.new_global_button = gtk.Button('New Global Map')
+        self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_global_button.connect('clicked', self.new_global_clicked)
+
+        self.new_savegame_button = gtk.Button('New Savegame Map')
+        self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
+
+        self.bbox = gtk.HButtonBox()
+        self.bbox.add(self.new_global_button)
+        self.bbox.add(self.new_savegame_button)
+
+        self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+        self.bbalign.set_padding(0, 5, 5, 5)
+        self.bbalign.add(self.bbox)
+        self.vbox.pack_start(self.bbalign, False, False)
+
+        # Show everything
+        self.show_all()
+
+    def new_global_clicked(self, widget):
+        """
+        What to do when our New Global Map button is clicked.
+        """
+        self.button_hit = self.NEW_GLOBAL
+        self.response(gtk.RESPONSE_OK)
+
+    def new_savegame_clicked(self, widget):
+        """
+        What to do when our New Savegame Map button is clicked.
+        """
+        self.button_hit = self.NEW_SAVEGAME
+        self.response(gtk.RESPONSE_OK)
+
+    def get_savegame_flag(self):
+        """
+        If one of our "new" buttons has been pressed, this will return
+        True if it's supposed to be a savegame file, or False otherwise.
+        """
+        if self.button_hit is not None and self.button_hit == self.NEW_GLOBAL:
+            return False
+        else:
+            return True
+
 class MapLoaderDialog(gtk.Dialog):
     """
     A dialog to load a map.  Embeds FileChooserWidget in one tab of
@@ -96,7 +175,11 @@ class MapLoaderDialog(gtk.Dialog):
     SOURCE_MODS = 3
     SOURCE_OTHER = 4
 
-    def __init__(self, starting_path, savegame_dir, transient=None, last_source=None):
+    # "New" button values
+    NEW_GLOBAL = 0
+    NEW_SAVEGAME = 1
+
+    def __init__(self, starting_path, savegame_dir, transient=None, last_source=None, show_new=False):
         """
         Constructor to set up everything
 
@@ -184,6 +267,26 @@ class MapLoaderDialog(gtk.Dialog):
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
+        # New Map buttons
+        self.button_hit = None
+        if show_new:
+            self.new_global_button = gtk.Button('New Global Map')
+            self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_global_button.connect('clicked', self.new_global_clicked)
+
+            self.new_savegame_button = gtk.Button('New Savegame Map')
+            self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
+
+            self.bbox = gtk.HButtonBox()
+            self.bbox.add(self.new_global_button)
+            self.bbox.add(self.new_savegame_button)
+
+            self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+            self.bbalign.set_padding(0, 5, 5, 5)
+            self.bbalign.add(self.bbox)
+            self.vbox.pack_start(self.bbalign, False, False)
+
         # Main Notebook
         notebook_align = gtk.Alignment(0, 0, 1, 1)
         notebook_align.set_padding(5, 5, 10, 10)
@@ -263,8 +366,6 @@ class MapLoaderDialog(gtk.Dialog):
         if active_slot:
             self.slot_tv.set_cursor(active_slot)
 
-        #self.set_initial()
-
     def get_filename(self):
         """
         Gets the selected filename, or None
@@ -317,23 +418,31 @@ class MapLoaderDialog(gtk.Dialog):
         """
         self.response(gtk.RESPONSE_OK)
 
-    #def set_initial(self, initial=True):
-    #    if initial:
-    #        self.set_title("Load or Create a Map")
-    #        self.createlabel.set_markup("<b>Or, select the type of map you want to create:</b>")
-    #        self.open_align_1.show()
-    #        self.open_align_2.show()
-    #        self.title_align.show()
-    #        self.open_savegame_radio.set_active(True)
-    #        self.resize(340, 288)
-    #    else:
-    #        self.set_title("Select New Map Type")
-    #        self.createlabel.set_markup("<b>Select the type of map you want to create:</b>")
-    #        self.open_align_1.hide()
-    #        self.open_align_2.hide()
-    #        self.title_align.hide()
-    #        self.new_savegame_radio.set_active(True)
-    #        self.resize(340, 160)
+    def new_global_clicked(self, widget):
+        """
+        What to do when our New Global Map button is clicked.  Note that we're
+        sort of abusing gtk.RESPONSE_APPLY for this.
+        """
+        self.button_hit = self.NEW_GLOBAL
+        self.response(gtk.RESPONSE_APPLY)
+
+    def new_savegame_clicked(self, widget):
+        """
+        What to do when our New Savegame Map button is clicked.  Note that we're
+        sort of abusing gtk.RESPONSE_APPLY for this.
+        """
+        self.button_hit = self.NEW_SAVEGAME
+        self.response(gtk.RESPONSE_APPLY)
+
+    def get_savegame_flag(self):
+        """
+        If one of our "new" buttons has been pressed, this will return
+        True if it's supposed to be a savegame file, or False otherwise.
+        """
+        if self.button_hit is not None and self.button_hit == self.NEW_GLOBAL:
+            return False
+        else:
+            return True
 
 class ObjectSelWindow(ImageSelWindow):
 
@@ -605,13 +714,10 @@ class MapGUI(BaseGUI):
         if (self.options['filename'] == None):
             if not self.on_load():
                 return
-            #if not self.on_new():
-            #    return;
         else:
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
                     return
-        #self.get_widget('map_new_map_dialog').set_initial(False)
 
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
@@ -1298,7 +1404,7 @@ class MapGUI(BaseGUI):
             self.mapname_mainscreen_label.set_text(self.map.mapname)
             self.mapname_mainscreen_label.set_has_tooltip(False)
 
-    def setup_new_map(self):
+    def setup_new_map_gui(self):
         """
         Sets various GUI elements which need setting, once we have a "new"
         map object.  This is called currently from on_new() and load_from_file()
@@ -1332,26 +1438,28 @@ class MapGUI(BaseGUI):
                 return False
 
         # Figure out what type of map to create
-        dialog = self.get_widget('map_new_map_dialog')
+        dialog = MapNewDialog(transient=self.window)
         resp = dialog.run()
-        dialog.hide()
-        if resp != gtk.RESPONSE_OK:
+        savegame = dialog.get_savegame_flag()
+        dialog.destroy()
+
+        # Process as-appropriate
+        if resp == gtk.RESPONSE_OK:
+            self.setup_new_map(savegame)
+            return True
+        else:
             return False
 
-        # Our "new map" dialog will have a couple of "open" options on
-        # it, if it's the initial dialog shown.  Check for those and
-        # process on_load() instead, if we've chosen to do that.
-        if dialog.open_global_radio.get_active() or dialog.open_savegame_radio.get_active():
-            if self.on_load():
-                return True
-            else:
-                # Recursion!  If a user cancels out of the load dialog, they may want to
-                # create a new map instead.  They can cancel out directly from there.
-                return self.on_new()
+    def setup_new_map(self, savegame=True):
+        """
+        Create a new, blank Map object.  Pass in "savegame" as a boolean
+        to determine whether it's a savegame or global map.  This will default
+        to savegame.
+        """
 
         # Now create a new map
-        self.map = Map.load('', self.req_book)
-        self.map.set_savegame(dialog.new_savegame_radio.get_active())
+        self.map = Map.new('', self.req_book)
+        self.map.set_savegame(savegame)
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
@@ -1366,10 +1474,7 @@ class MapGUI(BaseGUI):
             self.map.atmos_sound_day = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
-        self.setup_new_map()
-
-        # Return
-        return True
+        self.setup_new_map_gui()
 
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
@@ -1380,11 +1485,6 @@ class MapGUI(BaseGUI):
         # Figure out what our initial path should be
         path = ''
         if self.map == None:
-            #newdialog = self.get_widget('map_new_map_dialog')
-            #if newdialog.open_global_radio.get_active():
-            #    path = self.get_current_gamedir()
-            #else:
-            #    path = self.get_current_savegame_dir()
             path = self.get_current_savegame_dir()
         elif self.map.df.filename == '':
             if self.map.is_savegame():
@@ -1398,26 +1498,30 @@ class MapGUI(BaseGUI):
         dialog = MapLoaderDialog(starting_path=path,
                 savegame_dir=self.get_current_savegame_dir(),
                 transient=self.window,
-                last_source=self.last_map_source)
+                last_source=self.last_map_source,
+                show_new=(self.map is None))
 
         # Run the dialog and process its return values
         retval = False
         rundialog = True
         while (rundialog):
-            rundialog = False
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
-                if self.load_from_file(dialog.get_filename()):
+                filename = dialog.get_filename()
+                if filename and filename != '' and self.load_from_file(filename):
+                    rundialog = False
                     retval = True
-                else:
-                    rundialog = True
-
-        # Update map source if we loaded properly
-        if retval:
-            self.last_map_source = dialog.get_file_source()
+                    self.last_map_source = dialog.get_file_source()
+            elif response == gtk.RESPONSE_APPLY:
+                self.setup_new_map(dialog.get_savegame_flag())
+                self.last_map_source = None
+            else:
+                rundialog = False
 
         # Clean up
         dialog.destroy()
+
+        # Update some GUI elements
         if retval:
             self.update_main_map_name()
 
@@ -1446,7 +1550,7 @@ class MapGUI(BaseGUI):
         self.putstatus('Editing ' + self.map.df.filename)
 
         # Set up our other GUI elements
-        self.setup_new_map()
+        self.setup_new_map_gui()
 
         # If we appear to be editing a global map file and haven't
         # been told otherwise, show a dialog warning the user

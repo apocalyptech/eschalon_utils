@@ -325,6 +325,25 @@ class Map(object):
         return True
 
     @staticmethod
+    def new(filename, book):
+        """
+        Sets up a new, blank Map object with the given book.  Will raise a
+        LoadException if we're passed a book we don't know about.
+        """
+        df = Savefile(filename)
+        if book == 1:
+            c.switch_to_book(1)
+            return B1Map(df)
+        elif book == 2:
+            c.switch_to_book(2)
+            return B2Map(df)
+        elif book == 3:
+            c.switch_to_book(3)
+            return B3Map(df)
+        else:
+            raise LoadException('Unknown book version specified: %d' % (book))
+
+    @staticmethod
     def get_mapinfo(filename):
         """
         Given a filename, loads the first few bits of information from a map
