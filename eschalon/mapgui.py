@@ -114,7 +114,8 @@ class MapLoaderDialog(gtk.Dialog):
 
         # Various defaults for the dialog
         self.set_size_request(950, 680)
-        self.set_default_size(950, 680)
+        if gtk.gdk.screen_width() > 1200:
+            self.set_default_size(1200, 680)
         self.set_title('Open Eschalon Book %d Map File' % (c.book))
         self.set_default_response(gtk.RESPONSE_OK)
         if transient:
@@ -136,17 +137,21 @@ class MapLoaderDialog(gtk.Dialog):
             hide_savegames = True
 
         # Slot-choosing combobox/liststore
+        active_slot = None
         self.slot_store = gtk.ListStore(int, str, str, str, int, object)
         self.slot_tv = gtk.TreeView(self.slot_store)
         self.slot_tv.connect('cursor-changed', self.slot_changed)
         col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
         col.set_sort_column_id(self.SLOT_COL_IDX)
+        col.set_resizable(True)
         self.slot_tv.append_column(col)
         col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
         col.set_sort_column_id(self.SLOT_COL_SAVENAME)
+        col.set_resizable(True)
         self.slot_tv.append_column(col)
         col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.SLOT_COL_DATE)
         col.set_sort_column_id(self.SLOT_COL_DATE_EPOCH)
+        col.set_resizable(True)
         self.slot_tv.append_column(col)
         for (idx, slot) in enumerate(self.slots):
             self.slot_store.append((idx,
@@ -155,6 +160,8 @@ class MapLoaderDialog(gtk.Dialog):
                 slot.timestamp,
                 slot.timestamp_epoch,
                 slot))
+            if starting_path and os.path.samefile(slot.directory, starting_path):
+                active_slot = idx
 
         # Map-choosing combobox/liststore
         self.map_store = gtk.ListStore(int, str, str, str)
@@ -162,9 +169,11 @@ class MapLoaderDialog(gtk.Dialog):
         self.map_tv.connect('row-activated', self.map_activated)
         col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
         col.set_sort_column_id(self.MAP_COL_FILENAME)
+        col.set_resizable(True)
         self.map_tv.append_column(col)
         col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
         col.set_sort_column_id(self.MAP_COL_MAPNAME)
+        col.set_resizable(True)
         self.map_tv.append_column(col)
 
         # Main Title
@@ -189,8 +198,8 @@ class MapLoaderDialog(gtk.Dialog):
         save_vbox = gtk.VBox()
         vp = gtk.Viewport()
         vp.set_shadow_type(gtk.SHADOW_OUT)
-        save_hbox = gtk.HBox()
-        vp.add(save_hbox)
+        save_hpaned = gtk.HPaned()
+        vp.add(save_hpaned)
         save_vbox.pack_start(vp, True, True)
         note_align = gtk.Alignment(0, 0, 0, 0)
         note_align.set_padding(5, 2, 2, 2)
@@ -201,21 +210,16 @@ class MapLoaderDialog(gtk.Dialog):
         save_dir_align.add(save_vbox)
         self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
 
-        # Save-dir HBox contents
+        # Save-dir HPaned contents
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         sw.add(self.slot_tv)
-        save_hbox.pack_start(sw, False, False)
-
-        sep_align = gtk.Alignment(0, 0, 0, 1)
-        sep_align.set_padding(5, 5, 10, 10)
-        sep_align.add(gtk.VSeparator())
-        save_hbox.pack_start(sep_align, False, False)
+        save_hpaned.pack1(sw)
 
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         sw.add(self.map_tv)
-        save_hbox.pack_start(sw, True, True)
+        save_hpaned.pack2(sw)
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -255,6 +259,10 @@ class MapLoaderDialog(gtk.Dialog):
             elif last_source == self.SOURCE_OTHER:
                 self.open_notebook.set_current_page(1)
 
+        # Default to the last-used slot if we have one.
+        if active_slot:
+            self.slot_tv.set_cursor(active_slot)
+
         #self.set_initial()
 
     def get_filename(self):
@@ -285,7 +293,7 @@ class MapLoaderDialog(gtk.Dialog):
     def chooser_file_activated(self, widget):
         """
         Called when the user double-clicks or hits enter on a selected file
-        on our internal FileChooserWidget
+        in our internal FileChooserWidget
         """
         self.response(gtk.RESPONSE_OK)
 
