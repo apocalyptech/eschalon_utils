@@ -1532,17 +1532,22 @@ class MapGUI(BaseGUI):
         """
         Updates the text area above the map with the current map name.
         """
+        if self.map.is_savegame():
+            prefix = 'Savegame Map'
+        else:
+            prefix = 'Global Map'
+
         if (c.book == 1 and
                 self.map.df.filename != '' and
                 os.path.basename(self.map.df.filename)[:-4] != self.map.mapid):
-            self.mapname_mainscreen_label.set_markup('%s <span color="red">(Map ID Mismatch)</span>' %
-                    (self.map.mapname))
+            self.mapname_mainscreen_label.set_markup('%s: %s <span color="red">(Map ID Mismatch)</span>' %
+                    (prefix, self.map.mapname))
             self.mapname_mainscreen_label.set_tooltip_text('This map is saved to a file named "%s" '
                     'but the Map ID is set to "%s" - this will cause problems with saving the map '
                     'state, inside Eschalon.  You should change this value in "Map Properties."' %
                     (os.path.basename(self.map.df.filename), self.map.mapid))
         else:
-            self.mapname_mainscreen_label.set_text(self.map.mapname)
+            self.mapname_mainscreen_label.set_text('%s: %s' % (prefix, self.map.mapname))
             self.mapname_mainscreen_label.set_has_tooltip(False)
 
     def setup_new_map_gui(self):
