@@ -174,6 +174,12 @@ class MapLoaderDialog(gtk.Dialog):
     MOD_COL_FILENAME_FULL = 2
     MOD_COL_MAPNAME = 3
 
+    # Treeview column indexes for datadir
+    DATA_COL_IDX = 0
+    DATA_COL_FILENAME = 1
+    DATA_COL_FILENAME_FULL = 2
+    DATA_COL_MAPNAME = 3
+
     # Load-source constants
     SOURCE_SAVES = 0
     SOURCE_GLOBAL = 1
@@ -339,41 +345,25 @@ class MapLoaderDialog(gtk.Dialog):
 
         # Mod info, for Book III v1.0.2
         if c.book == 3:
-            self.mod_list = []
-            self.mod_dir = os.path.join(basegame_dir, 'mods')
-            if os.path.isdir(self.mod_dir):
-                mod_files = glob.glob(os.path.join(self.mod_dir, '*.map'))
-                for mod_file in mod_files:
-                    try:
-                        self.mod_list.append(Map.get_mapinfo(mod_file))
-                        #detected_book, detected_mapname, df
-                    except Exception, e:
-                        pass
+            (self.mod_list,
+                    self.mod_store,
+                    self.mod_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'mods'),
+                            source=self.SOURCE_MODS,
+                            label='Load from Mods...',
+                            callback=self.mod_activated,
+                            filename_col=self.MOD_COL_FILENAME,
+                            mapname_col=self.MOD_COL_MAPNAME)
 
-                if len(self.mod_list) > 0:
-                    self.mod_store = gtk.ListStore(int, str, str, str)
-                    self.mod_tv = gtk.TreeView(self.mod_store)
-                    self.mod_tv.connect('row-activated', self.mod_activated)
-                    col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=self.MOD_COL_FILENAME)
-                    col.set_sort_column_id(self.MOD_COL_FILENAME)
-                    col.set_resizable(True)
-                    self.mod_tv.append_column(col)
-                    col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=self.MOD_COL_MAPNAME)
-                    col.set_sort_column_id(self.MOD_COL_MAPNAME)
-                    col.set_resizable(True)
-                    self.mod_tv.append_column(col)
-                    for (idx, (mod_book, mod_mapname, mod_df)) in enumerate(self.mod_list):
-                        self.mod_store.append((idx,
-                            '<b>%s</b>' % (os.path.basename(mod_df.filename)),
-                            mod_df.filename,
-                            mod_mapname))
-
-                    mod_align = gtk.Alignment(0, 0, 1, 1)
-                    mod_align.set_padding(5, 5, 5, 5)
-                    mod_align.add(self.mod_tv)
-
-                    self.register_page(self.SOURCE_MODS)
-                    self.open_notebook.append_page(mod_align, gtk.Label('Load from Mods...'))
+        # Map data dir, for book I
+        if c.book == 1:
+            (self.data_list,
+                    self.data_store,
+                    self.data_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'data'),
+                            source=self.SOURCE_GLOBAL,
+                            label='Load from Datadir...',
+                            callback=self.data_activated,
+                            filename_col=self.DATA_COL_FILENAME,
+                            mapname_col=self.DATA_COL_MAPNAME)
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -420,6 +410,67 @@ class MapLoaderDialog(gtk.Dialog):
         self.page_index[curpages] = source
         self.source_index[source] = curpages
 
+    def mapdir_page(self, directory, source, label, callback, filename_col, mapname_col):
+        """
+        Sets up a page on our notebook which loads all maps from a given directory.
+        """
+        map_list = []
+        map_store = None
+        map_tv = None
+        if os.path.isdir(directory):
+            map_files = glob.glob(os.path.join(directory, '*.map'))
+            for map_file in sorted(map_files):
+                try:
+                    map_list.append(Map.get_mapinfo(map_file))
+                    #detected_book, detected_mapname, df
+                except Exception, e:
+                    pass
+
+            if len(map_list) > 0:
+                map_store = gtk.ListStore(int, str, str, str)
+                map_tv = gtk.TreeView(map_store)
+                map_tv.connect('row-activated', callback)
+                col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=filename_col)
+                col.set_sort_column_id(filename_col)
+                col.set_resizable(True)
+                map_tv.append_column(col)
+                col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=mapname_col)
+                col.set_sort_column_id(mapname_col)
+                col.set_resizable(True)
+                map_tv.append_column(col)
+                for (idx, (map_book, map_mapname, map_df)) in enumerate(map_list):
+                    map_store.append((idx,
+                        '<b>%s</b>' % (os.path.basename(map_df.filename)),
+                        map_df.filename,
+                        map_mapname))
+
+                sw = gtk.ScrolledWindow()
+                sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+                sw.add(map_tv)
+
+                vp = gtk.Viewport()
+                vp.set_shadow_type(gtk.SHADOW_OUT)
+                vp.add(sw)
+
+                note_align = gtk.Alignment(0, 0, 0, 0)
+                note_align.set_padding(5, 2, 2, 2)
+                note_label = gtk.Label()
+                note_label.set_markup('<i>Reading from %s</i>' % (directory))
+                note_align.add(note_label)
+
+                map_vbox = gtk.VBox()
+                map_vbox.pack_start(vp, True, True)
+                map_vbox.pack_start(note_align, False, False)
+
+                map_align = gtk.Alignment(0, 0, 1, 1)
+                map_align.set_padding(5, 5, 5, 5)
+                map_align.add(map_vbox)
+
+                self.register_page(source)
+                self.open_notebook.append_page(map_align, gtk.Label(label))
+
+        return (map_list, map_store, map_tv)
+
     def get_filename(self):
         """
         Gets the selected filename, or None
@@ -440,6 +491,14 @@ class MapLoaderDialog(gtk.Dialog):
                 (model, treeiter) = self.mod_tv.get_selection().get_selected()
                 if model and treeiter:
                     (filename,) = model.get(treeiter, self.MOD_COL_FILENAME_FULL)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_GLOBAL:
+                (model, treeiter) = self.data_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.DATA_COL_FILENAME_FULL)
                     return filename
                 else:
                     return None
@@ -492,6 +551,12 @@ class MapLoaderDialog(gtk.Dialog):
     def mod_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on a particular mod map.
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def data_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on a particular datadir map.
         """
         self.response(gtk.RESPONSE_OK)
 
