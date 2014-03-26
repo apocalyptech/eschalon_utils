@@ -394,9 +394,14 @@ class MapLoaderDialog(gtk.Dialog):
 
         # Default to our last-used page, if specified
         # This apparently has to be done after the widgets are visible
-        if last_source is not None:
-            if last_source in self.source_index:
-                self.open_notebook.set_current_page(self.source_index[last_source])
+        # Note that the FIRST thing we do is switch to the "other" tab...  If we
+        # don't, there's some gtk+ bug where the FileChooserWidget ends up with
+        # an ugly-looking horizontal scrollbar which cuts off part of the date.
+        self.open_notebook.set_current_page(self.source_index[self.SOURCE_OTHER])
+        if last_source is not None and last_source in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[last_source])
+        elif self.SOURCE_SAVES in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[self.SOURCE_SAVES])
 
         # Default to the last-used slot if we have one.
         if active_slot:
