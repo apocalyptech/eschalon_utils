@@ -103,50 +103,11 @@ class CharLoaderDialog(gtk.Dialog):
             self.set_transient_for(transient)
             self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
-        # Grab a list of savegames for use in the dialog
-        hide_savegames = False
-        slotdirs = glob.glob(os.path.join(savegame_dir, 'slot*'))
-        self.slots = []
-        for slotdir in slotdirs:
-            try:
-                slot = Saveslot(slotdir, c.book)
-                slot.load_charname()
-                self.slots.append(slot)
-            except:
-                # If there's an error, just don't show the slot
-                pass
-        self.slots.sort()
-        if len(self.slots) == 0:
-            hide_savegames = True
+        # Page-to-source mapping
+        self.page_index = {}
 
-        # Savegame combobox/liststore
-        self.save_dir_store = gtk.ListStore(int, str, str, str, str, int, str)
-        self.save_dir_tv = gtk.TreeView(self.save_dir_store)
-        self.save_dir_tv.connect('row-activated', self.save_dir_activated)
-        col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
-        col.set_sort_column_id(self.COL_IDX)
-        col.set_resizable(True)
-        self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
-        col.set_sort_column_id(self.COL_SAVENAME)
-        col.set_resizable(True)
-        self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
-        col.set_sort_column_id(self.COL_CHARNAME)
-        col.set_resizable(True)
-        self.save_dir_tv.append_column(col)
-        col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.COL_DATE)
-        col.set_sort_column_id(self.COL_DATE_EPOCH)
-        col.set_resizable(True)
-        self.save_dir_tv.append_column(col)
-        for (idx, slot) in enumerate(self.slots):
-            self.save_dir_store.append((idx,
-                '<b>%s</b>' % (slot.slotname_short()),
-                slot.savename,
-                slot.charname,
-                slot.timestamp,
-                slot.timestamp_epoch,
-                slot.char_loc))
+        # Source-to-page mapping
+        self.source_index = {}
 
         # Main Title
         self.title_align = gtk.Alignment(.5, 0, 0, 0)
@@ -164,25 +125,68 @@ class CharLoaderDialog(gtk.Dialog):
         notebook_align.add(self.open_notebook)
         self.vbox.pack_start(notebook_align, True, True)
 
-        # Loading from our save dir
-        save_dir_align = gtk.Alignment(0, 0, 1, 1)
-        save_dir_align.set_padding(5, 5, 5, 5)
-        save_vbox = gtk.VBox()
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_OUT)
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.add(self.save_dir_tv)
-        vp.add(sw)
-        save_vbox.pack_start(vp, True, True)
-        note_align = gtk.Alignment(0, 0, 0, 0)
-        note_align.set_padding(5, 2, 2, 2)
-        note_label = gtk.Label()
-        note_label.set_markup('<i>Reading from %s</i>' % (savegame_dir))
-        note_align.add(note_label)
-        save_vbox.pack_start(note_align, False, False)
-        save_dir_align.add(save_vbox)
-        self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
+        # Loading from our save dir, first see if we have saves to load
+        slotdirs = glob.glob(os.path.join(savegame_dir, 'slot*'))
+        self.slots = []
+        for slotdir in slotdirs:
+            try:
+                slot = Saveslot(slotdir, c.book)
+                slot.load_charname()
+                self.slots.append(slot)
+            except:
+                # If there's an error, just don't show the slot
+                pass
+        self.slots.sort()
+        if len(self.slots) > 0:
+
+            # Savegame combobox/liststore
+            self.save_dir_store = gtk.ListStore(int, str, str, str, str, int, str)
+            self.save_dir_tv = gtk.TreeView(self.save_dir_store)
+            self.save_dir_tv.connect('row-activated', self.save_dir_activated)
+            col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
+            col.set_sort_column_id(self.COL_IDX)
+            col.set_resizable(True)
+            self.save_dir_tv.append_column(col)
+            col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
+            col.set_sort_column_id(self.COL_SAVENAME)
+            col.set_resizable(True)
+            self.save_dir_tv.append_column(col)
+            col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
+            col.set_sort_column_id(self.COL_CHARNAME)
+            col.set_resizable(True)
+            self.save_dir_tv.append_column(col)
+            col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.COL_DATE)
+            col.set_sort_column_id(self.COL_DATE_EPOCH)
+            col.set_resizable(True)
+            self.save_dir_tv.append_column(col)
+            for (idx, slot) in enumerate(self.slots):
+                self.save_dir_store.append((idx,
+                    '<b>%s</b>' % (slot.slotname_short()),
+                    slot.savename,
+                    slot.charname,
+                    slot.timestamp,
+                    slot.timestamp_epoch,
+                    slot.char_loc))
+
+            save_dir_align = gtk.Alignment(0, 0, 1, 1)
+            save_dir_align.set_padding(5, 5, 5, 5)
+            save_vbox = gtk.VBox()
+            vp = gtk.Viewport()
+            vp.set_shadow_type(gtk.SHADOW_OUT)
+            sw = gtk.ScrolledWindow()
+            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            sw.add(self.save_dir_tv)
+            vp.add(sw)
+            save_vbox.pack_start(vp, True, True)
+            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align.set_padding(5, 2, 2, 2)
+            note_label = gtk.Label()
+            note_label.set_markup('<i>Reading from %s</i>' % (savegame_dir))
+            note_align.add(note_label)
+            save_vbox.pack_start(note_align, False, False)
+            save_dir_align.add(save_vbox)
+            self.register_page(self.SOURCE_SAVES)
+            self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -190,6 +194,7 @@ class CharLoaderDialog(gtk.Dialog):
         self.chooser = gtk.FileChooserWidget()
         self.chooser.connect('file-activated', self.chooser_file_activated)
         arbitrary_align.add(self.chooser)
+        self.register_page(self.SOURCE_OTHER)
         self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
 
         # Starting path for chooser
@@ -211,31 +216,46 @@ class CharLoaderDialog(gtk.Dialog):
         # Show everything
         self.show_all()
 
-        # ... or NOT
-        if hide_savegames:
-            save_dir_align.hide()
-
         # Default to our last-used page, if specified
         # This apparently has to be done after the widgets are visible
-        if last_source is not None:
-            if last_source == self.SOURCE_SAVES and not hide_savegames:
-                self.open_notebook.set_current_page(0)
-            elif last_source == self.SOURCE_OTHER:
-                self.open_notebook.set_current_page(1)
+        # Note that the FIRST thing we do is switch to the "other" tab...  If we
+        # don't, there's some gtk+ bug where the FileChooserWidget ends up with
+        # an ugly-looking horizontal scrollbar which cuts off part of the date.
+        self.open_notebook.set_current_page(self.source_index[self.SOURCE_OTHER])
+        if last_source is not None and last_source in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[last_source])
+        elif self.SOURCE_SAVES in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[self.SOURCE_SAVES])
+
+    def register_page(self, source):
+        """
+        Sets up some dicts to map source-to-page, and vice-versa.
+        """
+        curpages = self.open_notebook.get_n_pages()
+        self.page_index[curpages] = source
+        self.source_index[source] = curpages
 
     def get_filename(self):
         """
         Gets the selected filename, or None
         """
-        if self.open_notebook.get_current_page() == 0:
-            (model, treeiter) = self.save_dir_tv.get_selection().get_selected()
-            if model and treeiter:
-                (filename,) = model.get(treeiter, self.COL_FILENAME)
-                return filename
-            else:
-                return None
-        else:
-            return self.chooser.get_filename()
+        page = self.open_notebook.get_current_page()
+
+        if page in self.page_index:
+
+            if self.page_index[page] == self.SOURCE_SAVES:
+                (model, treeiter) = self.save_dir_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.COL_FILENAME)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_OTHER:
+                return self.chooser.get_filename()
+
+        # Finally, throw an exception
+        raise LoadException('Unknown tab selected on open dialog')
 
     def get_file_source(self):
         """
@@ -243,8 +263,9 @@ class CharLoaderDialog(gtk.Dialog):
         will be somewhat meaningless to anything outside the dialog, but we'll
         want to know what was used "last time."
         """
-        if self.open_notebook.get_current_page() == 0:
-            return self.SOURCE_SAVES
+        curpage = self.open_notebook.get_current_page()
+        if curpage in self.page_index:
+            return self.page_index[curpage]
         else:
             return self.SOURCE_OTHER
 
