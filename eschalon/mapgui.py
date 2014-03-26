@@ -299,7 +299,9 @@ class MapLoaderDialog(gtk.Dialog):
                     slot.timestamp,
                     slot.timestamp_epoch,
                     slot))
-                if starting_path and os.path.samefile(slot.directory, starting_path):
+                if (starting_path and
+                        os.path.normcase(os.path.abspath(slot.directory)) ==
+                        os.path.normcase(os.path.abspath(starting_path))):
                     active_slot = idx
 
             # Map-choosing combobox/liststore
