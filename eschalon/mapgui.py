@@ -1662,6 +1662,8 @@ class MapGUI(BaseGUI):
             elif response == gtk.RESPONSE_APPLY:
                 self.setup_new_map(dialog.get_savegame_flag())
                 self.last_map_source = None
+                retval = True
+                rundialog = False
             else:
                 rundialog = False
 
