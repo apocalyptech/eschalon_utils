@@ -215,6 +215,13 @@ class BaseGUI(object):
         # variable.
         self.labelcache = {}
 
+        # We use this boolean to keep track of when we're showing the item
+        # window.  We're doing this so that we can have set_item_quantity_nonzero
+        # not change things while the window's rendering the first time, which
+        # could otherwise result in values being changed without the user's
+        # knowledge.
+        self.itemwindow_loading = False
+
         # Find out if we have NumPy installed.  There's a bug in pygtk (or,
         # at least, a bug SOMEWHERE) where if numpy isn't installed, a call
         # to gtk.gdk.Pixbuf.get_pixels_array() will segfault Python, which
@@ -809,7 +816,7 @@ class BaseGUI(object):
         requiring the user to set it every time would be annoying.  This will set the quantity
         to 1 if we're passed an item object with a quantity of zero.
         """
-        if c.book > 1 and item.quantity == 0:
+        if not self.itemwindow_loading and c.book > 1 and item.quantity == 0:
             self.get_widget('quantity').set_value(1)
 
     def on_dropdown_changed(self, widget):
@@ -962,6 +969,9 @@ class BaseGUI(object):
     def populate_itemform_from_item(self, item):
         """ Populates the Item GUI from the given object. """
 
+        # Specify that we're loading, to prevent some signals from being sent
+        self.itemwindow_loading = True
+
         self.get_widget('item_name').set_text(item.item_name)
         self.get_widget('category').set_active(item.category)
         self.get_widget('subcategory').set_active(item.subcategory)
@@ -1068,6 +1078,9 @@ class BaseGUI(object):
         for val in b2modifiervals:
             self.on_b2_bonus_changed(self.get_widget(val))
         self.on_singleval_changed_int_itempic(self.get_widget('pictureid'))
+
+        # Now specify that we're not loading
+        self.itemwindow_loading = False
 
     def gui_item_label(self, label, name):
         """ Generate a Label for an inventory item. """
