@@ -469,6 +469,11 @@ class BaseGUI(object):
             label.show()
             align.add(label)
 
+            align = self.get_widget('quantity_align_b23')
+            label = WrapLabel('<i>(This value should always be greater than zero)</i>')
+            label.show()
+            align.add(label)
+
         ###
         ### Fix some tooltips
         ###
