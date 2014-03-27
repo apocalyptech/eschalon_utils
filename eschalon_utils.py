@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import gtk
 from eschalon import version
 from eschalon.maingui import MainGUI
@@ -103,10 +104,10 @@ class EschalonUtils:
         label = gtk.Label()
         label.set_markup('<big><b>Eschalon Map/Character Editor v%s</b></big>' % (version))
         hbox = gtk.HBox()
-        if os.path.dirname(__file__).find('library.zip') == -1:
-            icon_filename = os.path.join(os.path.dirname('__file__'), 'data', 'eb1_icon_64.png')
+        if getattr(sys, 'frozen', False):
+            icon_filename = os.path.join(os.path.dirname(sys.executable), 'data', 'eb1_icon_64.png')
         else:
-            icon_filename = os.path.join(os.path.dirname('__file__'), '..', 'data', 'eb1_icon_64.png')
+            icon_filename = os.path.join(os.path.dirname(__file__), 'data', 'eb1_icon_64.png')
         hbox.pack_start(gtk.image_new_from_file(icon_filename), False, False)
         hbox.pack_start(label, False, False)
         align = gtk.Alignment(0, 0, 1, 1)
