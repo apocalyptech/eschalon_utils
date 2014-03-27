@@ -147,8 +147,17 @@ class ImageSelWindow(gtk.Window):
         self.eventbox.add(self.image)
 
         self.connect('delete-event', self.delete_event)
+        self.connect('key-release-event', self.key_release_event)
 
         vbox.show_all()
+
+    def key_release_event(self, widget, event):
+        """
+        What to do when the user presses a key.  We're mostly
+        looking for 'esc' so we can exit.
+        """
+        if gtk.gdk.keyval_name(event.keyval) == 'Escape':
+            self.delete_event(None, None)
 
     def delete_event(self, widget, event):
         self.hide()

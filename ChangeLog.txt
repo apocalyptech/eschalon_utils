@@ -4,6 +4,7 @@
 
    26 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    Fix some Windows path detection issues for the preferences file
+   Esc will now close image selection dialogs as advertised
 
    24-25 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
    "Smart" loading dialogs which understand map/character names
