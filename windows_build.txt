@@ -23,6 +23,8 @@ Manual Process:
 
     3) Copy everything from inside build/exe.win32-2.6 to dist/
        (which is where win-setup.py put some .exe and .zip files)
+       Be sure to do so recursively, or you'll miss out on having
+       a nicer-looking gtk+ theme.
 
     4) Copy data/ to dist/
 

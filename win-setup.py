@@ -19,6 +19,12 @@ excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
 packages = []
 path = []
 
+# These will give us a nice-looking gtk+ theme on the Windows side
+include_files = [
+        ('win32support/gtkrc', 'etc/gtk-2.0/gtkrc'),
+        ('win32support/libclearlooks.dll', 'lib/gtk-2.0/2.10.0/engines/libclearlooks.dll'),
+    ]
+
 # This is a place where the user custom code may go. You can do almost
 # whatever you want, even modify the data_files, includes and friends
 # here as long as they have the same variable name that the setup call
@@ -130,7 +136,8 @@ setup(
     options = {"build_exe": {"includes": includes,
                              "excludes": excludes,
                              "packages": packages,
-                             "path": path
+                             "path": path,
+                             "include_files": include_files,
                              }
                },
                            
