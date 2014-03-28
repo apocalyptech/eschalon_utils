@@ -1103,8 +1103,10 @@ class SmartDraw(object):
         """
         if book == 1:
             return B1SmartDraw()
-        else:
+        elif book == 2:
             return B2SmartDraw()
+        else:
+            return B3SmartDraw()
 
 class B1SmartDraw(SmartDraw):
     """
@@ -2061,24 +2063,539 @@ class B2SmartDraw(SmartDraw):
 
         # Large Graphics
         self.premade_objects.add_category('Large Graphics')
-        for (wall, name, image) in [
-                (1, 'Hammerlorne Tower', 'hammerlorne.png'),
-                (1, 'Wagon', 'wagon.png'),
-                (None, 'Docked Ship #1', 'docked_ship_1.png'),
-                (None, 'Docked Ship #2', 'corsair.png'),
-                (None, 'Shipwreck', 'sunk_boat.png'),
-                (5, 'Draco Skeleton', 'draco.png'),
-                (1, 'Taurax Statue', 'taurax_statue.png'),
-                (1, 'Stone Head Doorway', 'head_dun.png'),
-                ]:
-            obj = self.premade_objects.new(name)
-            if wall is not None:
-                obj.set_wall(wall)
+        for big_gfx in c.big_gfx_list:
+            obj = self.premade_objects.new(big_gfx.name)
+            if big_gfx.barrier is not None:
+                obj.set_wall(big_gfx.barrier)
             obj.set_wallimg(1000)
             obj.set_tilecontent(21)
             obj.create_tilecontentobj(None)
             obj.tilecontent.description = 'Big Graphic Object #0'
-            obj.tilecontent.extratext = image
+            obj.tilecontent.extratext = big_gfx.image
+
+        # Light Sources
+        self.premade_objects.add_category('Light Sources')
+        for (id, name) in c.tilecontenttypetable.items():
+            if name[:13] == 'Light Source ':
+                obj = self.premade_objects.new(name)
+                obj.set_tilecontent(id)
+                obj.create_tilecontentobj(None)
+
+        # Sound Generators
+        self.premade_objects.add_category('Sound Generators')
+        for (id, name) in c.tilecontenttypetable.items():
+            if name[:16] == 'Sound Generator ':
+                obj = self.premade_objects.new(name)
+                obj.set_tilecontent(id)
+                obj.create_tilecontentobj(None)
+
+        # TODO: code duplication from the main setup screen routine
+        monsters = {}
+        npcs = {}
+        for (key, item) in c.entitytable.iteritems():
+            if item.friendly == 0:
+                table = monsters
+            else:
+                table = npcs
+            table[item.name] = key
+        npckeys = npcs.keys()
+        npckeys.sort()
+
+        # Enemies
+        for (name, table) in [
+                ('Enemies', monsters),
+                ('NPCs', npcs)
+                ]:
+            self.premade_objects.add_category(name)
+            for name in sorted(table.keys()):
+                obj = self.premade_objects.new(name)
+                ent = obj.create_entity()
+                entid = table[name]
+                ent_entry = c.entitytable[entid]
+                ent.entid = entid
+                ent.direction = 1
+                ent.friendly = ent_entry.friendly
+                ent.health = ent_entry.health
+                ent.movement = ent_entry.movement
+                ent.entscript = ent_entry.entscript
+
+class B3SmartDraw(B2SmartDraw):
+    """
+    SmartDraw for Book 3.  This is mostly a copy of Book 2, but I don't think it's
+    worth trying to figure out a (heh) Smart way to override, etc.  Changes to
+    these kinds of things are unlikely to want to transfer to other books.
+    """
+
+    book = 3
+
+    def init_vars(self):
+
+        # Various lists to keep track of which objects should be walls
+        # Note that water tiles in Book 2 are automatically made seethrough-wall
+        # by the engine, so we don't have to specify them here.
+        self.wall_list = {}
+        self.wall_list['floor_seethrough'] = []
+        self.wall_list['decal_blocked'] = [134, 150, 151, 152]
+        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
+            range(170, 174) + range(185, 191) + range(202, 206))
+        self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 81, 82, 83, 86, 116, 164] +
+            range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
+            range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 379) +
+            range(381, 384) + range(384, 394) + [402, 403, 406] + range(251, 256) + [414])
+        self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
+            range(44, 57) + [58] + range(61, 69) + range(71, 81) + [84, 85] +
+            range(87, 97) + range(99, 113) + range(117, 119) +
+            range(121, 129) + [130, 132] + range(134, 164) + range(165, 169) +
+            [270, 271] + range(315, 320) + [333] + range(346, 352) +
+            [364, 365, 367, 381, 394, 395] + range(398, 402) +
+            range(404, 410) + [412, 413, 415])
+        self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
+        self.wall_list['wall_restrict'] = ([120] + range(298, 304) + [332, 379, 380, 396, 397, 410])
+
+        # Hardcoded Graphics info
+        self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
+        self.fenceids = [47, 48, 61, 62, 63, 64]
+        self.bigfencestarts = [286]
+        self.bigfence2starts = [362, 364, 382]
+        self.special = 301
+        self.tilesets = {
+                self.IDX_GRASS: [1, 2, 3, 4],
+                self.IDX_SAND: [20],
+                self.IDX_SNOW: [81, 82, 83, 84],
+                self.IDX_LAVA: [109]
+            }
+        self.random_terrain = [
+                [1, 2, 3, 4],      # Regular Grass
+                [5, 6, 7, 8],      # Dried-up Grass
+                [13, 14, 15, 16],  # Dark Grass
+                [21, 22, 23],      # Cracked Clay/Mud
+                [31, 32],          # Mossy Cobbles
+                [81, 82, 83, 84],  # Snow
+            ]
+        self.random_decal = [
+                [87, 103, 104],    # Rubble
+                [108, 124],        # Large Rubble
+                [13, 14, 15, 16],  # Dark Rubble
+                [97, 98, 99],      # Smudges
+                range(113, 120),   # Bloodstains, small-to-med
+                [120, 121],        # Bloodstains, large
+                [122, 123],        # Slime?
+                [106, 107],        # Starfish
+                [181, 182, 213],   # Smashed somethingorother
+                [167, 168, 184, 199, 200], # More smashed objects
+                [153, 169],        # Strewn papers
+                range(209, 213),   # Brown smudge
+                [214, 215],        # Smashed Boards
+                [241, 242, 243],   # Cracks
+                [72, 88],          # Hay/Straw
+                [225, 226, 227],   # Mushrooms
+            ]
+        self.random_obj = [
+                [33, 34],             # Smashed tables
+                [44, 45, 46],         # Smashed chairs
+                [49, 50],             # Smashed furniture
+                [147, 148],           # Tree Trunks
+                [97, 114, 115, 133],  # Swampy plants
+                [98, 113, 116, 132],  # Bushes
+                [129, 130, 131],      # Different sort of bushes
+                [378, 379],           # Short rocks
+                [394, 395],           # Short black rocks
+                [251, 252, 253, 255], # Tall Trees
+            ]
+        self.random_walldecal = [
+                [33, 37, 39],   # Wall shadows/smudges (SW->NE)
+                [34, 38, 40],   # Wall shadows/smudges (NW->SE)
+                [21, 22],       # Cracks (NW->SE)
+                [23, 24]        # Cracks (SW->NE)
+            ]
+        self.water = [ 113 ]
+
+        # Wall Indexes
+        self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 0, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, 1, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 2, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, 3, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 4, self.DIR_NE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 5, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_WALL, 6, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 7, self.DIR_NE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 8, self.DIR_NE|self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_WALL, 9, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+
+        # Fence Indexes
+        self.add_index(self.IDX_FENCE, 0, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 1, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 14, self.DIR_SE|self.DIR_NE)
+        self.add_index(self.IDX_FENCE, 15, self.DIR_SW|self.DIR_SE)
+        self.add_index(self.IDX_FENCE, 16, self.DIR_NE|self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 17, self.DIR_NW|self.DIR_SW)
+
+        # "Big" fence Indexes
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
+
+        # "Big" fence Indexes (the other direction)
+        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW|self.DIR_SE)
+
+        # Grass Indexes
+        self.add_index(self.IDX_GRASS, 1, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 2, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 3, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 4, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 5, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 6, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 17, self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 18, self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 19, self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 20, self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 33, self.DIR_S|self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 34, self.DIR_N|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 35, self.DIR_W|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 36, self.DIR_E|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 37, self.DIR_N|self.DIR_S)
+        self.add_index(self.IDX_GRASS, 49, self.DIR_N)
+        self.add_index(self.IDX_GRASS, 50, self.DIR_E)
+        self.add_index(self.IDX_GRASS, 51, self.DIR_S)
+        self.add_index(self.IDX_GRASS, 52, self.DIR_W)
+        self.add_index(self.IDX_GRASS, 53, self.DIR_W|self.DIR_E)
+        self.add_index(self.IDX_GRASS, 65, self.DIR_W|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 66, self.DIR_S|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 67, self.DIR_E|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 68, self.DIR_N|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 81, self.DIR_N|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 82, self.DIR_W|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 83, self.DIR_E|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 84, self.DIR_S|self.DIR_NW)
+
+        # Note that these given our current algorithms, will probably never be chosen
+        self.add_index(self.IDX_GRASS, 21, self.DIR_N|self.DIR_E|self.DIR_S|self.DIR_W)
+        self.add_index(self.IDX_GRASS, 22, self.DIR_N|self.DIR_W)
+        self.add_index(self.IDX_GRASS, 38, self.DIR_S|self.DIR_E)
+        self.add_index(self.IDX_GRASS, 54, self.DIR_N|self.DIR_E)
+        self.add_index(self.IDX_GRASS, 69, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 70, self.DIR_W|self.DIR_S)
+        self.add_index(self.IDX_GRASS, 71, self.DIR_SW|self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 85, self.DIR_NW|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 86, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+
+        # Sand Indexes
+        self.add_index(self.IDX_SAND, 129, self.DIR_NW)
+        self.add_index(self.IDX_SAND, 130, self.DIR_NE)
+        self.add_index(self.IDX_SAND, 131, self.DIR_SE)
+        self.add_index(self.IDX_SAND, 132, self.DIR_SW)
+        self.add_index(self.IDX_SAND, 133, self.DIR_SE|self.DIR_NW)
+        self.add_index(self.IDX_SAND, 145, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_SAND, 146, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_SAND, 147, self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 148, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_SAND, 149, self.DIR_NE|self.DIR_SW)
+
+        # Snow Indexes
+        self.add_index(self.IDX_SNOW, 230, self.DIR_NW)
+        self.add_index(self.IDX_SNOW, 231, self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 232, self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 233, self.DIR_SW)
+        self.add_index(self.IDX_SNOW, 234, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 246, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_SNOW, 247, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 248, self.DIR_SW|self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 249, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 250, self.DIR_SW|self.DIR_NE)
+
+        # Lava Indexes
+        self.add_index(self.IDX_LAVA, 219, self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 220, self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 221, self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 222, self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 223, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 235, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 236, self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 237, self.DIR_SW|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 238, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 239, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 252, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 253, self.DIR_SW|self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 254, self.DIR_NW|self.DIR_NE|self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 255, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+
+        # Pool to randomly choose from if we're completely surrounded
+        self.tile_fullest = {
+                self.IDX_GRASS: [69, 71, 85, 86],
+                self.IDX_SAND: [133, 149],
+                self.IDX_SNOW: [234, 250],
+                self.IDX_LAVA: [252, 253, 254, 255],
+            }
+
+        # Beach indexes (these are floor tiles, not decals - the directions
+        # specified here are the direction that the SAND is in, not the
+        # water.  Or to put it another way, these tiles are considered
+        # water which happen to bleed into sand a bit.
+        self.add_beach_index(114, self.DIR_NW|self.DIR_SW)
+        self.add_beach_index(115, self.DIR_NW|self.DIR_NE)
+        self.add_beach_index(116, self.DIR_NE|self.DIR_SE)
+        self.add_beach_index(117, self.DIR_SW|self.DIR_SE)
+        self.add_beach_index(121, self.DIR_E)
+        self.add_beach_index(122, self.DIR_S)
+        self.add_beach_index(123, self.DIR_W)
+        self.add_beach_index(124, self.DIR_N)
+        self.add_beach_index(125, self.DIR_NW)
+        self.add_beach_index(126, self.DIR_NE)
+        self.add_beach_index(127, self.DIR_SE)
+        self.add_beach_index(128, self.DIR_SW)
+        self.add_beach_index(13, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
+
+        # Now smart Complex Objects
+        self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
+
+        ycarpet1 = ComplexObj('Yellow Carpet (1)', 35)
+        self.complex_obj_floor.add(ycarpet1)
+        ycarpet1.add(self.DIR_NE, 33)
+
+        ycarpet2 = ComplexObj('Yellow Carpet (2)', 34)
+        self.complex_obj_floor.add(ycarpet2)
+        ycarpet2.add(self.DIR_NW, 36)
+
+        rcarpet = ComplexObj('Large Red Carpet', 37)
+        self.complex_obj_floor.add(rcarpet)
+        rcarpet.add(self.DIR_SE, 38)
+        rcarpet.add(self.DIR_SW, 39)
+        rcarpet.add(self.DIR_NW, 40)
+
+        rcarpet2 = ComplexObj('Small Red Carpet (1)', 41)
+        self.complex_obj_floor.add(rcarpet2)
+        rcarpet2.add(self.DIR_SW, 43)
+
+        rcarpet3 = ComplexObj('Small Red Carpet (2)', 42)
+        self.complex_obj_floor.add(rcarpet3)
+        rcarpet3.add(self.DIR_NW, 44)
+
+        self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
+        
+        bed_ne = ComplexObj('Bed (NE/SW)', 1, 1)
+        self.complex_obj_wall.add(bed_ne)
+        bed_ne.add(self.DIR_NE, 2)
+
+        bed_nw = ComplexObj('Bed (NW/SE)', 3, 1)
+        self.complex_obj_wall.add(bed_nw)
+        bed_nw.add(self.DIR_SE, 4)
+
+        sickbed = ComplexObj('Sickbed', 122, 1)
+        self.complex_obj_wall.add(sickbed)
+        sickbed.add(self.DIR_SE, 123)
+
+        tent_nw = ComplexObj('Tent (NW/SE)', 83, 1)
+        self.complex_obj_wall.add(tent_nw)
+        tent_nw.add(self.DIR_E, 84)
+
+        tent_ne = ComplexObj('Tent (NE/SW)', 85, 1)
+        self.complex_obj_wall.add(tent_ne)
+        tent_ne.add(self.DIR_E, 86)
+
+        self.complex_obj_decal = ComplexObjCollection(self.REV_DIR, 'decalimg')
+
+        stairs_ne = ComplexObj('Stairs (NE/SW)', 134, 5)
+        self.complex_obj_decal.add(stairs_ne)
+        stairs_ne.add(self.DIR_SW, 150)
+
+        stairs_ne = ComplexObj('Stairs (NW/SE)', 151, 5)
+        self.complex_obj_decal.add(stairs_ne)
+        stairs_ne.add(self.DIR_SE, 152)
+
+        # Now premade objects
+        self.premade_objects = PremadeObjectCollection()
+
+    def create_premade_objects(self):
+        """
+        We don't do this in __init__ because we want to load entities into here,
+        and those don't get load until we've already got a smartdraw object.
+        """
+
+        # Doors!
+        self.premade_objects.add_category('Doors')
+        for (start, desc, text, cond) in [
+                (266, 'Wooden', 'a wooden door.', 550),
+                (282, 'Banded', 'a heavy, reinforced door.', 1100)
+                ]:
+            cur = start
+            for (walldecal, dir, framedir, framedecal) in [
+                    (19, '/', self.DIR_NE, 35),
+                    (20, '\\', self.DIR_NW, 36)
+                    ]:
+                for (state, wall, statenum) in [
+                        ('Closed', 1, 1),
+                        ('Open', 0, 2)
+                        ]:
+                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
+                    obj.set_wall(wall)
+                    obj.set_wallimg(cur)
+                    obj.set_walldecalimg(walldecal)
+                    obj.set_tilecontent(5)
+                    obj.create_tilecontentobj('random')
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.cur_condition = cond
+                    obj.tilecontent.max_condition = cond
+                    if statenum == 1:
+                        obj.use_trap()
+                        obj.use_lock()
+                    rel = obj.add_rel_tile(framedir)
+                    rel.set_walldecalimg(framedecal)
+                    cur += 1
+
+        # Cabinets / Chests
+        for (cat, start, desc, text, cond, contents) in [
+                ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
+                (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
+                ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'random'),
+                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
+                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
+                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'empty'),
+                ]:
+            if cat is not None:
+                self.premade_objects.add_category(cat)
+            cur = start
+            for dir in [ '\\', '/' ]:
+                for (state, statenum) in [
+                        ('Closed', 1),
+                        ('Open', 2)
+                        ]:
+                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
+                    obj.set_wall(5)
+                    obj.set_wallimg(cur)
+                    obj.set_tilecontent(2)
+                    obj.create_tilecontentobj(contents)
+                    obj.tilecontent.description = text
+                    obj.tilecontent.state = statenum
+                    obj.tilecontent.cur_condition = cond
+                    obj.tilecontent.max_condition = cond
+                    obj.use_loot()
+                    if statenum == 1:
+                        obj.use_trap()
+                        obj.use_lock()
+                    cur += 1
+
+        # Still in the "other containers" cat
+        obj = self.premade_objects.new('Open Barrel')
+        obj.set_wall(5)
+        obj.set_wallimg(13)
+        obj.set_tilecontent(1)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a sturdy oaken barrel.'
+        obj.tilecontent.cur_condition = 80
+        obj.tilecontent.max_condition = 80
+        obj.use_loot()
+
+        obj = self.premade_objects.new('Sealed Barrel')
+        obj.set_wall(5)
+        obj.set_wallimg(14)
+        obj.set_tilecontent(11)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a sturdy oak sealed barrel.'
+        obj.tilecontent.cur_condition = 90
+        obj.tilecontent.max_condition = 90
+        obj.use_loot()
+
+        # Signs
+        self.premade_objects.add_category('Signs')
+        for (name, wallimg, text) in [
+                ('Signpost SE', 316, 'a signpost.'),
+                ('Signpost SW', 317, 'a signpost.'),
+                ('Signpost NW', 318, 'a signpost.'),
+                ('Signpost NE', 319, 'a signpost.'),
+                ('Roadsign', 399, 'a roadsign.'),
+                ('Headstone \\', 108, 'a granite headstone.'),
+                ('Headstone /', 109, 'a granite headstone.'),
+                ('Monument', 110, 'a tall, marble grave monument.'),
+                ('Gravestone \\', 111, 'a simple stone grave marker.'),
+                ('Gravestone /', 112, 'a simple stone grave marker.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_wall(5)
+            obj.set_wallimg(wallimg)
+            obj.set_tilecontent(10)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description=text
+        for (name, walldecalimg, text) in [
+                ('Plaque /', 61, 'a plaque affixed to the wall.'),
+                ('Plaque \\', 62, 'a plaque affixed to the wall.'),
+                ('Painting 1 /', 14, 'a painting.'),
+                ('Painting 2 /', 15, 'a painting.'),
+                ('Painting 3 /', 16, 'a painting.'),
+                ('Painting 1 \\', 30, 'a painting.'),
+                ('Painting 2 \\', 30, 'a painting.'),
+                ('Painting 3 \\', 30, 'a painting.'),
+                ]:
+            obj = self.premade_objects.new(name)
+            obj.set_walldecalimg(walldecalimg)
+            obj.set_tilecontent(9)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description=text
+
+        # Misc items
+        self.premade_objects.add_category('Misc Items')
+
+        obj = self.premade_objects.new('Powder Keg')
+        obj.set_wall(5)
+        obj.set_wallimg(32)
+        obj.set_tilecontent(15)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a keg of black powder.'
+        obj.tilecontent.cur_condition = 5
+        obj.tilecontent.max_condition = 5
+
+        obj = self.premade_objects.new('Well')
+        obj.set_wall(1)
+        obj.set_wallimg(57)
+        obj.set_tilecontent(16)
+        obj.create_tilecontentobj()
+        obj.tilecontent.description = 'a well.'
+
+        for (id, dir) in [(39, '\\'), (40, '/')]:
+            obj = self.premade_objects.new('Archery Target %s' % (dir))
+            obj.set_wall(1)
+            obj.set_wallimg(id)
+            obj.set_tilecontent(17)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description = 'a target.'
+
+        for (id, dir) in [(2, '/'), (4, '\\')]:
+            obj = self.premade_objects.new('Sconce %s' % (dir))
+            obj.set_walldecalimg(id)
+            obj.set_tilecontent(12)
+            obj.create_tilecontentobj()
+            obj.tilecontent.description = 'a sconce.'
+
+        # Levers
+        cur = 65
+        for dir in ['\\', '/']:
+            for (text, toggle) in [('Up', 4), ('Toggled', 5)]:
+                obj = self.premade_objects.new('Lever (%s) %s' % (text, dir))
+                obj.set_wall(5)
+                obj.set_wallimg(cur)
+                obj.set_tilecontent(7)
+                obj.create_tilecontentobj()
+                obj.tilecontent.description = 'a wooden lever.'
+                obj.tilecontent.state = toggle
+                obj.tilecontent.script = 'toggle_switch'
+                cur += 1
+        
+        # Zapper
+        obj = self.premade_objects.new('Zapper')
+        obj.set_tilecontent(19)
+
+        # Large Graphics
+        self.premade_objects.add_category('Large Graphics')
+        for big_gfx in c.big_gfx_list:
+            obj = self.premade_objects.new(big_gfx.name)
+            if big_gfx.barrier is not None:
+                obj.set_wall(big_gfx.barrier)
+            obj.set_wallimg(1000)
+            obj.set_tilecontent(21)
+            obj.create_tilecontentobj(None)
+            obj.tilecontent.description = 'Big Graphic Object #0'
+            obj.tilecontent.extratext = big_gfx.image
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')

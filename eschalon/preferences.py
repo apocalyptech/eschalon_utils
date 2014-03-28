@@ -67,7 +67,7 @@ class Prefs(object):
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
-        for vars in [('mapgui', 'warn_global_map'), ('mapgui', 'warn_slow_zip')]:
+        for vars in [('mapgui', 'warn_slow_zip')]:
             self.set_bool(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
@@ -116,8 +116,6 @@ class Prefs(object):
         if (cat == 'mapgui'):
             if (name == 'default_zoom'):
                 return 4
-            elif (name == 'warn_global_map'):
-                return 'True'
             elif (name == 'warn_slow_zip'):
                 return 'True'
         return None
@@ -207,45 +205,43 @@ class Prefs(object):
             os.mkdir(dir)
         return os.path.join(dir, 'config.ini')
 
-    # Should probably review and conform to http://msdn.microsoft.com/en-us/library/ms811696.aspx
     def win32_prefsfile(self):
         """ Default prefsfile on Windows """
 
-        # First, where it Should be
-        appdir = os.path.join(os.path.expanduser('~'), 'Local Settings', 'Application Data')
-        if (os.path.isdir(appdir)):
-            return self.win32_prefsfile_final(appdir)
+        # First, use %LOCALAPPDATA% like we should be doing.
+        if 'LOCALAPPDATA' in os.environ:
+            appdir = os.environ['LOCALAPPDATA']
+            if (os.path.isdir(appdir)):
+                return self.win32_prefsfile_final(appdir)
 
-        # If "Local Settings" isn't available for some reason, just put it in Application Data
-        appdir = os.path.join(os.path.expanduser('~'), 'Application Data')
-        if (os.path.isdir(appdir)):
-            return self.win32_prefsfile_final(appdir)
+        # ... and if not, loop through various options.  I'm having a hard
+        # time coming up with a scenario where the above call would fail but
+        # the ones below would work, but I feel compelled to try.
+        user_dir_names = [os.path.expanduser('~')]
+        if 'USERPROFILE' in os.environ:
+            user_dir_names.append(os.environ['USERPROFILE'])
 
-        # When logged in as Administrator on some boxes, expanduser() doesn't work
-        # properly (at least on win2k, on Python 2.5).  Check USERPROFILE and try from there.
-        if ('USERPROFILE' in os.environ):
-            if (os.path.isdir(os.environ['USERPROFILE'])):
-                appdir = os.path.join(os.environ['USERPROFILE'], 'Local Settings', 'Application Data')
+        # This loop will check various combinations which Shouldn't work.
+        # But then again, we're already jumping into strange waters by
+        # getting here in the first place, so let's be thorough.
+        for user_dir_name in user_dir_names:
+
+            # "Application Data" should be 2000, XP, 2003
+            # "AppData" should be Vista, 7, 8
+            for app_dir_name in ['Application Data', 'AppData']:
+
+                # This one should work for 2000, XP, 2003
+                appdir = os.path.join(user_dir_name, 'Local Settings', app_dir_name)
                 if (os.path.isdir(appdir)):
                     return self.win32_prefsfile_final(appdir)
 
-                appdir = os.path.join(os.environ['USERPROFILE'], 'Application Data')
+                # This one should work for Vista, 7, 8
+                appdir = os.path.join(user_dir_name, app_dir_name, 'Local')
                 if (os.path.isdir(appdir)):
                     return self.win32_prefsfile_final(appdir)
 
-        # If that didn't work out, grab our username and try that,
-        if ('USERNAME' in os.environ):
-            if ('HOMEDRIVE' in os.environ):
-                drive = os.environ['HOMEDRIVE']
-            else:
-                drive = 'C:'
-            constdir = os.path.join(drive, 'Documents and Settings', os.environ['USERNAME'])
-            if (os.path.isdir(constdir)):
-                appdir = os.path.join(constdir, 'Local Settings', 'Application Data')
-                if (os.path.isdir(appdir)):
-                    return self.win32_prefsfile_final(appdir)
-
-                appdir = os.path.join(constdir, 'Application Data')
+                # This one?  Who knows.  Seems like a good thing to try?
+                appdir = os.path.join(user_dir_name, app_dir_name)
                 if (os.path.isdir(appdir)):
                     return self.win32_prefsfile_final(appdir)
 

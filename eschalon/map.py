@@ -323,42 +323,14 @@ class Map(object):
             if ascii < 32 or ascii > 126:
                 return False
         return True
-        
+
     @staticmethod
-    def load(filename, book=None, req_book=None):
+    def new(filename, book):
         """
-        Static method to load a map file.  This will open the file once
-        and read in a bit of data to determine whether this is a Book 1 map file
-        or a Book 1 map file, and then call the appropriate constructor and
-        return the object.
+        Sets up a new, blank Map object with the given book.  Will raise a
+        LoadException if we're passed a book we don't know about.
         """
         df = Savefile(filename)
-
-        # Book 1 files start with 10 strings, Book 2 with 9, and Book 3 with
-        # more.  To see what kind of file we have, read 11 strings and check
-        # whether the last two are ASCII-only
-        if book is None:
-            try:
-                df.open_r()
-                strings = []
-                for i in range(11):
-                    strings.append(df.readstr())
-                df.close()
-            except (IOError, struct.error), e:
-                raise LoadException(str(e))
-
-            if not Map.is_ascii(strings[9]):
-                book = 2
-            elif not Map.is_ascii(strings[10]):
-                book = 1
-            else:
-                book = 3
-
-        # See if we're required to conform to a specific book
-        if (req_book is not None and book != req_book):
-            raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (req_book, book))
-
-        # Now actually return the object
         if book == 1:
             c.switch_to_book(1)
             return B1Map(df)
@@ -368,6 +340,91 @@ class Map(object):
         elif book == 3:
             c.switch_to_book(3)
             return B3Map(df)
+        else:
+            raise LoadException('Unknown book version specified: %d' % (book))
+
+    @staticmethod
+    def get_mapinfo(filename):
+        """
+        Given a filename, loads the first few bits of information from a map
+        file, and will return a tuple containing the Eschalon Book the map
+        belongs to, the internal "map name" of the map, and a Savefile object
+        pointing to the map.  Will raise a LoadException if it encounters errors.
+
+        Book 1 files start with 10 strings
+        Book 2 files start with 9 strings, followed by a uchar whose value
+          will always be 1 (the "loadhook" var, presumably)
+        Book 3 files start with 12 strings, the first of which is a version,
+          which so far is always 0.992.
+        
+        So, to figure out dynamically what kind of file we're loading:
+          1) Read 9 strings, remember the first one
+          2) Read the next uchar - if it's 1, then we're editing Book 2
+          3) If the first string is "0.992", then we're editing Book 3
+          4) Otherwise, we're editing Book 1
+        
+        Theoretically, that way this works even if a Book 2 map happens
+        to use a mapname of 0.992, in an effort to be cheeky.
+        """
+        df = Savefile(filename)
+        stringlist = []
+        try:
+            df.open_r()
+            for i in range(9):
+                stringlist.append(df.readstr())
+            nextbyte = df.readuchar()
+            df.close()
+        except (IOError, struct.error), e:
+            raise LoadException(str(e))
+
+        if nextbyte == 1:
+            detected_book = 2
+            detected_mapname = stringlist[0]
+        elif stringlist[0] == '0.992':
+            detected_book = 3
+            detected_mapname = stringlist[1]
+        else:
+            detected_book = 1
+            detected_mapname = stringlist[1]
+
+        return (detected_book, detected_mapname, df)
+        
+    @staticmethod
+    def load(filename, req_book=None):
+        """
+        Static method to load a map file.  This will open the file once
+        and read in a bit of data to determine which Eschalon game the mapfile
+        comes from, and calls the appropriate constructor to return the object.
+        If req_book is passed in, it will raise a LoadException if the detected
+        Book number doesn't match.  This will also raise a LoadException if
+        it's unable to determine the version (generally due to being passed
+        something that's not a map file).
+
+        Note that this method does not actually read in the entire map file.
+        It does "preload" the map name, however, so that it can be easily
+        referenced in lists.  Use .read() on the resulting map object to actually
+        read in the map data.
+        """
+
+        # Get some information about the filename
+        (detected_book, detected_mapname, df) = Map.get_mapinfo(filename)
+
+        # See if we're required to conform to a specific book
+        if (req_book is not None and detected_book != req_book):
+            raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (req_book, detected_book))
+
+        # Now actually return the object
+        if detected_book == 1:
+            c.switch_to_book(1)
+            return B1Map(df)
+        elif detected_book == 2:
+            c.switch_to_book(2)
+            return B2Map(df)
+        elif detected_book == 3:
+            c.switch_to_book(3)
+            return B3Map(df)
+        else:
+            raise LoadException('Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
 
 class B1Map(Map):
     """

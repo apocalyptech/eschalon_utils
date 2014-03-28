@@ -1,2 +1,6 @@
 ignore
 *.pyc
+*.swp
+Output
+dist
+build

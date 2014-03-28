@@ -147,8 +147,17 @@ class ImageSelWindow(gtk.Window):
         self.eventbox.add(self.image)
 
         self.connect('delete-event', self.delete_event)
+        self.connect('key-release-event', self.key_release_event)
 
         vbox.show_all()
+
+    def key_release_event(self, widget, event):
+        """
+        What to do when the user presses a key.  We're mostly
+        looking for 'esc' so we can exit.
+        """
+        if gtk.gdk.keyval_name(event.keyval) == 'Escape':
+            self.delete_event(None, None)
 
     def delete_event(self, widget, event):
         self.hide()
@@ -205,6 +214,13 @@ class BaseGUI(object):
         # Stores the vanilla labels which "should" be in place for an unmodified
         # variable.
         self.labelcache = {}
+
+        # We use this boolean to keep track of when we're showing the item
+        # window.  We're doing this so that we can have set_item_quantity_nonzero
+        # not change things while the window's rendering the first time, which
+        # could otherwise result in values being changed without the user's
+        # knowledge.
+        self.itemwindow_loading = False
 
         # Find out if we have NumPy installed.  There's a bug in pygtk (or,
         # at least, a bug SOMEWHERE) where if numpy isn't installed, a call
@@ -469,6 +485,11 @@ class BaseGUI(object):
             label.show()
             align.add(label)
 
+            align = self.get_widget('quantity_align_b23')
+            label = WrapLabel('<i>(This value should always be greater than zero)</i>')
+            label.show()
+            align.add(label)
+
         ###
         ### Fix some tooltips
         ###
@@ -659,7 +680,6 @@ class BaseGUI(object):
             gui_gamedir.set_current_folder(cur_gamedir)
         if cur_savegamedir != '':
             gui_savegamedir.set_current_folder(cur_savegamedir)
-        self.prefs_warn_global.set_active(self.prefsobj.get_bool('mapgui', 'warn_global_map'))
         self.prefs_warn_slowzip.set_active(self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
         #self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
@@ -667,7 +687,6 @@ class BaseGUI(object):
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
             self.prefsobj.set_int('mapgui', 'default_zoom', int(self.prefs_default_zoom.get_value()))
-            self.prefsobj.set_bool('mapgui', 'warn_global_map', self.prefs_warn_global.get_active())
             self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
 
             # Save our new game directory.  We actually only want to save under two conditions:
@@ -797,7 +816,7 @@ class BaseGUI(object):
         requiring the user to set it every time would be annoying.  This will set the quantity
         to 1 if we're passed an item object with a quantity of zero.
         """
-        if c.book > 1 and item.quantity == 0:
+        if not self.itemwindow_loading and c.book > 1 and item.quantity == 0:
             self.get_widget('quantity').set_value(1)
 
     def on_dropdown_changed(self, widget):
@@ -950,6 +969,9 @@ class BaseGUI(object):
     def populate_itemform_from_item(self, item):
         """ Populates the Item GUI from the given object. """
 
+        # Specify that we're loading, to prevent some signals from being sent
+        self.itemwindow_loading = True
+
         self.get_widget('item_name').set_text(item.item_name)
         self.get_widget('category').set_active(item.category)
         self.get_widget('subcategory').set_active(item.subcategory)
@@ -1056,6 +1078,9 @@ class BaseGUI(object):
         for val in b2modifiervals:
             self.on_b2_bonus_changed(self.get_widget(val))
         self.on_singleval_changed_int_itempic(self.get_widget('pictureid'))
+
+        # Now specify that we're not loading
+        self.itemwindow_loading = False
 
     def gui_item_label(self, label, name):
         """ Generate a Label for an inventory item. """

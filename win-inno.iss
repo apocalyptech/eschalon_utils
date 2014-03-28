@@ -29,6 +29,7 @@ Source: "C:\InstPrograms\eschalon_utils\dist\*"; DestDir: {app}; Flags: ignoreve
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
+Name: "{group}\Eschalon Editor Launcher"; Filename: "{app}\eschalon_utils.exe"
 Name: "{group}\Book 1 Character Editor"; Filename: "{app}\eschalon_b1_char.exe"
 Name: "{group}\Book 1 Map Editor"; Filename: "{app}\eschalon_b1_map.exe"
 Name: "{group}\Book 2 Character Editor"; Filename: "{app}\eschalon_b2_char.exe"
@@ -38,6 +39,6 @@ Name: "{group}\Book 3 Map Editor"; Filename: "{app}\eschalon_b3_map.exe"
 Name: "{group}\Uninstall Eschalon Utilities"; Filename: "{uninstallexe}"
 
 [Run]
-Filename: "{app}\eschalon_b1_char.exe"; Description: "{cm:LaunchProgram,Eschalon Book I Character Editor}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\eschalon_utils.exe"; Description: "{cm:LaunchProgram,Eschalon Utilities}"; Flags: nowait postinstall skipifsilent
 
 

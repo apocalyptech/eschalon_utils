@@ -19,6 +19,12 @@ excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
 packages = []
 path = []
 
+# These will give us a nice-looking gtk+ theme on the Windows side
+include_files = [
+        ('win32support/gtkrc', 'etc/gtk-2.0/gtkrc'),
+        ('win32support/libclearlooks.dll', 'lib/gtk-2.0/2.10.0/engines/libclearlooks.dll'),
+    ]
+
 # This is a place where the user custom code may go. You can do almost
 # whatever you want, even modify the data_files, includes and friends
 # here as long as they have the same variable name that the setup call
@@ -115,6 +121,20 @@ GUI2Exe_Target_6 = Executable(
     icon = None
     )
 
+GUI2Exe_Target_7 = Executable(
+    # what to build
+    script = "eschalon_utils.py",
+    initScript = None,
+    base = None,
+    targetDir = r"dist",
+    targetName = "eschalon_utils.exe",
+    compress = True,
+    copyDependentFiles = False,
+    appendScriptToExe = False,
+    appendScriptToLibrary = False,
+    icon = None
+    )
+
 
 # That's serious now: we have all (or almost all) the options cx_Freeze
 # supports. I put them all even if some of them are usually defaulted
@@ -130,11 +150,20 @@ setup(
     options = {"build_exe": {"includes": includes,
                              "excludes": excludes,
                              "packages": packages,
-                             "path": path
+                             "path": path,
+                             "include_files": include_files,
                              }
                },
                            
-    executables = [GUI2Exe_Target_1, GUI2Exe_Target_2, GUI2Exe_Target_3, GUI2Exe_Target_4, GUI2Exe_Target_5, GUI2Exe_Target_6]
+    executables = [
+        GUI2Exe_Target_1,
+        GUI2Exe_Target_2,
+        GUI2Exe_Target_3,
+        GUI2Exe_Target_4,
+        GUI2Exe_Target_5,
+        GUI2Exe_Target_6,
+        GUI2Exe_Target_7,
+        ]
     )
 
 # This is a place where any post-compile code may go.

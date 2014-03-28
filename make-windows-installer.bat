@@ -7,7 +7,7 @@ rd /s /q Output
 echo Building exes
 win-setup.py build_exe
 echo "Setting up the distribution directory"
-copy build\exe.win32-2.7\*.* dist\
+xcopy build\exe.win32-2.7\* dist\ /E
 mkdir dist\data
 copy data\*.* dist\data\
 echo Compiling the installer

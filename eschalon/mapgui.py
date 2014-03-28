@@ -21,6 +21,7 @@
 import os
 import csv
 import sys
+import glob
 import time
 import random
 import traceback
@@ -31,6 +32,7 @@ from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item, B3Item
 from eschalon.entity import B1Entity, B2Entity, B3Entity
 from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
+from eschalon.saveslot import Saveslot
 
 # Load our GTK modules
 try:
@@ -66,15 +68,167 @@ from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 from eschalon import app_name, version, url, authors
 
-class NewMapDialog(gtk.Dialog):
-    def __init__(self):
-        super(NewMapDialog, self).__init__(
+class MapNewDialog(gtk.Dialog):
+    """
+    A simple dialog to ask a user whether to create a new Global
+    or Savegame map.
+    """
+
+    # "New" button values
+    NEW_GLOBAL = 0
+    NEW_SAVEGAME = 1
+
+    def __init__(self, transient=None):
+        """
+        Constructor to set up everything
+        """
+        super(MapNewDialog, self).__init__(
+                flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+
+        # Various defaults for the dialog
+        self.set_size_request(500, 150)
+        self.set_title('New Eschalon Book %d Map' % (c.book))
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        self.button_hit = None
+
+        # Main Title
+        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align.set_padding(20, 20, 15, 15)
+        label = gtk.Label()
+        label.set_markup('<big><b>Choose the type of map to create:</b></big>')
+        self.title_align.add(label)
+        self.vbox.pack_start(self.title_align, False, False)
+
+        # Buttons
+        self.new_global_button = gtk.Button('New Global Map')
+        self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_global_button.connect('clicked', self.new_global_clicked)
+
+        self.new_savegame_button = gtk.Button('New Savegame Map')
+        self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
+
+        self.bbox = gtk.HButtonBox()
+        self.bbox.add(self.new_global_button)
+        self.bbox.add(self.new_savegame_button)
+
+        self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+        self.bbalign.set_padding(0, 5, 5, 5)
+        self.bbalign.add(self.bbox)
+        self.vbox.pack_start(self.bbalign, False, False)
+
+        # Show everything
+        self.show_all()
+
+    def new_global_clicked(self, widget):
+        """
+        What to do when our New Global Map button is clicked.
+        """
+        self.button_hit = self.NEW_GLOBAL
+        self.response(gtk.RESPONSE_OK)
+
+    def new_savegame_clicked(self, widget):
+        """
+        What to do when our New Savegame Map button is clicked.
+        """
+        self.button_hit = self.NEW_SAVEGAME
+        self.response(gtk.RESPONSE_OK)
+
+    def get_savegame_flag(self):
+        """
+        If one of our "new" buttons has been pressed, this will return
+        True if it's supposed to be a savegame file, or False otherwise.
+        """
+        if self.button_hit is not None and self.button_hit == self.NEW_GLOBAL:
+            return False
+        else:
+            return True
+
+class MapLoaderDialog(gtk.Dialog):
+    """
+    A dialog to load a map.  Embeds FileChooserWidget in one tab of
+    a notebook, but will also try to be "smart" about things in other
+    tabs.
+    """
+
+    # Treeview column indexes for slot-choosing
+    SLOT_COL_IDX = 0
+    SLOT_COL_SLOTNAME = 1
+    SLOT_COL_SAVENAME = 2
+    SLOT_COL_DATE = 3
+    SLOT_COL_DATE_EPOCH = 4
+    SLOT_COL_OBJ = 5
+
+    # Treeview column indexes for map-choosing
+    MAP_COL_IDX = 0
+    MAP_COL_FILENAME = 1
+    MAP_COL_FILENAME_FULL = 2
+    MAP_COL_MAPNAME = 3
+
+    # Treeview column indexes for mod-choosing
+    MOD_COL_IDX = 0
+    MOD_COL_FILENAME = 1
+    MOD_COL_FILENAME_FULL = 2
+    MOD_COL_MAPNAME = 3
+
+    # Treeview column indexes for datadir
+    DATA_COL_IDX = 0
+    DATA_COL_FILENAME = 1
+    DATA_COL_FILENAME_FULL = 2
+    DATA_COL_MAPNAME = 3
+
+    # Load-source constants
+    SOURCE_SAVES = 0
+    SOURCE_GLOBAL = 1
+    SOURCE_DATAPAK = 2
+    SOURCE_MODS = 3
+    SOURCE_OTHER = 4
+
+    # "New" button values
+    NEW_GLOBAL = 0
+    NEW_SAVEGAME = 1
+
+    def __init__(self, starting_path, savegame_dir, basegame_dir,
+            transient=None,
+            last_source=None,
+            show_new=False):
+        """
+        Constructor to set up everything
+
+        starting_path is the default path to use for our FileChooserWidget
+        savegame_dir is the default path to use for our custom "smart" chooser
+        basegame_dir is the base path for the Eschalon game itself
+        transient is a window that we should be "transient" for
+        last_source is the last source we loaded from - this should be None on the
+           first run, but passed in on subsequent calls (though of course it's not
+           actually necessary)
+        """
+        super(MapLoaderDialog, self).__init__(
                 flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
                 buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_OK, gtk.RESPONSE_OK))
 
-        self.set_default_size(340, 160)
+        # Various defaults for the dialog
+        self.set_size_request(950, 680)
+        if gtk.gdk.screen_width() > 1200:
+            self.set_default_size(1200, 680)
+        self.set_title('Open Eschalon Book %d Map File' % (c.book))
+        self.set_default_response(gtk.RESPONSE_OK)
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        active_slot = None
 
+        # Page-to-source mapping
+        self.page_index = {}
+
+        # Source-to-page mapping
+        self.source_index = {}
+
+        # Main Title
         self.title_align = gtk.Alignment(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
         label = gtk.Label()
@@ -82,67 +236,362 @@ class NewMapDialog(gtk.Dialog):
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
-        self.open_align_1 = gtk.Alignment(0, 0, 0, 0)
-        self.open_align_1.set_padding(0, 20, 15, 15)
-        self.openlabel = gtk.Label()
-        self.openlabel.set_markup('<b>Open an existing map file:</b>')
-        self.open_align_1.add(self.openlabel)
-        self.vbox.pack_start(self.open_align_1, False, False)
+        # New Map buttons
+        self.button_hit = None
+        if show_new:
+            self.new_global_button = gtk.Button('New Global Map')
+            self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_global_button.connect('clicked', self.new_global_clicked)
 
-        rvbox = gtk.VBox()
-        self.open_align_2 = gtk.Alignment(0, 0, 0, 1)
-        self.open_align_2.set_padding(0, 10, 40, 15)
-        self.open_align_2.add(rvbox)
-        self.vbox.pack_start(self.open_align_2, False, False)
+            self.new_savegame_button = gtk.Button('New Savegame Map')
+            self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
 
-        self.open_savegame_radio = gtk.RadioButton(label="From the Savegame Directory")
-        rvbox.add(self.open_savegame_radio)
-        self.open_global_radio = gtk.RadioButton(label="From the Global Directory", group=self.open_savegame_radio)
+            self.bbox = gtk.HButtonBox()
+            self.bbox.add(self.new_global_button)
+            self.bbox.add(self.new_savegame_button)
+
+            self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+            self.bbalign.set_padding(0, 5, 5, 5)
+            self.bbalign.add(self.bbox)
+            self.vbox.pack_start(self.bbalign, False, False)
+
+        # Main Notebook
+        notebook_align = gtk.Alignment(0, 0, 1, 1)
+        notebook_align.set_padding(5, 5, 10, 10)
+        self.open_notebook = gtk.Notebook()
+        self.open_notebook.set_tab_pos(gtk.POS_LEFT)
+        notebook_align.add(self.open_notebook)
+        self.vbox.pack_start(notebook_align, True, True)
+
+        # Loading from our save dir, first see if we have saves to load
+        slotdirs = glob.glob(os.path.join(savegame_dir, 'slot*'))
+        self.slots = []
+        for slotdir in slotdirs:
+            try:
+                self.slots.append(Saveslot(slotdir, c.book))
+            except LoadException, e:
+                # If there's an error, just don't show the slot
+                pass
+        self.slots.sort()
+        if len(self.slots) > 0:
+
+            # Slot-choosing combobox/liststore
+            self.slot_store = gtk.ListStore(int, str, str, str, int, object)
+            self.slot_tv = gtk.TreeView(self.slot_store)
+            self.slot_tv.connect('cursor-changed', self.slot_changed)
+            col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
+            col.set_sort_column_id(self.SLOT_COL_IDX)
+            col.set_resizable(True)
+            self.slot_tv.append_column(col)
+            col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
+            col.set_sort_column_id(self.SLOT_COL_SAVENAME)
+            col.set_resizable(True)
+            self.slot_tv.append_column(col)
+            col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.SLOT_COL_DATE)
+            col.set_sort_column_id(self.SLOT_COL_DATE_EPOCH)
+            col.set_resizable(True)
+            self.slot_tv.append_column(col)
+            for (idx, slot) in enumerate(self.slots):
+                self.slot_store.append((idx,
+                    '<b>%s</b>' % (slot.slotname_short()),
+                    slot.savename,
+                    slot.timestamp,
+                    slot.timestamp_epoch,
+                    slot))
+                if (starting_path and
+                        os.path.normcase(os.path.abspath(slot.directory)) ==
+                        os.path.normcase(os.path.abspath(starting_path))):
+                    active_slot = idx
+
+            # Map-choosing combobox/liststore
+            self.map_store = gtk.ListStore(int, str, str, str)
+            self.map_tv = gtk.TreeView(self.map_store)
+            self.map_tv.connect('row-activated', self.map_activated)
+            col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
+            col.set_sort_column_id(self.MAP_COL_FILENAME)
+            col.set_resizable(True)
+            self.map_tv.append_column(col)
+            col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
+            col.set_sort_column_id(self.MAP_COL_MAPNAME)
+            col.set_resizable(True)
+            self.map_tv.append_column(col)
+            save_dir_align = gtk.Alignment(0, 0, 1, 1)
+            save_dir_align.set_padding(5, 5, 5, 5)
+            save_vbox = gtk.VBox()
+            vp = gtk.Viewport()
+            vp.set_shadow_type(gtk.SHADOW_OUT)
+            save_hpaned = gtk.HPaned()
+            vp.add(save_hpaned)
+            save_vbox.pack_start(vp, True, True)
+            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align.set_padding(5, 2, 2, 2)
+            note_label = gtk.Label()
+            note_label.set_markup('<i>Reading from %s</i>' % (savegame_dir))
+            note_align.add(note_label)
+            save_vbox.pack_start(note_align, False, False)
+            save_dir_align.add(save_vbox)
+            self.register_page(self.SOURCE_SAVES)
+            self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
+
+            # Save-dir HPaned contents
+            sw = gtk.ScrolledWindow()
+            sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            sw.add(self.slot_tv)
+            save_hpaned.pack1(sw)
+
+            sw = gtk.ScrolledWindow()
+            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            sw.add(self.map_tv)
+            save_hpaned.pack2(sw)
+
+        # Mod info, for Book III v1.0.2
+        if c.book == 3:
+            (self.mod_list,
+                    self.mod_store,
+                    self.mod_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'mods'),
+                            source=self.SOURCE_MODS,
+                            label='Load from Mods...',
+                            callback=self.mod_activated,
+                            filename_col=self.MOD_COL_FILENAME,
+                            mapname_col=self.MOD_COL_MAPNAME)
+
+        # Map data dir, for book I
         if c.book == 1:
-            # There's no point in showing this radio for Book II
-            rvbox.add(self.open_global_radio)
+            (self.data_list,
+                    self.data_store,
+                    self.data_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'data'),
+                            source=self.SOURCE_GLOBAL,
+                            label='Load from Datadir...',
+                            callback=self.data_activated,
+                            filename_col=self.DATA_COL_FILENAME,
+                            mapname_col=self.DATA_COL_MAPNAME)
 
-        align = gtk.Alignment(0, 0, 0, 0)
-        align.set_padding(10, 20, 15, 15)
-        self.createlabel = gtk.Label()
-        align.add(self.createlabel)
-        self.vbox.pack_start(align, False, False)
+        # Loading from an arbitrary location
+        arbitrary_align = gtk.Alignment(0, 0, 1, 1)
+        arbitrary_align.set_padding(5, 5, 5, 5)
+        self.chooser = gtk.FileChooserWidget()
+        self.chooser.connect('file-activated', self.chooser_file_activated)
+        arbitrary_align.add(self.chooser)
+        self.register_page(self.SOURCE_OTHER)
+        self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
 
-        rvbox = gtk.VBox()
-        align = gtk.Alignment(0, 0, 0, 1)
-        align.set_padding(0, 10, 40, 15)
-        align.add(rvbox)
-        self.vbox.pack_start(align, False, False)
+        # Starting path for chooser
+        if starting_path and starting_path != '' and os.path.isdir(starting_path):
+            self.chooser.set_current_folder(starting_path)
 
-        self.new_savegame_radio = gtk.RadioButton(label="Savegame Map File", group=self.open_savegame_radio)
-        rvbox.add(self.new_savegame_radio)
-        self.new_global_radio = gtk.RadioButton(label="Global Map File", group=self.open_savegame_radio)
-        if c.book > 1:
-            self.new_global_radio.set_tooltip_text('Book 2/3 global maps are hidden away inside the "datapak" '
-                    'file, so creating a Global Book 2/3 map may not be worth it.')
-        rvbox.add(self.new_global_radio)
+        # Filename filters for chooser
+        filter = gtk.FileFilter()
+        filter.set_name("Map Files")
+        filter.add_pattern("*.map")
+        self.chooser.add_filter(filter)
 
+        filter = gtk.FileFilter()
+        filter.set_name("All files")
+        filter.add_pattern("*")
+        self.chooser.add_filter(filter)
+
+        # Show everything
         self.show_all()
-        self.hide()
-        self.set_initial()
 
-    def set_initial(self, initial=True):
-        if initial:
-            self.set_title("Load or Create a Map")
-            self.createlabel.set_markup("<b>Or, select the type of map you want to create:</b>")
-            self.open_align_1.show()
-            self.open_align_2.show()
-            self.title_align.show()
-            self.open_savegame_radio.set_active(True)
-            self.resize(340, 288)
+        # Default to our last-used page, if specified
+        # This apparently has to be done after the widgets are visible
+        # Note that the FIRST thing we do is switch to the "other" tab...  If we
+        # don't, there's some gtk+ bug where the FileChooserWidget ends up with
+        # an ugly-looking horizontal scrollbar which cuts off part of the date.
+        self.open_notebook.set_current_page(self.source_index[self.SOURCE_OTHER])
+        if last_source is not None and last_source in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[last_source])
+        elif self.SOURCE_SAVES in self.source_index:
+            self.open_notebook.set_current_page(self.source_index[self.SOURCE_SAVES])
+
+        # Default to the last-used slot if we have one.
+        if active_slot:
+            self.slot_tv.set_cursor(active_slot)
+
+    def register_page(self, source):
+        """
+        Sets up some dicts to map source-to-page, and vice-versa.
+        """
+        curpages = self.open_notebook.get_n_pages()
+        self.page_index[curpages] = source
+        self.source_index[source] = curpages
+
+    def mapdir_page(self, directory, source, label, callback, filename_col, mapname_col):
+        """
+        Sets up a page on our notebook which loads all maps from a given directory.
+        """
+        map_list = []
+        map_store = None
+        map_tv = None
+        if os.path.isdir(directory):
+            map_files = glob.glob(os.path.join(directory, '*.map'))
+            for map_file in sorted(map_files):
+                try:
+                    map_list.append(Map.get_mapinfo(map_file))
+                    #detected_book, detected_mapname, df
+                except Exception, e:
+                    pass
+
+            if len(map_list) > 0:
+                map_store = gtk.ListStore(int, str, str, str)
+                map_tv = gtk.TreeView(map_store)
+                map_tv.connect('row-activated', callback)
+                col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=filename_col)
+                col.set_sort_column_id(filename_col)
+                col.set_resizable(True)
+                map_tv.append_column(col)
+                col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=mapname_col)
+                col.set_sort_column_id(mapname_col)
+                col.set_resizable(True)
+                map_tv.append_column(col)
+                for (idx, (map_book, map_mapname, map_df)) in enumerate(map_list):
+                    map_store.append((idx,
+                        '<b>%s</b>' % (os.path.basename(map_df.filename)),
+                        map_df.filename,
+                        map_mapname))
+
+                sw = gtk.ScrolledWindow()
+                sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+                sw.add(map_tv)
+
+                vp = gtk.Viewport()
+                vp.set_shadow_type(gtk.SHADOW_OUT)
+                vp.add(sw)
+
+                note_align = gtk.Alignment(0, 0, 0, 0)
+                note_align.set_padding(5, 2, 2, 2)
+                note_label = gtk.Label()
+                note_label.set_markup('<i>Reading from %s</i>' % (directory))
+                note_align.add(note_label)
+
+                map_vbox = gtk.VBox()
+                map_vbox.pack_start(vp, True, True)
+                map_vbox.pack_start(note_align, False, False)
+
+                map_align = gtk.Alignment(0, 0, 1, 1)
+                map_align.set_padding(5, 5, 5, 5)
+                map_align.add(map_vbox)
+
+                self.register_page(source)
+                self.open_notebook.append_page(map_align, gtk.Label(label))
+
+        return (map_list, map_store, map_tv)
+
+    def get_filename(self):
+        """
+        Gets the selected filename, or None
+        """
+        page = self.open_notebook.get_current_page()
+
+        if page in self.page_index:
+
+            if self.page_index[page] == self.SOURCE_SAVES:
+                (model, treeiter) = self.map_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.MAP_COL_FILENAME_FULL)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_MODS:
+                (model, treeiter) = self.mod_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.MOD_COL_FILENAME_FULL)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_GLOBAL:
+                (model, treeiter) = self.data_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.DATA_COL_FILENAME_FULL)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_OTHER:
+                return self.chooser.get_filename()
+
+        # Finally, throw an exception.
+        raise LoadException('Unknown tab selected on open dialog')
+
+    def get_file_source(self):
+        """
+        Gets the "source" tab where our savegame selection came from.  The value
+        will be somewhat meaningless to anything outside the dialog, but we'll
+        want to know what was used "last time."
+        """
+        curpage = self.open_notebook.get_current_page()
+        if curpage in self.page_index:
+            return self.page_index[curpage]
         else:
-            self.set_title("Select New Map Type")
-            self.createlabel.set_markup("<b>Select the type of map you want to create:</b>")
-            self.open_align_1.hide()
-            self.open_align_2.hide()
-            self.title_align.hide()
-            self.new_savegame_radio.set_active(True)
-            self.resize(340, 160)
+            return self.SOURCE_OTHER
+
+    def chooser_file_activated(self, widget):
+        """
+        Called when the user double-clicks or hits enter on a selected file
+        in our internal FileChooserWidget
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def slot_changed(self, widget):
+        """
+        Called when the user clicks on or changes a slot selection
+        """
+        (model, treeiter) = widget.get_selection().get_selected()
+        (slot,) = model.get(treeiter, self.SLOT_COL_OBJ)
+        self.map_store.clear()
+        slot.load_maps()
+        for (idx, mapobj) in enumerate(slot.maps):
+            self.map_store.append((idx,
+                '<b>%s</b>' % (mapobj.filename_short()),
+                mapobj.filename,
+                mapobj.mapname))
+
+    def map_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on a particular map.
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def mod_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on a particular mod map.
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def data_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on a particular datadir map.
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def new_global_clicked(self, widget):
+        """
+        What to do when our New Global Map button is clicked.  Note that we're
+        sort of abusing gtk.RESPONSE_APPLY for this.
+        """
+        self.button_hit = self.NEW_GLOBAL
+        self.response(gtk.RESPONSE_APPLY)
+
+    def new_savegame_clicked(self, widget):
+        """
+        What to do when our New Savegame Map button is clicked.  Note that we're
+        sort of abusing gtk.RESPONSE_APPLY for this.
+        """
+        self.button_hit = self.NEW_SAVEGAME
+        self.response(gtk.RESPONSE_APPLY)
+
+    def get_savegame_flag(self):
+        """
+        If one of our "new" buttons has been pressed, this will return
+        True if it's supposed to be a savegame file, or False otherwise.
+        """
+        if self.button_hit is not None and self.button_hit == self.NEW_GLOBAL:
+            return False
+        else:
+            return True
 
 class ObjectSelWindow(ImageSelWindow):
 
@@ -322,7 +771,6 @@ class MapGUI(BaseGUI):
         self.map_exception_view = self.get_widget('map_exception_view')
         self.activity_label = self.get_widget('activity_label')
         self.draw_frame = self.get_widget('draw_frame')
-        self.globalwarndialog = self.get_widget('globalwarndialog')
         self.globalwarn_check = self.get_widget('globalwarn_check')
         if (self.window):
             self.window.connect('destroy', gtk.main_quit)
@@ -410,14 +858,14 @@ class MapGUI(BaseGUI):
 
         # If we were given a filename, load it.  If not, create a new map,
         # or load one if the user wants.
+        self.last_map_source = None
         if (self.options['filename'] == None):
-            if not self.on_new():
-                return;
+            if not self.on_load():
+                return
         else:
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
                     return
-        self.get_widget('map_new_map_dialog').set_initial(False)
 
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.
@@ -517,16 +965,20 @@ class MapGUI(BaseGUI):
             script = row['Script'].strip()
             if script == '*':
                 script = ''
-            c.entitytable[int(row['ID'])] = c.EntHelper(name,
-                int(row['HP']),
-                '%s.png' % (row['file']),
-                int(row['Dirs']),
-                int(row['Align']),
-                width,
-                height,
-                int(row['Frame']),
-                int(row['Move']),
-                script)
+            # In the event of multiple IDs found in the file, Eschalon itself will favor
+            # the first, so we should check for this.
+            ent_id_int = int(row['ID'])
+            if ent_id_int not in c.entitytable.keys():
+                c.entitytable[int(row['ID'])] = c.EntHelper(name,
+                    int(row['HP']),
+                    '%s.png' % (row['file']),
+                    int(row['Dirs']),
+                    int(row['Align']),
+                    width,
+                    height,
+                    int(row['Frame']),
+                    int(row['Move']),
+                    script)
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -956,10 +1408,6 @@ class MapGUI(BaseGUI):
         adjust.add(label)
         adjust.show_all()
 
-        # "New Map" dialog (previously in Glade, but Glade continues to be awful)
-        dialog = NewMapDialog()
-        self.register_widget('map_new_map_dialog', dialog)
-
         # Increase the height of our tilewindow, if gtk thinks we have room.
         if gtk.gdk.screen_height() > 900:
             (cur_width, cur_height) = self.tilewindow.get_size_request()
@@ -1091,20 +1539,25 @@ class MapGUI(BaseGUI):
         """
         Updates the text area above the map with the current map name.
         """
+        if self.map.is_savegame():
+            prefix = 'Savegame Map'
+        else:
+            prefix = 'Global Map'
+
         if (c.book == 1 and
                 self.map.df.filename != '' and
                 os.path.basename(self.map.df.filename)[:-4] != self.map.mapid):
-            self.mapname_mainscreen_label.set_markup('%s <span color="red">(Map ID Mismatch)</span>' %
-                    (self.map.mapname))
+            self.mapname_mainscreen_label.set_markup('%s: %s <span color="red">(Map ID Mismatch)</span>' %
+                    (prefix, self.map.mapname))
             self.mapname_mainscreen_label.set_tooltip_text('This map is saved to a file named "%s" '
                     'but the Map ID is set to "%s" - this will cause problems with saving the map '
                     'state, inside Eschalon.  You should change this value in "Map Properties."' %
                     (os.path.basename(self.map.df.filename), self.map.mapid))
         else:
-            self.mapname_mainscreen_label.set_text(self.map.mapname)
+            self.mapname_mainscreen_label.set_text('%s: %s' % (prefix, self.map.mapname))
             self.mapname_mainscreen_label.set_has_tooltip(False)
 
-    def setup_new_map(self):
+    def setup_new_map_gui(self):
         """
         Sets various GUI elements which need setting, once we have a "new"
         map object.  This is called currently from on_new() and load_from_file()
@@ -1138,26 +1591,28 @@ class MapGUI(BaseGUI):
                 return False
 
         # Figure out what type of map to create
-        dialog = self.get_widget('map_new_map_dialog')
+        dialog = MapNewDialog(transient=self.window)
         resp = dialog.run()
-        dialog.hide()
-        if resp != gtk.RESPONSE_OK:
+        savegame = dialog.get_savegame_flag()
+        dialog.destroy()
+
+        # Process as-appropriate
+        if resp == gtk.RESPONSE_OK:
+            self.setup_new_map(savegame)
+            return True
+        else:
             return False
 
-        # Our "new map" dialog will have a couple of "open" options on
-        # it, if it's the initial dialog shown.  Check for those and
-        # process on_load() instead, if we've chosen to do that.
-        if dialog.open_global_radio.get_active() or dialog.open_savegame_radio.get_active():
-            if self.on_load():
-                return True
-            else:
-                # Recursion!  If a user cancels out of the load dialog, they may want to
-                # create a new map instead.  They can cancel out directly from there.
-                return self.on_new()
+    def setup_new_map(self, savegame=True):
+        """
+        Create a new, blank Map object.  Pass in "savegame" as a boolean
+        to determine whether it's a savegame or global map.  This will default
+        to savegame.
+        """
 
         # Now create a new map
-        self.map = Map.load('', self.req_book, self.req_book)
-        self.map.set_savegame(dialog.new_savegame_radio.get_active())
+        self.map = Map.new('', self.req_book)
+        self.map.set_savegame(savegame)
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
@@ -1172,10 +1627,7 @@ class MapGUI(BaseGUI):
             self.map.atmos_sound_day = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
         self.map.mapname = 'New Map'
-        self.setup_new_map()
-
-        # Return
-        return True
+        self.setup_new_map_gui()
 
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
@@ -1183,23 +1635,10 @@ class MapGUI(BaseGUI):
         # Blank out the main area
         #self.mainbook.set_sensitive(False)
 
-        # Create the dialog
-        dialog = gtk.FileChooserDialog('Open New Map File...', None,
-                                       gtk.FILE_CHOOSER_ACTION_OPEN,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
-        dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-
         # Figure out what our initial path should be
         path = ''
         if self.map == None:
-            newdialog = self.get_widget('map_new_map_dialog')
-            if newdialog.open_global_radio.get_active():
-                path = self.get_current_gamedir()
-            else:
-                path = self.get_current_savegame_dir()
+            path = self.get_current_savegame_dir()
         elif self.map.df.filename == '':
             if self.map.is_savegame():
                 path = self.get_current_savegame_dir()
@@ -1209,33 +1648,36 @@ class MapGUI(BaseGUI):
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
 
         # Set the initial path
-        if (path != '' and os.path.isdir(path)):
-            dialog.set_current_folder(path)
-
-        filter = gtk.FileFilter()
-        filter.set_name("Map Files")
-        filter.add_pattern("*.map")
-        dialog.add_filter(filter)
-
-        filter = gtk.FileFilter()
-        filter.set_name("All files")
-        filter.add_pattern("*")
-        dialog.add_filter(filter)
+        dialog = MapLoaderDialog(starting_path=path,
+                savegame_dir=self.get_current_savegame_dir(),
+                basegame_dir=self.get_current_gamedir(),
+                transient=self.window,
+                last_source=self.last_map_source,
+                show_new=(self.map is None))
 
         # Run the dialog and process its return values
         retval = False
         rundialog = True
         while (rundialog):
-            rundialog = False
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
-                if self.load_from_file(dialog.get_filename()):
+                filename = dialog.get_filename()
+                if filename and filename != '' and self.load_from_file(filename):
+                    rundialog = False
                     retval = True
-                else:
-                    rundialog = True
+                    self.last_map_source = dialog.get_file_source()
+            elif response == gtk.RESPONSE_APPLY:
+                self.setup_new_map(dialog.get_savegame_flag())
+                self.last_map_source = None
+                retval = True
+                rundialog = False
+            else:
+                rundialog = False
 
         # Clean up
         dialog.destroy()
+
+        # Update some GUI elements
         if retval:
             self.update_main_map_name()
 
@@ -1247,7 +1689,7 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map.load(filename, None, self.req_book)
+            map = Map.load(filename, self.req_book)
             map.read()
         except LoadException, e:
             self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
@@ -1264,18 +1706,7 @@ class MapGUI(BaseGUI):
         self.putstatus('Editing ' + self.map.df.filename)
 
         # Set up our other GUI elements
-        self.setup_new_map()
-
-        # If we appear to be editing a global map file and haven't
-        # been told otherwise, show a dialog warning the user
-        warn = self.prefs.get_bool('mapgui', 'warn_global_map')
-        if (not map.is_savegame() and warn and filename.find(self.get_current_gamedir()) != -1):
-            self.globalwarn_check.set_active(warn)
-            resp = self.globalwarndialog.run()
-            self.globalwarndialog.hide()
-            if (self.globalwarn_check.get_active() != warn):
-                self.prefs.set_bool('mapgui', 'warn_global_map', self.globalwarn_check.get_active())
-                self.prefs.save()
+        self.setup_new_map_gui()
 
         # Return success
         return True

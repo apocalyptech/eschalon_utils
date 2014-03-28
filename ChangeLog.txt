@@ -2,8 +2,22 @@
 
 *eschalon_utils-1.0.0 ()
 
+   27 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Bundle a nicer-looking GUI theme with the Windows version
+   Add the OSX launcher as an option on Windows as well
+
+   26 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Fix some Windows path detection issues for the preferences file
+   Esc will now close image selection dialogs as advertised
+
+   24-25 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   "Smart" loading dialogs which understand map/character names
+   Removed Global Map file warnings
+
+   22 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
+   Various bugfixes for Books 1 and 2
+
    21 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
-   Fix Character Editor Hitpoint and Mana Point fields for Books 2 and 3
    Moved all fields from the "Misc Attributes" tab on the item edit
       window to the main tab, and removed "Misc Attributes"
    Automatically set item quantity to 1 when creating items, for Books 2+3
@@ -11,15 +25,11 @@
       enough, and add a scrollbar for displays which aren't.
    Adjust textbox GUI elements to resize properly with the windows
    GUI Tweaks to Map Global Properties window
-   Not all wall graphics were available in the chooser for Book 3
 
    16-20 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
-   Update "Parallax 1" and "Parallax 2" to be X and Y instead
-   Allow "Cloud Offset X/Y" to be edited in the GUI
    Use "barrier" consistently in the GUI
    Change some internal variables to better match the official
       variable names in the Eschalon engine
-   Fixed a bug where the item Subcategory dropdown wasn't rendering
 
    06 Mar 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Breakable walls in Book III are type 22, not 50

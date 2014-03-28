@@ -25,6 +25,10 @@ the Python License at http://www.python.org/psf/license/
 The class WrapLabel, in basegui.py is Copyright(c) 2005 VMware, Inc.
 See basegui.py for the exact licensing terms.
 
+The gtk+ "ClearLooks" theme in win32support, used for the Windows bundle,
+is Copyright(c) the Free Software Foundation, Inc., and is licensed under
+the GPLv2.  The version here was obtained via http://gtk-win.sourceforge.net/
+
 ABOUT
 -----
 
