@@ -110,13 +110,13 @@ class Map(object):
         except ValueError:
             self.df_ent = Savefile('')
 
-    def replicate(self, book = None):
+    def replicate(self):
         
-        if book == 1 or (book == None and self.book == 1):
+        if self.book == 1:
             newmap = B1Map(Savefile(self.df.filename))
-        elif book == 2 or (book == None and self.book == 2):
+        elif self.book == 2:
             newmap = B2Map(Savefile(self.df.filename))
-        elif book == 3 or (book == None and self.book == 3):
+        elif self.book == 3:
             newmap = B3Map(Savefile(self.df.filename))
 
         # Single vals (no need to do actual replication)
@@ -137,7 +137,7 @@ class Map(object):
         # Copy tiles
         for i in range(200):
             for j in range(100):
-                newmap.tiles[i][j] = self.tiles[i][j].replicate(book)
+                newmap.tiles[i][j] = self.tiles[i][j].replicate()
 
         # At this point, tilecontents and entities have been replicated as well;
         # loop through our list to repopulate from the new objects, so that
@@ -149,7 +149,7 @@ class Map(object):
                 if (entity.y < len(newmap.tiles) and entity.x < len(newmap.tiles[entity.y])):
                     newmap.entities.append(newmap.tiles[entity.y][entity.x].entity)
                 else:
-                    newmap.entities.append(entity.replicate(book))
+                    newmap.entities.append(entity.replicate())
         tilecontentidxtemp = {}
         for tilecontent in self.tilecontents:
             if (tilecontent is None):
@@ -163,15 +163,15 @@ class Map(object):
                         tilecontentidxtemp[key] = 0
                     newmap.tilecontents.append(newmap.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentidxtemp[key]])
                 else:
-                    newmap.tilecontents.append(tilecontent.replicate(book))
+                    newmap.tilecontents.append(tilecontent.replicate())
 
         # Call out to superclass replication
-        self._sub_replicate(newmap, book = None)
+        self._sub_replicate(newmap)
 
         # Now return our duplicated object
         return newmap
 
-    def _sub_replicate(self, newmap, book = None):
+    def _sub_replicate(self, newmap):
         """
         Stub for superclasses to override, to replicate specific vars
         """
@@ -557,33 +557,23 @@ class B1Map(Map):
             self.savegame_2 = 0
             self.savegame_3 = 0
 
-    def _sub_replicate(self, newmap, book = 1):
+    def _sub_replicate(self, newmap):
         """
         Replicate b1-specific vars
         """
-        if book == 1:
-            newmap.mapid = self.mapid
-            newmap.exit_north = self.exit_north
-            newmap.exit_east = self.exit_east
-            newmap.exit_south = self.exit_south
-            newmap.exit_west = self.exit_west
-            newmap.clouds = self.clouds
-            newmap.savegame_1 = self.savegame_1
-            newmap.savegame_2 = self.savegame_2
-            newmap.savegame_3 = self.savegame_3
-            newmap.map_unknownh1 = self.map_unknownh1
-            newmap.map_b1_last_xpos = self.map_b1_last_xpos
-            newmap.map_b1_last_ypos = self.map_b1_last_ypos
-            newmap.map_b1_outsideflag = self.map_b1_outsideflag
-        else:
-            # These are always allowed on B1 maps
-            newmap.map_flags = newmap.map_flags | 0x02 # Allow QT
-            newmap.map_flags = newmap.map_flags | 0x04 # Allow Portal
-            if self.map_b1_outsideflag:
-                newmap.map_flags = newmap.map_flags | 0x08 # Day/night
-                newmap.map_flags = newmap.map_flags | 0x40 # Regular weather
-            if self.clouds:
-                newmap.map_flags = newmap.map_flags | 0x20 # Clouds
+        newmap.mapid = self.mapid
+        newmap.exit_north = self.exit_north
+        newmap.exit_east = self.exit_east
+        newmap.exit_south = self.exit_south
+        newmap.exit_west = self.exit_west
+        newmap.clouds = self.clouds
+        newmap.savegame_1 = self.savegame_1
+        newmap.savegame_2 = self.savegame_2
+        newmap.savegame_3 = self.savegame_3
+        newmap.map_unknownh1 = self.map_unknownh1
+        newmap.map_b1_last_xpos = self.map_b1_last_xpos
+        newmap.map_b1_last_ypos = self.map_b1_last_ypos
+        newmap.map_b1_outsideflag = self.map_b1_outsideflag
 
 class B2Map(Map):
     """
@@ -765,26 +755,25 @@ class B2Map(Map):
         else:
             self.last_turn = 0
 
-    def _sub_replicate(self, newmap, book = 2):
+    def _sub_replicate(self, newmap):
         """
         Replicate b2-specific vars
         """
-        if book == 2:
-            newmap.entrancescript = self.entrancescript
-            newmap.returnscript = self.returnscript
-            newmap.exitscript = self.exitscript
-            newmap.random_sound1 = self.random_sound1
-            newmap.loadhook = self.loadhook
-            newmap.unusedc1 = self.unusedc1
-            newmap.random_entity_1 = self.random_entity_1
-            newmap.random_entity_2 = self.random_entity_2
-            newmap.map_flags = self.map_flags
-            newmap.start_tile = self.start_tile
-            newmap.tree_set = self.tree_set
-            newmap.last_turn = self.last_turn
-            newmap.unusedstr1 = self.unusedstr1
-            newmap.unusedstr2 = self.unusedstr2
-            newmap.unusedstr3 = self.unusedstr3
+        newmap.entrancescript = self.entrancescript
+        newmap.returnscript = self.returnscript
+        newmap.exitscript = self.exitscript
+        newmap.random_sound1 = self.random_sound1
+        newmap.loadhook = self.loadhook
+        newmap.unusedc1 = self.unusedc1
+        newmap.random_entity_1 = self.random_entity_1
+        newmap.random_entity_2 = self.random_entity_2
+        newmap.map_flags = self.map_flags
+        newmap.start_tile = self.start_tile
+        newmap.tree_set = self.tree_set
+        newmap.last_turn = self.last_turn
+        newmap.unusedstr1 = self.unusedstr1
+        newmap.unusedstr2 = self.unusedstr2
+        newmap.unusedstr3 = self.unusedstr3
 
 class B3Map(B2Map):
     """
@@ -953,15 +942,14 @@ class B3Map(B2Map):
             entity.write(self.df_ent)
         self.df_ent.close()
 
-    def _sub_replicate(self, newmap, book = 3):
+    def _sub_replicate(self, newmap):
         """
         Replicate b3-specific vars
         """
-        if book == 3:
-            newmap.version = self.version
-            newmap.atmos_sound_night = self.atmos_sound_night
-            newmap.random_sound2 = self.random_sound2
-            newmap.cloud_offset_x = self.cloud_offset_x
-            newmap.cloud_offset_y = self.cloud_offset_y
+        newmap.version = self.version
+        newmap.atmos_sound_night = self.atmos_sound_night
+        newmap.random_sound2 = self.random_sound2
+        newmap.cloud_offset_x = self.cloud_offset_x
+        newmap.cloud_offset_y = self.cloud_offset_y
 
-        super(B3Map, self)._sub_replicate(newmap, book)
+        super(B3Map, self)._sub_replicate(newmap)
