@@ -195,13 +195,26 @@ class Item(object):
                     else:
                         ret.append("\tSpecial: 0x%08X" % self.flags)
             else:
-                for i in range(1, 4):
-                    modified_var = self.__dict__['attr_modified_%d' % (i)]
-                    modifier_var = self.__dict__['attr_modifier_%d' % (i)]
-                    if modified_var > 0 or modifier_var > 0:
-                        if modified_var in c.itemeffecttable:
-                            modified_var = c.itemeffecttable[modified_var]
-                        ret.append("\tSpecial (%d): +%d %s" % (i, modifier_var, modified_var))
+                if c.book == 1:
+                    for i in range(1, 4):
+                        modified_var = self.__dict__['attr_modified_%d' % (i)]
+                        modifier_var = self.__dict__['attr_modifier_%d' % (i)]
+                        if modified_var > 0 or modifier_var > 0:
+                            if modified_var in c.itemeffecttable:
+                                modified_var = c.itemeffecttable[modified_var]
+                            ret.append("\tSpecial (%d): +%d %s" % (i, modifier_var, modified_var))
+                else:
+                    for i in range(1, 3):
+                        modified_var = self.__dict__['bonus_value_%d' % (i)]
+                        modifier_var = self.__dict__['bonus_%d' % (i)]
+                        if modified_var != 0:
+                            if modifier_var in c.itemeffecttable:
+                                modifier_var = c.itemeffecttable[modifier_var]
+                            if modified_var > 0:
+                                operator = '+'
+                            else:
+                                operator = '-'
+                            ret.append("\tSpecial (%d): %s%d %s" % (i, operator, modified_var, modifier_var))
             ret.append("\tWeight: %0.1f lbs" % self.weight)
             if (self.script != ''):
                 ret.append("\tScript: %s" % self.script)
