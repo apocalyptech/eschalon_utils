@@ -4010,7 +4010,7 @@ class MapGUI(BaseGUI):
                 drawn = True
                 # Check to see if we should draw a flame
                 if ((self.req_book == 1 and tile.decalimg == 52) or
-                    (self.req_book == 2 and tile.decalimg == 101)):
+                    (self.req_book > 1 and tile.decalimg == 101)):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         # TODO: in book 2, campfire wall objects will overwrite some of our campfire flame
@@ -4037,7 +4037,7 @@ class MapGUI(BaseGUI):
                     tile_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
                     tile_ctx.paint()
                     drawn = True
-                    if (self.req_book == 2 and (tile.wallimg == 349 or tile.wallimg == 350)):
+                    if (self.req_book > 1 and (tile.wallimg == 349 or tile.wallimg == 350)):
                         pixbuf = self.gfx.get_flame(self.curzoom)
                         if (pixbuf is not None):
                             xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_tilebuf_offset
@@ -4079,7 +4079,7 @@ class MapGUI(BaseGUI):
                 drawn = True
                 # Check to see if we should draw a flame
                 if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
-                    (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
+                    (self.req_book > 1 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         xoffset = int(pixbuf.get_width()*0.3)
