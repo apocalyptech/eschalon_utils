@@ -380,7 +380,11 @@ class Map(object):
         if nextbyte == 1:
             detected_book = 2
             detected_mapname = stringlist[0]
-        elif stringlist[0] == '0.992':
+        # TODO: We're checking for a blank string here to cover up
+        # for some invalid data that older versions of the unofficial
+        # pre-1.0.0 builds.  By the time 1.1.0 rolls around, or so,
+        # we should get rid of that.
+        elif stringlist[0] == '0.992' or stringlist[0] == '':
             detected_book = 3
             detected_mapname = stringlist[1]
         else:
@@ -928,6 +932,13 @@ class B3Map(B2Map):
 
             # Close the file
             self.df.close()
+
+            # This isn't really *proper* but any Book 3 map we load really does need
+            # a version of 0.992 and a loadhook of 2.  Override them here, in case we
+            # loaded a map which was written by a buggier older version of this
+            # utility which might not have set these correctly.
+            self.version = '0.992'
+            self.loadhook = 2
 
         except (IOError, struct.error), e:
             raise LoadException(str(e))
