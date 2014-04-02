@@ -1,4 +1,12 @@
-More immediately, but I'm too tired to continue for the night:
+NOTE: This TODO file hasn't been updated since 2012 or so.  Recently,
+tasks that we're focusing on have been put into the Github issue
+tracker at: https://github.com/apocalyptech/eschalon_utils/issues
+
+I do intend to comb through this and get relevant stuff into Github,
+but for now we'll leave this here.
+
+Random Stuff
+------------
 
  * set_transient_for() on "new" dialog
  * get the transient working for the img/obj dialogs too actually
