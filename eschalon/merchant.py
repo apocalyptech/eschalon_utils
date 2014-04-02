@@ -57,6 +57,7 @@ class Merchant(object):
         for i in range(item_count):
             item = Item.new(c.book)
             item.read(df)
+            self.items.append(item)
 
         extradata = df.read()
         if len(extradata) > 0:
