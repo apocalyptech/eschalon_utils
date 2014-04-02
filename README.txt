@@ -112,7 +112,12 @@ into somewhere in your $PATH (~/bin is probably the best location).  For example
    $ ln -s /path/to/eschalon_b3_char.py .
    $ ln -s /path/to/eschalon_b3_map.py .
 
-At that point you should be able to just run "eschalon_b1_char.py" from the
+Starting with v1.0.0, we also have a launcher window which will let you click
+a button to launch the editor of your choice:
+
+   $ ln -s /path/to/eschalon_utils.py .
+
+At that point you should be able to just run "eschalon_utils.py" from the
 command prompt, for instance.  Setting up shortcuts through your window
 manager of choice should work fine, as well.  Failing that, just run them
 from the directory you untarred them into.
