@@ -6,14 +6,9 @@
 # - py2app, czipfile, and pycrypto installed with easy_install
 # - OS X developer tools
 #
-# You may get different version of some libraries than me, which may
-# necessitate changing things below.  We expect libicuuc.50.1.dylib,
-# libicudata.50.1.dylib, pango 1.34.0, and gdk-pixbuf 2.28.1.
-#
-# Developed and tested on Mac OS 10.8.3 64 bit
+# Developed on Mac OS 10.8.3 64 bit and tested on latest 10.9
 
 # Build these apps
-#APPS="eschalon_b1_char eschalon_b1_map eschalon_b2_char eschalon_b2_map"
 APPS="eschalon_utils"
 # Include these python modules
 INCLUDE="gtk,gio,atk,pangocairo"
@@ -21,7 +16,14 @@ INCLUDE="gtk,gio,atk,pangocairo"
 # MachO header rebuild fails with the python library - see below for more
 # info
 RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0"
-DMG="Eschalon Utils"
+# The version numbers for these libraries as they appear in the file names
+PANGO=1.0.0
+GDKPIXBUF=2.0.0
+# Make sure python knows how to find libraries installed by Homebrew
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages:/usr/local/lib/python2.7/site-packages/gtk-2.0
+# Dynamically figure out the version number and include that in the name
+VERSION=$(grep 'version =' eschalon/__init__.py|perl -i -ne '/([0-9.]+)/ && print "$1\n"')
+DMG="Eschalon Utils $VERSION"
 
 # Exit if any step exits uncleanly. Helpful for a hack job like this
 set -e
@@ -40,8 +42,6 @@ for APP in $APPS; do
   # The libraries are referenced by these names, and py2app doesn't make
   # the appropriate links, so make them ourselves
   cd "$DMG"/"$APP".app/Contents/Frameworks
-  ln -s libicuuc.50.1.dylib libicuuc.50.dylib
-  ln -s libicudata.50.1.dylib libicudata.50.dylib
 
   # The data directory gets referenced relative to the contents of the
   # site-packages directory.  If it's a zip file as py2app makes, this
@@ -90,13 +90,23 @@ for APP in $APPS; do
   echo "[Pango]\nModuleFiles=./etc/pango/pango.modules\n" > etc/pango/pangorc
 
   # Modify the pango libraries to look for config files and modules in the
-  # right place. We're doing string replace on binary files, so it's
-  # vitally important that the replacement be the exact same length
-  # as the original. We pad up with dots
+  # right place
+
+  # First, double-check that the library version numbers are 6 characters. 
+  # If they're not, this won't work.
+  for i in libpango-$PANGO libgdk_pixbuf-$GDKPIXBUF; do
+    if ! readlink /usr/local/lib/$i.dylib |egrep -q "/Cellar/.*?/.{6}/lib/lib"; then
+      echo "Fatal: $i version is not 6 characters long"
+      exit
+    fi
+  done
+
+  # Do the modifications. Our new paths are shorter than the old ones,
+  # so null-terminate the string and pad up with dots.
   cd ../Frameworks
-  perl -i -pe 's?/usr/local/Cellar/pango/1.34.0/etc/pango?../Resources/etc/pango\x00.................?' libpango-1.0.0.dylib
-  perl -i -pe 's?/usr/local/Cellar/pango/1.34.0/lib/pango?../Resources/lib/pango\x00.................?' libpango-1.0.0.dylib
-  perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/2.28.1/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-2.0.0.dylib
+  perl -i -pe 's?/usr/local/Cellar/pango/.{6}/etc/pango?../Resources/etc/pango\x00.................?' libpango-$PANGO.dylib
+  perl -i -pe 's?/usr/local/Cellar/pango/.{6}/lib/pango?../Resources/lib/pango\x00.................?' libpango-$PANGO.dylib
+  perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/.{6}/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-$GDKPIXBUF.dylib
 
   # Go back to the root to start the next loop iteration
   cd ../../../..
