@@ -3925,6 +3925,9 @@ class MapGUI(BaseGUI):
             elif (tile.tilecontentid > 0 and len(tile.tilecontents) == 0):
                 # This shouldn't happen either
                 tilecontent = (1, 0, 0, 0.5)
+            elif (tile.wallimg >= 1000 and tile.tilecontentid == 0):
+                # Big Graphics which don't have associated objects
+                tilecontent = (1, 0, 0, 0.5)
             elif tile.tilecontentid > 0:
                 tilecontent = (1, 1, 0, 0.5)
 
