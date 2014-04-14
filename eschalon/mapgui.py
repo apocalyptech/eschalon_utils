@@ -600,7 +600,7 @@ class BigGraphicDialog(gtk.Dialog):
     the issues, if there are any.
     """
 
-    def __init__(self, mappingobj, messages=None, transient=None):
+    def __init__(self, mappingobj, messages=None, transient=None, elderoak=False):
         """
         Constructor to set up everything
 
@@ -684,6 +684,8 @@ class BigGraphicDialog(gtk.Dialog):
                 align.add(label)
                 self.vbox.pack_start(align, True, True)
             else:
+                if elderoak:
+                    height += 30
                 self.set_size_request(650, height+100)
                 label = gtk.Label()
                 label.set_markup('There were some problems detected with the Big Graphics on this map.  We might be able to fix some of these automatically.  Use the "Renumber" button below to make an attempt.  Note that doing so will renumber the IDs of the Big Graphics on the map:')
@@ -713,6 +715,16 @@ class BigGraphicDialog(gtk.Dialog):
                 for message in messages:
                     display_messages.append(' * %s' % (message))
                 tb.set_text("\n".join(display_messages))
+
+                if elderoak:
+                    label = gtk.Label()
+                    label.set_markup('<b>Note:</b> Elderoak Forest (4949.map) has an intentional mismatch once Ulgolek has been healed.  If the only problem detected is between <tt>sgfx_father_tree_2.png</tt> and <tt>sgfx_father_tree_1.png</tt>, renumbering is not advised.')
+                    label.set_size_request(600, 50)
+                    label.set_line_wrap(True)
+                    align = gtk.Alignment(0, 0, 1, 0)
+                    align.set_padding(5, 5, 15, 15)
+                    align.add(label)
+                    self.vbox.pack_start(align, True, False)
 
         # Buttons at the bottom
         close = gtk.Button(stock=gtk.STOCK_CLOSE)
@@ -1871,7 +1883,7 @@ class MapGUI(BaseGUI):
         # Check for Big Graphic issues.
         messages = self.map.big_gfx_mappings.load()
         if len(messages) > 0:
-            self.on_big_graphic_info_clicked(messages=messages)
+            self.on_big_graphic_info_clicked(messages=messages, do_redraw=False)
 
         # Return success
         return True
@@ -1893,14 +1905,22 @@ class MapGUI(BaseGUI):
         else:
             return True
 
-    def on_big_graphic_info_clicked(self, widget=None, messages=None):
+    def on_big_graphic_info_clicked(self, widget=None, messages=None, do_redraw=True):
         """
         Launch a dialog to show information about the Big Graphic mappings, and an
-        option to renumber if need be.
+        option to renumber if need be.  Will trigger a map redraw if not told otherwise,
+        if it might be necessary.
         """
-        dialog = BigGraphicDialog(self.map.big_gfx_mappings, messages, transient=self.window)
+        request_redraw = False
+        if c.book == 3 and ('4949' in self.map.df.filename or 'Elderoak Forest' in self.map.mapname):
+            print 'True'
+            elderoak = True
+        else:
+            elderoak = False
+        dialog = BigGraphicDialog(self.map.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
         response = dialog.run()
         if response == gtk.RESPONSE_APPLY:
+            request_redraw = True
             self.map.big_gfx_mappings.fix()
             messages = self.map.big_gfx_mappings.load()
             if len(messages) > 0:
@@ -1920,6 +1940,8 @@ class MapGUI(BaseGUI):
                 md.run()
                 md.destroy()
         dialog.destroy()
+        if request_redraw and do_redraw:
+            self.draw_map()
 
     # Show the About dialog
     def on_about(self, widget):
@@ -4541,6 +4563,12 @@ class MapGUI(BaseGUI):
                 if tile.x not in self.huge_gfx_rows[tile.y]:
                     self.huge_gfx_rows[tile.y].append(tile.x)
                     self.huge_gfx_rows[tile.y].sort()
+
+            # Rather than try and be clever by maintaining our Big Graphic
+            # mapping information, we'll just totally regenerate the list
+            # whenever the GUI feels the need to redraw the map.
+            self.map.big_gfx_mappings.load()
+
             return True
         else:
             return False

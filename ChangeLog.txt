@@ -1,5 +1,10 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   13 Apr 2014; CJ Kucera <pez@apocalyptech.com> :
+   Fixed some bugs related to Big Graphic processing, and added
+      some extra error handling to deal with improperly-set-up
+      Big Graphics.
+
 *eschalon_utils-1.0.0 (02 Apr 2014)
 
    27 Mar 2014; CJ Kucera <pez@apocalyptech.com> :
