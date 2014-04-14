@@ -249,6 +249,7 @@ class B2Entity(Entity):
             'parallax1_label', 'parallax_x',
             'parallax2_label', 'parallax_y',
             'objectplace_loot_spin', 'objectplace_loot_label',
+            'gtk-biggraphic'
             ]
 
     def __init__(self, savegame):
@@ -350,6 +351,7 @@ class B3Entity(B2Entity):
             'random_entity_2_label', 'random_entity_2',
             'parallax_x_label', 'parallax_x',
             'parallax_y_label', 'parallax_y',
+            'gtk-biggraphic'
             ]
 
     def __init__(self, savegame):
