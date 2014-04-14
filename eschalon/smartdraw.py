@@ -2074,7 +2074,7 @@ class B2SmartDraw(SmartDraw):
         self.premade_objects.add_category('Large Graphics')
         for big_gfx in c.big_gfx_list:
             obj = self.premade_objects.new(big_gfx.name)
-            obg.set_big_gfx()
+            obj.set_big_gfx()
             if big_gfx.barrier is not None:
                 obj.set_wall(big_gfx.barrier)
             obj.set_tilecontent(21)
