@@ -109,6 +109,7 @@ class PremadeObject(object):
         self.do_loot = False
         self.do_lock = False
         self.do_trap = False
+        self.big_gfx = False
         self.rel_tiles = {}
 
     def set_wall(self, wall):
@@ -130,6 +131,10 @@ class PremadeObject(object):
     def set_walldecalimg(self, floorimg):
         self.do_walldecalimg = True
         self.tile.walldecalimg = floorimg
+
+    def set_big_gfx(self):
+        """ Sets this Premade Object as a Big Graphic. """
+        self.big_gfx = True
 
     def use_loot(self):
         self.do_loot = True
@@ -190,6 +195,10 @@ class PremadeObject(object):
                 if c.book > 1:
                     if self.do_loot:
                         tile.tilecontents[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
+                if self.big_gfx:
+                    wallid = map.big_gfx_mappings.get_id(tile.tilecontents[0].extratext, tile.x, tile.y)
+                    tile.wallimg = wallid
+                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (tile.wallimg)
 
         if self.do_entity:
             if self.entity is not None:
@@ -2065,12 +2074,11 @@ class B2SmartDraw(SmartDraw):
         self.premade_objects.add_category('Large Graphics')
         for big_gfx in c.big_gfx_list:
             obj = self.premade_objects.new(big_gfx.name)
+            obg.set_big_gfx()
             if big_gfx.barrier is not None:
                 obj.set_wall(big_gfx.barrier)
-            obj.set_wallimg(1000)
             obj.set_tilecontent(21)
             obj.create_tilecontentobj(None)
-            obj.tilecontent.description = 'Big Graphic Object #0'
             obj.tilecontent.extratext = big_gfx.image
 
         # Light Sources
@@ -2589,12 +2597,11 @@ class B3SmartDraw(B2SmartDraw):
         self.premade_objects.add_category('Large Graphics')
         for big_gfx in c.big_gfx_list:
             obj = self.premade_objects.new(big_gfx.name)
+            obj.set_big_gfx()
             if big_gfx.barrier is not None:
                 obj.set_wall(big_gfx.barrier)
-            obj.set_wallimg(1000)
             obj.set_tilecontent(21)
             obj.create_tilecontentobj(None)
-            obj.tilecontent.description = 'Big Graphic Object #0'
             obj.tilecontent.extratext = big_gfx.image
 
         # Light Sources

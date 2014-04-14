@@ -26,6 +26,124 @@ from eschalon.tile import Tile
 from eschalon.tilecontent import Tilecontent
 from eschalon.entity import Entity
 
+class BigGraphicMapping(object):
+    """
+    Class to hold some information about a Wall ID -> Big Graphic mapping.
+    """
+
+    def __init__(self, wallid, gfx, tile):
+        self.wallid = wallid
+        self.gfx = gfx
+        self.tile = tile
+
+class BigGraphicMappings(object):
+    """
+    Class to hold total information about Wall ID -> Big Graphic mappings,
+    for a whole map.
+    """
+
+    def __init__(self, mapobj):
+        """
+        Sets up a new object, which doesn't actually do much.  Call load() when the map object
+        is ready to be looped-through.
+        """
+        self.mapobj = mapobj
+        self.reset()
+
+    def reset(self):
+        """
+        Resets our internal variables, for either a load() for fix() run
+        """
+        self.mappings = {}
+        self.mappings_gfx = {}
+        self.last_error = ''
+        self.cur_idx = 1000
+
+    def next_index(self):
+        """
+        Updates our cur_idx counter to the next-available ID.  This might
+        actually not change the variable at all, in case we have IDs 1001 and 1002
+        but not 1000, for instance.  Returns the index that we assigned, as well.
+        """
+        while self.cur_idx in self.mappings:
+            self.cur_idx += 1
+        return self.cur_idx
+
+    def load(self):
+        """
+        Loop through and create a mapping based on what's
+        in the map.  Returns a list of messages to the user.  If that list
+        has any contents, there's been a mismatch and the user should be 
+        notified.
+        """
+        self.reset()
+        messages = []
+        for (y, row) in enumerate(self.mapobj.tiles):
+            for (x, tile) in enumerate(row):
+                if tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
+                    if not self.update(tile):
+                        messages.append(self.last_error)
+                elif tile.wallimg >= 1000 and (tile.tilecontentid != 21 or len(tile.tilecontents) == 0):
+                    messages.append('Tile (%d, %d) is using a Huge Graphic Wall ID without a proper Huge Graphic object' % (x, y))
+                elif tile.wallimg < 1000 and tile.tilecontentid == 21:
+                    messages.append('Tile (%d, %d) is using a Huge Graphic Object, but its Wall ID is not a Huge Graphic ID' % (x, y))
+        return messages
+
+    def update(self, tile):
+        """
+        Given a tile, add or update our mapping information. Returns False if
+        there has been a mismatch of some sort, or True otherwise.  Sets the
+        internal var last_error as a message to the user if there's been an error.
+        """
+        new_gfx = tile.tilecontents[0].extratext
+        if tile.wallimg in self.mappings:
+            cur_mapping = self.mappings[tile.wallimg]
+            if cur_mapping.gfx != new_gfx:
+                self.last_error = 'Big Graphic ID %d is used by more than one graphic - at (%d, %d) it is %s, and at (%d, %d) it is %s' % (
+                        tile.wallimg, cur_mapping.tile[0], cur_mapping.tile[1], cur_mapping.gfx, tile.x, tile.y, new_gfx)
+                return False
+        else:
+            self.mappings[tile.wallimg] = BigGraphicMapping(tile.wallimg, new_gfx, (tile.x, tile.y))
+            # Note that we're not checking to see if there are collisions in mappings_gfx.  The engine
+            # doesn't care if the same Big Graphic gets used by more than one ID, so we won't care
+            # either.
+            self.mappings_gfx[new_gfx] = self.mappings[tile.wallimg]
+        return True
+
+    def get_id(self, gfx, x, y):
+        """
+        Given a big graphic filename, return the ID that should be used.  This might
+        end up creating a new mapping, which is why we also ask for the x, y coordinates
+        of the new graphic in question.
+        """
+        if gfx in self.mappings_gfx:
+            return self.mappings_gfx[gfx].wallid
+        else:
+            mapping = BigGraphicMapping(self.next_index(), gfx, (x, y))
+            self.mappings[mapping.wallid] = mapping
+            self.mappings_gfx[gfx] = mapping
+            return mapping.wallid
+
+    def fix(self):
+        """
+        Loops through our map object and fixes/normalizes the Big Graphics ID mismatches
+        we can find.  Note that this will renumber all the objects.  This will be based
+        on the Big Graphic object filenames, not the wall IDs on the map currently.
+        """
+        self.reset()
+        gfx_to_id = {}
+        for (y, row) in enumerate(self.mapobj.tiles):
+            for (x, tile) in enumerate(row):
+                if tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
+                    gfx = tile.tilecontents[0].extratext
+                    if gfx not in gfx_to_id:
+                        gfx_to_id[gfx] = self.next_index()
+                    tile.wallimg = gfx_to_id[gfx]
+                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (gfx_to_id[gfx])
+        # Rather than try and be clever and build our hashes in here, let's just re-load everything
+        # once we're done.
+        self.load()
+
 class Map(object):
     """ The base Map class.  """
 
@@ -83,6 +201,9 @@ class Map(object):
 
         self.df = df
         self.set_df_ent()
+
+        # Also, we'll keep track of "big graphic" mappings
+        self.big_gfx_mappings = BigGraphicMappings(self)
 
     def set_savegame(self, savegame):
         """

@@ -1708,6 +1708,18 @@ class MapGUI(BaseGUI):
         # Set up our other GUI elements
         self.setup_new_map_gui()
 
+        # Check for Big Graphic issues.
+        messages = self.map.big_gfx_mappings.load()
+        print messages
+        for mapping in self.map.big_gfx_mappings.mappings.values():
+            print '%d -> %s' % (mapping.wallid, mapping.gfx)
+        if len(messages) > 0:
+            self.map.big_gfx_mappings.fix()
+        messages = self.map.big_gfx_mappings.load()
+        print messages
+        for mapping in self.map.big_gfx_mappings.mappings.values():
+            print '%d -> %s' % (mapping.wallid, mapping.gfx)
+
         # Return success
         return True
 
@@ -4321,7 +4333,7 @@ class MapGUI(BaseGUI):
         Stores whether or not there's a current hugegfx on the given tile
         (and stores the graphic name).  Used before a tile is edited.
         """
-        if (tile.wallimg == 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
+        if (tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
             self.cur_hugegfx_state = tile.tilecontents[0].extratext
         else:
             self.cur_hugegfx_state = None
@@ -4334,7 +4346,7 @@ class MapGUI(BaseGUI):
 
         Will also upkeep our self.huge_gfx_rows list
         """
-        if (tile.wallimg == 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
+        if (tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) != 0):
             new_hugegfx_state = tile.tilecontents[0].extratext
         else:
             new_hugegfx_state = None
