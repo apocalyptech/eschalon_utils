@@ -600,11 +600,11 @@ class BigGraphicDialog(gtk.Dialog):
     the issues, if there are any.
     """
 
-    def __init__(self, mapobj, messages=None, transient=None):
+    def __init__(self, mappingobj, messages=None, transient=None):
         """
         Constructor to set up everything
 
-        "mapobj" is the map object in question
+        "mappingobj" is the mapping object holding our info
         "messages" should be a list of problems we know about.  If not passed in,
         we will scan the map ourselves.
         """
@@ -627,10 +627,10 @@ class BigGraphicDialog(gtk.Dialog):
 
         # Scan for problems if we don't have any
         if messages is None:
-            messages = mapobj.big_gfx_mappings.load()
+            messages = mappingobj.load()
 
         # Figure out if we even have any Big Graphics at the moment
-        mappings = mapobj.big_gfx_mappings.get_gfx_mappings()
+        mappings = mappingobj.get_gfx_mappings()
         mapping_treeview = None
         if len(mappings) == 0:
             label = gtk.Label()
@@ -1626,6 +1626,7 @@ class MapGUI(BaseGUI):
                 'on_propswindow_close': self.on_propswindow_close,
                 'on_prefs': self.on_prefs,
                 'on_abort_render': self.on_abort_render,
+                'on_big_graphic_info_clicked': self.on_big_graphic_info_clicked,
                 'open_floorsel': self.open_floorsel,
                 'open_draw_floorsel': self.open_draw_floorsel,
                 'open_decalsel': self.open_decalsel,
@@ -1870,7 +1871,7 @@ class MapGUI(BaseGUI):
         # Check for Big Graphic issues.
         messages = self.map.big_gfx_mappings.load()
         if len(messages) > 0:
-            self.launch_big_graphic_info(messages=messages)
+            self.on_big_graphic_info_clicked(messages=messages)
 
         # Return success
         return True
@@ -1892,12 +1893,12 @@ class MapGUI(BaseGUI):
         else:
             return True
 
-    def launch_big_graphic_info(self, widget=None, messages=None):
+    def on_big_graphic_info_clicked(self, widget=None, messages=None):
         """
         Launch a dialog to show information about the Big Graphic mappings, and an
         option to renumber if need be.
         """
-        dialog = BigGraphicDialog(self.map, messages, transient=self.window)
+        dialog = BigGraphicDialog(self.map.big_gfx_mappings, messages, transient=self.window)
         response = dialog.run()
         if response == gtk.RESPONSE_APPLY:
             self.map.big_gfx_mappings.fix()
@@ -1907,7 +1908,15 @@ class MapGUI(BaseGUI):
                         flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
                         buttons=gtk.BUTTONS_OK)
                 md.set_transient_for(dialog)
-                md.set_markup('Note: there remain some unresolved Big Graphic issues.  You can see the list of problems again by doing stuff.')
+                md.set_markup('Note: there are still some unresolved Big Graphic issues.  You can see the list of problems again by selecting "Big Graphic Info" from the "Edit" menu.')
+                md.run()
+                md.destroy()
+            else:
+                md = gtk.MessageDialog(
+                        flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
+                        buttons=gtk.BUTTONS_OK)
+                md.set_transient_for(dialog)
+                md.set_markup('All Big Graphic issues were successfully resolved.')
                 md.run()
                 md.destroy()
         dialog.destroy()

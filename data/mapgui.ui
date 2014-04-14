@@ -2184,6 +2184,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -2293,6 +2296,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-revert-to-saved</property>
+  </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-zoom-in</property>
   </object>
   <object class="GtkWindow" id="mainwindow">
     <property name="width_request">1024</property>
@@ -2497,6 +2505,16 @@
                         <property name="accel_group">accelgroup1</property>
                         <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_prop_button_clicked" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="gtk-biggraphic">
+                        <property name="label" translatable="yes">Big Graphic Info</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image7</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_big_graphic_info_clicked" swapped="no"/>
                       </object>
                     </child>
                   </object>
