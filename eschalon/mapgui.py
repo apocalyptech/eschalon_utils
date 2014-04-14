@@ -593,6 +593,165 @@ class MapLoaderDialog(gtk.Dialog):
         else:
             return True
 
+class BigGraphicDialog(gtk.Dialog):
+    """
+    A dialog to present the user with some information about the Big Graphic
+    objects stored on the map, with the option to possibly fix some of
+    the issues, if there are any.
+    """
+
+    def __init__(self, mapobj, messages=None, transient=None):
+        """
+        Constructor to set up everything
+
+        "mapobj" is the map object in question
+        "messages" should be a list of problems we know about.  If not passed in,
+        we will scan the map ourselves.
+        """
+        super(BigGraphicDialog, self).__init__(flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT)
+
+        # Various options for the dialog
+        self.set_title('Eschalon Book %d Map Editor - Big Graphic Status' % (c.book))
+        self.set_default_response(gtk.RESPONSE_CLOSE)
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+
+        # Title
+        label = gtk.Label()
+        label.set_markup('<b>Big Graphic Status</b>')
+        align = gtk.Alignment(.5, 0, 1, 0)
+        align.set_padding(10, 10, 10, 10)
+        align.add(label)
+        self.vbox.pack_start(align, False, False)
+
+        # Scan for problems if we don't have any
+        if messages is None:
+            messages = mapobj.big_gfx_mappings.load()
+
+        # Figure out if we even have any Big Graphics at the moment
+        mappings = mapobj.big_gfx_mappings.get_gfx_mappings()
+        mapping_treeview = None
+        if len(mappings) == 0:
+            label = gtk.Label()
+            label.set_markup('There are currently no Big Graphics on this map.')
+            label.set_line_wrap(True)
+            align = gtk.Alignment(0, 0, 1, 1)
+            align.set_padding(5, 5, 5, 5)
+            align.add(label)
+            self.vbox.pack_start(align, True, True)
+
+        else:
+
+            height = 200
+
+            # Display the current graphic mappings
+            label = gtk.Label('Current Big Graphic ID associations:')
+            align = gtk.Alignment(0, .5, 1, 0)
+            align.set_padding(5, 5, 15, 15)
+            align.add(label)
+            self.vbox.pack_start(align, False, True)
+            
+            store = gtk.ListStore(str, str)
+            mapping_treeview = gtk.TreeView(store)
+            self.thing = mapping_treeview
+            col = gtk.TreeViewColumn('Graphic', gtk.CellRendererText(), text=0)
+            col.set_sort_column_id(0)
+            col.set_resizable(True)
+            mapping_treeview.append_column(col)
+            col = gtk.TreeViewColumn('Wall ID', gtk.CellRendererText(), text=1)
+            col.set_sort_column_id(1)
+            col.set_resizable(True)
+            mapping_treeview.append_column(col)
+            for gfx in sorted(mappings.keys()):
+                store.append((gfx, mappings[gfx].wallid))
+            align = gtk.Alignment(.5, .5, 0, 0)
+            align.set_padding(5, 5, 5, 5)
+            align.add(mapping_treeview)
+            self.vbox.pack_start(align, False, False)
+            (w, h) = mapping_treeview.size_request()
+            height += h
+
+            # Now report on what we've got
+            if len(messages) == 0:
+                self.set_size_request(550, height)
+                label = gtk.Label()
+                label.set_markup('All the Big Graphics in this map are fine.  You can have the editor renumber them if you like, but there is probably no reason to do so.')
+                label.set_line_wrap(True)
+                label.set_size_request(500, 30)
+                align = gtk.Alignment(0, 0, 1, 1)
+                align.set_padding(5, 5, 5, 5)
+                align.add(label)
+                self.vbox.pack_start(align, True, True)
+            else:
+                self.set_size_request(650, height+100)
+                label = gtk.Label()
+                label.set_markup('There were some problems detected with the Big Graphics on this map.  We might be able to fix some of these automatically.  Use the "Renumber" button below to make an attempt.  Note that doing so will renumber the IDs of the Big Graphics on the map:')
+                label.set_line_wrap(True)
+                label.set_size_request(600, 50)
+                align = gtk.Alignment(0, 0, 1, 0)
+                align.set_padding(5, 10, 15, 15)
+                align.add(label)
+                self.vbox.pack_start(align, False, True)
+
+                tb = gtk.TextBuffer()
+                tv = gtk.TextView(tb)
+                tv.set_wrap_mode(gtk.WRAP_WORD)
+                tv.set_editable(False)
+                vp = gtk.Viewport()
+                vp.set_shadow_type(gtk.SHADOW_IN)
+                vp.add(tv)
+                sw = gtk.ScrolledWindow()
+                sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+                sw.add(vp)
+                align = gtk.Alignment(0, 0, 1, 1)
+                align.set_padding(5, 5, 15, 15)
+                align.add(sw)
+                self.vbox.pack_start(align, True, True)
+
+                display_messages = []
+                for message in messages:
+                    display_messages.append(' * %s' % (message))
+                tb.set_text("\n".join(display_messages))
+
+        # Buttons at the bottom
+        close = gtk.Button(stock=gtk.STOCK_CLOSE)
+        close.connect('clicked', self.close_clicked)
+        hbox = gtk.HButtonBox()
+
+        if len(mappings) > 0:
+            renumber = gtk.Button('Renumber')
+            renumber.set_image(gtk.image_new_from_stock(gtk.STOCK_REFRESH, gtk.ICON_SIZE_BUTTON))
+            renumber.connect('clicked', self.renumber_clicked)
+            hbox.add(renumber)
+
+        hbox.add(close)
+        align = gtk.Alignment(1, 1, 0, 0)
+        align.set_padding(5, 5, 5, 5)
+        align.add(hbox)
+        self.vbox.pack_start(align, False, False)
+
+        # Show everything
+        self.show_all()
+
+        # A couple of GUI updates we can only do once we're shown
+        close.grab_focus()
+        if mapping_treeview is not None:
+            mapping_treeview.get_selection().unselect_path(0)
+
+    def renumber_clicked(self, widget):
+        """
+        What to do when our renumber button is clicked.. We're abusing
+        the RESPONSE_APPLY constant here.
+        """
+        self.response(gtk.RESPONSE_APPLY)
+
+    def close_clicked(self, widget):
+        """
+        What to do when our close button is clicked
+        """
+        self.response(gtk.RESPONSE_CLOSE)
+
 class ObjectSelWindow(ImageSelWindow):
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
@@ -1710,15 +1869,8 @@ class MapGUI(BaseGUI):
 
         # Check for Big Graphic issues.
         messages = self.map.big_gfx_mappings.load()
-        print messages
-        for mapping in self.map.big_gfx_mappings.mappings.values():
-            print '%d -> %s' % (mapping.wallid, mapping.gfx)
         if len(messages) > 0:
-            self.map.big_gfx_mappings.fix()
-        messages = self.map.big_gfx_mappings.load()
-        print messages
-        for mapping in self.map.big_gfx_mappings.mappings.values():
-            print '%d -> %s' % (mapping.wallid, mapping.gfx)
+            self.launch_big_graphic_info(messages=messages)
 
         # Return success
         return True
@@ -1739,6 +1891,26 @@ class MapGUI(BaseGUI):
             gtk.main_quit()
         else:
             return True
+
+    def launch_big_graphic_info(self, widget=None, messages=None):
+        """
+        Launch a dialog to show information about the Big Graphic mappings, and an
+        option to renumber if need be.
+        """
+        dialog = BigGraphicDialog(self.map, messages, transient=self.window)
+        response = dialog.run()
+        if response == gtk.RESPONSE_APPLY:
+            self.map.big_gfx_mappings.fix()
+            messages = self.map.big_gfx_mappings.load()
+            if len(messages) > 0:
+                md = gtk.MessageDialog(
+                        flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
+                        buttons=gtk.BUTTONS_OK)
+                md.set_transient_for(dialog)
+                md.set_markup('Note: there remain some unresolved Big Graphic issues.  You can see the list of problems again by doing stuff.')
+                md.run()
+                md.destroy()
+        dialog.destroy()
 
     # Show the About dialog
     def on_about(self, widget):
@@ -3939,6 +4111,9 @@ class MapGUI(BaseGUI):
                 tilecontent = (1, 0, 0, 0.5)
             elif (tile.wallimg >= 1000 and tile.tilecontentid == 0):
                 # Big Graphics which don't have associated objects
+                tilecontent = (1, 0, 0, 0.5)
+            elif (tile.wallimg > 1003):
+                # Maximum Huge Graphic ID is 1003
                 tilecontent = (1, 0, 0, 0.5)
             elif tile.tilecontentid > 0:
                 tilecontent = (1, 1, 0, 0.5)

@@ -29,6 +29,7 @@ from eschalon.entity import Entity
 class BigGraphicMapping(object):
     """
     Class to hold some information about a Wall ID -> Big Graphic mapping.
+    Basically just an overglorified hash/tuple/whatever
     """
 
     def __init__(self, wallid, gfx, tile):
@@ -81,6 +82,8 @@ class BigGraphicMappings(object):
         for (y, row) in enumerate(self.mapobj.tiles):
             for (x, tile) in enumerate(row):
                 if tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
+                    if tile.wallimg > 1003:
+                        messages.append('Tile (%d, %d) is using a Huge Graphic Wall ID of %d, but the maximum is 1003' % (x, y, tile.wallimg))
                     if not self.update(tile):
                         messages.append(self.last_error)
                 elif tile.wallimg >= 1000 and (tile.tilecontentid != 21 or len(tile.tilecontents) == 0):
@@ -88,6 +91,20 @@ class BigGraphicMappings(object):
                 elif tile.wallimg < 1000 and tile.tilecontentid == 21:
                     messages.append('Tile (%d, %d) is using a Huge Graphic Object, but its Wall ID is not a Huge Graphic ID' % (x, y))
         return messages
+
+    def get_id(self, gfx, x, y):
+        """
+        Given a big graphic filename, return the ID that should be used.  This might
+        end up creating a new mapping, which is why we also ask for the x, y coordinates
+        of the new graphic in question.
+        """
+        if gfx in self.mappings_gfx:
+            return self.mappings_gfx[gfx].wallid
+        else:
+            mapping = BigGraphicMapping(self.next_index(), gfx, (x, y))
+            self.mappings[mapping.wallid] = mapping
+            self.mappings_gfx[gfx] = mapping
+            return mapping.wallid
 
     def update(self, tile):
         """
@@ -110,20 +127,6 @@ class BigGraphicMappings(object):
             self.mappings_gfx[new_gfx] = self.mappings[tile.wallimg]
         return True
 
-    def get_id(self, gfx, x, y):
-        """
-        Given a big graphic filename, return the ID that should be used.  This might
-        end up creating a new mapping, which is why we also ask for the x, y coordinates
-        of the new graphic in question.
-        """
-        if gfx in self.mappings_gfx:
-            return self.mappings_gfx[gfx].wallid
-        else:
-            mapping = BigGraphicMapping(self.next_index(), gfx, (x, y))
-            self.mappings[mapping.wallid] = mapping
-            self.mappings_gfx[gfx] = mapping
-            return mapping.wallid
-
     def fix(self):
         """
         Loops through our map object and fixes/normalizes the Big Graphics ID mismatches
@@ -131,18 +134,19 @@ class BigGraphicMappings(object):
         on the Big Graphic object filenames, not the wall IDs on the map currently.
         """
         self.reset()
-        gfx_to_id = {}
         for (y, row) in enumerate(self.mapobj.tiles):
             for (x, tile) in enumerate(row):
                 if tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
                     gfx = tile.tilecontents[0].extratext
-                    if gfx not in gfx_to_id:
-                        gfx_to_id[gfx] = self.next_index()
-                    tile.wallimg = gfx_to_id[gfx]
-                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (gfx_to_id[gfx])
-        # Rather than try and be clever and build our hashes in here, let's just re-load everything
-        # once we're done.
-        self.load()
+                    wallimg = self.get_id(gfx, x, y)
+                    tile.wallimg = wallimg
+                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (wallimg)
+
+    def get_gfx_mappings(self):
+        """
+        Returns our graphic-to-ID mapping
+        """
+        return self.mappings_gfx
 
 class Map(object):
     """ The base Map class.  """
