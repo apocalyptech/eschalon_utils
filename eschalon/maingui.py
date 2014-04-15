@@ -193,6 +193,7 @@ class CharLoaderDialog(gtk.Dialog):
         arbitrary_align.set_padding(5, 5, 5, 5)
         self.chooser = gtk.FileChooserWidget()
         self.chooser.connect('file-activated', self.chooser_file_activated)
+        self.chooser.set_show_hidden(True)
         arbitrary_align.add(self.chooser)
         self.register_page(self.SOURCE_OTHER)
         self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
