@@ -414,7 +414,7 @@ class B2Constants:
             17: 'Archery Target',
             18: 'Nest / Computer Teriminal',
             19: 'Zapper',
-            21: 'Huge Graphic',
+            21: 'Big Graphic',
             25: 'Light Source (white)',
             26: 'Light Source (red)',
             27: 'Light Source (green)',

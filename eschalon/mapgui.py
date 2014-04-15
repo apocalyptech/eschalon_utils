@@ -4150,7 +4150,7 @@ class MapGUI(BaseGUI):
                 # Big Graphics which don't have associated objects
                 tilecontent = (1, 0, 0, 0.5)
             elif (tile.wallimg > 1003):
-                # Maximum Huge Graphic ID is 1003
+                # Maximum Big Graphic ID is 1003
                 tilecontent = (1, 0, 0, 0.5)
             elif tile.tilecontentid > 0:
                 tilecontent = (1, 1, 0, 0.5)

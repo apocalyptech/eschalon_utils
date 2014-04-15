@@ -2070,8 +2070,8 @@ class B2SmartDraw(SmartDraw):
         obj = self.premade_objects.new('Zapper')
         obj.set_tilecontent(19)
 
-        # Large Graphics
-        self.premade_objects.add_category('Large Graphics')
+        # Big Graphics
+        self.premade_objects.add_category('Big Graphics')
         for big_gfx in c.big_gfx_list:
             obj = self.premade_objects.new(big_gfx.name)
             obj.set_big_gfx()
@@ -2593,8 +2593,8 @@ class B3SmartDraw(B2SmartDraw):
         obj = self.premade_objects.new('Zapper')
         obj.set_tilecontent(19)
 
-        # Large Graphics
-        self.premade_objects.add_category('Large Graphics')
+        # Big Graphics
+        self.premade_objects.add_category('Big Graphics')
         for big_gfx in c.big_gfx_list:
             obj = self.premade_objects.new(big_gfx.name)
             obj.set_big_gfx()

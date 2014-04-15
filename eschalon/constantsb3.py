@@ -426,7 +426,7 @@ class B3Constants:
             17: 'Archery Target',
             18: 'Nest / Computer Teriminal',
             19: 'Zapper',
-            21: 'Huge Graphic',
+            21: 'Big Graphic',
             22: 'Breakable Wall',
             23: 'Ceramic pot (breakable with powder keg)',
             25: 'Light Source (white)',

@@ -83,13 +83,13 @@ class BigGraphicMappings(object):
             for (x, tile) in enumerate(row):
                 if tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
                     if tile.wallimg > 1003:
-                        messages.append('Tile (%d, %d) is using a Huge Graphic Wall ID of %d, but the maximum is 1003' % (x, y, tile.wallimg))
+                        messages.append('Tile (%d, %d) is using a Big Graphic Wall ID of %d, but the maximum is 1003' % (x, y, tile.wallimg))
                     if not self.update(tile):
                         messages.append(self.last_error)
                 elif tile.wallimg >= 1000 and (tile.tilecontentid != 21 or len(tile.tilecontents) == 0):
-                    messages.append('Tile (%d, %d) is using a Huge Graphic Wall ID without a proper Huge Graphic object' % (x, y))
+                    messages.append('Tile (%d, %d) is using a Big Graphic Wall ID without a proper Big Graphic object' % (x, y))
                 elif tile.wallimg < 1000 and tile.tilecontentid == 21:
-                    messages.append('Tile (%d, %d) is using a Huge Graphic Object, but its Wall ID is not a Huge Graphic ID' % (x, y))
+                    messages.append('Tile (%d, %d) is using a Big Graphic Object, but its Wall ID is not a Big Graphic ID' % (x, y))
         return messages
 
     def get_id(self, gfx, x, y):
