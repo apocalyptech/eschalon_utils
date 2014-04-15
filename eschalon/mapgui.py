@@ -3938,6 +3938,12 @@ class MapGUI(BaseGUI):
             if (self.erase_entity_checkbox.get_active()):
                 self.map.delentity(x, y)
             if (self.erase_object_checkbox.get_active()):
+                # If we erase a tilecontent which happens to be a Big Graphic, let's also
+                # clear out the wall ID, even if we haven't been told to
+                if c.book != 1 and tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
+                    tile.wallimg = 0
+
+                # Now delete the actual tilecontent
                 num = len(tile.tilecontents)
                 for i in range(num):
                     self.map.deltilecontent(x, y, 0)
