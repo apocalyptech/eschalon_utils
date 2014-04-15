@@ -3986,6 +3986,8 @@ class MapGUI(BaseGUI):
             if c.book > 1:
                 if self.check_hugegfx_state(tile):
                     self.draw_map()
+                    # The map-rendering status window can leave us in a clicked state, let's clear that out
+                    self.on_released()
 
         except Exception:
 
