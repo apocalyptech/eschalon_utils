@@ -306,10 +306,8 @@ class BaseGUI(object):
         # Update the text on our graphics popups
         if c.book == 1:
             gfxfile = 'gfx.pak (or packedgraphics)'
-        elif c.book == 2:
-            gfxfile = 'datapak (or data)'
-        elif c.book == 3:
-            gfxfile = 'datapak (or Files)'
+        else:
+            gfxfile = 'datapak (or directory containing gfx directory)'
         opt_label = self.prefsbuilder.get_object('gfx_opt_window_mainlabel')
         opt_label.set_markup('We couldn\'t locate the file "%s," which can be used by '
             'this program to enhance the GUI.  It\'s not required, but it does look '
@@ -571,10 +569,10 @@ class BaseGUI(object):
         return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'packedgraphics'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir'), 'gfx.pak')))
 
     def gamedir_set_b2(self):
-        return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'data'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'datapak')))
+        return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'gfx'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b2'), 'datapak')))
 
     def gamedir_set_b3(self):
-        return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b3'), 'Files'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b3'), 'datapak')))
+        return (os.path.isdir(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b3'), 'gfx'))) or (os.path.isfile(os.path.join(self.prefsobj.get_str('paths', 'gamedir_b3'), 'datapak')))
 
     def gamedir_set(self, book=None):
         if book is None:
@@ -660,14 +658,14 @@ class BaseGUI(object):
             self.prefsbuilder.get_object('b3_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir_b2
             gui_savegamedir = self.prefs_savegame_b2
-            look_for = [ 'datapak', 'data' ]
+            look_for = [ 'datapak', 'gfx' ]
         elif c.book == 3:
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').hide()
             self.prefsbuilder.get_object('b3_dir_tab').show()
             gui_gamedir = self.prefs_gamedir_b3
             gui_savegamedir = self.prefs_savegame_b3
-            look_for = [ 'datapak', 'Files' ]
+            look_for = [ 'datapak', 'gfx' ]
 
         # In case we have a blank value stored in the prefs file, re-attempt to set it
         # from the default (should theoretically return '' anyway if we can't)

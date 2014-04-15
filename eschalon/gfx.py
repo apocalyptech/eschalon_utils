@@ -590,7 +590,6 @@ class B2Gfx(Gfx):
     book = 2
     gamedir_label = 'gamedir_b2'
     zip = None
-    dirname = 'data'
     wall_types = {}
     wall_gfx_group = {}
     tilebuf_mult = 1.5
@@ -763,7 +762,7 @@ class B2Gfx(Gfx):
                 try:
                     return self.zip.read(filename)
                 except KeyError:
-                    raise LoadException('Filename %s not found in Files!' % (filename))
+                    raise LoadException('Filename %s not found in data directory!' % (filename))
         else:
             raise LoadException('We haven\'t initialized ourselves yet')
 
@@ -908,10 +907,10 @@ class B2Gfx(Gfx):
         if os.path.isfile(os.path.join(self.gamedir, 'datapak')):
             self.zip = zipfile.ZipFile(os.path.join(self.gamedir, 'datapak'), 'r')
             self.zip.setpassword(text)
-        elif os.path.isdir(os.path.join(self.gamedir, self.dirname)):
-            self.path = os.path.join(self.gamedir, self.dirname)
+        elif os.path.isdir(os.path.join(self.gamedir, 'gfx')):
+            self.path = self.gamedir
         else:
-            raise LoadException('Could not open datapak or ' + self.dirname + ' directory!')
+            raise LoadException('Could not open datapak or gfx directory!')
 
         self.loaded = True
 
@@ -938,7 +937,6 @@ class B3Gfx(B2Gfx):
     book = 3
     gamedir_label = 'gamedir_b3'
     obj_a_rows = 11
-    dirname = 'Files'
 
     def __init__(self, prefs, datadir):
         # Call the B2 constructor first, then override for unique Book III
