@@ -35,13 +35,18 @@ for APP in $APPS; do
   rm -f setup.py
   rm -rf build
 
+  PRETTY=$(echo $APP|perl -i -pe 's/_/ /g; s/([\w]+)/\u\L$1/g')
+  cp $APP.py "$PRETTY".py
+
   # Run py2app
-  py2applet --make-setup "$APP.py"
+  py2applet --make-setup "$PRETTY.py"
+  # Set icon file, which evidently can't be specified on the command line
+  perl -i -pe 's/(OPTIONS = {.*?)}/$1, "iconfile":"data\/eschalon1.icns"}/' setup.py
   python setup.py py2app -i "$INCLUDE" -r "$RESOURCES" -d "$DMG"
 
   # The libraries are referenced by these names, and py2app doesn't make
   # the appropriate links, so make them ourselves
-  cd "$DMG"/"$APP".app/Contents/Frameworks
+  cd "$DMG"/"$PRETTY".app/Contents/Frameworks
 
   # The data directory gets referenced relative to the contents of the
   # site-packages directory.  If it's a zip file as py2app makes, this
@@ -110,6 +115,9 @@ for APP in $APPS; do
 
   # Go back to the root to start the next loop iteration
   cd ../../../..
+
+  # We don't need this any more
+  rm "$PRETTY".py
 done
 
 hdiutil create "$DMG".dmg -srcfolder "$DMG" -ov
