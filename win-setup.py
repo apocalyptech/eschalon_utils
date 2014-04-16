@@ -142,7 +142,7 @@ GUI2Exe_Target_7 = Executable(
 
 setup(
     
-    version = "1.0.1",
+    version = "1.0.2",
     description = "Eschalon Utilities",
     author = "CJ Kucera",
     name = "Eschalon Utilities",
