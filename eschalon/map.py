@@ -235,6 +235,24 @@ class Map(object):
         except ValueError:
             self.df_ent = Savefile('')
 
+    def get_opq_path(self):
+        """
+        Returns the path to the opq file (only valid if we're a savegame).  This is
+        the level minimap, and must be present in the savegame dir.
+        """
+        return self.df.filename[:self.df.filename.rindex('.map')] + '.opq'
+
+    def has_opq_file(self):
+        """
+        Returns true if we have a .opq file in our savegame dir, or if we're a
+        global map file.  Returns false if we're a savegame and an .opq is not
+        found.
+        """
+        if self.is_savegame() and not os.path.exists(self.get_opq_path()):
+            return False
+        else:
+            return True
+
     def replicate(self):
         
         if self.book == 1:

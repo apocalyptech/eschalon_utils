@@ -1190,6 +1190,19 @@ class MapGUI(BaseGUI):
             self.on_save_as()
         else:
             self.map.write()
+            if self.map.is_savegame() and not self.map.has_opq_file():
+                if c.book == 1:
+                    opq_template = self.datafile('minimap-book1.png')
+                else:
+                    opq_template = self.datafile('minimap-book23.png')
+                try:
+                    with open(opq_template, 'rb') as df:
+                        with open(self.map.get_opq_path(), 'wb') as odf:
+                            odf.write(df.read())
+                except Exception, e:
+                    self.warningdialog('Could not write minimap',
+                        "Could not write this map\'s minimap graphic file.  This can cause corruption on the in-game minimap.\n\nThe error: <tt>%s</tt>" % (e),
+                        self.window)
             self.putstatus('Saved ' + self.map.df.filename)
             self.update_main_map_name()
 
