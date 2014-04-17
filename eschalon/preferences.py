@@ -58,7 +58,10 @@ class Prefs(object):
         self.set_defaults()
         if (not self.load()):
             # Write out our prefs if one didn't exist
-            self.save()
+            try:
+                self.save()
+            except Exception:
+                pass
 
     def set_defaults(self):
         # We're loading gamedir first because sometimes Windows will have its
@@ -78,10 +81,13 @@ class Prefs(object):
             return False
 
     def save(self):
-        if (self.filename is not None):
+        if (self.filename is None):
+            return False
+        else:
             df = open(self.filename, 'w')
             self.cp.write(df)
             df.close()
+            return True
 
     def set_str(self, cat, name, val):
         if (not self.cp.has_section(cat)):

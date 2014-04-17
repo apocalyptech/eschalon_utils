@@ -698,20 +698,34 @@ class BaseGUI(object):
             # the current dir, if the graphics pack wasn't found.
             new_gamedir = gui_gamedir.get_filename()
             found = False
-            for i in look_for:
-                if os.path.exists(os.path.join(new_gamedir, i)):
-                    found = True
-            if (cur_gamedir != '' or found):
-                self.prefsobj.set_str('paths', self.get_gamedir_key(), new_gamedir)
-                if cur_gamedir != new_gamedir:
-                    changed = True
+            if new_gamedir:
+                for i in look_for:
+                    print new_gamedir
+                    if os.path.exists(os.path.join(new_gamedir, i)):
+                        found = True
+                if (cur_gamedir != '' or found):
+                    self.prefsobj.set_str('paths', self.get_gamedir_key(), new_gamedir)
+                    if cur_gamedir != new_gamedir:
+                        changed = True
 
             # Similar logic applies to the savegame directory
             new_savegamedir = gui_savegamedir.get_filename()
             if (cur_savegamedir != '' or os.path.exists(os.path.join(new_savegamedir, 'slot1'))):
                 self.prefsobj.set_str('paths', self.get_savegame_dir_key(), new_savegamedir)
 
-            self.prefsobj.save()
+            try:
+                if not self.prefsobj.save():
+                    self.warningdialog('Could not save preferences',
+                        '%s %s %s' % ('We were unable to save your preferences because we couldn\'t',
+                        'find the directory to use.  Please report this on the forums so that it',
+                        'can be fixed.'),
+                        self.window);
+            except Exception, e:
+                self.warningdialog('Could not save preferences',
+                    '%s %s <tt>%s</tt>' % ('We were unable to save your preferences.  Please report this',
+                    "on the forums so that it can be fixed.\n\nThe error: ", e),
+                    self.window);
+
         return (changed, alert_changed)
 
     def on_prefs_changed(self, widget):
