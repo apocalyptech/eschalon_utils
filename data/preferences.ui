@@ -454,7 +454,7 @@
                                 <property name="xalign">0</property>
                                 <property name="ypad">4</property>
                                 <property name="label" translatable="yes">&lt;b&gt;Book 3 Game Data Directory&lt;/b&gt;
-&lt;i&gt;Will contain files such as "datapak.zip"&lt;/i&gt;</property>
+&lt;i&gt;Will contain "datapak" file or "gfx" directory&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
                               </object>
                             </child>
