@@ -420,6 +420,7 @@ class MainGUI(BaseGUI):
             if (not self.on_load()):
                 return
         else:
+            self.last_char_source = CharLoaderDialog.SOURCE_OTHER
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
                     return
