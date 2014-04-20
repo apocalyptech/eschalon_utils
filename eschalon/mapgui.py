@@ -33,6 +33,7 @@ from eschalon.item import B1Item, B2Item, B3Item
 from eschalon.entity import B1Entity, B2Entity, B3Entity
 from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
 from eschalon.saveslot import Saveslot
+from eschalon.eschalondata import EschalonData
 
 # Load our GTK modules
 try:
@@ -974,18 +975,25 @@ class MapGUI(BaseGUI):
         self.curitem = ''
         self.itemclipboard = None
 
-        # Preferences window - also load in our graphics
+        # Initialize preferences
         self.prefs_init(self.prefs)
+
+        # Make sure that we know where the game graphics directory is
         if (not self.require_gfx()):
             return
+
+        # Set up our EschalonData object
+        # For the Map editor, we need this to be present
+        self.eschalondata = None
         try:
-            self.gfx = Gfx.new(self.req_book, self.prefs, self.datadir)
+            self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
+            self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
         except Exception, e:
             self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
-        if c.book > 1 and not self.gfx.fast_zipfile:
+        if c.book > 1 and not self.eschalondata.fast_zipfile:
             self.get_widget('render_slowzip_warning').show()
             self.drawstatuswindow.set_size_request(350, 200)
             warn = self.prefs.get_bool('mapgui', 'warn_slow_zip')
@@ -1113,7 +1121,7 @@ class MapGUI(BaseGUI):
     def populate_entities(self):
         """
         Populates our entities, if need be.
-        (Currently only does things for Book 2, since they can be sourced from
+        (Currently only does things for Book 2+3, since they can be sourced from
         a CSV file)
         """
         # x / y sizing
@@ -1124,7 +1132,7 @@ class MapGUI(BaseGUI):
         # 64 / 64 2048x2048, sixteen to a row
         if self.req_book == 1:
             return
-        reader = csv.DictReader(cStringIO.StringIO(self.gfx.readfile('entities.csv', 'data')))
+        reader = csv.DictReader(cStringIO.StringIO(self.eschalondata.readfile('entities.csv', 'data')))
         for row in reader:
             if row['file'].strip() == '':
                 continue

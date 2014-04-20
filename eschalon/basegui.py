@@ -1366,7 +1366,7 @@ class BaseGUI(object):
             files = os.listdir(path)
         else:
             files = []
-            for file in self.gfx.filelist():
+            for file in self.eschalondata.filelist():
                 (filedir, filename) = os.path.split(file)
                 if filedir == dir:
                     files.append(filename)

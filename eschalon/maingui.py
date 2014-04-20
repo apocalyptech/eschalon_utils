@@ -54,6 +54,7 @@ from eschalon.character import Character, B1Character, B2Character, B3Character
 from eschalon.item import Item, B1Item, B2Item, B3Item
 from eschalon.savefile import LoadException
 from eschalon.saveslot import Saveslot
+from eschalon.eschalondata import EschalonData
 from eschalon import constants as c
 from eschalon import app_name, version, url, authors
 
@@ -367,15 +368,27 @@ class MainGUI(BaseGUI):
         self.avatarsel_mousex_prev = -1
         self.avatarsel_mousey_prev = -1
 
-        # Set up our graphics cache
-        self.gfx = None
+        # Initialize preferences
         self.prefs_init(self.prefs)
-        self.optional_gfx()
+
+        # Set up our EschalonData object
+        # In the Character editor this is optional, as we can function
+        # fine without graphics, so don't worry if it doesn't work.
+        self.eschalondata = None
         if self.gamedir_set():
             try:
-                self.gfx = Gfx.new(c.book, self.prefs, self.datadir)
-            except:
-                pass
+                self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
+            except Exception, e:
+                print 'Exception instantiating EschalonData: %s' % (e)
+
+        # Set up our graphics cache
+        self.gfx = None
+        self.optional_gfx()
+        if self.eschalondata:
+            try:
+                self.gfx = Gfx.new(c.book, self.datadir, self.eschalondata)
+            except Exception, e:
+                print 'Exception instantiating Gfx: %s' % (e)
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
