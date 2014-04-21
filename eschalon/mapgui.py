@@ -34,6 +34,7 @@ from eschalon.entity import B1Entity, B2Entity, B3Entity
 from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
 from eschalon.saveslot import Saveslot
 from eschalon.eschalondata import EschalonData
+from eschalon.savefile import Savefile
 
 # Load our GTK modules
 try:
@@ -181,6 +182,12 @@ class MapLoaderDialog(gtk.Dialog):
     DATA_COL_FILENAME_FULL = 2
     DATA_COL_MAPNAME = 3
 
+    # Treeview column indexes for datapak
+    DATAPAK_COL_IDX = 0
+    DATAPAK_COL_FILENAME = 1
+    DATAPAK_COL_FILENAME_FULL = 2
+    DATAPAK_COL_MAPNAME = 3
+
     # Load-source constants
     SOURCE_SAVES = 0
     SOURCE_GLOBAL = 1
@@ -195,7 +202,9 @@ class MapLoaderDialog(gtk.Dialog):
     def __init__(self, starting_path, savegame_dir, basegame_dir,
             transient=None,
             last_source=None,
-            show_new=False):
+            show_new=False,
+            b23maplist=None,
+            eschalondata=None):
         """
         Constructor to set up everything
 
@@ -206,6 +215,9 @@ class MapLoaderDialog(gtk.Dialog):
         last_source is the last source we loaded from - this should be None on the
            first run, but passed in on subsequent calls (though of course it's not
            actually necessary)
+        b23maplist is a list of maps that we've read from the datapak
+        eschalondata is an EschalonData object that we could use to read the maps
+            in b23maplist, if necessary
         """
         super(MapLoaderDialog, self).__init__(
                 flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -350,23 +362,38 @@ class MapLoaderDialog(gtk.Dialog):
         if c.book == 3:
             (self.mod_list,
                     self.mod_store,
-                    self.mod_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'mods'),
-                            source=self.SOURCE_MODS,
+                    self.mod_tv) = self.mapdir_page(source=self.SOURCE_MODS,
                             label='Load from Mods...',
                             callback=self.mod_activated,
                             filename_col=self.MOD_COL_FILENAME,
-                            mapname_col=self.MOD_COL_MAPNAME)
+                            mapname_col=self.MOD_COL_MAPNAME,
+                            directory=os.path.join(basegame_dir, 'mods'),
+                            )
 
         # Map data dir, for book I
         if c.book == 1:
             (self.data_list,
                     self.data_store,
-                    self.data_tv) = self.mapdir_page(directory=os.path.join(basegame_dir, 'data'),
-                            source=self.SOURCE_GLOBAL,
+                    self.data_tv) = self.mapdir_page(source=self.SOURCE_GLOBAL,
                             label='Load from Datadir...',
                             callback=self.data_activated,
                             filename_col=self.DATA_COL_FILENAME,
-                            mapname_col=self.DATA_COL_MAPNAME)
+                            mapname_col=self.DATA_COL_MAPNAME,
+                            directory=os.path.join(basegame_dir, 'data'),
+                            )
+
+        # Map datapak records, for books II and III
+        if c.book > 1:
+            (self.datapak_list,
+                    self.datapak_store,
+                    self.datapak_tv) = self.mapdir_page(source=self.SOURCE_DATAPAK,
+                            label='Load from Datapak...',
+                            callback=self.datapak_activated,
+                            filename_col=self.DATAPAK_COL_FILENAME,
+                            mapname_col=self.DATAPAK_COL_MAPNAME,
+                            b23maplist=b23maplist,
+                            eschalondata=eschalondata,
+                            )
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -419,64 +446,83 @@ class MapLoaderDialog(gtk.Dialog):
         self.page_index[curpages] = source
         self.source_index[source] = curpages
 
-    def mapdir_page(self, directory, source, label, callback, filename_col, mapname_col):
+    def mapdir_page(self, source, label, callback, filename_col, mapname_col,
+            directory=None, b23maplist=None, eschalondata=None):
         """
-        Sets up a page on our notebook which loads all maps from a given directory.
+        Sets up a page on our notebook which loads all maps, either from a given
+        directory, or from a book2/3 datapak.  One of either "directory" or
+        both "b23maplist" and "eschalondata" must be passed in.  If directory
+        is present, only that will be used.
         """
         map_list = []
         map_store = None
         map_tv = None
-        if os.path.isdir(directory):
-            map_files = glob.glob(os.path.join(directory, '*.map'))
-            for map_file in sorted(map_files):
+
+        if directory is not None:
+            if os.path.isdir(directory):
+                map_files = glob.glob(os.path.join(directory, '*.map'))
+                for map_file in sorted(map_files):
+                    try:
+                        map_list.append(Map.get_mapinfo(map_file))
+                        #detected_book, detected_mapname, df
+                    except Exception, e:
+                        pass
+        elif b23maplist is not None and eschalondata is not None:
+            for map_file in sorted(b23maplist):
                 try:
-                    map_list.append(Map.get_mapinfo(map_file))
-                    #detected_book, detected_mapname, df
+                    map_data = eschalondata.readfile(map_file, 'maps')
+                    if map_data:
+                        map_df = Savefile(filename=map_file, stringdata=map_data)
+                        map_list.append(Map.get_mapinfo(map_df=map_df))
                 except Exception, e:
+                    print 'Exception: %s' % (e)
                     pass
 
-            if len(map_list) > 0:
-                map_store = gtk.ListStore(int, str, str, str)
-                map_tv = gtk.TreeView(map_store)
-                map_tv.connect('row-activated', callback)
-                col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=filename_col)
-                col.set_sort_column_id(filename_col)
-                col.set_resizable(True)
-                map_tv.append_column(col)
-                col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=mapname_col)
-                col.set_sort_column_id(mapname_col)
-                col.set_resizable(True)
-                map_tv.append_column(col)
-                for (idx, (map_book, map_mapname, map_df)) in enumerate(map_list):
-                    map_store.append((idx,
-                        '<b>%s</b>' % (os.path.basename(map_df.filename)),
-                        map_df.filename,
-                        map_mapname))
+        if len(map_list) > 0:
+            map_store = gtk.ListStore(int, str, str, str)
+            map_tv = gtk.TreeView(map_store)
+            map_tv.connect('row-activated', callback)
+            col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=filename_col)
+            col.set_sort_column_id(filename_col)
+            col.set_resizable(True)
+            map_tv.append_column(col)
+            col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=mapname_col)
+            col.set_sort_column_id(mapname_col)
+            col.set_resizable(True)
+            map_tv.append_column(col)
+            for (idx, (map_book, map_mapname, map_df)) in enumerate(map_list):
+                map_store.append((idx,
+                    '<b>%s</b>' % (os.path.basename(map_df.filename)),
+                    map_df.filename,
+                    map_mapname))
 
-                sw = gtk.ScrolledWindow()
-                sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-                sw.add(map_tv)
+            sw = gtk.ScrolledWindow()
+            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            sw.add(map_tv)
 
-                vp = gtk.Viewport()
-                vp.set_shadow_type(gtk.SHADOW_OUT)
-                vp.add(sw)
+            vp = gtk.Viewport()
+            vp.set_shadow_type(gtk.SHADOW_OUT)
+            vp.add(sw)
 
-                note_align = gtk.Alignment(0, 0, 0, 0)
-                note_align.set_padding(5, 2, 2, 2)
-                note_label = gtk.Label()
+            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align.set_padding(5, 2, 2, 2)
+            note_label = gtk.Label()
+            if directory is None:
+                note_label.set_markup('<i>Reading from datapak</i>')
+            else:
                 note_label.set_markup('<i>Reading from %s</i>' % (directory))
-                note_align.add(note_label)
+            note_align.add(note_label)
 
-                map_vbox = gtk.VBox()
-                map_vbox.pack_start(vp, True, True)
-                map_vbox.pack_start(note_align, False, False)
+            map_vbox = gtk.VBox()
+            map_vbox.pack_start(vp, True, True)
+            map_vbox.pack_start(note_align, False, False)
 
-                map_align = gtk.Alignment(0, 0, 1, 1)
-                map_align.set_padding(5, 5, 5, 5)
-                map_align.add(map_vbox)
+            map_align = gtk.Alignment(0, 0, 1, 1)
+            map_align.set_padding(5, 5, 5, 5)
+            map_align.add(map_vbox)
 
-                self.register_page(source)
-                self.open_notebook.append_page(map_align, gtk.Label(label))
+            self.register_page(source)
+            self.open_notebook.append_page(map_align, gtk.Label(label))
 
         return (map_list, map_store, map_tv)
 
@@ -508,6 +554,14 @@ class MapLoaderDialog(gtk.Dialog):
                 (model, treeiter) = self.data_tv.get_selection().get_selected()
                 if model and treeiter:
                     (filename,) = model.get(treeiter, self.DATA_COL_FILENAME_FULL)
+                    return filename
+                else:
+                    return None
+
+            elif self.page_index[page] == self.SOURCE_DATAPAK:
+                (model, treeiter) = self.datapak_tv.get_selection().get_selected()
+                if model and treeiter:
+                    (filename,) = model.get(treeiter, self.DATAPAK_COL_FILENAME_FULL)
                     return filename
                 else:
                     return None
@@ -566,6 +620,12 @@ class MapLoaderDialog(gtk.Dialog):
     def data_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on a particular datadir map.
+        """
+        self.response(gtk.RESPONSE_OK)
+
+    def datapak_activated(self, widget, path, column):
+        """
+        Called when the user double-clicks or hits enter on a particular datapak map.
         """
         self.response(gtk.RESPONSE_OK)
 
@@ -1450,8 +1510,6 @@ class MapGUI(BaseGUI):
             box.append_text(key)
 
         # Grab some lists of files
-        # Note that maplist will be empty for B2, but that's okay since B2 won't
-        # end up using it.
         maplist = self.get_gamedir_filelist('data', 'map', False)
         musiclist = self.get_gamedir_filelist('music', 'ogg')
         atmoslist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
@@ -1824,6 +1882,25 @@ class MapGUI(BaseGUI):
         self.map.mapname = 'New Map'
         self.setup_new_map_gui()
 
+    def load_from_datapak(self, filename):
+        """
+        Loads the specified map from our datapak.
+        """
+
+        # Set up a new Savefile with the datapak data
+        map_data = self.eschalondata.readfile(filename, 'maps')
+        map_df = Savefile(filename=filename, stringdata=map_data)
+
+        # Create the map object
+        self.map = Map.new('', self.req_book, map_df=map_df)
+        self.map.read()
+
+        # Some other statuses
+        self.putstatus('Editing datapak map "%s"' % (filename))
+        self.setup_new_map_gui()
+        
+        return True
+
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
         
@@ -1843,11 +1920,17 @@ class MapGUI(BaseGUI):
             path = os.path.dirname(os.path.realpath(self.map.df.filename))
 
         # Set the initial path
+        if c.book == 1:
+            b23maplist = None
+        else:
+            b23maplist = self.get_gamedir_filelist('maps', 'map')
         dialog = MapLoaderDialog(starting_path=path,
                 savegame_dir=self.get_current_savegame_dir(),
                 basegame_dir=self.get_current_gamedir(),
                 transient=self.window,
                 last_source=self.last_map_source,
+                b23maplist=b23maplist,
+                eschalondata=self.eschalondata,
                 show_new=(self.map is None))
 
         # Run the dialog and process its return values
@@ -1857,10 +1940,16 @@ class MapGUI(BaseGUI):
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
                 filename = dialog.get_filename()
-                if filename and filename != '' and self.load_from_file(filename):
-                    rundialog = False
-                    retval = True
-                    self.last_map_source = dialog.get_file_source()
+                if filename and filename != '':
+                    if dialog.get_file_source() == dialog.SOURCE_DATAPAK:
+                        if self.load_from_datapak(filename):
+                            rundialog = False
+                            retval = True
+                            self.last_map_source = dialog.get_file_source()
+                    elif self.load_from_file(filename):
+                        rundialog = False
+                        retval = True
+                        self.last_map_source = dialog.get_file_source()
             elif response == gtk.RESPONSE_APPLY:
                 self.setup_new_map(dialog.get_savegame_flag())
                 self.last_map_source = None

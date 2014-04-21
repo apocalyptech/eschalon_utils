@@ -1360,15 +1360,15 @@ class BaseGUI(object):
         self.imgsel_init = False
         self.imgsel_window.drawingarea.queue_draw()
 
-    def get_gamedir_filelist(self, dir, ext, keepext=True, matchprefixes=None):
+    def get_gamedir_filelist(self, directory, ext, keepext=True, matchprefixes=None):
         if c.book == 1:
-            path = os.path.join(self.prefs.get_str('paths', 'gamedir'), dir)
+            path = os.path.join(self.prefs.get_str('paths', 'gamedir'), directory)
             files = os.listdir(path)
         else:
             files = []
             for file in self.eschalondata.filelist():
                 (filedir, filename) = os.path.split(file)
-                if filedir == dir:
+                if filedir == directory:
                     files.append(filename)
 
         filelist = []

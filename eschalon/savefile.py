@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
+import cStringIO
 from struct import pack, unpack
 
 class LoadException(Exception):
@@ -35,16 +36,29 @@ class FirstItemLoadException(LoadException):
 class Savefile(object):
     """ Class that wraps around a file object, to simplify things """
 
-    def __init__(self, filename):
-        """ Empty object. """
+    def __init__(self, filename=None, stringdata=None):
+        """
+        Empty object.  If only "filename" is passed, we will read
+        from the filesystem.  If "stringdata" is also passed, we
+        will use a cStringIO object instead.  Writing to cStringIO
+        objects is not currently supported.
+        """
         self.filename = filename
+        self.stringdata = stringdata
+
+        if self.filename is None and self.stringdata is None:
+            raise LoadException('Must pass in at least a filename')
+
         self.df = None
         self.opened_r = False
         self.opened_w = False
 
     def exists(self):
         """ Returns true if the file currently exists. """
-        return os.path.exists(self.filename)
+        if self.stringdata is None:
+            return os.path.exists(self.filename)
+        else:
+            return True
 
     def close(self):
         """ Closes the filehandle. """
@@ -57,13 +71,18 @@ class Savefile(object):
         """ Opens a file for reading.  Throws IOError if unavailable"""
         if (self.opened_r or self.opened_w):
             raise IOError('File is already open')
-        self.df = open(self.filename, 'rb')
+        if self.stringdata is None:
+            self.df = open(self.filename, 'rb')
+        else:
+            self.df = cStringIO.StringIO(self.stringdata)
         self.opened_r = True
 
     def open_w(self):
         """ Opens a file for writing.  Throws IOError if unavailable"""
         if (self.opened_r or self.opened_w):
             raise IOError('File is already open')
+        if self.stringdata is not None:
+            raise IOError('Writing is not supported when using a string backend')
         self.df = open(self.filename, 'wb')
         self.df.seek(0)
         self.opened_w = True

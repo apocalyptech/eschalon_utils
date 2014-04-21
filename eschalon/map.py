@@ -468,12 +468,17 @@ class Map(object):
         return True
 
     @staticmethod
-    def new(filename, book):
+    def new(filename, book, map_df=None):
         """
         Sets up a new, blank Map object with the given book.  Will raise a
-        LoadException if we're passed a book we don't know about.
+        LoadException if we're passed a book we don't know about.  Optionally
+        pass in a datafile object to load our data from.
         """
-        df = Savefile(filename)
+        if map_df is None:
+            df = Savefile(filename)
+        else:
+            df = map_df
+            df.filename = ''
         if book == 1:
             c.switch_to_book(1)
             return B1Map(df)
@@ -487,12 +492,13 @@ class Map(object):
             raise LoadException('Unknown book version specified: %d' % (book))
 
     @staticmethod
-    def get_mapinfo(filename):
+    def get_mapinfo(filename=None, map_df=None):
         """
-        Given a filename, loads the first few bits of information from a map
-        file, and will return a tuple containing the Eschalon Book the map
-        belongs to, the internal "map name" of the map, and a Savefile object
-        pointing to the map.  Will raise a LoadException if it encounters errors.
+        Given a filename or a passed filehandle, loads the first few bits of
+        information from a map file, and will return a tuple containing the
+        Eschalon Book the map belongs to, the internal "map name" of the map,
+        and a Savefile object pointing to the map.  Will raise a LoadException
+        if it encounters errors.
 
         Book 1 files start with 10 strings
         Book 2 files start with 9 strings, followed by a uchar whose value
@@ -509,7 +515,12 @@ class Map(object):
         Theoretically, that way this works even if a Book 2 map happens
         to use a mapname of 0.992, in an effort to be cheeky.
         """
-        df = Savefile(filename)
+        if filename is not None:
+            df = Savefile(filename)
+        elif map_df is not None:
+            df = map_df
+        else:
+            raise LoadException('One of filename or map_df must be passed in')
         stringlist = []
         try:
             df.open_r()
