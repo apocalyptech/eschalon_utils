@@ -160,7 +160,7 @@ class Map(object):
     DIR_W = 0x40
     DIR_NW = 0x80
 
-    def __init__(self, df):
+    def __init__(self, df, ent_df):
         """
         A fresh object.
         """
@@ -204,7 +204,10 @@ class Map(object):
         self.entities = []
 
         self.df = df
-        self.set_df_ent()
+        if ent_df is None:
+            self.set_df_ent()
+        else:
+            self.df_ent = ent_df
 
         # Also, we'll keep track of "big graphic" mappings
         self.big_gfx_mappings = BigGraphicMappings(self)
@@ -468,7 +471,7 @@ class Map(object):
         return True
 
     @staticmethod
-    def new(filename, book, map_df=None):
+    def new(filename, book, map_df=None, ent_df=None):
         """
         Sets up a new, blank Map object with the given book.  Will raise a
         LoadException if we're passed a book we don't know about.  Optionally
@@ -481,13 +484,13 @@ class Map(object):
             df.filename = ''
         if book == 1:
             c.switch_to_book(1)
-            return B1Map(df)
+            return B1Map(df, ent_df)
         elif book == 2:
             c.switch_to_book(2)
-            return B2Map(df)
+            return B2Map(df, ent_df)
         elif book == 3:
             c.switch_to_book(3)
-            return B3Map(df)
+            return B3Map(df, ent_df)
         else:
             raise LoadException('Unknown book version specified: %d' % (book))
 
@@ -591,7 +594,7 @@ class B1Map(Map):
 
     book = 1
 
-    def __init__(self, df):
+    def __init__(self, df, ent_df=None):
 
         # Book 1-specific vars
         self.mapid = ''
@@ -609,7 +612,7 @@ class B1Map(Map):
         self.map_b1_outsideflag = 0
 
         # Base class attributes
-        super(B1Map, self).__init__(df)
+        super(B1Map, self).__init__(df, ent_df)
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -797,7 +800,7 @@ class B2Map(Map):
 
     book = 2
 
-    def __init__(self, df):
+    def __init__(self, df, ent_df=None):
 
         # Book 2 specific vars
         self.entrancescript = ''
@@ -817,7 +820,7 @@ class B2Map(Map):
         self.unusedstr3 = ''
         
         # Now the base attributes
-        super(B2Map, self).__init__(df)
+        super(B2Map, self).__init__(df, ent_df)
 
     def read(self):
         """ Read in the whole map from a file descriptor. """
@@ -997,7 +1000,7 @@ class B3Map(B2Map):
 
     book = 3
 
-    def __init__(self, df):
+    def __init__(self, df, ent_df=None):
 
         # Book 3 specific vars
         self.version = '0.992'
@@ -1007,7 +1010,7 @@ class B3Map(B2Map):
         self.cloud_offset_y = 0
 
         # Now the base attributes
-        super(B3Map, self).__init__(df)
+        super(B3Map, self).__init__(df, ent_df)
 
         # Override the parent class - without this B3 maps won't load
         self.loadhook = 2

@@ -1891,8 +1891,15 @@ class MapGUI(BaseGUI):
         map_data = self.eschalondata.readfile(filename, 'maps')
         map_df = Savefile(filename=filename, stringdata=map_data)
 
+        # Also we'll need to grab our Entity data
+        if filename[-4:] != '.map':
+            raise LoadException('Datapak map filenames must end with ".map", passed in "%s"', filename)
+        ent_filename = '%s.ent' % (filename[:-4])
+        ent_data = self.eschalondata.readfile(ent_filename, 'maps')
+        ent_df = Savefile(filename=ent_filename, stringdata=ent_data)
+
         # Create the map object
-        self.map = Map.new('', self.req_book, map_df=map_df)
+        self.map = Map.new('', self.req_book, map_df=map_df, ent_df=ent_df)
         self.map.read()
 
         # Some other statuses
