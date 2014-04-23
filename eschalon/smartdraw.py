@@ -150,6 +150,9 @@ class PremadeObject(object):
         self.tile.tilecontentid = tilecontentid
 
     def create_tilecontentobj(self, initcontents='random'):
+        if c.book == 3 and initcontents is not None:
+            if initcontents == 'random' or initcontents == 'empty':
+                initcontents = initcontents.upper()
         self.tilecontent = Tilecontent.new(c.book, True)
         self.tilecontent.tozero(-1, -1)
         if initcontents is not None:
@@ -2440,7 +2443,7 @@ class B3SmartDraw(B2SmartDraw):
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
                     obj.set_tilecontent(5)
-                    obj.create_tilecontentobj('random')
+                    obj.create_tilecontentobj('RANDOM')
                     obj.tilecontent.description = text
                     obj.tilecontent.state = statenum
                     obj.tilecontent.cur_condition = cond
@@ -2454,12 +2457,12 @@ class B3SmartDraw(B2SmartDraw):
 
         # Cabinets / Chests
         for (cat, start, desc, text, cond, contents) in [
-                ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
-                (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
-                ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'random'),
-                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
-                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
-                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'empty'),
+                ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'RANDOM'),
+                (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'RANDOM'),
+                ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'RANDOM'),
+                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'RANDOM'),
+                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'RANDOM'),
+                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'EMPTY'),
                 ]:
             if cat is not None:
                 self.premade_objects.add_category(cat)
