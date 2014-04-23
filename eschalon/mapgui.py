@@ -4049,8 +4049,7 @@ class MapGUI(BaseGUI):
                 tile.decalimg = 0
             if (self.erase_wall_checkbox.get_active()):
                 if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                    if (tile.wallimg in self.smartdraw.wall_list['wall_blocked']+self.smartdraw.wall_list['wall_seethrough']):
-                        tile.wall = 0
+                    tile.wall = 0
                 tile.wallimg = 0
             if (self.erase_walldecal_checkbox.get_active()):
                 tile.walldecalimg = 0
