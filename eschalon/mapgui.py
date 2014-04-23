@@ -1244,7 +1244,10 @@ class MapGUI(BaseGUI):
 
     def on_reload(self, widget=None):
         """ What to do when we're told to reload. """
-        if self.map.df.filename != '':
+        if self.map.df.is_stringdata():
+            self.load_from_datapak(self.map.df.filename)
+            self.update_main_map_name()
+        elif self.map.df.filename != '':
             self.load_from_file(self.map.df.filename)
             self.update_main_map_name()
         else:
@@ -1255,7 +1258,7 @@ class MapGUI(BaseGUI):
         """
         Save map to disk.  Calls out to on_save_as() if we don't have a filename yet.
         """
-        if self.map.df.filename == '':
+        if self.map.df.is_stringdata() or self.map.df.filename == '':
             self.on_save_as()
         else:
             self.map.write()
@@ -1349,7 +1352,7 @@ class MapGUI(BaseGUI):
                             self.map.mapid = base_map_name
 
                 # And now do the actual save
-                self.map.df.filename = new_filename
+                self.map.df.set_filename(new_filename)
                 self.on_save()
                 self.putstatus('Saved as %s' % (self.map.df.filename))
                 self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '

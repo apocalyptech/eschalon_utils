@@ -257,13 +257,18 @@ class Map(object):
             return True
 
     def replicate(self):
+
+        if self.df_ent is None:
+            new_df_ent = None
+        else:
+            new_df_ent = Savefile(self.df_ent.filename, self.df_ent.stringdata)
         
         if self.book == 1:
-            newmap = B1Map(Savefile(self.df.filename))
+            newmap = B1Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
         elif self.book == 2:
-            newmap = B2Map(Savefile(self.df.filename))
+            newmap = B2Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
         elif self.book == 3:
-            newmap = B3Map(Savefile(self.df.filename))
+            newmap = B3Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
 
         # Single vals (no need to do actual replication)
         newmap.mapname = self.mapname
@@ -481,7 +486,6 @@ class Map(object):
             df = Savefile(filename)
         else:
             df = map_df
-            df.filename = ''
         if book == 1:
             c.switch_to_book(1)
             return B1Map(df, ent_df)

@@ -53,6 +53,22 @@ class Savefile(object):
         self.opened_r = False
         self.opened_w = False
 
+    def set_filename(self, filename):
+        """
+        Sets our filename (and clears our stringdata, if it's set)
+        """
+        self.filename = filename
+        self.stringdata = None
+
+    def is_stringdata(self):
+        """
+        Returns True if we're a string-backed Savefile, false otherwise.
+        """
+        if self.stringdata is None:
+            return False
+        else:
+            return True
+
     def exists(self):
         """ Returns true if the file currently exists. """
         if self.stringdata is None:
