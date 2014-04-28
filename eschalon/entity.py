@@ -93,6 +93,25 @@ class Entity(object):
         """
         pass
 
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourself to a savegame or global object.  This should be
+        overridden by implementing classes if needed.
+        """
+        self.savegame = savegame
+        save_entid = self.entid
+        save_direction = self.direction
+        save_entscript = self.entscript
+        self.tozero(self.x, self.y)
+        self.entid = save_entid
+        self.direction = save_direction
+        self.entscript = save_entscript
+        if savegame:
+            if self.entid in c.entitytable:
+                self.friendly = c.entitytable[self.entid].friendly
+                self.health = c.entitytable[self.entid].health
+                self.movement = c.entitytable[self.entid].movement
+
     def equals(self, entity):
         """
         Compare ourselves to another entity object.  We're just

@@ -467,6 +467,33 @@ class Map(object):
         else:
             return None
 
+    def _convert_savegame(self, savegame):
+        """
+        Does the grunt work of converting ourself to a savegame or global
+        file.
+        """
+        for col in self.tiles:
+            for tile in col:
+                tile._convert_savegame(savegame)
+        for entity in self.entities:
+            entity._convert_savegame(savegame)
+        self.set_savegame(savegame)
+
+    def convert_savegame(self, savegame=True):
+        """
+        Converts ourself to a savegame or global map.  This will clear out the
+        filenames from our Savefile objects, so they can't be accidentally
+        overwritten without effort.
+        """
+        if (savegame and self.is_global()) or (self.is_savegame() and not savegame):
+            self.df.set_filename('')
+            if self.df_ent is not None:
+                self.df_ent.set_filename('')
+            self._convert_savegame(savegame)
+            return True
+        else:
+            raise Exception('No conversion to perform')
+
     @staticmethod
     def is_ascii(s):
         for c in s:

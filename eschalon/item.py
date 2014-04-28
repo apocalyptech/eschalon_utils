@@ -103,6 +103,15 @@ class Item(object):
         """
         pass
 
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourself to a savegame or global object.  This could be
+        overridden by implementing classes if needed.
+        """
+        name = self.item_name
+        self.tozero()
+        self.item_name = name
+
     def equals(self, item):
         """
         Compare ourselves to another item object.  We're just

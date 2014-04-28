@@ -105,6 +105,15 @@ class Tilecontent(object):
         """
         pass
 
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourself to a savegame or global object.  This could be
+        overridden by implementing classes if needed.
+        """
+        for item in self.items:
+            item._convert_savegame(savegame)
+        self.savegame = savegame
+
     def equals(self, tilecontent):
         """
         Compare ourselves to another tilecontent object.  We're just

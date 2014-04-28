@@ -40,6 +40,15 @@ class Tile(object):
         self.entity = None
         self.savegame = False
 
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourselves to a savegame or global file.  This could
+        be extended by implementing classes  if needed.
+        """
+        for tilecontent in self.tilecontents:
+            tilecontent._convert_savegame(savegame)
+        self.savegame = savegame
+
     def replicate(self):
         newtile = Tile.new(self.book, self.x, self.y)
         newtile.savegame = self.savegame
@@ -317,6 +326,13 @@ class B2Tile(Tile):
         """
         return (self.tile_flag != 0)
 
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourself to a savegame or global file.
+        """
+        super(B2Tile, self)._convert_savegame(savegame)
+        self.tile_flag = 0
+
 class B3Tile(B2Tile):
     """
     Tile structure for Book 3
@@ -374,3 +390,10 @@ class B3Tile(B2Tile):
         Do we have data in our B3-specific elements?
         """
         return (self.cartography != 0 or super(B3Tile)._sub_hasdata(self))
+
+    def _convert_savegame(self, savegame):
+        """
+        Converts ourself to a savegame or global file.
+        """
+        super(B3Tile, self)._convert_savegame(savegame)
+        self.cartography = 0
