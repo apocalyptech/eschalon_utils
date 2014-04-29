@@ -1379,6 +1379,10 @@ class MapGUI(BaseGUI):
                 'a new file.  Proceed?' % (totype),
                 self.window)
         if response == gtk.RESPONSE_YES:
+
+            self.undo = Undo(self.map)
+            self.update_undo_gui()
+
             try:
                 self.map.convert_savegame(savegame)
             except Exception, e:
