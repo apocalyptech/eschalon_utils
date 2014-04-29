@@ -1365,6 +1365,50 @@ class MapGUI(BaseGUI):
         # Clean up
         dialog.destroy()
 
+    def on_convert(self, savegame=True):
+        """
+        Converts our map to a savegame or global map
+        """
+        if savegame:
+            totype = 'savegame'
+        else:
+            totype = 'global'
+
+        response = self.confirmdialog('Convert Map?', 'Converting to a %s '
+                'map will clear your undo history and require you to save to '
+                'a new file.  Proceed?' % (totype),
+                self.window)
+        if response == gtk.RESPONSE_YES:
+            try:
+                self.map.convert_savegame(savegame)
+            except Exception, e:
+                self.errordialog('Conversion Error', '<b>Error:</b> Map could not be '
+                        'converted to %s format.  The map might be in an '
+                        'inconsistent state.'
+                        "\n\n"
+                        'It would be advisable to reload the map from scratch.'
+                        "\n\n"
+                        'The actual error: <tt>%s</tt>' % (totype, str(e)),
+                        self.window)
+                return False
+            self.update_main_map_name()
+            self.putstatus('Editing %s map "%s"' % (totype, self.map.mapname))
+            self.infodialog('Map Converted', 'The map has been converted to a '
+                    '%s map.' % (totype),
+                    self.window)
+
+    def on_convert_savegame_item_activate(self, widget):
+        """
+        Converts our map to a savegame map
+        """
+        self.on_convert(True)
+
+    def on_convert_global_item_activate(self, widget):
+        """
+        Converts our map to a global map
+        """
+        self.on_convert(False)
+
     def map_gui_finish(self):
         """
         This function is designed to finish drawing the base GUI, to either make up for
@@ -1742,6 +1786,8 @@ class MapGUI(BaseGUI):
                 'update_activity_label': self.update_activity_label,
                 'draw_map': self.draw_map,
                 'update_objectplace': self.update_objectplace,
+                'on_convert_savegame_item_activate': self.on_convert_savegame_item_activate,
+                'on_convert_global_item_activate': self.on_convert_global_item_activate,
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
@@ -1794,11 +1840,16 @@ class MapGUI(BaseGUI):
     def update_main_map_name(self):
         """
         Updates the text area above the map with the current map name.
+        Also shows/hides the relevant conversion menu items
         """
         if self.map.is_savegame():
             prefix = 'Savegame Map'
+            self.get_widget('convert_savegame_item').hide()
+            self.get_widget('convert_global_item').show()
         else:
             prefix = 'Global Map'
+            self.get_widget('convert_savegame_item').show()
+            self.get_widget('convert_global_item').hide()
 
         if (c.book == 1 and
                 self.map.df.filename != '' and

@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   28 Apr 2014; CJ Kucera <pez@apocalyptech.com> :
+   Ability to convert to/from savegame/global map formats
+
    23 Apr 2014; CJ Kucera <pez@apocalyptech.com> :
    Some fixes to Premade Object creation in Book 3
 

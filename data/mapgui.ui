@@ -2187,6 +2187,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -2302,6 +2305,16 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-zoom-in</property>
   </object>
+  <object class="GtkImage" id="image8">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-convert</property>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-convert</property>
+  </object>
   <object class="GtkWindow" id="mainwindow">
     <property name="width_request">1024</property>
     <property name="height_request">768</property>
@@ -2389,6 +2402,32 @@
                     </child>
                     <child>
                       <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="convert_savegame_item">
+                        <property name="label" translatable="yes">Convert to Savegame</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image8</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_convert_savegame_item_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="convert_global_item">
+                        <property name="label" translatable="yes">Convert to Global</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="image">image9</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_convert_global_item_activate" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separatormenuitem4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
