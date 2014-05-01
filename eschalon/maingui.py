@@ -378,6 +378,7 @@ class MainGUI(BaseGUI):
         if self.gamedir_set():
             try:
                 self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
+                c.set_eschalondata(self.eschalondata)
             except Exception, e:
                 print 'Exception instantiating EschalonData: %s' % (e)
 

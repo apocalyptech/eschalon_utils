@@ -203,6 +203,13 @@ class B1Constants:
             25: 'Greater Protection'
         }
 
+    # I don't think these mean anything for Book 1 - materials seem
+    # reasonably hardcoded.  We'll keep the values here for compatibility
+    # reasons, though.
+    materials_wood = []
+    materials_metal = []
+    materials_fabric = []
+
     # Right now this is the only one that appears to exist
     tilecontentflags = {
             0x40: 'destructible'
@@ -256,6 +263,9 @@ class B1Constants:
             37: 'Sound Generator (Crowd)',
             38: 'Sound Generator (Waterfall)',
         }
+
+    # EschalonData object
+    eschalondata = None
 
     class EntHelper(object):
         def __init__(self, name, health, gfxfile, friendly, movement):

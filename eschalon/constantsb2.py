@@ -256,6 +256,42 @@ class B2Constants:
             0x37: 'Large Effect Area (thrown potions)'
         }
 
+    materials_wood = [ 'Pine',
+            'Birch',
+            'Oak',
+            'Maple',
+            'Walnut',
+            'Burley Oak',
+            'Hickory',
+            'Mahogany',
+            'Petrified',
+            'Divine Timber',
+        ]
+
+    materials_metal = [ 'Copper',
+            'Bronze',
+            'Iron',
+            'Steel',
+            'Tempered Steel',
+            'Dwarven Steel',
+            'Tungsten',
+            'Mithril',
+            'Adamantium',
+            'Divine Ore',
+        ]
+
+    materials_fabric = [ 'Hemp',
+            'Hide',
+            'Leather',
+            'Boiled Leather',
+            'Studded Leather',
+            'Reptile Hide',
+            'Studded Reptile Hide',
+            'Dragon Skin',
+            'Spun Adamantium',
+            'Ancient Dragon Skin',
+        ]
+
     # This table is a bitfield lookup
     permstatustable = {
             0x00000001: '(unknown 1)',
@@ -438,6 +474,9 @@ class B2Constants:
             45: 'Sound Generator (Electric Throbbing)',
             50: 'Breakable Wall',
         }
+
+    # EschalonData object
+    eschalondata = None
 
     # I'm not fond of the way we're defining this class in multiple constants files
     class BigGfxHelper(object):

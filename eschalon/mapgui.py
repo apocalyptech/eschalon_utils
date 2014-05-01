@@ -1048,6 +1048,7 @@ class MapGUI(BaseGUI):
         try:
             self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
             self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
+            c.set_eschalondata(self.eschalondata)
         except Exception, e:
             self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
@@ -1371,13 +1372,34 @@ class MapGUI(BaseGUI):
         """
         if savegame:
             totype = 'savegame'
+            response = self.confirmdialog('Convert Map?', 'Converting to a %s '
+                    'map will clear your undo history and require you to save to '
+                    'a new file.  Proceed?' % (totype),
+                    self.window)
         else:
             totype = 'global'
+            response = self.confirmdialog('Convert Map?', 'Converting to a %s '
+                    'map will clear your undo history and require you to save to '
+                    'a new file.'
+                    "\n\n"
+                    'Additionally, converting to a global map will lose some '
+                    'data previously stored in the savegame format.  Most noticeably: '
+                    'entities will lose all but their position, orientation, and '
+                    'death script; and items will only be identified by their name. '
+                    'Item names must then exactly match the names given in Eschalon\'s '
+                    '<tt>general_items.csv</tt> file.  Some side effects are that '
+                    'the material can no longer be specified for weapons/armor, '
+                    'gold amounts will be randomized to a certain degree, and spell '
+                    'scrolls must omit the "Scroll of" prefix.'
+                    "\n\n"
+                    'We will try to automatically convert item names to acceptable '
+                    'values as much as possible, but it\'s likely that the items stored '
+                    'on the new global map will not be identical to the versions on '
+                    'the savegame map.'
+                    "\n\n"
+                    'Proceed?' % (totype),
+                    self.window)
 
-        response = self.confirmdialog('Convert Map?', 'Converting to a %s '
-                'map will clear your undo history and require you to save to '
-                'a new file.  Proceed?' % (totype),
-                self.window)
         if response == gtk.RESPONSE_YES:
 
             self.undo = Undo(self.map)

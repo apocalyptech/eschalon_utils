@@ -106,11 +106,18 @@ class Item(object):
     def _convert_savegame(self, savegame):
         """
         Converts ourself to a savegame or global object.  This could be
-        overridden by implementing classes if needed.
+        overridden by implementing classes if needed.  If we are told to
+        convert to a global map, this will attempt to normalize the item
+        name into something which is valid in a global map.
         """
         name = self.item_name
         self.tozero()
         self.item_name = name
+
+        if (not savegame and self.item_name != '' and
+                self.item_name.lower() != 'empty' and 
+                self.item_name.lower() != 'random' and c.eschalondata):
+            self.item_name = c.eschalondata.get_global_name(self.item_name)
 
     def equals(self, item):
         """

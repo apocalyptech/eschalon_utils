@@ -53,7 +53,16 @@ class Constants:
                 3: B3Constants
             }
         self.book = None
+        self.eschalondata = None
         self.switch_to_book(book)
+
+    def set_eschalondata(self, eschalondata):
+        """
+        Sets our internal EschalonData object.  Mostly just a convenience
+        so that we don't have to pass that around to all the components
+        which might need access to the datapak/datadir.
+        """
+        self.eschalondata = eschalondata
 
     def switch_to_book(self, book):
         if book != self.book:

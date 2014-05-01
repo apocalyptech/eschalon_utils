@@ -32,10 +32,95 @@ except ImportError:
     have_aes = False
 
 import os
+import csv
 import glob
 import base64
+import cStringIO
 from eschalon import constants as c
 from eschalon.savefile import LoadException
+
+class GoldRanges(object):
+    """
+    Class to hold information about the gold ranges seen in general_items.csv.
+    Used primarily to attempt to normalize item names during savegame -> global
+    conversions.  The Book III Gold items are nice enough to have their ranges
+    in the name of the item, whereas Book II just has labels.  We do some munging
+    to pretend that everything's in the Book III format.
+
+    Note that the Book III values haven't actually been experimentally verified.
+    """
+    def __init__(self):
+        """
+        Initialize our empty fields.  "exact" is a dict used to match an
+        exact amount of gold, of which a couple are valid.  "ranges" defines
+        the ranges we know about, and "labels" are the labels which are
+        associated with those ranges.
+        """
+        self.exact = {}
+        self.ranges = []
+        self.labels = []
+        self.max_seen = -1
+
+    def add_item(self, item_name):
+        """
+        Adds a gold range to ourselves, based on interpreting an item name.
+        """
+        parts = item_name.split()
+        if len(parts) == 3:
+            if parts[1] == 'Gold' and parts[2][:5] == 'Piece':
+                self.exact[int(parts[0])] = True
+                if int(parts[0]) > self.max_seen:
+                    self.max_seen = int(parts[0])
+            elif parts[2][0] == '(' and parts[2][-1] == ')':
+                item_ranges = parts[2][1:-1].split('-')
+                if len(item_ranges) == 2:
+                    self.ranges.append((int(item_ranges[0]), int(item_ranges[1])))
+                    self.labels.append(parts[0])
+                    if int(item_ranges[1]) > self.max_seen:
+                        self.max_seen = int(item_ranges[1])
+        elif c.book == 2 and len(parts) == 2 and parts[1] == 'Gold':
+            # The ranges I observed experimentally turned out to be:
+            #   Small: 16-35
+            #   Medium: 76-125
+            #   Large: 151-250
+            # I've widened those ranges a little bit here
+            if parts[0] == 'Small':
+                self.add_item('Small Gold (1-74)')
+            elif parts[0] == 'Medium':
+                self.add_item('Medium Gold (75-149)')
+            else:
+                self.add_item('Large Gold (150-250)')
+
+    def get_equivalent(self, item_name):
+        """
+        Returns our best guess about a valid global item name for the given
+        item name.
+        """
+        if self.max_seen >= 0 and 'Gold Piece' in item_name:
+            parts = item_name.split()
+            if len(parts) == 3:
+                if parts[1] == 'Gold' and parts[2][:5] == 'Piece':
+                    num_gold = int(parts[0])
+                    if num_gold in self.exact:
+                        # We're already a known specific gold value
+                        return item_name
+
+                    for (label, (begin, end)) in zip(self.labels, self.ranges):
+                        if num_gold >= begin and num_gold <= end:
+                            # We found ourselves in a range we know about
+                            if c.book == 3:
+                                return '%s Gold (%d-%d)' % (label, begin, end)
+                            else:
+                                return '%s Gold' % (label)
+
+                    # If we got here, we didn't have an exact number and also
+                    # don't have a valid range.  Just re-run with our max
+                    # known value, on the assumption that our range extends
+                    # as low as it can.
+                    return self.get_equivalent('%d Gold Pieces' % (self.max_seen))
+
+        # Default, just return our passed-in name
+        return item_name
 
 class Datapak(object):
     """
@@ -105,6 +190,11 @@ class EschalonData(object):
         # First read a couple of variables from our global environment
         self.fast_zipfile = fast_zipfile
         self.have_aes = have_aes
+
+        # Cache of our known item list, so that we only read it once.
+        self.itemlist = None
+        self.goldranges = None
+        self.material_items = None
 
         # Our datapak object.  If this remains None, it means that we're
         # reading from the filesystem structure instead.
@@ -199,6 +289,78 @@ class EschalonData(object):
         else:
             return self.datapak.readfile(filename, directory)
 
+    def get_filehandle(self, filename, directory='gfx'):
+        """
+        Reads a given filename from our dir and returns a filehandle-like object to
+        its data, using the cStringIO object.  Consequently, the returned filehandle
+        will be read-only.  Calls self.readfile() to do most of our work.
+        """
+        return cStringIO.StringIO(self.readfile(filename, directory))
+
+    def populate_datapak_info(self):
+        """
+        Populates some internal structures based on information found in
+        Eschalon's datapak:
+            1) Valid item names from the main general_items.csv
+            2) Gold range information from general_items.csv (needed to
+               tarnslate savegame gold values back to global values)
+            3) Savegame Weapon/Armor names which can be mapped back to
+               base global item names.
+        """
+        self.itemlist = []
+        self.goldranges = GoldRanges()
+        self.material_items = {}
+        try:
+            df = self.get_filehandle('general_items.csv', 'data')
+            reader = csv.DictReader(df)
+            for row in reader:
+                if row['DESCRIPTION'] != '':
+                    self.itemlist.append(row['DESCRIPTION'])
+
+                if row['Item Category'] == 'IC_GOLD':
+                    self.goldranges.add_item(row['DESCRIPTION'])
+
+                materialid = int(row['Material'])
+                if materialid == 1:
+                    for material in c.materials_wood:
+                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+                elif materialid == 2:
+                    for material in c.materials_metal:
+                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+                elif materialid == 3:
+                    for material in c.materials_fabric:
+                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+            df.close()
+        except:
+            pass
+
+    def get_itemlist(self):
+        """
+        Returns a list of valid item names from the main general_items.csv
+        """
+        if self.itemlist is None:
+            self.populate_datapak_info()
+        return self.itemlist
+
+    def get_global_name(self, item_name):
+        """
+        Returns an attempt to normalize our given item_name into a value
+        appropriate for global map files.
+        """
+        if self.goldranges is None:
+            self.populate_datapak_info()
+
+        if 'Gold Piece' in item_name:
+            if self.goldranges:
+                return self.goldranges.get_equivalent(item_name)
+        elif item_name[:10] == 'Scroll of ':
+            return item_name[10:]
+        else:
+            for (key, val) in self.material_items.items():
+                if key in item_name:
+                    return val
+            return item_name
+
     @staticmethod
     def new(book, gamedir):
         """
@@ -253,3 +415,23 @@ class B1EschalonData(object):
         """
         with open(os.path.join(self.gamedir, directory, filename)) as df:
             return df.read()
+
+    def populate_datapak_info(self):
+        """
+        Compatibility function, does nothing
+        """
+        pass
+
+    def get_itemlist(self):
+        """
+        Returns an empty list.  It might be nice to come up with a static list
+        to put in here, instead
+        """
+        return []
+
+    def get_global_name(self, item_name):
+        """
+        Theoretically returns a normalized "global" map item name, but in reality
+        just returns the passed-in name.
+        """
+        return item_name
