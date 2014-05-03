@@ -546,6 +546,7 @@
     <property name="width_request">500</property>
     <property name="height_request">650</property>
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Map Properties</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="transient_for">mainwindow</property>
@@ -2193,6 +2194,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -2297,6 +2301,11 @@
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-info</property>
+  </object>
+  <object class="GtkImage" id="image12">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-properties</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -2548,7 +2557,8 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
-                        <property name="use_stock">True</property>
+                        <property name="image">image12</property>
+                        <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
                         <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_prop_button_clicked" swapped="no"/>
