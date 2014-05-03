@@ -826,6 +826,146 @@ class BigGraphicDialog(gtk.Dialog):
         """
         self.response(gtk.RESPONSE_CLOSE)
 
+class GlobalNameDialog(gtk.Dialog):
+    """
+    Class to report on Global item name problems on a map
+    """
+
+    def __init__(self, item_names, eschalondata, transient=None, confirm=False, converted=False, title=None, message=None):
+        """
+        Constructor.  The various options are so the one dialog can support
+        three similar functions:
+            1) As a pre-global-conversion dialog to show the user what will
+               happen during the conversion.
+            2) As a post-global-conversion dialog to show the user what items
+               couldn't be automatically massaged into valid global item names
+            3) As a dialog launched from the menu to do the same.
+        
+        item_names should be a list of tuples, each with the following contents:
+            1) Tile X
+            2) Tile Y
+            3) Item Name
+
+        eschalondata should be an EschalonData object that we can use to populate
+        renaming information
+
+        transient is the parent window for which we'll be transient
+
+        confirm is a boolean - if True, we will show Yes/No buttons, and ask
+        "Proceed?" at the bottom.  If False, we will just have an OK button.
+
+        converted is a boolean to specify whether the dialog is being run
+        immediately post-conversion, in which case we'll add some text to
+        that effect.
+
+        title is an optional title to set on the window, rather than using
+        the defaults.
+
+        message is an optional message to show to the user, rather than
+        our default (which is intended to be used from the menu).  We set
+        the window size pretty high if passed a message; we should really
+        be calculating the needed height, but for now it's being hardcoded.
+        """
+        if confirm:
+            buttons = (gtk.STOCK_NO, gtk.RESPONSE_NO, gtk.STOCK_YES, gtk.RESPONSE_YES)
+        else:
+            buttons = (gtk.STOCK_OK, gtk.RESPONSE_OK)
+        super(GlobalNameDialog, self).__init__(flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
+                buttons = buttons)
+
+        # Various options for the dialog
+        if title:
+            self.set_title(title)
+        else:
+            self.set_title('Eschalon Book %d Map Editor - Global Item Name Status' % (c.book))
+        if message:
+            self.set_size_request(500, 500)
+        else:
+            self.set_size_request(500, 400)
+        self.set_default_response(gtk.RESPONSE_CLOSE)
+        if transient:
+            self.set_transient_for(transient)
+            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+
+        # Title
+        label = gtk.Label()
+        if title:
+            label.set_markup('<b>%s</b>' % (title))
+        else:
+            label.set_markup('<b>Global Item Name Status</b>')
+        align = gtk.Alignment(.5, 0, 1, 0)
+        align.set_padding(10, 10, 10, 10)
+        align.add(label)
+        self.vbox.pack_start(align, False, False)
+
+        # Message to the user
+        label = gtk.Label()
+        if message:
+            label.set_markup(message)
+            label.set_size_request(460, 230)
+        else:
+            usual_text_list = ['Some items on this map have names which do not ',
+                    'appear to be valid item names for a global map.  If this map ',
+                    'is saved as a global map and these names are encountered ',
+                    'in-game, they will likely show up as a generic "Widget" object.']
+            usual_text = ''.join(usual_text_list)
+            if converted:
+                label.set_markup("The map has been converted to a global map.\n\n%s" % (usual_text))
+                label.set_size_request(460, 100)
+            else:
+                label.set_markup(usual_text)
+                label.set_size_request(460, 70)
+        label.set_line_wrap(True)
+        align = gtk.Alignment(0, 0, 1, 0)
+        align.set_padding(5, 5, 5, 5)
+        align.add(label)
+        self.vbox.pack_start(align, False, False)
+
+        # Show the information
+        store = gtk.ListStore(str, str, str)
+        tv = gtk.TreeView(store)
+        col = gtk.TreeViewColumn('Coord', gtk.CellRendererText(), text=0)
+        col.set_sort_column_id(0)
+        col.set_resizable(True)
+        tv.append_column(col)
+        col = gtk.TreeViewColumn('Name', gtk.CellRendererText(), text=1)
+        col.set_sort_column_id(1)
+        col.set_resizable(True)
+        tv.append_column(col)
+        col = gtk.TreeViewColumn('Conversion', gtk.CellRendererText(), markup=2)
+        col.set_sort_column_id(2)
+        col.set_resizable(True)
+        tv.append_column(col)
+        for (x, y, item_name) in item_names:
+            new_name = eschalondata.get_global_name(item_name)
+            if new_name == item_name:
+                new_name = '<i>(none)</i>'
+            store.append(('(%d, %d)' % (x, y), item_name, new_name))
+
+        sw = gtk.ScrolledWindow()
+        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw.add(tv)
+
+        vp = gtk.Viewport()
+        vp.set_shadow_type(gtk.SHADOW_IN)
+        vp.add(sw)
+
+        align = gtk.Alignment(0, 0, 1, 1)
+        align.set_padding(5, 5, 50, 50)
+        align.add(vp)
+        self.vbox.pack_start(align, True, True)
+
+        if confirm:
+            label = gtk.Label()
+            label.set_markup('Proceed?')
+            align = gtk.Alignment(0, 0, 0, 1)
+            align.set_padding(5, 5, 5, 5)
+            align.add(label)
+            self.vbox.pack_start(align, False, False)
+
+        # Show everything
+        self.show_all()
+
 class ObjectSelWindow(ImageSelWindow):
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
@@ -1378,27 +1518,45 @@ class MapGUI(BaseGUI):
                     self.window)
         else:
             totype = 'global'
-            response = self.confirmdialog('Convert Map?', 'Converting to a %s '
-                    'map will clear your undo history and require you to save to '
-                    'a new file.'
-                    "\n\n"
-                    'Additionally, converting to a global map will lose some '
-                    'data previously stored in the savegame format.  Most noticeably: '
-                    'entities will lose all but their position, orientation, and '
-                    'death script; and items will only be identified by their name. '
-                    'Item names must then exactly match the names given in Eschalon\'s '
-                    '<tt>general_items.csv</tt> file.  Some side effects are that '
-                    'the material can no longer be specified for weapons/armor, '
-                    'gold amounts will be randomized to a certain degree, and spell '
-                    'scrolls must omit the "Scroll of" prefix.'
-                    "\n\n"
-                    'We will try to automatically convert item names to acceptable '
-                    'values as much as possible, but it\'s likely that the items stored '
-                    'on the new global map will not be identical to the versions on '
-                    'the savegame map.'
-                    "\n\n"
-                    'Proceed?' % (totype),
-                    self.window)
+            global_warning_list = ['Converting to a global ',
+                'map will clear your undo history and require you to save to ',
+                'a new file.',
+                "\n\n",
+                'Additionally, converting to a global map will lose some ',
+                'data previously stored in the savegame format.  Most noticeably: ',
+                'entities will lose all but their position, orientation, and ',
+                'death script; and items will only be identified by their name. ',
+                'Item names must then exactly match the names given in Eschalon\'s ',
+                '<tt>general_items.csv</tt> file.  Some side effects are that ',
+                'the material can no longer be specified for weapons/armor, ',
+                'gold amounts will be randomized to a certain degree, and spell ',
+                'scrolls must omit the "Scroll of" prefix.',
+                ]
+            global_warning = ''.join(global_warning_list)
+            invalid_items = self.map.get_invalid_global_items()
+            if len(invalid_items) > 0:
+                dialog = GlobalNameDialog(item_names=invalid_items,
+                        eschalondata=self.eschalondata,
+                        transient=self.window,
+                        confirm=True,
+                        title='Convert Map?',
+                        message='%s'
+                            "\n\n"
+                            'The following item names will be converted automatically.  '
+                            'Items marked as having no valid conversion will remain '
+                            'as-is but will likely show up as Widgets in the Eschalon '
+                            'game.' % (global_warning),
+                        )
+                response = dialog.run()
+                dialog.destroy()
+            else:
+                response = self.confirmdialog('Convert Map?', '%s'
+                        "\n\n"
+                        'All item names on the current map are valid as global item names, '
+                        'so no conflicts will occur.'
+                        "\n\n"
+                        'Proceed?' % (global_warning),
+                        self.window)
 
         if response == gtk.RESPONSE_YES:
 
@@ -1419,9 +1577,24 @@ class MapGUI(BaseGUI):
                 return False
             self.update_main_map_name()
             self.putstatus('Editing %s map "%s"' % (totype, self.map.mapname))
-            self.infodialog('Map Converted', 'The map has been converted to a '
-                    '%s map.' % (totype),
-                    self.window)
+
+            # Check our converted item names, if we've converted to global.
+            invalid_items = []
+            if not savegame:
+                invalid_items = self.map.get_invalid_global_items()
+
+            if len(invalid_items) > 0:
+                dialog = GlobalNameDialog(item_names=invalid_items,
+                        eschalondata=self.eschalondata,
+                        transient=self.window,
+                        converted=True,
+                        title='Map Converted')
+                dialog.run()
+                dialog.destroy()
+            else:
+                self.infodialog('Map Converted', 'The map has been converted to a '
+                        '%s map.' % (totype),
+                        self.window)
 
     def on_convert_savegame_item_activate(self, widget):
         """
@@ -1434,6 +1607,22 @@ class MapGUI(BaseGUI):
         Converts our map to a global map
         """
         self.on_convert(False)
+
+    def on_globalnamecheck_activate(self, widget):
+        """
+        Show a dialog summarizing our Global Item Name status.
+        """
+        invalid_items = self.map.get_invalid_global_items()
+        if len(invalid_items) > 0:
+            dialog = GlobalNameDialog(item_names=invalid_items,
+                    eschalondata=self.eschalondata,
+                    transient=self.window)
+            dialog.run()
+            dialog.destroy()
+        else:
+            self.infodialog('Global Item Name Status', 'All item names '
+                    'on this map are valid global item names.',
+                    self.window)
 
     def map_gui_finish(self):
         """
@@ -1814,6 +2003,7 @@ class MapGUI(BaseGUI):
                 'update_objectplace': self.update_objectplace,
                 'on_convert_savegame_item_activate': self.on_convert_savegame_item_activate,
                 'on_convert_global_item_activate': self.on_convert_global_item_activate,
+                'on_globalnamecheck_activate': self.on_globalnamecheck_activate,
                 }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this

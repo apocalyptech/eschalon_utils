@@ -494,6 +494,47 @@ class Map(object):
         else:
             raise Exception('No conversion to perform')
 
+    def get_item_names(self):
+        """
+        Returns a list of tuples which describe all the item names
+        found on the map.  Used at the moment to doublecheck item names
+        once a map is converted from savegame to global.  Elements of
+        the tuple:
+            1) Tile X
+            2) Tile Y
+            3) Item Name
+        """
+        retlist = []
+        for (y, row) in enumerate(self.tiles):
+            for (x, tile) in enumerate(row):
+                for tilecontent in tile.tilecontents:
+                    for item in tilecontent.items:
+                        if item.item_name != '':
+                            retlist.append((x, y, item.item_name))
+        return retlist
+
+    def get_invalid_global_items(self):
+        """
+        Returns a list of items on this map which do not appear to
+        be valid global item names.  Returns a list of tuples
+        where each element contains the following:
+            1) Tile X
+            2) Tile Y
+            3) Item Name
+        """
+        itemlist = c.eschalondata.get_itemlist()
+        itemdict = {}
+        for item in itemlist:
+            itemdict[item] = True
+        invalid_items = []
+        for itemtuple in self.get_item_names():
+            itemname = itemtuple[2]
+            itemname_lower = itemname.lower()
+            if (itemname_lower != 'empty' and itemname_lower != 'random' and
+                    itemname not in itemdict):
+                invalid_items.append(itemtuple)
+        return invalid_items
+
     @staticmethod
     def is_ascii(s):
         for c in s:

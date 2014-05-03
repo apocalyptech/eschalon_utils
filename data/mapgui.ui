@@ -2190,6 +2190,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -2289,6 +2292,11 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-info</property>
   </object>
   <object class="GtkImage" id="image3">
     <property name="visible">True</property>
@@ -2554,6 +2562,17 @@
                         <property name="image">image7</property>
                         <property name="use_stock">False</property>
                         <signal name="activate" handler="on_big_graphic_info_clicked" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkImageMenuItem" id="globalnamecheck">
+                        <property name="label" translatable="yes">Check Global Item Names</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">This is used to check the item names on this map against valid "global" map item names.  Useful only if this map is global, or will be converted to a global map.</property>
+                        <property name="image">image10</property>
+                        <property name="use_stock">False</property>
+                        <signal name="activate" handler="on_globalnamecheck_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
