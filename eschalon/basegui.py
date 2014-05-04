@@ -1439,3 +1439,20 @@ class BaseGUI(object):
         if event.type == gtk.gdk._2BUTTON_PRESS:
             (model, iter) = widget.get_selection().get_selected()
             self.get_widget('bonus_value_3').set_value(model.get_value(iter, 1))
+
+    def completion_show_text(self, layout, cell, model, iteration, column):
+        """
+        Intended for use with gtk.EntryCompletion.set_cell_data_func(), this will
+        let you specify which column should contain the text to be shown in the
+        autocomplete list.
+        """
+        cell.set_property('text', model.get_value(iteration, column))
+
+    def completion_match_anywhere(self, completion, key, iteration, column):
+        """
+        Intended for use with gtk.EntryCompletion.set_match_func(), this will
+        match anywhere in the string.
+        """
+        model = completion.get_model()
+        text = model.get_value(iteration, column)
+        return key.lower() in text.lower()

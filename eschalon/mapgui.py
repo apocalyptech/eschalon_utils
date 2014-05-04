@@ -1194,6 +1194,9 @@ class MapGUI(BaseGUI):
             self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
 
+        # Global Item Name Completion ListStore
+        self.global_item_name_store = None
+
         # Show a slow-loading zip warning if necessary
         if c.book > 1 and not self.eschalondata.fast_zipfile:
             self.get_widget('render_slowzip_warning').show()
@@ -3394,6 +3397,32 @@ class MapGUI(BaseGUI):
         box.pack_start(header, False, False)
         return box
 
+    def setup_global_item_completion(self, entry):
+        """
+        Given a gtk.Entry(), sets up a global-item-name autocompletion on
+        the entry.  Note: we *do* need a separate gtk.EntryCompletion()
+        for each gtk.Entry(), so we don't save anything by trying to re-use
+        them on multiple widgets.
+        """
+        if not self.global_item_name_store:
+            self.global_item_name_store = gtk.ListStore(str)
+            for item_name in self.eschalondata.get_itemlist():
+                iteration = self.global_item_name_store.append()
+                self.global_item_name_store.set(iteration, 0, item_name)
+
+        if len(self.global_item_name_store) > 0:
+            completion = gtk.EntryCompletion()
+            completion.set_model(self.global_item_name_store)
+            completion.set_popup_set_width(False)
+            renderer = gtk.CellRendererText()
+            completion.pack_start(renderer)
+            completion.set_property('text-column', 0)
+            # These two callbacks can be done with lambdas fairly easily, but
+            # they look ugly that way.
+            completion.set_match_func(self.completion_match_anywhere, 0)
+            completion.set_cell_data_func(renderer, self.completion_show_text, 0)
+            entry.set_completion(completion)
+
     def append_tilecontent_notebook(self, tilecontent):
         """
         Given a tilecontent, adds a new tab to the tilecontent notebook, with
@@ -3533,7 +3562,12 @@ class MapGUI(BaseGUI):
                 self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
-                self.tilecontent_input_text(curpages, cinput, num, 'item_name_%d' % (num), 'Item %d' % (num+1))
+                entry = self.tilecontent_input_text(curpages,
+                                                    cinput,
+                                                    num,
+                                                    'item_name_%d' % (num),
+                                                    'Item %d' % (num+1))
+                self.setup_global_item_completion(entry)
 
         # Unknowns
         unknown_box = self.tilecontent_group_box('<b>Unknowns</b>')

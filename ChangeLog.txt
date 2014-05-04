@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   04 May 2014; CJ Kucera <pez@apocalyptech.com> :
+   Autocompletion for Global Map Item Names
+
    04 May 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Fix bug that could sometimes cause which tile is being edited to change
       while the tile edit window is open
