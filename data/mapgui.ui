@@ -4352,7 +4352,7 @@ Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so 
     <property name="width_request">500</property>
     <property name="height_request">700</property>
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Edit Item Details</property>
+    <property name="title" translatable="yes">Edit Tile Details</property>
     <property name="modal">True</property>
     <property name="window_position">center-on-parent</property>
     <property name="destroy_with_parent">True</property>
