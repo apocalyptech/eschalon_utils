@@ -181,6 +181,9 @@ class EschalonData(object):
 
     DATA_DIRS = [ 'data', 'gfx', 'maps', 'music', 'sound' ]
 
+    empty_name = None
+    random_name = None
+
     def __init__(self, gamedir):
         """
         Constructor.  "gamedir" should be the base game directory, whether
@@ -333,10 +336,20 @@ class EschalonData(object):
                     for material in c.materials_fabric:
                         self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
             df.close()
+
         except:
             pass
 
-        self.itemlist = sorted(self.itemdict.keys())
+        # Add RANDOM/EMPTY to the list of valid names, if we actually
+        # have data.
+        if len(self.itemdict) > 0:
+            if self.empty_name:
+                self.itemdict[self.empty_name] = True
+            if self.random_name:
+                self.itemdict[self.random_name] = True
+
+        # Populate a sorted itemlist object as well.
+        self.itemlist = sorted(self.itemdict.keys(), key=lambda s: s.lower())
 
     def get_itemlist(self):
         """
@@ -384,8 +397,10 @@ class EschalonData(object):
         """
         if book == 1:
             return B1EschalonData(gamedir)
+        elif book == 2:
+            return B2EschalonData(gamedir)
         else:
-            return EschalonData(gamedir)
+            return B3EschalonData(gamedir)
 
 class B1EschalonData(object):
     """
@@ -456,3 +471,17 @@ class B1EschalonData(object):
         just returns the passed-in name.
         """
         return item_name
+
+class B2EschalonData(EschalonData):
+    """
+    Book 2 specific Eschalon Data
+    """
+    empty_name = 'empty'
+    random_name = 'random'
+
+class B3EschalonData(EschalonData):
+    """
+    Book 3 specific Eschalon Data
+    """
+    empty_name = 'EMPTY'
+    random_name = 'RANDOM'
