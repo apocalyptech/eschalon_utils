@@ -522,10 +522,7 @@ class Map(object):
             2) Tile Y
             3) Item Name
         """
-        itemlist = c.eschalondata.get_itemlist()
-        itemdict = {}
-        for item in itemlist:
-            itemdict[item] = True
+        itemdict = c.eschalondata.get_itemdict()
         invalid_items = []
         for itemtuple in self.get_item_names():
             itemname = itemtuple[2]

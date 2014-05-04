@@ -193,6 +193,7 @@ class EschalonData(object):
 
         # Cache of our known item list, so that we only read it once.
         self.itemlist = None
+        self.itemdict = None
         self.goldranges = None
         self.material_items = None
 
@@ -308,6 +309,7 @@ class EschalonData(object):
                base global item names.
         """
         self.itemlist = []
+        self.itemdict = {}
         self.goldranges = GoldRanges()
         self.material_items = {}
         try:
@@ -315,7 +317,7 @@ class EschalonData(object):
             reader = csv.DictReader(df)
             for row in reader:
                 if row['DESCRIPTION'] != '':
-                    self.itemlist.append(row['DESCRIPTION'])
+                    self.itemdict[row['DESCRIPTION']] = True
 
                 if row['Item Category'] == 'IC_GOLD':
                     self.goldranges.add_item(row['DESCRIPTION'])
@@ -334,6 +336,8 @@ class EschalonData(object):
         except:
             pass
 
+        self.itemlist = sorted(self.itemdict.keys())
+
     def get_itemlist(self):
         """
         Returns a list of valid item names from the main general_items.csv
@@ -341,6 +345,16 @@ class EschalonData(object):
         if self.itemlist is None:
             self.populate_datapak_info()
         return self.itemlist
+
+    def get_itemdict(self):
+        """
+        Returns a dictionary of valid item names from the main general_items.csv
+        Nearly the same thing as get_itemlist, but more useful if you're comparing
+        another list of items versus this
+        """
+        if self.itemdict is None:
+            self.populate_datapak_info()
+        return self.itemdict
 
     def get_global_name(self, item_name):
         """
@@ -428,6 +442,13 @@ class B1EschalonData(object):
         to put in here, instead
         """
         return []
+
+    def get_itemdict(self):
+        """
+        Returns an empty dict.  It might be nice to come up with a static list
+        to put in here, instead
+        """
+        return {}
 
     def get_global_name(self, item_name):
         """
