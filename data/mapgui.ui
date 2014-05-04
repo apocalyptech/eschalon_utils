@@ -619,10 +619,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="exit_west_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry2">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -650,10 +650,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="exit_south_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry4">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -681,10 +681,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="exit_east_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry6">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -712,10 +712,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="exit_north_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry8">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1577,13 +1577,13 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="skybox_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                     </child>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry10">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1611,10 +1611,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="atmos_sound_day_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry12">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1642,10 +1642,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="music2_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry14">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1673,11 +1673,11 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="music1_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <property name="tooltip_markup">Note that having an empty value here will crash Eschalon</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry16">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1888,10 +1888,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="random_sound1_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry18">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -1964,10 +1964,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="atmos_sound_night_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry20">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>
@@ -2023,10 +2023,10 @@
                                 <child>
                                   <object class="GtkComboBoxEntry" id="random_sound2_combo">
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
+                                    <property name="can_focus">True</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="comboboxentry-entry22">
-                                        <property name="can_focus">False</property>
+                                        <property name="can_focus">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
                                         <property name="primary_icon_sensitive">True</property>

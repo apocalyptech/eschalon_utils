@@ -3,6 +3,8 @@
    04 May 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Fix bug that could sometimes cause which tile is being edited to change
       while the tile edit window is open
+   Make combo boxes in the map properties window able to focus so you can
+      enter text into them
 
    03 May 2014; CJ Kucera <pez@apocalyptech.com> :
    Add an icon and window title for the global Map Properties dialog
