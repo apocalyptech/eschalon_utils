@@ -1053,6 +1053,7 @@ class MapGUI(BaseGUI):
     def __init__(self, options, prefs, req_book):
         self.options = options
         self.prefs = prefs
+        self.editing_a_tile = False
         self.path_init()
         self.req_book = req_book
         c.switch_to_book(self.req_book)
@@ -2823,6 +2824,7 @@ class MapGUI(BaseGUI):
             if self.check_hugegfx_state(self.map.tiles[self.tile_y][self.tile_x]):
                 self.draw_map()
 
+        self.editing_a_tile = False
         return True
 
     def redraw_tile(self, x, y):
@@ -3017,6 +3019,13 @@ class MapGUI(BaseGUI):
 
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
+
+        # In some cases, on_mouse_changed gets triggered even when the tile
+        # edit window is open.  When that happens we shouldn't do anything,
+        # or else we risk causing the user to suddenly be editing a
+        # different tile
+        if (self.editing_a_tile):
+          return
 
         if (self.dragging):
             if sys.platform != 'win32' and gtk.events_pending():
@@ -4124,6 +4133,7 @@ class MapGUI(BaseGUI):
                     self.undo.store(self.tile_x, self.tile_y)
                     self.populate_tilewindow_from_tile(self.map.tiles[self.tile_y][self.tile_x])
                     self.get_widget('tilelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.tile_x, self.tile_y))
+                    self.editing_a_tile = True
                     self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
