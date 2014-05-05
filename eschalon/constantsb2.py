@@ -496,23 +496,6 @@ class B2Constants:
             BigGfxHelper('head_dun.png', 'Stone Head Doorway', 1),
         ]
 
-    # I'm not fond of the way we're defining this class in multiple constants files
-    class EntHelper(object):
-        def __init__(self, name, health, gfxfile, dirs, friendly, width, height, frames, movement=1, entscript=''):
-            self.name = name
-            self.health = health
-            self.gfxfile = gfxfile
-            self.dirs = dirs
-            self.friendly = friendly
-            self.width = width
-            self.height = height
-            self.frames = frames
-            self.movement = movement
-            self.entscript = entscript
-
-    # Entities
-    entitytable = {}
-
     # Script Commands
     commands = {
             'quest': ['questnum', 'state'],

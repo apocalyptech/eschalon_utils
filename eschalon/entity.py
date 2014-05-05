@@ -107,10 +107,11 @@ class Entity(object):
         self.direction = save_direction
         self.entscript = save_entscript
         if savegame:
-            if self.entid in c.entitytable:
-                self.friendly = c.entitytable[self.entid].friendly
-                self.health = c.entitytable[self.entid].health
-                self.movement = c.entitytable[self.entid].movement
+            entity = c.eschalondata.get_entity(self.entid)
+            if entity:
+                self.friendly = entity.friendly
+                self.health = entity.health
+                self.movement = entity.movement
 
     def equals(self, entity):
         """
@@ -148,8 +149,9 @@ class Entity(object):
 
         ret = []
 
-        if (self.entid in c.entitytable):
-            ret.append("\tEntity: %s" % (c.entitytable[self.entid].name))
+        entity = c.eschalondata.get_entity(self.entid)
+        if entity:
+            ret.append("\tEntity: %s" % (entity.name))
         else:
             ret.append("\tEntity ID: %d" % (self.entid))
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))

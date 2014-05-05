@@ -1212,8 +1212,10 @@ class MapGUI(BaseGUI):
                 if resp != gtk.RESPONSE_OK:
                     sys.exit(1)
 
-        # Now that we're sure we have a data dir, load in our entities
-        self.populate_entities()
+        # Pull in the entitytable dict from EschalonData - we reference
+        # this often enough that it's awkward to have to call
+        # get_entitytable() all the time
+        self.entitytable = self.eschalondata.get_entitytable()
 
         # Create these objects as soon as we have our entity list
         self.smartdraw.create_premade_objects()
@@ -1322,49 +1324,6 @@ class MapGUI(BaseGUI):
         of the headers in the submenu.
         """
         cell.set_property('sensitive', not model.iter_has_child(iter))
-
-    def populate_entities(self):
-        """
-        Populates our entities, if need be.
-        (Currently only does things for Book 2+3, since they can be sourced from
-        a CSV file)
-        """
-        # x / y sizing
-        # 0 / 0 1024x1024, sixteen to a row
-        # 0 / 32 1024x1024, sixteen to a row
-        # 32 / 0 1024x1024, ten to a row
-        # 32 / 32 2048x2048, twenty-one to a row (with some left over)
-        # 64 / 64 2048x2048, sixteen to a row
-        if self.req_book == 1:
-            return
-        reader = csv.DictReader(cStringIO.StringIO(self.eschalondata.readfile('entities.csv', 'data')))
-        for row in reader:
-            if row['file'].strip() == '':
-                continue
-            xoff = int(row['Xoff'])
-            yoff = int(row['Yoff'])
-            width = 64 + xoff
-            height = 64 + yoff
-            name = row['Name']
-            if (int(row['Dirs']) == 1):
-                name = '%s *' % (name)
-            script = row['Script'].strip()
-            if script == '*':
-                script = ''
-            # In the event of multiple IDs found in the file, Eschalon itself will favor
-            # the first, so we should check for this.
-            ent_id_int = int(row['ID'])
-            if ent_id_int not in c.entitytable.keys():
-                c.entitytable[int(row['ID'])] = c.EntHelper(name,
-                    int(row['HP']),
-                    '%s.png' % (row['file']),
-                    int(row['Dirs']),
-                    int(row['Align']),
-                    width,
-                    height,
-                    int(row['Frame']),
-                    int(row['Move']),
-                    script)
 
     def putstatus(self, text):
         """ Pushes a message to the status bar """
@@ -1754,7 +1713,7 @@ class MapGUI(BaseGUI):
         globalstore.append(['(none)', 0])
         monsters = {}
         npcs = {}
-        for (key, item) in c.entitytable.iteritems():
+        for (key, item) in self.entitytable.iteritems():
             if (item.friendly == 0):
                 table = monsters
             else:
@@ -2644,12 +2603,12 @@ class MapGUI(BaseGUI):
         entid = self.entityrev[name]
         entity = self.map.tiles[self.tile_y][self.tile_x].entity
         entity.entid = entid
-        if (entid in c.entitytable):
+        if (entid in self.entitytable):
             # We set the button out here in case we were editing a Global map and
             # then load a savegame, and edit a tile which has an entity that we
             # already had selected.
             button = self.get_widget('healthmaxbutton')
-            health = c.entitytable[entid].health
+            health = self.entitytable[entid].health
             button.set_label('Set to Max Health (%d)' % (health))
             if not self.populating_entity_tab and entity.savegame:
                 if c.book > 1:
@@ -2658,10 +2617,10 @@ class MapGUI(BaseGUI):
                     # game engine after loading the main map.  The entscripts found in
                     # the global map files are "special" ones like keys that only certain
                     # monsters drop, etc.
-                    self.get_widget('entscript').set_text(c.entitytable[entid].entscript)
+                    self.get_widget('entscript').set_text(self.entitytable[entid].entscript)
                 self.get_widget('health').set_value(health)
-                self.get_widget('movement').set_value(c.entitytable[entid].movement)
-                self.get_widget('friendly').set_value(c.entitytable[entid].friendly)
+                self.get_widget('movement').set_value(self.entitytable[entid].movement)
+                self.get_widget('friendly').set_value(self.entitytable[entid].friendly)
             self.update_ent_tile_img()
 
     def on_ent_status_changed(self, widget):
@@ -3662,8 +3621,8 @@ class MapGUI(BaseGUI):
     def on_healthmaxbutton_clicked(self, widget):
         """ Set the entity's health to its maximum. """
         entid = self.map.tiles[self.tile_y][self.tile_x].entity.entid
-        if (entid in c.entitytable):
-            health = c.entitytable[entid].health
+        if (entid in self.entitytable):
+            health = self.entitytable[entid].health
             self.get_widget('health').set_value(health)
 
     def on_setinitial_clicked(self, widget):
@@ -3797,9 +3756,9 @@ class MapGUI(BaseGUI):
     def populate_entity_tab(self, tile):
         """ Populates the entity tab of the tile editing screen. """
         self.populating_entity_tab = True
-        if (tile.entity.entid in c.entitytable):
-            if (c.entitytable[tile.entity.entid].name in self.entitykeys):
-                idx = self.entitykeys.index(c.entitytable[tile.entity.entid].name)
+        if (tile.entity.entid in self.entitytable):
+            if (self.entitytable[tile.entity.entid].name in self.entitykeys):
+                idx = self.entitykeys.index(self.entitytable[tile.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
                 self.errordialog('Entity Error', 'The application encountered an entity '
@@ -4560,8 +4519,8 @@ class MapGUI(BaseGUI):
                 else:
                     entity = (1, 0, 0, 0.5)
             else:
-                if tile.entity.entid in c.entitytable:
-                    if c.entitytable[tile.entity.entid].friendly == 1:
+                if tile.entity.entid in self.entitytable:
+                    if self.entitytable[tile.entity.entid].friendly == 1:
                         entity = (0, 1, 0, 0.5)
                     else:
                         entity = (1, 0, 0, 0.5)

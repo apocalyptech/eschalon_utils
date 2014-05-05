@@ -1587,7 +1587,8 @@ class B1SmartDraw(SmartDraw):
         # TODO: code duplication from the main setup screen routine
         monsters = {}
         npcs = {}
-        for (key, item) in c.entitytable.iteritems():
+        entitytable = c.eschalondata.get_entitytable()
+        for (key, item) in entitytable.iteritems():
             if item.friendly == 0:
                 table = monsters
             else:
@@ -1606,7 +1607,7 @@ class B1SmartDraw(SmartDraw):
                 obj = self.premade_objects.new(name)
                 ent = obj.create_entity()
                 entid = table[name]
-                ent_entry = c.entitytable[entid]
+                ent_entry = entitytable[entid]
                 ent.entid = entid
                 ent.direction = 1
                 ent.friendly = ent_entry.friendly
@@ -2103,7 +2104,8 @@ class B2SmartDraw(SmartDraw):
         # TODO: code duplication from the main setup screen routine
         monsters = {}
         npcs = {}
-        for (key, item) in c.entitytable.iteritems():
+        entitytable = c.eschalondata.get_entitytable()
+        for (key, item) in entitytable.iteritems():
             if item.friendly == 0:
                 table = monsters
             else:
@@ -2122,7 +2124,7 @@ class B2SmartDraw(SmartDraw):
                 obj = self.premade_objects.new(name)
                 ent = obj.create_entity()
                 entid = table[name]
-                ent_entry = c.entitytable[entid]
+                ent_entry = entitytable[entid]
                 ent.entid = entid
                 ent.direction = 1
                 ent.friendly = ent_entry.friendly
@@ -2626,7 +2628,8 @@ class B3SmartDraw(B2SmartDraw):
         # TODO: code duplication from the main setup screen routine
         monsters = {}
         npcs = {}
-        for (key, item) in c.entitytable.iteritems():
+        entitytable = c.eschalondata.get_entitytable()
+        for (key, item) in entitytable.iteritems():
             if item.friendly == 0:
                 table = monsters
             else:
@@ -2645,7 +2648,7 @@ class B3SmartDraw(B2SmartDraw):
                 obj = self.premade_objects.new(name)
                 ent = obj.create_entity()
                 entid = table[name]
-                ent_entry = c.entitytable[entid]
+                ent_entry = entitytable[entid]
                 ent.entid = entid
                 ent.direction = 1
                 ent.friendly = ent_entry.friendly

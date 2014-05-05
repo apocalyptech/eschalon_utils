@@ -122,6 +122,30 @@ class GoldRanges(object):
         # Default, just return our passed-in name
         return item_name
 
+class EntHelper(object):
+    """
+    Class to store data about our entities.  Basically just a glorified
+    dictionary.  Previously this had been stored inside the various
+    Constants classes, but it never really belonged there.
+    """
+
+    def __init__(self, name, health, gfxfile, friendly, movement, dirs=8,
+                 width=64, height=64, frames=17, entscript=''):
+        """
+        Constructor.  Note that for Book 1, only name, health, gfxfile, friendly,
+        and movement will be specified.
+        """
+        self.name = name
+        self.health = health
+        self.gfxfile = gfxfile
+        self.friendly = friendly
+        self.movement = movement
+        self.dirs = dirs
+        self.width = width
+        self.height = height
+        self.frames = frames
+        self.entscript = entscript
+
 class Datapak(object):
     """
     Class to handle the encrypted datapak file used in Books 2 and 3.
@@ -199,6 +223,9 @@ class EschalonData(object):
         self.itemdict = None
         self.goldranges = None
         self.material_items = None
+
+        # Entities
+        self.entitytable = None
 
         # Our datapak object.  If this remains None, it means that we're
         # reading from the filesystem structure instead.
@@ -315,6 +342,9 @@ class EschalonData(object):
         self.itemdict = {}
         self.goldranges = GoldRanges()
         self.material_items = {}
+        self.entitytable = {}
+
+        # First load in all available information from general_items.csv
         try:
             df = self.get_filehandle('general_items.csv', 'data')
             reader = csv.DictReader(df)
@@ -336,7 +366,6 @@ class EschalonData(object):
                     for material in c.materials_fabric:
                         self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
             df.close()
-
         except:
             pass
 
@@ -350,6 +379,41 @@ class EschalonData(object):
 
         # Populate a sorted itemlist object as well.
         self.itemlist = sorted(self.itemdict.keys(), key=lambda s: s.lower())
+
+        # Now try to load in all available entity information
+        try:
+            df = self.get_filehandle('entities.csv', 'data')
+            reader = csv.DictReader(df)
+            for row in reader:
+                if row['file'].strip() == '':
+                    continue
+                xoff = int(row['Xoff'])
+                yoff = int(row['Yoff'])
+                width = 64 + xoff
+                height = 64 + yoff
+                name = row['Name']
+                if (int(row['Dirs']) == 1):
+                    name = '%s *' % (name)
+                script = row['Script'].strip()
+                if script == '*':
+                    script = ''
+                # In the event of multiple IDs found in the file, Eschalon itself will favor
+                # the first, so we should check for this.
+                ent_id_int = int(row['ID'])
+                if ent_id_int not in self.entitytable:
+                    self.entitytable[ent_id_int] = EntHelper(name=name,
+                        health=int(row['HP']),
+                        gfxfile='%s.png' % (row['file']),
+                        friendly=int(row['Align']),
+                        movement=int(row['Move']),
+                        dirs=int(row['Dirs']),
+                        width=width,
+                        height=height,
+                        frames=int(row['Frame']),
+                        entscript=script)
+            df.close()
+        except:
+            pass
 
     def get_itemlist(self):
         """
@@ -388,6 +452,26 @@ class EschalonData(object):
                     return val
             return item_name
 
+    def get_entitytable(self):
+        """
+        Returns a dict of entities from the main entities.csv
+        """
+        if self.entitytable is None:
+            self.populate_datapak_info()
+        return self.entitytable
+
+    def get_entity(self, entid):
+        """
+        Returns the requested entity, or None if not found
+        """
+        if self.entitytable is None:
+            self.populate_datapak_info()
+
+        try:
+            return self.entitytable[entid]
+        except KeyError:
+            return None
+
     @staticmethod
     def new(book, gamedir):
         """
@@ -415,6 +499,7 @@ class B1EschalonData(object):
         Initialization - just store our gamedir, primarily.
         """
         self.set_gamedir(gamedir)
+        self.entitytable = None
 
     def set_gamedir(self, gamedir):
         """
@@ -447,9 +532,86 @@ class B1EschalonData(object):
 
     def populate_datapak_info(self):
         """
-        Compatibility function, does nothing
+        Compatibility function.  Doesn't actually read any data from anywhere, but this
+        will store information that we've hardcoded but are pretending to be reading.
+        Right now that just means entities.
         """
-        pass
+
+        # Entities
+        self.entitytable = {
+
+                # Enemies
+                0x01: EntHelper('Fanged Salamander', 9, 1, 0, 1),
+                0x02: EntHelper('Bloodsipper', 17, 2, 0, 1),
+                0x03: EntHelper('Raptor', 95, 3, 0, 1), 
+                0x04: EntHelper('Noximander', 35, 4, 0, 1), 
+                0x05: EntHelper('Fungal Slime', 25, 5, 0, 1),
+                0x06: EntHelper('Walking Corpse', 55, 6, 0, 1),
+                0x07: EntHelper('Acid Grubb', 70, 7, 0, 1),
+                0x08: EntHelper('Timberland Giant', 140, 8, 0, 1),
+                0x09: EntHelper('Goblin Hacker', 38, 9, 0, 1),
+                0x0A: EntHelper('Goblin Archer', 45, 10, 0, 1),
+                0x0B: EntHelper('Goblin Warlord', 75, 11, 0, 1),
+                0x0C: EntHelper('Hive Drone', 40, 12, 0, 1), 
+                0x0D: EntHelper('Hive Queen', 100, 13, 0, 1),
+                0x0E: EntHelper('Thug', 40, 14, 0, 1), 
+                0x0F: EntHelper('Dimensional Eye', 80, 15, 0, 1),
+                0x10: EntHelper('Giant Arachnid', 70, 16, 0, 1),
+                0x11: EntHelper('Dirachnid', 250, 17, 0, 1),
+                0x12: EntHelper('Skeleton', 50, 18, 0, 1),
+                0x13: EntHelper('Goblin Bombthug', 15, 19, 0, 1),
+                0x14: EntHelper('Poltergeist', 60, 20, 0, 1),
+                0x15: EntHelper('Barrea Mercenary', 90, 21, 0, 1), 
+                0x16: EntHelper('Taurax', 140, 22, 0, 1),
+                0x17: EntHelper('Spire Guard', 300, 60, 0, 1),
+
+                # NPCs
+                0x33: EntHelper('Maddock', 15, 51, 1, 1),
+                0x34: EntHelper('Michael', 36, 52, 1, 1),
+                0x35: EntHelper('Farwick', 50, 53, 1, 1),
+                0x36: EntHelper('Abygale', 25, 62, 1, 1),
+                0x37: EntHelper('Eleanor *', 1, 55, 1, 2),
+                0x38: EntHelper('Garrett *', 1, 50, 1, 2),
+                0x39: EntHelper('Porter', 32, 56, 1, 1),
+                0x3A: EntHelper('Oswell *', 1, 58, 1, 2),
+                0x3B: EntHelper('Lilith', 130, 54, 1, 1),
+                0x3C: EntHelper('Town Guard', 120, 60, 1, 1),
+                0x3D: EntHelper('Gruzz', 16, 9, 1, 1),
+                0x3E: EntHelper('Gatekeeper', 45, 60, 1, 1),
+                0x3F: EntHelper('Eeru', 50, 65, 1, 1),
+                0x40: EntHelper('Erik', 45, 53, 1, 1),
+                0x41: EntHelper('Darkford Guard', 120, 60, 1, 1),
+                0x42: EntHelper('Gunther', 85, 53, 1, 1),
+                0x43: EntHelper('Leurik', 22, 65, 1, 1),
+                0x44: EntHelper('Vault Master', 5, 9, 1, 1),
+                0x45: EntHelper('Paul', 15, 51, 1, 1),
+                0x46: EntHelper('Krista', 70, 57, 1, 1),
+                0x47: EntHelper('Gamfari', 20, 64, 1, 1),
+                0x48: EntHelper('Larrus *', 1, 66, 1, 2),
+                0x49: EntHelper('Mary', 2, 63, 1, 1),
+                0x4A: EntHelper('Vekkar *', 1, 67, 1, 2),
+                0x4B: EntHelper('Jonathon', 36, 52, 1, 1),
+                0x4C: EntHelper('Shady Character (1)', 90, 14, 1, 1),
+                0x4D: EntHelper('Oolaseph *', 1, 54, 1, 2),
+                0x4E: EntHelper('Vault Guard', 50, 60, 1, 1),
+                0x4F: EntHelper('Vidar the Knife', 50, 14, 1, 1),
+                0x50: EntHelper('Walter', 15, 68, 1, 1),
+                0x51: EntHelper('Azure Guard', 120, 60, 1, 1),
+                0x52: EntHelper('Captain Morgan', 120, 60, 1, 1),
+                0x53: EntHelper('Erubor', 80, 69, 1, 1),
+                0x54: EntHelper('Shadowmirk Acolyte', 15, 68, 1, 1),
+                0x55: EntHelper('Phillip', 15, 65, 1, 1),
+                0x56: EntHelper('Omar', 140, 8, 1, 1),
+                0x57: EntHelper('Gramuk', 45, 70, 1, 1),
+                0x58: EntHelper('Shady Character (2)', 110, 14, 1, 1),
+                0x5A: EntHelper('Chancellor Malcolm *', 4, 71, 1, 2),
+                0x5B: EntHelper('Sonya', 160, 59, 1, 1),
+                0x5C: EntHelper('Aaron', 70, 61, 1, 1),
+                0x5D: EntHelper('Penelope', 2, 62, 1, 1),
+                0x5E: EntHelper('Siam', 80, 65, 1, 1),
+                0x5F: EntHelper('William', 60, 51, 1, 1),
+                0x60: EntHelper('Hesham', 60, 65, 1, 1)
+            }
 
     def get_itemlist(self):
         """
@@ -471,6 +633,26 @@ class B1EschalonData(object):
         just returns the passed-in name.
         """
         return item_name
+
+    def get_entitytable(self):
+        """
+        Returns a dict of entities
+        """
+        if self.entitytable is None:
+            self.populate_datapak_info()
+        return self.entitytable
+
+    def get_entity(self, entid):
+        """
+        Returns the requested entity, or None if not found
+        """
+        if self.entitytable is None:
+            self.populate_datapak_info()
+
+        try:
+            return self.entitytable[entid]
+        except KeyError:
+            return None
 
 class B2EschalonData(EschalonData):
     """

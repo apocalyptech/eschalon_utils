@@ -553,7 +553,10 @@ class B1Gfx(Gfx):
         return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
-        entnum = c.entitytable[entnum].gfxfile
+        entity = self.eschalondata.get_entity(entnum)
+        if not entity:
+            return None
+        entnum = entity.gfxfile
         if (entnum not in self.entcache):
             filename = 'mo%d.png' % (entnum)
             if (entnum in self.restrict_ents):
@@ -823,9 +826,8 @@ class B2Gfx(Gfx):
         return self.hugegfxcache[filename].getimg(1, int(size*self.hugegfxcache[filename].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
-        try:
-            ent = c.entitytable[entnum]
-        except KeyError:
+        ent = self.eschalondata.get_entity(entnum)
+        if not ent:
             return None
         if (entnum not in self.entcache):
             filename = ent.gfxfile
