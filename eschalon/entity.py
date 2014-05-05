@@ -260,6 +260,8 @@ class B2Entity(Entity):
             'decalpref_snow', 'decalpref_lava',
             'b2_barrier_label', 'b2_barrier',
             'entrancescript_label', 'entrancescript',
+            'returnscript_label', 'returnscript',
+            'exitscript_label', 'exitscript',
             'random_sound1_label', 'random_sound1_combo',
             'tile_flag_label', 'tile_flag',
             'tree_set_label', 'tree_set',

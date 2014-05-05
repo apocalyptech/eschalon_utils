@@ -2,6 +2,7 @@
 
    04 May 2014; CJ Kucera <pez@apocalyptech.com> :
    Autocompletion for Global Map Item Names
+   Fix map return script and exit script for Book II map editing
 
    04 May 2014; Elliot Kendall <elliotkendall@gmail.com> :
    Fix bug that could sometimes cause which tile is being edited to change
