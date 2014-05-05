@@ -1062,7 +1062,7 @@ class MapGUI(BaseGUI):
     def run(self):
 
         # Let's make sure our map object exists
-        self.map = None
+        self.mapobj = None
 
         self.tile_x = -1
         self.tile_y = -1
@@ -1346,11 +1346,11 @@ class MapGUI(BaseGUI):
 
     def on_reload(self, widget=None):
         """ What to do when we're told to reload. """
-        if self.map.df.is_stringdata():
-            self.load_from_datapak(self.map.df.filename)
+        if self.mapobj.df.is_stringdata():
+            self.load_from_datapak(self.mapobj.df.filename)
             self.update_main_map_name()
-        elif self.map.df.filename != '':
-            self.load_from_file(self.map.df.filename)
+        elif self.mapobj.df.filename != '':
+            self.load_from_file(self.mapobj.df.filename)
             self.update_main_map_name()
         else:
             self.infodialog('Reload Not Available', 'Sorry, this map isn\'t reloadable '
@@ -1360,24 +1360,24 @@ class MapGUI(BaseGUI):
         """
         Save map to disk.  Calls out to on_save_as() if we don't have a filename yet.
         """
-        if self.map.df.is_stringdata() or self.map.df.filename == '':
+        if self.mapobj.df.is_stringdata() or self.mapobj.df.filename == '':
             self.on_save_as()
         else:
-            self.map.write()
-            if self.map.is_savegame() and not self.map.has_opq_file():
+            self.mapobj.write()
+            if self.mapobj.is_savegame() and not self.mapobj.has_opq_file():
                 if c.book == 1:
                     opq_template = self.datafile('minimap-book1.png')
                 else:
                     opq_template = self.datafile('minimap-book23.png')
                 try:
                     with open(opq_template, 'rb') as df:
-                        with open(self.map.get_opq_path(), 'wb') as odf:
+                        with open(self.mapobj.get_opq_path(), 'wb') as odf:
                             odf.write(df.read())
                 except Exception, e:
                     self.warningdialog('Could not write minimap',
                         "Could not write this map\'s minimap graphic file.  This can cause corruption on the in-game minimap.\n\nThe error: <tt>%s</tt>" % (e),
                         self.window)
-            self.putstatus('Saved ' + self.map.df.filename)
+            self.putstatus('Saved ' + self.mapobj.df.filename)
             self.update_main_map_name()
 
     def on_save_as(self, widget=None):
@@ -1395,16 +1395,16 @@ class MapGUI(BaseGUI):
 
         # Figure out the initial path
         path = ''
-        if self.map is None:
+        if self.mapobj is None:
             pass
-        elif self.map.df.filename == '':
-            if self.map.is_savegame():
+        elif self.mapobj.df.filename == '':
+            if self.mapobj.is_savegame():
                 path = self.get_current_savegame_dir()
             else:
                 path = self.get_current_gamedir()
             dialog.set_current_folder(path)
         else:
-            path = os.path.dirname(os.path.realpath(self.map.df.filename))
+            path = os.path.dirname(os.path.realpath(self.mapobj.df.filename))
 
         # Set the initial path
         if (path != ''):
@@ -1443,20 +1443,20 @@ class MapGUI(BaseGUI):
                 # If we're book 1, make sure that our Map ID is set properly
                 if c.book == 1:
                     base_map_name = os.path.basename(new_filename)[:-4]
-                    if base_map_name != self.map.mapid:
+                    if base_map_name != self.mapobj.mapid:
                         resp = self.confirmdialog('Update Map ID Field?', 'You are saving this map '
                                 'to the file "%s", but the Map ID field <i>(available in the Map Properties '
                                 'screen)</i> is set to "%s".  In order for your maps to save properly in '
                                 'the game engine, they should be the same.  Do you want to update the Map '
-                                'ID to match the filename?' % (base_map_name, self.map.mapid),
+                                'ID to match the filename?' % (base_map_name, self.mapobj.mapid),
                                 dialog)
                         if resp == gtk.RESPONSE_YES:
-                            self.map.mapid = base_map_name
+                            self.mapobj.mapid = base_map_name
 
                 # And now do the actual save
-                self.map.df.set_filename(new_filename)
+                self.mapobj.df.set_filename(new_filename)
                 self.on_save()
-                self.putstatus('Saved as %s' % (self.map.df.filename))
+                self.putstatus('Saved as %s' % (self.mapobj.df.filename))
                 self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
                         'map will be saved to the new filename, not the original filename.',
                         self.window)
@@ -1494,7 +1494,7 @@ class MapGUI(BaseGUI):
                 'scrolls must omit the "Scroll of" prefix.',
                 ]
             global_warning = ''.join(global_warning_list)
-            invalid_items = self.map.get_invalid_global_items()
+            invalid_items = self.mapobj.get_invalid_global_items()
             if len(invalid_items) > 0:
                 dialog = GlobalNameDialog(item_names=invalid_items,
                         eschalondata=self.eschalondata,
@@ -1521,11 +1521,11 @@ class MapGUI(BaseGUI):
 
         if response == gtk.RESPONSE_YES:
 
-            self.undo = Undo(self.map)
+            self.undo = Undo(self.mapobj)
             self.update_undo_gui()
 
             try:
-                self.map.convert_savegame(savegame)
+                self.mapobj.convert_savegame(savegame)
             except Exception, e:
                 self.errordialog('Conversion Error', '<b>Error:</b> Map could not be '
                         'converted to %s format.  The map might be in an '
@@ -1537,12 +1537,12 @@ class MapGUI(BaseGUI):
                         self.window)
                 return False
             self.update_main_map_name()
-            self.putstatus('Editing %s map "%s"' % (totype, self.map.mapname))
+            self.putstatus('Editing %s map "%s"' % (totype, self.mapobj.mapname))
 
             # Check our converted item names, if we've converted to global.
             invalid_items = []
             if not savegame:
-                invalid_items = self.map.get_invalid_global_items()
+                invalid_items = self.mapobj.get_invalid_global_items()
 
             if len(invalid_items) > 0:
                 dialog = GlobalNameDialog(item_names=invalid_items,
@@ -1573,7 +1573,7 @@ class MapGUI(BaseGUI):
         """
         Show a dialog summarizing our Global Item Name status.
         """
-        invalid_items = self.map.get_invalid_global_items()
+        invalid_items = self.mapobj.get_invalid_global_items()
         if len(invalid_items) > 0:
             dialog = GlobalNameDialog(item_names=invalid_items,
                     eschalondata=self.eschalondata,
@@ -1994,8 +1994,8 @@ class MapGUI(BaseGUI):
         infolabel.set_markup('<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
         infolabel.set_line_wrap(True)
         dialog.set_extra_widget(infolabel)
-        if (self.map != None):
-            path = os.path.dirname(os.path.realpath(self.map.df.filename))
+        if (self.mapobj != None):
+            path = os.path.dirname(os.path.realpath(self.mapobj.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
 
@@ -2019,7 +2019,7 @@ class MapGUI(BaseGUI):
         Updates the text area above the map with the current map name.
         Also shows/hides the relevant conversion menu items
         """
-        if self.map.is_savegame():
+        if self.mapobj.is_savegame():
             prefix = 'Savegame Map'
             self.get_widget('convert_savegame_item').hide()
             self.get_widget('convert_global_item').show()
@@ -2029,16 +2029,16 @@ class MapGUI(BaseGUI):
             self.get_widget('convert_global_item').hide()
 
         if (c.book == 1 and
-                self.map.df.filename != '' and
-                os.path.basename(self.map.df.filename)[:-4] != self.map.mapid):
+                self.mapobj.df.filename != '' and
+                os.path.basename(self.mapobj.df.filename)[:-4] != self.mapobj.mapid):
             self.mapname_mainscreen_label.set_markup('%s: %s <span color="red">(Map ID Mismatch)</span>' %
-                    (prefix, self.map.mapname))
+                    (prefix, self.mapobj.mapname))
             self.mapname_mainscreen_label.set_tooltip_text('This map is saved to a file named "%s" '
                     'but the Map ID is set to "%s" - this will cause problems with saving the map '
                     'state, inside Eschalon.  You should change this value in "Map Properties."' %
-                    (os.path.basename(self.map.df.filename), self.map.mapid))
+                    (os.path.basename(self.mapobj.df.filename), self.mapobj.mapid))
         else:
-            self.mapname_mainscreen_label.set_text('%s: %s' % (prefix, self.map.mapname))
+            self.mapname_mainscreen_label.set_text('%s: %s' % (prefix, self.mapobj.mapname))
             self.mapname_mainscreen_label.set_has_tooltip(False)
 
     def setup_new_map_gui(self):
@@ -2051,11 +2051,11 @@ class MapGUI(BaseGUI):
         self.update_main_map_name()
 
         # Instansiate our "undo" object so we can handle that
-        self.undo = Undo(self.map)
+        self.undo = Undo(self.mapobj)
         self.update_undo_gui()
 
         # Load the new map into our SmartDraw object
-        self.smartdraw.set_map(self.map)
+        self.smartdraw.set_map(self.mapobj)
         self.smartdraw.set_gui(self)
 
         # Load information from the character
@@ -2069,7 +2069,7 @@ class MapGUI(BaseGUI):
         """
 
         # Confirm if we already have a map
-        if self.map is not None:
+        if self.mapobj is not None:
             resp = self.confirmdialog('Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
             if resp != gtk.RESPONSE_YES:
                 return False
@@ -2095,22 +2095,22 @@ class MapGUI(BaseGUI):
         """
 
         # Now create a new map
-        self.map = Map.new('', self.req_book)
-        self.map.set_savegame(savegame)
+        self.mapobj = Map.new('', self.req_book)
+        self.mapobj.set_savegame(savegame)
         
         # A few values need to be set to avoid crashes
         if c.book == 1:
-            self.map.music1 = 'overland_1.ogg'
-            self.map.atmos_sound_day = 'atmos_birds.wav'
+            self.mapobj.music1 = 'overland_1.ogg'
+            self.mapobj.atmos_sound_day = 'atmos_birds.wav'
         elif c.book == 2:
-            self.map.music1 = 'eb2_overland1.ogg'
-            self.map.atmos_sound_day = 'atmos_birds.wav'
+            self.mapobj.music1 = 'eb2_overland1.ogg'
+            self.mapobj.atmos_sound_day = 'atmos_birds.wav'
         elif c.book == 3:
-            self.map.version = '0.992'
-            self.map.music1 = 'book3_steps_of_the_wayfarer_dj.ogg'
-            self.map.atmos_sound_day = 'atmos_birds.wav'
+            self.mapobj.version = '0.992'
+            self.mapobj.music1 = 'book3_steps_of_the_wayfarer_dj.ogg'
+            self.mapobj.atmos_sound_day = 'atmos_birds.wav'
         self.putstatus('Editing a new map')
-        self.map.mapname = 'New Map'
+        self.mapobj.mapname = 'New Map'
         self.setup_new_map_gui()
 
     def load_from_datapak(self, filename):
@@ -2135,8 +2135,8 @@ class MapGUI(BaseGUI):
             ent_df = Savefile(filename=ent_filename, stringdata='')
 
         # Create the map object
-        self.map = Map.new('', self.req_book, map_df=map_df, ent_df=ent_df)
-        self.map.read()
+        self.mapobj = Map.new('', self.req_book, map_df=map_df, ent_df=ent_df)
+        self.mapobj.read()
 
         # Some other statuses
         self.putstatus('Editing datapak map "%s"' % (filename))
@@ -2152,15 +2152,15 @@ class MapGUI(BaseGUI):
 
         # Figure out what our initial path should be
         path = ''
-        if self.map == None:
+        if self.mapobj == None:
             path = self.get_current_savegame_dir()
-        elif self.map.df.filename == '':
-            if self.map.is_savegame():
+        elif self.mapobj.df.filename == '':
+            if self.mapobj.is_savegame():
                 path = self.get_current_savegame_dir()
             else:
                 path = self.get_current_gamedir()
         else:
-            path = os.path.dirname(os.path.realpath(self.map.df.filename))
+            path = os.path.dirname(os.path.realpath(self.mapobj.df.filename))
 
         # Set the initial path
         if c.book == 1:
@@ -2174,7 +2174,7 @@ class MapGUI(BaseGUI):
                 last_source=self.last_map_source,
                 b23maplist=b23maplist,
                 eschalondata=self.eschalondata,
-                show_new=(self.map is None))
+                show_new=(self.mapobj is None))
 
         # Run the dialog and process its return values
         retval = False
@@ -2216,8 +2216,8 @@ class MapGUI(BaseGUI):
 
         # Load the file, if we can
         try:
-            map = Map.load(filename, self.req_book)
-            map.read()
+            mapobj = Map.load(filename, self.req_book)
+            mapobj.read()
         except LoadException, e:
             self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
                     'be loaded.  Please choose a different file and try again.'
@@ -2227,16 +2227,16 @@ class MapGUI(BaseGUI):
             return False
 
         # Basic vars
-        self.map = map
+        self.mapobj = mapobj
 
         # Update our status bar
-        self.putstatus('Editing ' + self.map.df.filename)
+        self.putstatus('Editing ' + self.mapobj.df.filename)
 
         # Set up our other GUI elements
         self.setup_new_map_gui()
 
         # Check for Big Graphic issues.
-        messages = self.map.big_gfx_mappings.load()
+        messages = self.mapobj.big_gfx_mappings.load()
         if len(messages) > 0:
             self.on_big_graphic_info_clicked(messages=messages, do_redraw=False)
 
@@ -2267,17 +2267,17 @@ class MapGUI(BaseGUI):
         if it might be necessary.
         """
         request_redraw = False
-        if c.book == 3 and ('4949' in self.map.df.filename or 'Elderoak Forest' in self.map.mapname):
+        if c.book == 3 and ('4949' in self.mapobj.df.filename or 'Elderoak Forest' in self.mapobj.mapname):
             print 'True'
             elderoak = True
         else:
             elderoak = False
-        dialog = BigGraphicDialog(self.map.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
+        dialog = BigGraphicDialog(self.mapobj.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
         response = dialog.run()
         if response == gtk.RESPONSE_APPLY:
             request_redraw = True
-            self.map.big_gfx_mappings.fix()
-            messages = self.map.big_gfx_mappings.load()
+            self.mapobj.big_gfx_mappings.fix()
+            messages = self.mapobj.big_gfx_mappings.load()
             if len(messages) > 0:
                 md = gtk.MessageDialog(
                         flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
@@ -2374,11 +2374,11 @@ class MapGUI(BaseGUI):
         # though perhaps that needs to get revisited at some point.
         if self.undo.have_undo():
             history = self.undo.get_undo()
-            self.store_hugegfx_state(self.map.tiles[history.y][history.x])
+            self.store_hugegfx_state(self.mapobj.tiles[history.y][history.x])
             for (x, y) in self.undo.undo():
                 self.redraw_tile(x, y)
             self.update_undo_gui()
-            if self.check_hugegfx_state(self.map.tiles[history.y][history.x]):
+            if self.check_hugegfx_state(self.mapobj.tiles[history.y][history.x]):
                 self.draw_map()
 
     def on_redo(self, widget=None):
@@ -2386,11 +2386,11 @@ class MapGUI(BaseGUI):
         # See on_undo() for some notes about the hugegfx stuff
         if self.undo.have_redo():
             history = self.undo.get_redo()
-            self.store_hugegfx_state(self.map.tiles[history.y][history.x])
+            self.store_hugegfx_state(self.mapobj.tiles[history.y][history.x])
             for (x, y) in self.undo.redo():
                 self.redraw_tile(x, y)
             self.update_undo_gui()
-            if self.check_hugegfx_state(self.map.tiles[history.y][history.x]):
+            if self.check_hugegfx_state(self.mapobj.tiles[history.y][history.x]):
                 self.draw_map()
 
     def on_fill(self, widget=None):
@@ -2410,28 +2410,28 @@ class MapGUI(BaseGUI):
             # inside the loop itself
             if self.get_widget('fill_map_overwrite').get_active():
                 if len(pool) < 2:
-                    for row in self.map.tiles:
+                    for row in self.mapobj.tiles:
                         for tile in row:
                             tile.floorimg = val
                 else:
-                    for row in self.map.tiles:
+                    for row in self.mapobj.tiles:
                         for tile in row:
                             tile.floorimg = random.choice(pool)
             else:
                 if len(pool) < 2:
-                    for row in self.map.tiles:
+                    for row in self.mapobj.tiles:
                         for tile in row:
                             if tile.floorimg == 0:
                                 tile.floorimg = val
                 else:
-                    for row in self.map.tiles:
+                    for row in self.mapobj.tiles:
                         for tile in row:
                             if tile.floorimg == 0:
                                 tile.floorimg = random.choice(pool)
             self.draw_map()
 
             # Clear out "Undo" - we're not hooking into this yet.
-            self.undo = Undo(self.map)
+            self.undo = Undo(self.mapobj)
             self.update_undo_gui()
 
     def update_objectplace(self, widget=None):
@@ -2451,71 +2451,71 @@ class MapGUI(BaseGUI):
     def populate_color_selection(self):
         img = self.get_widget('color_img')
         pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 30, 30)
-        pixbuf.fill(self.map.rgb_color())
+        pixbuf.fill(self.mapobj.rgb_color())
         img.set_from_pixbuf(pixbuf)
         self.get_widget('color_rgb_label').set_markup('<i>(RGB: %d, %d, %d)</i>' %
-                (self.map.color_r, self.map.color_g, self.map.color_b))
+                (self.mapobj.color_r, self.mapobj.color_g, self.mapobj.color_b))
 
     def on_prop_button_clicked(self, widget=None):
         """ Show the global properties window. """
-        if (self.map.is_savegame()):
+        if (self.mapobj.is_savegame()):
             self.get_widget('maptype').set_text('From Savegame')
         else:
             self.get_widget('maptype').set_text('Global Map File')
-        self.get_widget('mapname').set_text(self.map.mapname)
-        self.get_widget('music1').set_text(self.map.music1)
-        self.get_widget('music2').set_text(self.map.music2)
-        self.get_widget('atmos_sound_day').set_text(self.map.atmos_sound_day)
+        self.get_widget('mapname').set_text(self.mapobj.mapname)
+        self.get_widget('music1').set_text(self.mapobj.music1)
+        self.get_widget('music2').set_text(self.mapobj.music2)
+        self.get_widget('atmos_sound_day').set_text(self.mapobj.atmos_sound_day)
         if c.book > 1:
-            self.cur_tree_set = self.map.tree_set
+            self.cur_tree_set = self.mapobj.tree_set
             for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
-                if row[1] == self.map.tree_set:
+                if row[1] == self.mapobj.tree_set:
                     self.get_widget('tree_set').set_active(idx)
                     continue
             for flag in [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]:
-                self.get_widget('map_flags_%02X' % (flag)).set_active(((self.map.map_flags & flag) == flag))
+                self.get_widget('map_flags_%02X' % (flag)).set_active(((self.mapobj.map_flags & flag) == flag))
             ent_store = self.get_widget('random_entity_store')
             for (widget, entid) in [
-                    (self.get_widget('random_entity_1'), self.map.random_entity_1),
-                    (self.get_widget('random_entity_2'), self.map.random_entity_2)]:
+                    (self.get_widget('random_entity_1'), self.mapobj.random_entity_1),
+                    (self.get_widget('random_entity_2'), self.mapobj.random_entity_2)]:
                 iter = ent_store.get_iter_first()
                 while iter is not None:
                     if ent_store.get_value(iter, 1) == entid:
                         widget.set_active_iter(iter)
                         break
                     iter = ent_store.iter_next(iter)
-        self.get_widget('skybox').set_text(self.map.skybox)
+        self.get_widget('skybox').set_text(self.mapobj.skybox)
         self.populate_color_selection()
-        self.get_widget('color_a').set_value(self.map.color_a)
-        self.get_widget('parallax_x').set_value(self.map.parallax_x)
-        self.get_widget('parallax_y').set_value(self.map.parallax_y)
+        self.get_widget('color_a').set_value(self.mapobj.color_a)
+        self.get_widget('parallax_x').set_value(self.mapobj.parallax_x)
+        self.get_widget('parallax_y').set_value(self.mapobj.parallax_y)
         if c.book == 1:
-            self.get_widget('mapid').set_text(self.map.mapid)
-            self.get_widget('exit_north').set_text(self.map.exit_north)
-            self.get_widget('exit_east').set_text(self.map.exit_east)
-            self.get_widget('exit_south').set_text(self.map.exit_south)
-            self.get_widget('exit_west').set_text(self.map.exit_west)
-            self.get_widget('map_unknownh1').set_value(self.map.map_unknownh1)
-            self.get_widget('clouds').set_value(self.map.clouds)
-            self.get_widget('map_b1_last_xpos').set_value(self.map.map_b1_last_xpos)
-            self.get_widget('map_b1_last_ypos').set_value(self.map.map_b1_last_ypos)
-            self.get_widget('map_b1_outsideflag').set_value(self.map.map_b1_outsideflag)
+            self.get_widget('mapid').set_text(self.mapobj.mapid)
+            self.get_widget('exit_north').set_text(self.mapobj.exit_north)
+            self.get_widget('exit_east').set_text(self.mapobj.exit_east)
+            self.get_widget('exit_south').set_text(self.mapobj.exit_south)
+            self.get_widget('exit_west').set_text(self.mapobj.exit_west)
+            self.get_widget('map_unknownh1').set_value(self.mapobj.map_unknownh1)
+            self.get_widget('clouds').set_value(self.mapobj.clouds)
+            self.get_widget('map_b1_last_xpos').set_value(self.mapobj.map_b1_last_xpos)
+            self.get_widget('map_b1_last_ypos').set_value(self.mapobj.map_b1_last_ypos)
+            self.get_widget('map_b1_outsideflag').set_value(self.mapobj.map_b1_outsideflag)
         else:
-            self.get_widget('entrancescript').set_text(self.map.entrancescript)
-            self.get_widget('returnscript').set_text(self.map.returnscript)
-            self.get_widget('exitscript').set_text(self.map.exitscript)
-            self.get_widget('random_sound1').set_text(self.map.random_sound1)
+            self.get_widget('entrancescript').set_text(self.mapobj.entrancescript)
+            self.get_widget('returnscript').set_text(self.mapobj.returnscript)
+            self.get_widget('exitscript').set_text(self.mapobj.exitscript)
+            self.get_widget('random_sound1').set_text(self.mapobj.random_sound1)
             if c.book == 3:
-                self.get_widget('atmos_sound_night').set_text(self.map.atmos_sound_night)
-                self.get_widget('random_sound2').set_text(self.map.random_sound2)
-                self.get_widget('cloud_offset_x').set_value(self.map.cloud_offset_x)
-                self.get_widget('cloud_offset_y').set_value(self.map.cloud_offset_y)
+                self.get_widget('atmos_sound_night').set_text(self.mapobj.atmos_sound_night)
+                self.get_widget('random_sound2').set_text(self.mapobj.random_sound2)
+                self.get_widget('cloud_offset_x').set_value(self.mapobj.cloud_offset_x)
+                self.get_widget('cloud_offset_y').set_value(self.mapobj.cloud_offset_y)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
         self.update_main_map_name()
         self.propswindow.hide()
-        if (c.book > 1 and self.cur_tree_set != self.map.tree_set):
+        if (c.book > 1 and self.cur_tree_set != self.mapobj.tree_set):
             self.draw_map()
             self.update_wall_selection_image()
         return True
@@ -2535,13 +2535,15 @@ class MapGUI(BaseGUI):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
         dialog.set_transient_for(self.window)
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        dialog.colorsel.set_current_color(gtk.gdk.Color(self.map.color_r*257, self.map.color_g*257, self.map.color_b*257))
+        dialog.colorsel.set_current_color(gtk.gdk.Color(self.mapobj.color_r*257,
+                                                        self.mapobj.color_g*257,
+                                                        self.mapobj.color_b*257))
         response = dialog.run()
         if (response == gtk.RESPONSE_OK):
             color = dialog.colorsel.get_current_color()
-            self.map.color_r = int(color.red/257)
-            self.map.color_g = int(color.green/257)
-            self.map.color_b = int(color.blue/257)
+            self.mapobj.color_r = int(color.red/257)
+            self.mapobj.color_g = int(color.green/257)
+            self.mapobj.color_b = int(color.blue/257)
             self.populate_color_selection()
         dialog.destroy()
 
@@ -2550,7 +2552,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             if (labelname[:9] == 'item_name'):
                 (varname, item_num) = labelname.rsplit('_', 1)
@@ -2564,7 +2566,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (labelname, page) = wname.rsplit('_', 1)
         page = int(page)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             tilecontent.__dict__[labelname] = int(widget.get_value())
 
@@ -2587,7 +2589,7 @@ class MapGUI(BaseGUI):
                 sliderloot.set_markup('Loot Level (0-10):')
 
     def update_ent_tile_img(self):
-        entity = self.map.tiles[self.tile_y][self.tile_x].entity
+        entity = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         entbuf = self.gfx.get_entity(entity.entid, entity.direction, None, True)
         if (entbuf is None):
             self.get_widget('ent_tile_img').set_from_stock(gtk.STOCK_MISSING_IMAGE, 2)
@@ -2599,7 +2601,7 @@ class MapGUI(BaseGUI):
         idx = widget.get_active()
         name = self.entitykeys[idx]
         entid = self.entityrev[name]
-        entity = self.map.tiles[self.tile_y][self.tile_x].entity
+        entity = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         entity.entid = entid
         if (entid in self.entitytable):
             # We set the button out here in case we were editing a Global map and
@@ -2626,39 +2628,39 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (shortname, idx) = wname.rsplit('_', 1)
         idx = int(idx)
-        ent = self.map.tiles[self.tile_y][self.tile_x].entity
+        ent = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         ent.statuses[idx] = int(widget.get_value())
 
     def on_direction_changed(self, widget):
         """ Special case for changing the entity direction. """
         wname = widget.get_name()
-        ent = self.map.tiles[self.tile_y][self.tile_x].entity
+        ent = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         ent.__dict__[wname] = widget.get_active() + 1
         self.update_ent_tile_img()
 
     def on_singleval_ent_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        ent = self.map.tiles[self.tile_y][self.tile_x].entity
+        ent = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         ent.__dict__[wname] = int(widget.get_value())
 
     def on_singleval_ent_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        ent = self.map.tiles[self.tile_y][self.tile_x].entity
+        ent = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         ent.__dict__[wname] = widget.get_text()
 
     def on_singleval_map_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        map = self.map
-        map.__dict__[wname] = int(widget.get_value())
+        mapobj = self.mapobj
+        mapobj.__dict__[wname] = int(widget.get_value())
 
     def on_singleval_map_changed_str(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        map = self.map
-        map.__dict__[wname] = widget.get_text()
+        mapobj = self.mapobj
+        mapobj.__dict__[wname] = widget.get_text()
 
     def on_dropdown_idx_changed(self, widget, object):
         """ NOT appropriate for use as a handler, needs an object passed in. """
@@ -2669,7 +2671,7 @@ class MapGUI(BaseGUI):
         iter = widget.get_active_iter()
         model = widget.get_model()
         val = model.get_value(iter, 1)
-        self.map.__dict__[wname] = val
+        self.mapobj.__dict__[wname] = val
 
     def on_dropdown_idx_tile_changed(self, widget):
         """ Update the appropriate bit in memory. """
@@ -2677,7 +2679,7 @@ class MapGUI(BaseGUI):
     def on_singleval_tile_changed_int(self, widget):
         """ Update the appropriate bit in memory. """
         wname = widget.get_name()
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         tile.__dict__[wname] = int(widget.get_value())
 
     def on_floor_changed(self, widget):
@@ -2728,7 +2730,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         if do_spin_update:
             self.on_singleval_tile_changed_int(widget)
-        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -2737,7 +2739,7 @@ class MapGUI(BaseGUI):
 
     def on_draw_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.map.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
             self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -2781,7 +2783,7 @@ class MapGUI(BaseGUI):
 
         # Check for hugegfx changes
         if c.book > 1:
-            if self.check_hugegfx_state(self.map.tiles[self.tile_y][self.tile_x]):
+            if self.check_hugegfx_state(self.mapobj.tiles[self.tile_y][self.tile_x]):
                 self.draw_map()
 
         self.editing_a_tile = False
@@ -2843,7 +2845,7 @@ class MapGUI(BaseGUI):
         over_ctx.paint()
 
         # Grab some local vars
-        tiles = self.map.tiles
+        tiles = self.mapobj.tiles
         huge_gfx_rows = self.huge_gfx_rows
         global_offset_x = global_x+1
         global_offset_y = self.z_halfheight*(y-8)+1
@@ -3068,7 +3070,7 @@ class MapGUI(BaseGUI):
                 self.cleantiles.append((self.tile_x_prev, self.tile_y_prev))
                 # We should just really check for over-wide entities here, but for now we'll
                 # just do some excessive redrawing.
-                if (self.map.tiles[self.tile_y_prev][self.tile_x_prev].entity is not None):
+                if (self.mapobj.tiles[self.tile_y_prev][self.tile_x_prev].entity is not None):
                     if (self.tile_x_prev != 0):
                         self.cleantiles.append((self.tile_x_prev-1, self.tile_y_prev))
                     if (self.tile_x_prev != 99):
@@ -3097,7 +3099,7 @@ class MapGUI(BaseGUI):
             image = gtk.STOCK_REMOVE
             text = 'Remove Entity'
             self.get_widget('entity_scroll').show()
-            if (self.map.is_savegame()):
+            if (self.mapobj.is_savegame()):
                 self.get_widget('entity_extra_box').show()
                 if c.book > 1:
                     self.get_widget('entity_status_box').show()
@@ -3149,7 +3151,7 @@ class MapGUI(BaseGUI):
     def tilecontent_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
         varname = '%s_%d' % (name, page)
         entry = self.input_text(table, row, varname, text, tooltip, self.on_tilecontent_str_changed, 250, hbox)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             if (name[:9] == 'item_name'):
                 (varname, itemnum) = name.rsplit('_', 1)
@@ -3195,7 +3197,7 @@ class MapGUI(BaseGUI):
         if signal is None:
             signal = self.on_tilecontent_int_changed
         entry = func(table, row, varname, text, tooltip, signal)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             entry.set_value(tilecontent.__dict__[name])
 
@@ -3221,7 +3223,7 @@ class MapGUI(BaseGUI):
         entry.set_name('%s_%d' % (name, page))
         for value in values:
             entry.append_text(value)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             entry.set_active(tilecontent.__dict__[name])
         if (signal is not None):
@@ -3240,7 +3242,7 @@ class MapGUI(BaseGUI):
         entry = gtk.CheckButton()
         entry.show()
         entry.set_name('%s_%X_%d' % (name, flagval, page))
-        tilecontentval = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page].__dict__[name]
+        tilecontentval = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].__dict__[name]
         entry.set_active((tilecontentval & flagval == flagval))
         entry.connect('toggled', self.on_tilecontent_flag_changed)
         if (tooltip is not None):
@@ -3266,7 +3268,7 @@ class MapGUI(BaseGUI):
         """
         wname = widget.get_name()
         (name, flagval) = wname.rsplit('_', 1)
-        self.on_flag_changed(name, flagval, widget, self.map)
+        self.on_flag_changed(name, flagval, widget, self.mapobj)
 
     def on_tilecontent_flag_changed(self, widget):
         """
@@ -3276,7 +3278,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (name, flagval, page) = wname.rsplit('_', 2)
         page = int(page)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         self.on_flag_changed(name, flagval, widget, tilecontent)
 
     def on_barrier_changed(self, widget):
@@ -3284,12 +3286,12 @@ class MapGUI(BaseGUI):
         What to do when our barrier dropdown is changed.
         """
         model = widget.get_model()
-        self.map.tiles[self.tile_y][self.tile_x].wall = model[widget.get_active()][1]
+        self.mapobj.tiles[self.tile_y][self.tile_x].wall = model[widget.get_active()][1]
 
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
-        item = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num]
+        item = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num]
         self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
 
     def on_tilecontent_dropdown_changed(self, widget):
@@ -3297,7 +3299,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (varname, page) = wname.rsplit('_', 2)
         page = int(page)
-        tilecontent = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page]
+        tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         tilecontent.__dict__[varname] = widget.get_active()
 
     def on_mapitem_clicked(self, widget, doshow=True):
@@ -3307,7 +3309,7 @@ class MapGUI(BaseGUI):
         num = int(num)
         page = int(page)
         self.curitem = (num, page)
-        self.populate_itemform_from_item(self.map.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num])
+        self.populate_itemform_from_item(self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num])
         self.get_widget('item_notebook').set_current_page(0)
         if (doshow):
             self.itemwindow.show()
@@ -3326,7 +3328,7 @@ class MapGUI(BaseGUI):
         (varname, num, page, action) = wname.rsplit('_', 3)
         num = int(num)
         page = int(page)
-        items = self.map.tiles[self.tile_y][self.tile_x].tilecontents[page].items
+        items = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items
         if (action == 'cut'):
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_copy' % (num, page)))
             self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_delete' % (num, page)))
@@ -3385,7 +3387,7 @@ class MapGUI(BaseGUI):
         Given a tilecontent, adds a new tab to the tilecontent notebook, with
         all the necessary inputs.
         """
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         curpages = self.tilecontent_notebook.get_n_pages()
 
         # Label for the notebook
@@ -3465,7 +3467,7 @@ class MapGUI(BaseGUI):
             self.tilecontent_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
 
             # Condition is special, we're using an hbox here
-            scr = self.map.tiles[self.tile_y][self.tile_x].tilecontents[curpages]
+            scr = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[curpages]
             self.tilecontent_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
@@ -3584,10 +3586,10 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (button_name, page) = wname.rsplit('_', 1)
         page = int(page)
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
 
         # We'll have to remove this regardless, so do it now.
-        self.map.deltilecontent(self.tile_x, self.tile_y, page)
+        self.mapobj.deltilecontent(self.tile_x, self.tile_y, page)
         self.tilecontent_notebook.remove_page(page)
 
         # If we didn't just lop off the last one, redraw the whole notebook.
@@ -3596,7 +3598,7 @@ class MapGUI(BaseGUI):
         # in there.  Which would be even more lame.
         if (page < len(tile.tilecontents)):
             self.clear_tilecontent_notebook()
-            for tilecontent in self.map.tiles[self.tile_y][self.tile_x].tilecontents:
+            for tilecontent in self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents:
                 self.append_tilecontent_notebook(tilecontent)
 
         # ... and possibly clean out our note
@@ -3607,10 +3609,10 @@ class MapGUI(BaseGUI):
         Called when a new tilecontent is added.  Creates a new
         Script object and handles adding it to the notebook.
         """
-        tile = self.map.tiles[self.tile_y][self.tile_x]
-        tilecontent = Tilecontent.new(c.book, self.map.is_savegame())
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
+        tilecontent = Tilecontent.new(c.book, self.mapobj.is_savegame())
         tilecontent.tozero(self.tile_x, self.tile_y)
-        self.map.tilecontents.append(tilecontent)
+        self.mapobj.tilecontents.append(tilecontent)
         tile.addtilecontent(tilecontent)
         self.append_tilecontent_notebook(tilecontent)
         self.tilecontent_notebook.show()
@@ -3618,24 +3620,24 @@ class MapGUI(BaseGUI):
 
     def on_healthmaxbutton_clicked(self, widget):
         """ Set the entity's health to its maximum. """
-        entid = self.map.tiles[self.tile_y][self.tile_x].entity.entid
+        entid = self.mapobj.tiles[self.tile_y][self.tile_x].entity.entid
         if (entid in self.entitytable):
             health = self.entitytable[entid].health
             self.get_widget('health').set_value(health)
 
     def on_setinitial_clicked(self, widget):
         """ Set the entity's "initial" location to the current (x,y) """
-        ent = self.map.tiles[self.tile_y][self.tile_x].entity
+        ent = self.mapobj.tiles[self.tile_y][self.tile_x].entity
         ent.set_initial(self.tile_x, self.tile_y)
         self.get_widget('initial_loc').set_value(ent.initial_loc)
 
     def on_entity_toggle(self, widget):
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         if (tile.entity is None):
             # create a new entity and toggle
-            ent = Entity.new(c.book, self.map.is_savegame())
+            ent = Entity.new(c.book, self.mapobj.is_savegame())
             ent.tozero(self.tile_x, self.tile_y)
-            self.map.entities.append(ent)
+            self.mapobj.entities.append(ent)
             tile.addentity(ent)
             self.populate_entity_tab(tile)
             self.set_entity_toggle_button(False)
@@ -3644,7 +3646,7 @@ class MapGUI(BaseGUI):
             self.on_entid_changed(self.get_widget('entid'))
         else:
             # Remove the existing entity
-            self.map.delentity(self.tile_x, self.tile_y)
+            self.mapobj.delentity(self.tile_x, self.tile_y)
             self.set_entity_toggle_button(True)
 
     def update_tilecontent_type_strings(self, page, tilecontentid):
@@ -3676,13 +3678,13 @@ class MapGUI(BaseGUI):
     def on_tilecontentid_changed(self, widget):
         """ Process changing our object/tilecontent ID. """
         self.on_singleval_tile_changed_int(widget)
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         self.update_all_tilecontentid_type_strings(tile)
         self.update_object_note()
 
     def on_tilecontentid_dd_changed(self, widget):
         """ Process changing our object/tilecontent type dropdown. """
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         tile.tilecontentid = self.object_type_list_rev[widget.get_active()]
         self.update_all_tilecontentid_type_strings(tile)
         self.update_object_note()
@@ -3771,7 +3773,7 @@ class MapGUI(BaseGUI):
         self.populating_entity_tab = False
         self.get_widget('direction').set_active(tile.entity.direction-1)
         self.get_widget('entscript').set_text(tile.entity.entscript)
-        if (self.map.is_savegame()):
+        if (self.mapobj.is_savegame()):
             self.get_widget('friendly').set_value(tile.entity.friendly)
             self.get_widget('health').set_value(tile.entity.health)
             self.get_widget('frame').set_value(tile.entity.frame)
@@ -3788,7 +3790,7 @@ class MapGUI(BaseGUI):
         be an object or not.  Also shows or hides the "Add Object" button
         as needed.
         """
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         note = self.get_widget('object_note')
 
         # First the button
@@ -3898,7 +3900,7 @@ class MapGUI(BaseGUI):
             self.imgsel_widget = spinwidget
         self.imgsel_getfunc = self.gfx.get_object
         self.imgsel_getfunc_obj_func = None
-        self.imgsel_getfunc_extraarg = self.map.tree_set
+        self.imgsel_getfunc_extraarg = self.mapobj.tree_set
         self.imgsel_pixbuffunc = self.objsel_fix_pixbuf
         self.imgsel_init_bgcolor()
         self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
@@ -4117,12 +4119,12 @@ class MapGUI(BaseGUI):
             self.diff_y = 0
             self.maparea.window.set_cursor(self.cursor_move_drag)
         if (action == self.ACTION_EDIT):
-            if (self.tile_y < len(self.map.tiles)):
-                if (self.tile_x < len(self.map.tiles[self.tile_y])):
+            if (self.tile_y < len(self.mapobj.tiles)):
+                if (self.tile_x < len(self.mapobj.tiles[self.tile_y])):
                     if c.book > 1:
-                        self.store_hugegfx_state(self.map.tiles[self.tile_y][self.tile_x])
+                        self.store_hugegfx_state(self.mapobj.tiles[self.tile_y][self.tile_x])
                     self.undo.store(self.tile_x, self.tile_y)
-                    self.populate_tilewindow_from_tile(self.map.tiles[self.tile_y][self.tile_x])
+                    self.populate_tilewindow_from_tile(self.mapobj.tiles[self.tile_y][self.tile_x])
                     self.get_widget('tilelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.tile_x, self.tile_y))
                     self.editing_a_tile = True
                     self.tilewindow.show()
@@ -4185,7 +4187,7 @@ class MapGUI(BaseGUI):
         
         try:
             # Grab our tile object
-            tile = self.map.tiles[y][x]
+            tile = self.mapobj.tiles[y][x]
             if c.book > 1:
                 self.store_hugegfx_state(tile)
 
@@ -4232,7 +4234,7 @@ class MapGUI(BaseGUI):
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_wall(tile)
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Draw')
@@ -4251,7 +4253,7 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Draw')
@@ -4306,7 +4308,7 @@ class MapGUI(BaseGUI):
         try:
             
             # Grab our tile object
-            tile = self.map.tiles[y][x]
+            tile = self.mapobj.tiles[y][x]
             if c.book > 1:
                 self.store_hugegfx_state(tile)
 
@@ -4330,7 +4332,7 @@ class MapGUI(BaseGUI):
             if (self.erase_walldecal_checkbox.get_active()):
                 tile.walldecalimg = 0
             if (self.erase_entity_checkbox.get_active()):
-                self.map.delentity(x, y)
+                self.mapobj.delentity(x, y)
             if (self.erase_object_checkbox.get_active()):
                 # If we erase a tilecontent which happens to be a Big Graphic, let's also
                 # clear out the wall ID, even if we haven't been told to
@@ -4340,13 +4342,13 @@ class MapGUI(BaseGUI):
                 # Now delete the actual tilecontent
                 num = len(tile.tilecontents)
                 for i in range(num):
-                    self.map.deltilecontent(x, y, 0)
+                    self.mapobj.deltilecontent(x, y, 0)
                 tile.tilecontentid = 0
 
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_wall(tile)
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Erase')
@@ -4359,7 +4361,7 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Erase')
@@ -4412,10 +4414,10 @@ class MapGUI(BaseGUI):
             # It's possible that our object placement may touch adjacent tiles, as well.
             # Load those in now.
             for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                self.undo.add_additional(self.map.tile_relative(x, y, dir))
+                self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
             
             # Grab our tile object
-            tile = self.map.tiles[y][x]
+            tile = self.mapobj.tiles[y][x]
             if c.book > 1:
                 self.store_hugegfx_state(tile)
 
@@ -4503,7 +4505,7 @@ class MapGUI(BaseGUI):
         entity = False
 
         # Use local vars instead of continually calling out
-        tile = self.map.tiles[y][x]
+        tile = self.mapobj.tiles[y][x]
         tile_ctx = self.tilebuf_ctx
         main_ctx = self.ctx
 
@@ -4511,7 +4513,7 @@ class MapGUI(BaseGUI):
             pointer = (1, 1, 1, 0.5)
 
         if (tile.entity is not None):
-            if self.map.is_savegame():
+            if self.mapobj.is_savegame():
                 if (tile.entity.friendly == 1):
                     entity = (0, 1, 0, 0.5)
                 else:
@@ -4678,7 +4680,7 @@ class MapGUI(BaseGUI):
 
             # Draw trees
             elif (walltype == self.gfx.TYPE_TREE and self.tree_toggle.get_active()):
-                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.map.tree_set)
+                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.mapobj.tree_set)
                 if (pixbuf is not None):
                     tile_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
                     tile_ctx.paint()
@@ -4820,7 +4822,7 @@ class MapGUI(BaseGUI):
         """
 
         # Grab our variables and clear out the pixbuf
-        tile = self.map.tiles[self.tile_y][self.tile_x]
+        tile = self.mapobj.tiles[self.tile_y][self.tile_x]
         comp_pixbuf = self.comp_pixbuf
         comp_pixbuf.fill(0)
 
@@ -4875,7 +4877,7 @@ class MapGUI(BaseGUI):
                             torchwidth-1, torchdecalyoff,
                             1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (tile.wallimg > 0):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(tile.wallimg, width, True, self.map.tree_set)
+            (pixbuf, pixheight, offset) = self.gfx.get_object(tile.wallimg, width, True, self.mapobj.tree_set)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
                         0, height*(4-pixheight),
@@ -4969,7 +4971,7 @@ class MapGUI(BaseGUI):
             # Rather than try and be clever by maintaining our Big Graphic
             # mapping information, we'll just totally regenerate the list
             # whenever the GUI feels the need to redraw the map.
-            self.map.big_gfx_mappings.load()
+            self.mapobj.big_gfx_mappings.load()
 
             return True
         else:
@@ -5061,18 +5063,18 @@ class MapGUI(BaseGUI):
         #time_c = time.time()
         for i in range(200):
             self.huge_gfx_rows.append([])
-        for y in range(len(self.map.tiles)):
+        for y in range(len(self.mapobj.tiles)):
             huge_gfxes = []
-            for x in range(len(self.map.tiles[y])):
+            for x in range(len(self.mapobj.tiles[y])):
                 self.draw_tile(x, y)
-                if self.map.tiles[y][x].tilecontentid == 21:
-                    huge_gfxes.append(self.map.tiles[y][x])
+                if self.mapobj.tiles[y][x].tilecontentid == 21:
+                    huge_gfxes.append(self.mapobj.tiles[y][x])
             if self.req_book > 1 and self.huge_gfx_toggle.get_active():
                 for tile in huge_gfxes:
                     self.draw_huge_gfx(tile)
                     self.huge_gfx_rows[y].append(tile.x)
             if (y % 10 == 0):
-                self.drawstatusbar.set_fraction(y/float(len(self.map.tiles)))
+                self.drawstatusbar.set_fraction(y/float(len(self.mapobj.tiles)))
                 while gtk.events_pending():
                     gtk.main_iteration()
         #time_d = time.time()

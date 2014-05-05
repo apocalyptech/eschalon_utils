@@ -343,7 +343,7 @@ class SmartDraw(object):
         self.beach_revindex = {}
 
         # Other vars we'll need to keep track of
-        self.map = None
+        self.mapobj = None
         self.gui = None
 
         # Now populate all the actual constants
@@ -365,7 +365,7 @@ class SmartDraw(object):
         self.beach_revindex[connections] = index
 
     def set_map(self, map):
-        self.map = map
+        self.mapobj = map
         self.premade_objects.set_savegame(map.is_savegame())
 
     def set_gui(self, gui):
@@ -426,7 +426,7 @@ class SmartDraw(object):
         connflags = 0
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            adjtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            adjtile = self.mapobj.tile_relative(tile.x, tile.y, testdir)
             if adjtile is None:
                 continue
             adjgroup = self.get_wall_group(adjtile, wallgroup)
@@ -488,7 +488,7 @@ class SmartDraw(object):
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             if (testdir == dir):
                 continue
-            testtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            testtile = self.mapobj.tile_relative(tile.x, tile.y, testdir)
             if testtile is None:
                 continue
             testgroup = self.get_wall_group(testtile, group)
@@ -549,7 +549,7 @@ class SmartDraw(object):
         connflags = 0
         flagcount = 0
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-            adjtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            adjtile = self.mapobj.tile_relative(tile.x, tile.y, testdir)
             if adjtile is None:
                 continue
             adjgroup = self.get_wall_group(adjtile)
@@ -615,7 +615,7 @@ class SmartDraw(object):
         for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
             if (testdir == dir):
                 continue
-            testtile = self.map.tile_relative(tile.x, tile.y, testdir)
+            testtile = self.mapobj.tile_relative(tile.x, tile.y, testdir)
             if testtile is None:
                 continue
             testgroup = self.get_wall_group(testtile)
@@ -664,7 +664,7 @@ class SmartDraw(object):
         isn't found.
         """
         if (dir not in known):
-            known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
+            known[dir] = self.mapobj.tile_relative(tile.x, tile.y, dir)
         return known[dir]
 
     def get_random_terrain_pool(self, floorimg):
@@ -715,7 +715,7 @@ class SmartDraw(object):
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
-                known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
+                known[dir] = self.mapobj.tile_relative(tile.x, tile.y, dir)
 
             # Also randomize the floor tile if we're supposed to (we only do
             # this to the tile actually being drawn, not any adjacent tiles)
@@ -869,7 +869,7 @@ class SmartDraw(object):
             connflags = 0
             flagcount = 0
             for dir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW]:
-                adjtile = self.map.tile_relative(tile.x, tile.y, dir)
+                adjtile = self.mapobj.tile_relative(tile.x, tile.y, dir)
                 if adjtile is None:
                     continue
                 if adjtile.floorimg in self.tilesets[idxtype]:
@@ -951,7 +951,7 @@ class SmartDraw(object):
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
                     self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
-                known[dir] = self.map.tile_relative(tile.x, tile.y, dir)
+                known[dir] = self.mapobj.tile_relative(tile.x, tile.y, dir)
 
             # Additionally, set our tile to full-sand so that the recursion
             # stuff can link in properly
@@ -1080,7 +1080,7 @@ class SmartDraw(object):
             for series in (fwd, rev):
                 (curx, cury) = (tile.x, tile.y)
                 for (dir, id) in series:
-                    newtile = self.map.tile_relative(curx, cury, dir)
+                    newtile = self.mapobj.tile_relative(curx, cury, dir)
                     if newtile:
                         if (newtile.__dict__[collection.var] != id):
                             undo.add_additional(newtile)
@@ -1106,7 +1106,7 @@ class SmartDraw(object):
         """
         Places a premade object on a tile
         """
-        return obj.apply_to(self.gui, self.map, tile)
+        return obj.apply_to(self.gui, self.mapobj, tile)
 
     @staticmethod
     def new(book):

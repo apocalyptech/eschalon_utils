@@ -168,11 +168,11 @@ class Undo(object):
     A class to hold historical editing information, for undo purposes.
     """
 
-    def __init__(self, map):
+    def __init__(self, mapobj):
         self.history = []
         self.maxstack = 50
         self.curidx = -1
-        self.map = map
+        self.mapobj = mapobj
         self.finished = True
 
     def have_undo(self):
@@ -205,7 +205,7 @@ class Undo(object):
         """
         if (self.finished):
             self.curidx += 1
-            self.history.insert(self.curidx, UndoHistory(self.map, x, y))
+            self.history.insert(self.curidx, UndoHistory(self.mapobj, x, y))
             self.finished = False
         else:
             raise Exception('Previous undo must be finished before storing a new one')
@@ -220,7 +220,7 @@ class Undo(object):
         undo state has been altered), or False if no changes have been made.
         """
         if (self.have_undo()):
-            if (self.history[self.curidx].set_new(self.map)):
+            if (self.history[self.curidx].set_new(self.mapobj)):
                 del self.history[self.curidx+1:]
                 if (len(self.history) > self.maxstack):
                     del self.history[0]
@@ -288,7 +288,7 @@ class Undo(object):
                         obj.old_entidx, obj.old_tilecontentidx)
                 retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx+1].additional:
-                add_obj.undo(self.map.tiles[add_obj.y][add_obj.x])
+                add_obj.undo(self.mapobj.tiles[add_obj.y][add_obj.x])
                 retval.append((add_obj.x, add_obj.y))
             return retval
         else:
@@ -309,7 +309,7 @@ class Undo(object):
                         obj.new_entidx, obj.new_tilecontentidx)
                 retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx].additional:
-                add_obj.redo(self.map.tiles[add_obj.y][add_obj.x])
+                add_obj.redo(self.mapobj.tiles[add_obj.y][add_obj.x])
                 retval.append((add_obj.x, add_obj.y))
             return retval
         else:
@@ -317,27 +317,27 @@ class Undo(object):
 
     def process_changes(self, x, y, totile, from_entidx, from_tilecontentidx, to_entidx, to_tilecontentidx):
         """
-        Actually make the change in self.map, given from/to vars.  Mostly
+        Actually make the change in self.mapobj, given from/to vars.  Mostly
         this is just necessary so that our entity and tilecontent links stay
         populated like they should.
         """
 
         # First update the map tile itself
-        self.map.tiles[y][x] = totile.replicate()
+        self.mapobj.tiles[y][x] = totile.replicate()
 
         # Entity first
         if (from_entidx is not None and from_entidx >= 0):
-            del self.map.entities[from_entidx]
+            del self.mapobj.entities[from_entidx]
         if (to_entidx is not None and to_entidx >= 0):
-            self.map.entities.insert(to_entidx, self.map.tiles[y][x].entity)
+            self.mapobj.entities.insert(to_entidx, self.mapobj.tiles[y][x].entity)
 
         # ... and now Scripts
         idxes = from_tilecontentidx[:]
         idxes.reverse()
         for idx in idxes:
-            del self.map.tilecontents[idx]
+            del self.mapobj.tilecontents[idx]
         for (i, idx) in enumerate(to_tilecontentidx):
-            self.map.tilecontents.insert(idx, self.map.tiles[y][x].tilecontents[i])
+            self.mapobj.tilecontents.insert(idx, self.mapobj.tiles[y][x].tilecontents[i])
 
     def report(self):
         """
@@ -346,23 +346,23 @@ class Undo(object):
         at all since I just used it for debugging while figuring things out, so it
         may very well fail right now.  Nothing in the code actually calls this.
         """
-        print '%d total tilecontents in map' % (len(self.map.tilecontents))
+        print '%d total tilecontents in map' % (len(self.mapobj.tilecontents))
         tilecontentcounters = {}
-        for tilecontent in self.map.tilecontents:
+        for tilecontent in self.mapobj.tilecontents:
             tileval = tilecontent.y*100+tilecontent.x
             if (tileval not in tilecontentcounters):
                 tilecontentcounters[tileval] = -1
             tilecontentcounters[tileval] += 1
-            tiletilecontent = self.map.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentcounters[tileval]]
+            tiletilecontent = self.mapobj.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentcounters[tileval]]
             if (tiletilecontent == tilecontent):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
             print ' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval]+1, matched)
         print
-        print '%d total entities in map' % (len(self.map.entities))
-        for entity in self.map.entities:
-            tileentity = self.map.tiles[entity.y][entity.x].entity
+        print '%d total entities in map' % (len(self.mapobj.entities))
+        for entity in self.mapobj.entities:
+            tileentity = self.mapobj.tiles[entity.y][entity.x].entity
             if (tileentity == entity):
                 matched = 'matched'
             else:
