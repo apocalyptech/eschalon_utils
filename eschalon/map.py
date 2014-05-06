@@ -445,7 +445,7 @@ class Map(object):
             else:
                 return None
         elif (dir == self.DIR_W):
-            if (x > 1):
+            if (x > 0):
                 return (x-1, y)
             else:
                 return None
