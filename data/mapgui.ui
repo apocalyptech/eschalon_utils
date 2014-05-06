@@ -2192,6 +2192,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -2703,6 +2706,74 @@
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="menuitem2">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Highlighting</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="barrier_hi_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
+                        <property name="label" translatable="yes">Barrier Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="tilecontent_hi_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">When active, objects will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Object Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="entity_hi_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="tooltip_text" translatable="yes">When active, entities will be highlighted on the map</property>
+                        <property name="label" translatable="yes">Entity Highlighting</property>
+                        <property name="use_underline">True</property>
+                        <signal name="toggled" handler="map_toggle" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem" id="separator0">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="highlight_check_all">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">(Check All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="highlight_check_all" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="highlight_uncheck_all">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">(Uncheck All)</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="highlight_uncheck_all" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="menu-smartdraw">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -2818,74 +2889,6 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Floor Edge Preference</property>
                         <property name="use_underline">True</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkMenuItem" id="menuitem2">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_Highlighting</property>
-                <property name="use_underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu" id="menu5">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkCheckMenuItem" id="barrier_hi_button">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">When selected, barriers will be highlighted in white (or blueish for see-through barriers)</property>
-                        <property name="label" translatable="yes">Barrier Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkCheckMenuItem" id="tilecontent_hi_button">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">When active, objects will be highlighted on the map</property>
-                        <property name="label" translatable="yes">Object Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkCheckMenuItem" id="entity_hi_button">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">When active, entities will be highlighted on the map</property>
-                        <property name="label" translatable="yes">Entity Highlighting</property>
-                        <property name="use_underline">True</property>
-                        <signal name="toggled" handler="map_toggle" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorMenuItem" id="separator0">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="highlight_check_all">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">(Check All)</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="highlight_check_all" swapped="no"/>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="highlight_uncheck_all">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">(Uncheck All)</property>
-                        <property name="use_underline">True</property>
-                        <signal name="activate" handler="highlight_uncheck_all" swapped="no"/>
                       </object>
                     </child>
                   </object>
