@@ -3136,11 +3136,17 @@ class MapGUI(BaseGUI):
             # already sent a queue_draw to the main maparea, so we don't have
             # to do it again here.
             if (self.drawing):
+                to_redraw = {}
                 for (x, y) in self.highlight_tiles.keys():
-                    self.action_draw_tile(x, y)
+                    to_redraw.update(self.action_draw_tile(x, y))
+                for (x, y) in to_redraw.keys():
+                    self.redraw_tile(x, y)
             elif (self.erasing):
+                to_redraw = {}
                 for (x, y) in self.highlight_tiles.keys():
-                    self.action_erase_tile(x, y)
+                    to_redraw.update(self.action_erase_tile(x, y))
+                for (x, y) in to_redraw.keys():
+                    self.redraw_tile(x, y)
 
         # Update our coordinate label
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
@@ -4405,12 +4411,18 @@ class MapGUI(BaseGUI):
                     self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
+            to_redraw = {}
             for (x, y) in self.highlight_tiles.keys():
-                self.action_draw_tile(x, y)
+                to_redraw.update(self.action_draw_tile(x, y))
+            for (x, y) in to_redraw.keys():
+                self.redraw_tile(x, y)
         elif (action == self.ACTION_ERASE):
             self.erasing = True
+            to_redraw = {}
             for (x, y) in self.highlight_tiles.keys():
-                self.action_erase_tile(x, y)
+                to_redraw.update(self.action_erase_tile(x, y))
+            for (x, y) in to_redraw.keys():
+                self.redraw_tile(x, y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_tile(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
@@ -4456,11 +4468,16 @@ class MapGUI(BaseGUI):
         self.on_released()
 
     def action_draw_tile(self, x, y):
-        """ What to do when we're drawing on a tile on the map."""
-
+        """
+        What to do when we're drawing on a tile on the map.  Returns a dict
+        of tiles which will need to be redrawn with redraw_tile().
+        """
         # First store our undo state
         self.undo.store(x, y)
         self.undo.set_text('Draw')
+
+        # Keep track of affected tiles
+        tiles_to_redraw = {}
         
         try:
             # Grab our tile object
@@ -4516,13 +4533,13 @@ class MapGUI(BaseGUI):
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Draw')
                     for adjtile in affected_tiles:
-                        self.redraw_tile(adjtile.x, adjtile.y)
+                        tiles_to_redraw[(adjtile.x, adjtile.y)] = True
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
                 (text, affected_tiles) = self.smartdraw.draw_smart_complex_wall(tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Wall Draw (%s)' % (text))
                     for adjtile in affected_tiles:
-                        self.redraw_tile(adjtile.x, adjtile.y)
+                        tiles_to_redraw[(adjtile.x, adjtile.y)] = True
 
             # Handle "smart" floors if needed
             if (self.draw_floor_checkbox.get_active() and
@@ -4535,13 +4552,13 @@ class MapGUI(BaseGUI):
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Draw')
                     for adjtile in affected_tiles:
-                        self.redraw_tile(adjtile.x, adjtile.y)
+                        tiles_to_redraw[(adjtile.x, adjtile.y)] = True
             if (self.draw_floor_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
                 (text, affected_tiles) = self.smartdraw.draw_smart_complex_floor(tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
                     for adjtile in affected_tiles:
-                        self.redraw_tile(adjtile.x, adjtile.y)
+                        tiles_to_redraw[(adjtile.x, adjtile.y)] = True
 
             # Handles "smart" decals if needed
             if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_floor.get_active()):
@@ -4555,11 +4572,11 @@ class MapGUI(BaseGUI):
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
                     for adjtile in affected_tiles:
-                        self.redraw_tile(adjtile.x, adjtile.y)
+                        tiles_to_redraw[(adjtile.x, adjtile.y)] = True
 
             # And then close off our undo and redraw if needed
             if (self.undo.finish()):
-                self.redraw_tile(x, y)
+                tiles_to_redraw[(x, y)] = True
                 self.update_undo_gui()
 
             # Check for hugegfx changes
@@ -4570,6 +4587,9 @@ class MapGUI(BaseGUI):
         except Exception:
 
             self.handle_editing_exception(x, y, sys.exc_info())
+
+        # Return the list of tiles which need redrawing
+        return tiles_to_redraw
 
     def action_erase_tile(self, x, y):
         """ What to do when we're erasing on a tile on the map."""
