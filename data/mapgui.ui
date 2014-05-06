@@ -2588,7 +2588,7 @@
               <object class="GtkMenuItem" id="View">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">_Draw</property>
+                <property name="label" translatable="yes">_Render</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu4">
@@ -2706,7 +2706,7 @@
               <object class="GtkMenuItem" id="menu-smartdraw">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">SmartDraw</property>
+                <property name="label" translatable="yes">_SmartDraw</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu6">
