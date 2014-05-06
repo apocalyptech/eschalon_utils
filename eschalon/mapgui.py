@@ -1069,6 +1069,9 @@ class MapGUI(BaseGUI):
         self.tile_x_prev = -1
         self.tile_y_prev = -1
         self.cleantiles = []
+        self.highlight_tiles = {}
+        self.brush_pattern = [ [None] ]
+        self.brush_pattern_prev = [ [None] ]
 
         self.mapinit = False
         self.undo = None
@@ -1343,6 +1346,17 @@ class MapGUI(BaseGUI):
                 self.ctl_erase_toggle.set_active(True)
             elif (key == 'o'):
                 self.ctl_object_toggle.set_active(True)
+            elif (self.ctl_draw_toggle.get_active() or self.ctl_erase_toggle.get_active()):
+                if (key == '1'):
+                    self.get_widget('brush_tile_1_toggle').set_active(True)
+                elif (key == '2'):
+                    self.get_widget('brush_tile_2_toggle').set_active(True)
+                elif (key == '3'):
+                    self.get_widget('brush_tile_3_toggle').set_active(True)
+                elif (key == '4'):
+                    self.get_widget('brush_tile_4_toggle').set_active(True)
+                elif (key == '5'):
+                    self.get_widget('brush_tile_5_toggle').set_active(True)
 
     def on_reload(self, widget=None):
         """ What to do when we're told to reload. """
@@ -1660,6 +1674,37 @@ class MapGUI(BaseGUI):
         ctlbox.add(vbox)
         vbox.show_all()
 
+        # Populate our brush box
+        brushbox = self.get_widget('brush_alignment')
+        vbox = gtk.VBox()
+        hbox = gtk.HBox()
+        first = None
+        for (name, text, key, image) in [
+                ('tile_1', '1x1 Square', '1', 'icon-brush-tile-1.png'),
+                ('tile_3', '3x3 Square', '3', 'icon-brush-tile-3.png'),
+                ('tile_5', '5x5 Square', '5', 'icon-brush-tile-5.png'),
+                (None, None, None, None),
+                ('tile_2', '2-Radius Circle', '2', 'icon-brush-circle-2.png'),
+                ('tile_4', '4-Radius Circle', '4', 'icon-brush-circle-4.png')]:
+            if name is None:
+                vbox.add(hbox)
+                hbox = gtk.HBox()
+                continue
+            radio = gtk.RadioButton(first)
+            radio.set_property('draw-indicator', False)
+            radio.set_relief(gtk.RELIEF_NONE)
+            if first is None:
+                radio.set_active(True)
+                first = radio
+            self.register_widget('brush_%s_toggle' % (name), radio)
+            radio.add(gtk.image_new_from_file(self.datafile(image)))
+            radio.set_tooltip_markup('%s <i>(%s)</i>' % (text, key))
+            radio.connect('toggled', self.on_brush_toggle)
+            hbox.add(radio)
+        vbox.add(hbox)
+        brushbox.add(vbox)
+        vbox.show_all()
+
         # This used to happen at the start of run(), will have to do it
         # here instead.
         self.ctl_edit_toggle = self.get_widget('ctl_edit_toggle')
@@ -1916,6 +1961,7 @@ class MapGUI(BaseGUI):
                 'on_clicked': self.on_clicked,
                 'on_released': self.on_released,
                 'on_control_toggle': self.on_control_toggle,
+                'on_brush_toggle': self.on_brush_toggle,
                 'key_handler': self.key_handler,
                 'zoom_in': self.zoom_in,
                 'zoom_out': self.zoom_out,
@@ -3082,31 +3128,84 @@ class MapGUI(BaseGUI):
         elif (self.tile_y > 199):
             self.tile_y = 199
 
-        # See if we've changed, and queue some redraws if so
+        # Call our highlight-changing function
         if (self.tile_x != self.tile_x_prev or self.tile_y != self.tile_y_prev):
-            # It's possible we cause duplication here, but it the CPU cost should be negligible
-            # It's also important to append the previous value FIRST, so that our graphic clean-up
-            # doesn't clobber a freshly-drawn mouse pointer
-            if (self.tile_x_prev != -1):
-                self.cleantiles.append((self.tile_x_prev, self.tile_y_prev))
-                # We should just really check for over-wide entities here, but for now we'll
-                # just do some excessive redrawing.
-                if (self.mapobj.tiles[self.tile_y_prev][self.tile_x_prev].entity is not None):
-                    if (self.tile_x_prev != 0):
-                        self.cleantiles.append((self.tile_x_prev-1, self.tile_y_prev))
-                    if (self.tile_x_prev != 99):
-                        self.cleantiles.append((self.tile_x_prev+1, self.tile_y_prev))
-            self.cleantiles.append((self.tile_x, self.tile_y))
-            self.tile_x_prev = self.tile_x
-            self.tile_y_prev = self.tile_y
+            self.tile_highlight_change()
 
-            # Draw if we're supposed to
+            # Draw if we're supposed to.  tile_highlight_change() should've
+            # already sent a queue_draw to the main maparea, so we don't have
+            # to do it again here.
             if (self.drawing):
-                self.action_draw_tile(self.tile_x, self.tile_y)
+                for (x, y) in self.highlight_tiles.keys():
+                    self.action_draw_tile(x, y)
             elif (self.erasing):
-                self.action_erase_tile(self.tile_x, self.tile_y)
+                for (x, y) in self.highlight_tiles.keys():
+                    self.action_erase_tile(x, y)
 
+        # Update our coordinate label
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
+
+    def tile_highlight_change(self):
+        """
+        Used to trigger tile highlight changes.  Will loop through both previous
+        and current tile, even if they're identical, because this might happen when
+        our brush changes, for instance.
+        """
+
+        # Get a list of current and previous tiles
+        cur_tiles = []
+        prev_tiles = []
+        for (tiles, brush_pattern, (start_x, start_y)) in [
+                (cur_tiles, self.brush_pattern, (self.tile_x, self.tile_y)),
+                (prev_tiles, self.brush_pattern_prev, (self.tile_x_prev, self.tile_y_prev))]:
+            for pattern in brush_pattern:
+                cur_x = start_x
+                cur_y = start_y
+                failed = False
+                for direction in pattern:
+                    if direction:
+                        newdir = self.mapobj.coords_relative(cur_x, cur_y, direction)
+                        if newdir:
+                            cur_x = newdir[0]
+                            cur_y = newdir[1]
+                        else:
+                            failed = True
+                            break
+                if not failed:
+                    tiles.append((cur_x, cur_y))
+
+        # Build up a list of tiles which need to be redrawn.  We do need to make sure
+        # that tiles to clean (no longer being highlighted) get drawn first, and THEN
+        # the freshly-highlighted ones.  We're using a dict so that we don't have
+        # duplicates, though, since the chances of duplicates are quite high when using
+        # the larger brushes
+        local_cleantiles = {}
+        for (x, y) in prev_tiles:
+            if (x != -1):
+                local_cleantiles[(x, y)] = False
+                # We should just really check for over-wide entities here, but for now we'll
+                # just doe some excessive redrawing
+                if (self.mapobj.tiles[y][x].entity is not None):
+                    if (x != 0):
+                        local_cleantiles[(x-1, y)] = False
+                    if (x != 99):
+                        local_cleantiles[(x+1, y)] = False
+        self.highlight_tiles = {}
+        for coord in cur_tiles:
+            local_cleantiles[coord] = True
+            self.highlight_tiles[coord] = True
+        self.tile_x_prev = self.tile_x
+        self.tile_y_prev = self.tile_y
+        self.brush_pattern_prev = self.brush_pattern
+
+        # Now sort our cleantiles so that they're always drawn back-to-front
+        tiles_sorted = sorted(local_cleantiles.keys(), key=lambda c: c[1]*100+c[0])
+        for coord in tiles_sorted:
+            if local_cleantiles[coord] == False:
+                self.cleantiles.append(coord)
+        for coord in tiles_sorted:
+            if local_cleantiles[coord] == True:
+                self.cleantiles.append(coord)
 
         # Now queue up a draw
         self.maparea.queue_draw()
@@ -4041,11 +4140,33 @@ class MapGUI(BaseGUI):
         self.imgsel_on_motion(widget, event)
 
     def toggle_action_frames(self, which=''):
+        """
+        Toggles our lefthand pane control areas depending on which
+        tool just got selected.  Pass in "which" as the name of
+        the frame to activate.  This will also show/hide the brush
+        panel as needed.
+        """
         for widgetname in ['draw_frame', 'erase_frame', 'object_frame']:
             if widgetname == which:
                 self.get_widget(widgetname).show()
             else:
                 self.get_widget(widgetname).hide()
+
+        # Also hide or show our brushes, and in fact reset our brushes
+        # if need be
+        if which == 'draw_frame' or which == 'erase_frame':
+            self.get_widget('brush_frame').show()
+            for num in range(1, 6):
+                widget = self.get_widget('brush_tile_%d_toggle' % (num))
+                if widget and widget.get_active():
+                    self.on_brush_toggle(widget)
+                    break
+        else:
+            self.get_widget('brush_frame').hide()
+            self.brush_pattern = [ [None] ]
+
+        # Redraw our highlight, in case this change caused a brush change
+        self.tile_highlight_change()
 
     def update_activity_label(self, widget=None):
         newlabel = ''
@@ -4103,6 +4224,9 @@ class MapGUI(BaseGUI):
         self.activity_label.set_markup('Activity: %s' % (newlabel))
 
     def on_control_toggle(self, widget):
+        """
+        What to do when the user clicks on a control
+        """
         clicked = widget.get_name()
         if (widget.get_active()):
             if (clicked == 'ctl_edit_toggle'):
@@ -4123,6 +4247,136 @@ class MapGUI(BaseGUI):
                 return
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
             self.update_activity_label()
+
+    def on_brush_toggle(self, widget):
+        """
+        What happens when the user clicks on one of our brushes
+        """
+        # TODO: Make sure to queue up redraws properly if we change brushes
+        # while stuff is highlighted on the map
+        clicked = widget.get_name()
+        if (widget.get_active()):
+            if clicked == 'brush_tile_1_toggle':
+                # 1x1 Square
+                self.brush_pattern = [ [None] ]
+
+            elif clicked == 'brush_tile_3_toggle':
+                # 3x3 Square
+                self.brush_pattern = [ [Map.DIR_N],
+                        [Map.DIR_NW],
+                        [Map.DIR_NE],
+                        [Map.DIR_W],
+                        [None],
+                        [Map.DIR_E],
+                        [Map.DIR_SW],
+                        [Map.DIR_SE],
+                        [Map.DIR_S]]
+
+            elif clicked == 'brush_tile_5_toggle':
+                # 5x5 Square
+                self.brush_pattern = [ [Map.DIR_W, Map.DIR_W],
+                        [Map.DIR_W, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_N],
+                        [Map.DIR_N, Map.DIR_N],
+                        [Map.DIR_W, Map.DIR_SW],
+                        [Map.DIR_W],
+                        [Map.DIR_NW],
+                        [Map.DIR_N],
+                        [Map.DIR_N, Map.DIR_NE],
+                        [Map.DIR_SW, Map.DIR_SW],
+                        [Map.DIR_SW],
+                        [None],
+                        [Map.DIR_NE],
+                        [Map.DIR_NE, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_SW],
+                        [Map.DIR_S],
+                        [Map.DIR_SE],
+                        [Map.DIR_E],
+                        [Map.DIR_E, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_S],
+                        [Map.DIR_S, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_E],
+                        [Map.DIR_E, Map.DIR_E],
+                        ]
+                        
+            elif clicked == 'brush_tile_2_toggle':
+                # Circle with radius of 2 (ish)
+                # Actually just a 5x5 square with the corners cut
+                self.brush_pattern = [[Map.DIR_W, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_N],
+                        [Map.DIR_W, Map.DIR_SW],
+                        [Map.DIR_W],
+                        [Map.DIR_NW],
+                        [Map.DIR_N],
+                        [Map.DIR_N, Map.DIR_NE],
+                        [Map.DIR_SW, Map.DIR_SW],
+                        [Map.DIR_SW],
+                        [None],
+                        [Map.DIR_NE],
+                        [Map.DIR_NE, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_SW],
+                        [Map.DIR_S],
+                        [Map.DIR_SE],
+                        [Map.DIR_E],
+                        [Map.DIR_E, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_E],
+                        ]
+
+            elif clicked == 'brush_tile_4_toggle':
+                # Circle with radius of 4 (ish)
+                # Actually a 5x5 square with EXTRA stuff on it
+                self.brush_pattern = [ [Map.DIR_NW, Map.DIR_NW, Map.DIR_W],
+                        [Map.DIR_NW, Map.DIR_NW, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_NW, Map.DIR_N],
+                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_N],
+                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_NE],
+                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_E],
+                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_W],
+                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_SW],
+                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_S],
+                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_S],
+                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_E],
+                        [Map.DIR_W, Map.DIR_W],
+                        [Map.DIR_W, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_NW],
+                        [Map.DIR_NW, Map.DIR_N],
+                        [Map.DIR_N, Map.DIR_N],
+                        [Map.DIR_W, Map.DIR_SW],
+                        [Map.DIR_W],
+                        [Map.DIR_NW],
+                        [Map.DIR_N],
+                        [Map.DIR_N, Map.DIR_NE],
+                        [Map.DIR_SW, Map.DIR_SW],
+                        [Map.DIR_SW],
+                        [None],
+                        [Map.DIR_NE],
+                        [Map.DIR_NE, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_SW],
+                        [Map.DIR_S],
+                        [Map.DIR_SE],
+                        [Map.DIR_E],
+                        [Map.DIR_E, Map.DIR_NE],
+                        [Map.DIR_S, Map.DIR_S],
+                        [Map.DIR_S, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_SE],
+                        [Map.DIR_SE, Map.DIR_E],
+                        [Map.DIR_E, Map.DIR_E],
+                        ]
+
+            else:
+                # Should maybe throw an exception here, but instead we'll
+                # just spit something on the console and return.  No need to
+                # get all huffy about it.
+                print "Unknown brush toggled, should never get here"
+                return
+
+        self.tile_highlight_change()
 
     def on_clicked(self, widget, event):
         """ Handle a mouse click. """
@@ -4151,10 +4405,12 @@ class MapGUI(BaseGUI):
                     self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
-            self.action_draw_tile(self.tile_x, self.tile_y)
+            for (x, y) in self.highlight_tiles.keys():
+                self.action_draw_tile(x, y)
         elif (action == self.ACTION_ERASE):
             self.erasing = True
-            self.action_erase_tile(self.tile_x, self.tile_y)
+            for (x, y) in self.highlight_tiles.keys():
+                self.action_erase_tile(x, y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_tile(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
@@ -4530,7 +4786,7 @@ class MapGUI(BaseGUI):
         tile_ctx = self.tilebuf_ctx
         main_ctx = self.ctx
 
-        if (do_main_paint and x == self.tile_x and y == self.tile_y):
+        if (do_main_paint and (x, y) in self.highlight_tiles):
             pointer = (1, 1, 1, 0.5)
 
         if (tile.entity is not None):

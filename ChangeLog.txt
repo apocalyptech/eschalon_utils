@@ -1,5 +1,8 @@
 # ChangeLog for Eschalon Savefile Editor
 
+   06 May 2014; CJ Kucera <pez@apocalyptech.com> :
+   Added support for various brush sizes while drawing/erasing
+
    05 May 2014; CJ Kucera <pez@apocalyptech.com> :
    Rename "Draw" menu to "Render," which is more accurate
    Moved Smartdraw controls to the menu, instead of sidebar

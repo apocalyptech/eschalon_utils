@@ -2195,6 +2195,9 @@
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -3070,6 +3073,37 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkFrame" id="brush_frame">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">etched-out</property>
+                    <child>
+                      <object class="GtkAlignment" id="brush_alignment">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="left_padding">6</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="label28">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;i&gt;Brush&lt;/i&gt;</property>
+                        <property name="use_markup">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkFrame" id="draw_frame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -3371,7 +3405,7 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">3</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -3500,7 +3534,7 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">3</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
                 <child>
@@ -3699,7 +3733,7 @@
                     <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="padding">3</property>
-                    <property name="position">4</property>
+                    <property name="position">5</property>
                   </packing>
                 </child>
               </object>
