@@ -697,10 +697,16 @@ class SmartDraw(object):
         non-straight paths.
         """
 
+        # Get our edge preference type
+        idxtype = None
+        for (element, index) in self.gui.decal_edge_pref_map.items():
+            if element.get_active():
+                idxtype = index
+                break
+        if idxtype is None:
+            idxtype = self.IDX_GRASS
+
         # Go elsewhere if we're drawing beach stuffs
-        iter = self.gui.get_widget('decalpref').get_active_iter()
-        model = self.gui.get_widget('decalpref').get_model()
-        idxtype = model.get_value(iter, 1)
         if (idxtype == self.IDX_BEACH):
             return self.draw_beach(tile)
 

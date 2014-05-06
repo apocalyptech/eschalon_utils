@@ -1073,6 +1073,7 @@ class MapGUI(BaseGUI):
         self.mapinit = False
         self.undo = None
         self.smartdraw = SmartDraw.new(c.book)
+        self.decal_edge_pref_map = {}
 
         # Start up our GUI
         self.builder = gtk.Builder()
@@ -1130,7 +1131,6 @@ class MapGUI(BaseGUI):
         self.erase_entity_checkbox = self.get_widget('erase_entity_checkbox')
         self.erase_object_checkbox = self.get_widget('erase_object_checkbox')
         self.smartdraw_check = self.get_widget('smartdraw_check')
-        self.smartdraw_container = self.get_widget('smartdraw_container')
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
@@ -1767,15 +1767,26 @@ class MapGUI(BaseGUI):
             self.object_type_list[val] = typeidx
             self.object_type_list_rev[typeidx] = val
 
-        # Populate our smartdraw decal preference dropdown
-        store = self.get_widget('decalpref_store')
-        store.append(['Grass', self.smartdraw.IDX_GRASS])
-        store.append(['Sand', self.smartdraw.IDX_SAND])
-        store.append(['Beach', self.smartdraw.IDX_BEACH])
+        # Populate our smartdraw decal preference menu
+        decal_list = [('Grass', self.smartdraw.IDX_GRASS),
+                ('Sand', self.smartdraw.IDX_SAND),
+                ('Beach', self.smartdraw.IDX_BEACH)]
         if c.book > 1:
-            store.append(['Snow', self.smartdraw.IDX_SNOW])
-            store.append(['Lava', self.smartdraw.IDX_LAVA])
-        self.get_widget('decalpref').set_active(0)
+            decal_list.append(('Snow', self.smartdraw.IDX_SNOW))
+            decal_list.append(('Lava', self.smartdraw.IDX_LAVA))
+        menu = gtk.Menu()
+        group = None
+        self.decal_edge_pref_map = {}
+        for (label, index) in decal_list:
+            menuitem = gtk.RadioMenuItem(group, label)
+            menuitem.show()
+            self.decal_edge_pref_map[menuitem] = index
+            if not group:
+                menuitem.set_active(True)
+            group = menuitem
+            menu.add(menuitem)
+        edge_menu = self.get_widget('decalpref')
+        edge_menu.set_submenu(menu)
 
         # Populate our object placement dropdown
         store = self.get_widget('objectplace_treestore')
@@ -2337,13 +2348,23 @@ class MapGUI(BaseGUI):
 
     def on_draw_smart_floor_toggled(self, widget):
         """ Handle the smart-floor toggling. """
-        self.smartdraw_floor_container.set_sensitive(widget.get_active())
+        is_active = widget.get_active()
+        self.get_widget('draw_straight_paths').set_sensitive(is_active)
+        self.get_widget('decalpref').set_sensitive(is_active)
 
     def on_smartdraw_check_toggled(self, widget):
         """
         Deactivate/Activate smart draw functions
         """
-        self.smartdraw_container.set_sensitive(widget.get_active())
+        is_active = widget.get_active()
+        self.get_widget('draw_smart_barrier').set_sensitive(is_active)
+        self.get_widget('draw_smart_wall').set_sensitive(is_active)
+        self.get_widget('draw_smart_floor').set_sensitive(is_active)
+        self.get_widget('draw_straight_paths').set_sensitive(is_active)
+        self.get_widget('decalpref').set_sensitive(is_active)
+        self.get_widget('draw_smart_walldecal').set_sensitive(is_active)
+        self.get_widget('smart_randomize').set_sensitive(is_active)
+        self.get_widget('smart_complex_objects').set_sensitive(is_active)
 
     def update_undo_gui(self):
         """
