@@ -2,6 +2,7 @@
 
    06 May 2014; CJ Kucera <pez@apocalyptech.com> :
    Added support for various brush sizes while drawing/erasing
+   Fixed some carpet smartdraw objects for Book 3
 
    05 May 2014; CJ Kucera <pez@apocalyptech.com> :
    Rename "Draw" menu to "Render," which is more accurate

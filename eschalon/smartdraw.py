@@ -2368,27 +2368,21 @@ class B3SmartDraw(B2SmartDraw):
         # Now smart Complex Objects
         self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
 
-        ycarpet1 = ComplexObj('Yellow Carpet (1)', 35)
+        ycarpet1 = ComplexObj('Yellow Carpet (1)', 71)
         self.complex_obj_floor.add(ycarpet1)
-        ycarpet1.add(self.DIR_NE, 33)
+        ycarpet1.add(self.DIR_NE, 69)
 
-        ycarpet2 = ComplexObj('Yellow Carpet (2)', 34)
+        ycarpet2 = ComplexObj('Yellow Carpet (2)', 70)
         self.complex_obj_floor.add(ycarpet2)
-        ycarpet2.add(self.DIR_NW, 36)
+        ycarpet2.add(self.DIR_NW, 72)
 
-        rcarpet = ComplexObj('Large Red Carpet', 37)
-        self.complex_obj_floor.add(rcarpet)
-        rcarpet.add(self.DIR_SE, 38)
-        rcarpet.add(self.DIR_SW, 39)
-        rcarpet.add(self.DIR_NW, 40)
-
-        rcarpet2 = ComplexObj('Small Red Carpet (1)', 41)
+        rcarpet2 = ComplexObj('Small Red Carpet (1)', 77)
         self.complex_obj_floor.add(rcarpet2)
-        rcarpet2.add(self.DIR_SW, 43)
+        rcarpet2.add(self.DIR_SW, 79)
 
-        rcarpet3 = ComplexObj('Small Red Carpet (2)', 42)
+        rcarpet3 = ComplexObj('Small Red Carpet (2)', 78)
         self.complex_obj_floor.add(rcarpet3)
-        rcarpet3.add(self.DIR_NW, 44)
+        rcarpet3.add(self.DIR_NW, 80)
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
         
