@@ -151,6 +151,7 @@ class BigGraphicMappings(object):
 class Map(object):
     """ The base Map class.  """
 
+    DIR_NO_CHANGE = 0x00
     DIR_N = 0x01
     DIR_NE = 0x02
     DIR_E = 0x04
@@ -159,6 +160,7 @@ class Map(object):
     DIR_SW = 0x20
     DIR_W = 0x40
     DIR_NW = 0x80
+    DIR_NOT_ADJACENT = 0xFF
 
     def __init__(self, df, ent_df):
         """
@@ -655,6 +657,93 @@ class Map(object):
             return B3Map(df)
         else:
             raise LoadException('Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
+
+    # Find the direction from one tile to an adjacent tile
+    @staticmethod
+    def adjacentdirection(x1, y1, x2, y2):
+        xdiff = x2 - x1
+        ydiff = y2 - y1
+        # Self and cardinal directions are the same no matter where we are
+        if xdiff == 0 and ydiff == 0:
+            return Map.DIR_NO_CHANGE
+        elif xdiff == 0 and ydiff == -2:
+            return Map.DIR_N
+        elif xdiff == 1 and ydiff == 0:
+            return Map.DIR_E
+        elif xdiff == 0 and ydiff == 2:
+            return Map.DIR_S
+        elif xdiff == -1 and ydiff == 0:
+            return Map.DIR_W
+
+        if y1 % 2 == 0:
+            # Even y coord
+            if xdiff == -1 and ydiff == -1:
+                return Map.DIR_NW
+            elif xdiff == 0 and ydiff == -1:
+                return Map.DIR_NE
+            elif xdiff == 0 and ydiff == 1:
+                return Map.DIR_SE
+            elif xdiff == -1 and ydiff == 1:
+                return Map.DIR_SW
+            else:
+                print "Not adjacent, even Y: " + str(xdiff) + "," + str(ydiff)
+                print "From " + str(x1) + "," + str(y1)
+                print "To " + str(x2) + "," + str(y2)
+                return Map.DIR_NOT_ADJACENT
+        else:
+            # Odd y coord
+            if xdiff == 0 and ydiff == -1:
+                return Map.DIR_NW
+            elif xdiff == 1 and ydiff == -1:
+                return Map.DIR_NE
+            elif xdiff == 1 and ydiff == 1:
+                return Map.DIR_SE
+            elif xdiff == 0 and ydiff == 1:
+                return Map.DIR_SW
+            else:
+                print "Not adjacent, odd Y: " + str(xdiff) + "," + str(ydiff)
+                print "From " + str(x1) + "," + str(y1)
+                print "To " + str(x2) + "," + str(y2)
+                return Map.DIR_NOT_ADJACENT
+
+    # Return the tile adjacent to a given tile in a given direction
+    @staticmethod
+    def adjacent(x, y, direction):
+        if direction == Map.DIR_NO_CHANGE:
+            return x,y
+        elif direction == Map.DIR_N:
+            return x,y-2
+        elif direction == Map.DIR_E:
+            return x+1,y
+        elif direction == Map.DIR_S:
+            return x,y+2
+        elif direction == Map.DIR_W:
+            return x-1,y
+
+        if y % 2 == 0:
+            # Even y coord
+            if direction == Map.DIR_NW:
+                return x-1,y-1
+            elif direction == Map.DIR_NE:
+                return x,y-1
+            elif direction == Map.DIR_SE:
+                return x,y+1
+            elif direction == Map.DIR_SW:
+                return x-1,y+1
+            else:
+                raise Exception("Unknown direction " + hex(direction))
+        else:
+            # Odd y coord
+            if direction == Map.DIR_NW:
+                return x,y-1
+            elif direction == Map.DIR_NE:
+                return x+1,y-1
+            elif direction == Map.DIR_SE:
+                return x+1,y+1
+            elif direction == Map.DIR_SW:
+                return x,y+1
+            else:
+                raise Exception("Unknown direction " + hex(direction))
 
 class B1Map(Map):
     """

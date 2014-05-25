@@ -999,6 +999,7 @@ class MapGUI(BaseGUI):
     MODE_ERASE = 3
     MODE_OBJECT = 4
     MODE_SCRIPT_ED = 5
+    MODE_COPY = 6
 
     # Actions that a mouse click can take
     ACTION_NONE = -1
@@ -1008,6 +1009,8 @@ class MapGUI(BaseGUI):
     ACTION_ERASE = 4
     ACTION_OBJECT = 5
     ACTION_SCRIPT_ED = 6
+    ACTION_COPY = 7
+    ACTION_COPY_SELECT = 8
 
     # Mouse button constants
     MOUSE_LEFT = 1
@@ -1041,6 +1044,11 @@ class MapGUI(BaseGUI):
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
             },
+        MODE_COPY: {
+            MOUSE_LEFT: ACTION_COPY,
+            MOUSE_MIDDLE: ACTION_DRAG,
+            MOUSE_RIGHT: ACTION_COPY_SELECT
+            },
         MODE_SCRIPT_ED: {
             MOUSE_LEFT: ACTION_SCRIPT_ED,
             MOUSE_MIDDLE: ACTION_DRAG,
@@ -1068,6 +1076,13 @@ class MapGUI(BaseGUI):
         self.tile_y = -1
         self.tile_x_prev = -1
         self.tile_y_prev = -1
+        # Where we're copying from
+        self.copy_source_x = -1
+        self.copy_source_y = -1
+        # When the user drags the mouse, we temporarily change where we're
+        # copying from
+        self.copy_source_drag_y = -1
+        self.copy_source_drag_x = -1
         self.cleantiles = []
         self.highlight_tiles = {}
         self.brush_pattern = [ [None] ]
@@ -1170,6 +1185,7 @@ class MapGUI(BaseGUI):
             self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE),
             self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN),
             self.MODE_SCRIPT_ED: None,
+            self.MODE_COPY: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_UP),
             }
 
         # Initialize item stuff
@@ -1239,6 +1255,7 @@ class MapGUI(BaseGUI):
         self.dragging = False
         self.drawing = False
         self.erasing = False
+        self.copying = False
 
         # Set up the statusbar
         self.statusbar = self.get_widget('mainstatusbar')
@@ -1346,6 +1363,8 @@ class MapGUI(BaseGUI):
                 self.ctl_erase_toggle.set_active(True)
             elif (key == 'o'):
                 self.ctl_object_toggle.set_active(True)
+            elif (key == 'c'):
+                self.ctl_copy_toggle.set_active(True)
             elif (self.ctl_draw_toggle.get_active() or self.ctl_erase_toggle.get_active()):
                 if (key == '1'):
                     self.get_widget('brush_tile_1_toggle').set_active(True)
@@ -1651,6 +1670,7 @@ class MapGUI(BaseGUI):
         for (name, text, key, image) in [
             ('edit', 'Edit', 'e', 'icon-pointer.png'),
             ('move', 'Move', 'm', 'icon-hand.png'),
+            ('copy', 'Copy', 'c', 'icon-copy.png'),
             (None, None, None, None),
             ('draw', 'Draw', 'd', 'icon-draw.png'),
             ('erase', 'Erase', 'r', 'icon-erase.png'),
@@ -1712,6 +1732,7 @@ class MapGUI(BaseGUI):
         self.ctl_draw_toggle = self.get_widget('ctl_draw_toggle')
         self.ctl_erase_toggle = self.get_widget('ctl_erase_toggle')
         self.ctl_object_toggle = self.get_widget('ctl_object_toggle')
+        self.ctl_copy_toggle = self.get_widget('ctl_copy_toggle')
 
         # Not sure why this doesn't work properly just from Glade
         self.get_widget('music1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
@@ -3090,6 +3111,8 @@ class MapGUI(BaseGUI):
         # What x/y values we start with
         start_x = int(event.x/self.z_width)
         start_y = int(event.y/self.z_height)
+        original_x = self.tile_x
+        original_y = self.tile_y
 
         # Value to check inside our imagemap
         test_x = int(event.x - (start_x * self.z_width))
@@ -3118,6 +3141,15 @@ class MapGUI(BaseGUI):
             self.tile_x = start_x
             self.tile_y = start_y
 
+        if (self.copying):
+            # Because of the funky grid system, we can't just move the
+            # copying source tile the same amount of X and Y as the selected
+            # tile moved.  Instead, figure out which direction the selected
+            # tile moved and move the copying source tile the same
+            # direction.
+            direction = self.mapobj.adjacentdirection(original_x, original_y, self.tile_x, self.tile_y)
+            self.copy_source_drag_x,self.copy_source_drag_y = self.mapobj.adjacent(self.copy_source_drag_x, self.copy_source_drag_y, direction)
+
         # Some sanity checks
         if (self.tile_x < 0):
             self.tile_x = 0
@@ -3141,6 +3173,9 @@ class MapGUI(BaseGUI):
             elif (self.erasing):
                 for (x, y) in self.highlight_tiles.keys():
                     self.action_erase_tile(x, y)
+            elif (self.copying):
+                for (x, y) in self.highlight_tiles.keys():
+                    self.action_copy_tile(x, y)
 
         # Update our coordinate label
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
@@ -4218,6 +4253,8 @@ class MapGUI(BaseGUI):
             self.toggle_action_frames('object_frame')
             obj = self.get_cur_object_placement()
             newlabel = 'Placing Object "%s"' % (obj.name)
+        elif self.ctl_copy_toggle.get_active():
+            pass
         else:
             self.toggle_action_frames()
             newlabel = '<i>Unknown</i>'
@@ -4239,6 +4276,8 @@ class MapGUI(BaseGUI):
                 self.edit_mode = self.MODE_ERASE
             elif (clicked == 'ctl_object_toggle'):
                 self.edit_mode = self.MODE_OBJECT
+            elif (clicked == 'ctl_copy_toggle'):
+                self.edit_mode = self.MODE_COPY
             else:
                 # Should maybe throw an exception here, but instead we'll
                 # just spit something on the console and return.  No need to
@@ -4413,14 +4452,23 @@ class MapGUI(BaseGUI):
                 self.action_erase_tile(x, y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_tile(self.tile_x, self.tile_y)
+        elif (action == self.ACTION_COPY):
+            self.copying = True
+            for (x, y) in self.highlight_tiles.keys():
+                self.action_copy_tile(x, y)
+        elif (action == self.ACTION_COPY_SELECT):
+            self.action_copy_select(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
             self.action_script_edit(self.tile_x, self.tile_y)
 
     def on_released(self, widget=None, event=None):
-        if (self.dragging or self.drawing or self.erasing):
+        if (self.dragging or self.drawing or self.erasing or self.copying):
             self.dragging = False
             self.drawing = False
             self.erasing = False
+            self.copying = False
+            self.copy_source_drag_x = self.copy_source_x
+            self.copy_source_drag_y = self.copy_source_y
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
 
     def handle_editing_exception(self, x, y, exception_info):
@@ -4665,6 +4713,38 @@ class MapGUI(BaseGUI):
         except Exception:
 
             self.handle_editing_exception(x, y, sys.exc_info())
+
+    def action_copy_tile(self, x, y):
+        """ What to do when we're copying on a tile on the map."""
+
+        # If we're off the map, this is a silent no-op
+        if (self.copy_source_drag_x < 0 or self.copy_source_drag_x > 99 or self.copy_source_drag_y < 0 or self.copy_source_drag_y > 199):
+            return
+
+        # First store our undo state
+        self.undo.store(x, y)
+        self.undo.set_text('Copy')
+
+        # Grab our source tile
+        source = self.mapobj.tiles[self.copy_source_drag_y][self.copy_source_drag_x]
+
+        self.mapobj.tiles[y][x] = source.replicate()
+        # Add any new content and entity objects to the map's list
+        for tilecontent in self.mapobj.tiles[y][x].tilecontents:
+            self.mapobj.tilecontents.append(tilecontent)
+        if self.mapobj.tiles[y][x].entity is not None:
+            self.mapobj.entities.append(self.mapobj.tiles[y][x].entity)
+
+        if (self.undo.finish()):
+            self.redraw_tile(x, y)
+            self.update_undo_gui()
+
+    def action_copy_select(self, x, y):
+        """ Select a source tile to copy from."""
+        self.copy_source_x = x
+        self.copy_source_y = y
+        self.copy_source_drag_x = x
+        self.copy_source_drag_y = y
 
     def get_cur_object_placement(self):
         """
