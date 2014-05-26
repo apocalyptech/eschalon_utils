@@ -151,6 +151,7 @@ class BigGraphicMappings(object):
 class Map(object):
     """ The base Map class.  """
 
+    DIR_NO_CHANGE = 0x00
     DIR_N = 0x01
     DIR_NE = 0x02
     DIR_E = 0x04
@@ -159,6 +160,29 @@ class Map(object):
     DIR_SW = 0x20
     DIR_W = 0x40
     DIR_NW = 0x80
+    DIR_NOT_ADJACENT = 0xFF
+
+    DELTA_TO_DIRECTIONS = {
+      (0,0): DIR_NO_CHANGE,
+      (0,-2): DIR_N, (1,0): DIR_E,
+      (0,2): DIR_S, (-1,0): DIR_W }
+    DELTA_TO_DIRECTIONS_EVEN = {
+      (-1,-1): DIR_NW, (0,-1): DIR_NE,
+      (0,1): DIR_SE, (-1,1): DIR_SW }
+    DELTA_TO_DIRECTIONS_ODD = {
+      (0,-1): DIR_NW, (1,-1): DIR_NE,
+      (1,1): DIR_SE, (0,1): DIR_SW }
+
+    DIRECTIONS_TO_DELTA = {
+      DIR_NO_CHANGE: (0,0),
+      DIR_N: (0,-2), DIR_E: (1,0),
+      DIR_S: (0,2), DIR_W: (-1,0) }
+    DIRECTIONS_TO_DELTA_EVEN = {
+      DIR_NW: (-1,-1), DIR_NE: (0,-1),
+      DIR_SE: (0,1), DIR_SW: (-1,1) }
+    DIRECTIONS_TO_DELTA_ODD = {
+      DIR_NW: (0,-1), DIR_NE: (1,-1),
+      DIR_SE: (1,1), DIR_SW: (0,1) }
 
     def __init__(self, df, ent_df):
         """
@@ -655,6 +679,58 @@ class Map(object):
             return B3Map(df)
         else:
             raise LoadException('Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
+
+    # Find directions from one coordinate set to another
+    @staticmethod
+    def directions_between_coords(x1, y1, x2, y2):
+        if y1 % 2 == 0:
+            map = dict(Map.DELTA_TO_DIRECTIONS.items() + Map.DELTA_TO_DIRECTIONS_EVEN.items())
+        else:
+            map = dict(Map.DELTA_TO_DIRECTIONS.items() + Map.DELTA_TO_DIRECTIONS_ODD.items())
+
+        xdiff = x2 - x1
+        ydiff = y2 - y1
+
+        # Base case - adjacent tile
+        if (xdiff,ydiff) in map:
+            if map[(xdiff,ydiff)] == 0:
+                return []
+            else:
+                return [map[(xdiff,ydiff)]]
+
+        # Not adjacent - recur
+        # Looping through cardinal directions first would produce
+        # shorter lists of directions, but it's probably not worth the
+        # extra code complexity
+        for coords in map:
+            # Don't allow direction 0, DIR_NO_CHANGE
+            if map[coords] == 0:
+                continue
+            # Does this direction get us closer?
+            newx = x1 + coords[0]
+            newy = y1 + coords[1]
+            if abs(x2 - newx) <= abs(xdiff) and abs(y2 - newy) <= abs(ydiff):
+                return [map[coords]] + Map.directions_between_coords(newx, newy, x2, y2)
+
+        # Should never happen
+        raise Exception("Couldn't find a direction from " + str(x1) + "," + str(y1) + " to " + str(x2) + "," + str(y2))
+
+    # Follow a set of directions from a coordinate set
+    @staticmethod
+    def follow_directions_from_coord(x, y, directions):
+        for direction in directions:
+            if direction in Map.DIRECTIONS_TO_DELTA:
+                x = x + Map.DIRECTIONS_TO_DELTA[direction][0]
+                y = y + Map.DIRECTIONS_TO_DELTA[direction][1]
+            elif y % 2 == 0 and direction in Map.DIRECTIONS_TO_DELTA_EVEN:
+                x = x + Map.DIRECTIONS_TO_DELTA_EVEN[direction][0]
+                y = y + Map.DIRECTIONS_TO_DELTA_EVEN[direction][1]
+            elif y % 2 == 1 and direction in Map.DIRECTIONS_TO_DELTA_ODD:
+                x = x + Map.DIRECTIONS_TO_DELTA_ODD[direction][0]
+                y = y + Map.DIRECTIONS_TO_DELTA_ODD[direction][1]
+            else:
+                raise Exception("Unknown direction " + hex(direction))
+        return (x,y)
 
 class B1Map(Map):
     """
