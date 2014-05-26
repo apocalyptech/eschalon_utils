@@ -3147,8 +3147,8 @@ class MapGUI(BaseGUI):
             # tile moved.  Instead, figure out which direction the selected
             # tile moved and move the copying source tile the same
             # direction.
-            direction = self.mapobj.adjacentdirection(original_x, original_y, self.tile_x, self.tile_y)
-            self.copy_source_drag_x,self.copy_source_drag_y = self.mapobj.adjacent(self.copy_source_drag_x, self.copy_source_drag_y, direction)
+            directions = self.mapobj.directions_between_coords(original_x, original_y, self.tile_x, self.tile_y)
+            self.copy_source_drag_x,self.copy_source_drag_y = self.mapobj.follow_directions_from_coord(self.copy_source_drag_x, self.copy_source_drag_y, directions)
 
         # Some sanity checks
         if (self.tile_x < 0):
