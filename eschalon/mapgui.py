@@ -3174,8 +3174,7 @@ class MapGUI(BaseGUI):
                 for (x, y) in self.highlight_tiles.keys():
                     self.action_erase_tile(x, y)
             elif (self.copying):
-                for (x, y) in self.highlight_tiles.keys():
-                    self.action_copy_tile(x, y)
+                self.action_copy_tiles(self.tile_x, self.tile_y, self.highlight_tiles.keys())
 
         # Update our coordinate label
         self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
@@ -4457,8 +4456,7 @@ class MapGUI(BaseGUI):
             self.action_place_object_tile(self.tile_x, self.tile_y)
         elif (action == self.ACTION_COPY):
             self.copying = True
-            for (x, y) in self.highlight_tiles.keys():
-                self.action_copy_tile(x, y)
+            self.action_copy_tiles(self.tile_x, self.tile_y, self.highlight_tiles.keys())
         elif (action == self.ACTION_COPY_SELECT):
             self.action_copy_select(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
@@ -4717,30 +4715,45 @@ class MapGUI(BaseGUI):
 
             self.handle_editing_exception(x, y, sys.exc_info())
 
-    def action_copy_tile(self, x, y):
-        """ What to do when we're copying on a tile on the map."""
+    def action_copy_tiles(self, x, y, coords):
+        """ What to do when we're copying tile(s) on the map."""
 
-        # If we're off the map, this is a silent no-op
-        if (self.copy_source_drag_x < 0 or self.copy_source_drag_x > 99 or self.copy_source_drag_y < 0 or self.copy_source_drag_y > 199):
-            return
 
-        # First store our undo state
-        self.undo.store(x, y)
-        self.undo.set_text('Copy')
+        sourcex = self.copy_source_drag_x
+        sourcey = self.copy_source_drag_y
+        oldx = None
+        oldy = None
+        for (x, y) in [(x,y)] + coords:
+            # First store our undo state
+            self.undo.store(x, y)
+            self.undo.set_text('Copy')
 
-        # Grab our source tile
-        source = self.mapobj.tiles[self.copy_source_drag_y][self.copy_source_drag_x]
+            if oldx != None and oldy != None:
+                directions = self.mapobj.directions_between_coords(oldx, oldy, x, y)
+                sourcex,sourcey = self.mapobj.follow_directions_from_coord(sourcex, sourcey, directions)
 
-        self.mapobj.tiles[y][x] = source.replicate()
-        # Add any new content and entity objects to the map's list
-        for tilecontent in self.mapobj.tiles[y][x].tilecontents:
-            self.mapobj.tilecontents.append(tilecontent)
-        if self.mapobj.tiles[y][x].entity is not None:
-            self.mapobj.entities.append(self.mapobj.tiles[y][x].entity)
+            # If we're off the map, this is a silent no-op
+            if (sourcex < 0 or sourcex > 99 or sourcey < 0 or sourcey > 199):
+                oldx = x
+                oldy = y
+                continue
 
-        if (self.undo.finish()):
+            # Grab our source tile
+            source = self.mapobj.tiles[sourcey][sourcex]
+
+            self.mapobj.tiles[y][x] = source.replicate()
+            # Add any new content and entity objects to the map's list
+            for tilecontent in self.mapobj.tiles[y][x].tilecontents:
+                self.mapobj.tilecontents.append(tilecontent)
+            if self.mapobj.tiles[y][x].entity is not None:
+                self.mapobj.entities.append(self.mapobj.tiles[y][x].entity)
+
+            oldx = x
+            oldy = y
             self.redraw_tile(x, y)
-            self.update_undo_gui()
+
+            if (self.undo.finish()):
+                self.update_undo_gui()
 
     def action_copy_select(self, x, y):
         """ Select a source tile to copy from."""
