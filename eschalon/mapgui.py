@@ -4189,7 +4189,7 @@ class MapGUI(BaseGUI):
 
         # Also hide or show our brushes, and in fact reset our brushes
         # if need be
-        if which == 'draw_frame' or which == 'erase_frame':
+        if which == 'draw_frame' or which == 'erase_frame' or which == 'copy_frame':
             self.get_widget('brush_frame').show()
             for num in range(1, 6):
                 widget = self.get_widget('brush_tile_%d_toggle' % (num))
@@ -4211,6 +4211,9 @@ class MapGUI(BaseGUI):
         elif self.ctl_move_toggle.get_active():
             self.toggle_action_frames()
             newlabel = 'Scrolling Map'
+        elif self.ctl_copy_toggle.get_active():
+            self.toggle_action_frames('copy_frame')
+            newlabel = 'Copying Tiles'
         elif self.ctl_draw_toggle.get_active():
             self.toggle_action_frames('draw_frame')
             elems = []
