@@ -4718,7 +4718,6 @@ class MapGUI(BaseGUI):
     def action_copy_tiles(self, x, y, coords):
         """ What to do when we're copying tile(s) on the map."""
 
-
         sourcex = self.copy_source_drag_x
         sourcey = self.copy_source_drag_y
         oldx = None
@@ -4738,15 +4737,30 @@ class MapGUI(BaseGUI):
                 oldy = y
                 continue
 
-            # Grab our source tile
+            # Grab our source and destination tiles
             source = self.mapobj.tiles[sourcey][sourcex]
+            dest = self.mapobj.tiles[y][x]
 
-            self.mapobj.tiles[y][x] = source.replicate()
+            # Remove existing entities and objects
+            self.mapobj.delentity(x, y)
+            for i in range(len(dest.tilecontents)):
+                self.mapobj.deltilecontent(x, y, 0)
+            dest.tilecontentid = 0
+
+            # Make the copy
+            dest = source.replicate()
+
             # Add any new content and entity objects to the map's list
-            for tilecontent in self.mapobj.tiles[y][x].tilecontents:
+            for tilecontent in dest.tilecontents:
+                tilecontent.x = x
+                tilecontent.y = y
                 self.mapobj.tilecontents.append(tilecontent)
-            if self.mapobj.tiles[y][x].entity is not None:
-                self.mapobj.entities.append(self.mapobj.tiles[y][x].entity)
+            if dest.entity is not None:
+                dest.entity.x = x
+                dest.entity.y = y
+                self.mapobj.entities.append(dest.entity)
+
+            self.mapobj.tiles[y][x] = dest
 
             oldx = x
             oldy = y
