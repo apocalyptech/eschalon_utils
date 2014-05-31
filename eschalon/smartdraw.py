@@ -1692,9 +1692,9 @@ class B2SmartDraw(SmartDraw):
                 [82, 97, 98],         # Watery plants, greenish
                 [114, 115],           # Watery plants, yellowish
                 [134, 135],           # Mossy overgrowth
-                [378, 379],           # Short rocks
-                [381, 382],           # Short snowy rocks
-                [403, 404],           # Short black rocks
+                [378, 379, 380],      # Mountains
+                [381, 382, 383],      # Short snowy rocks
+                [403, 404, 405],      # Short black rocks
                 [251, 252, 253, 255], # Tall Trees
             ]
         self.random_walldecal = [
@@ -2217,8 +2217,9 @@ class B3SmartDraw(B2SmartDraw):
                 [97, 114, 115, 133],  # Swampy plants
                 [98, 113, 116, 132],  # Bushes
                 [129, 130, 131],      # Different sort of bushes
-                [378, 379],           # Short rocks
-                [394, 395],           # Short black rocks
+                [58, 59, 60],         # Short rocks
+                [378, 379, 380],      # Mountains
+                [394, 395, 396],      # Black mountains
                 [251, 252, 253, 255], # Tall Trees
             ]
         self.random_walldecal = [
