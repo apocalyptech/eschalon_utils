@@ -23,6 +23,7 @@ import time
 import glob
 from eschalon.map import Map
 from eschalon.savefile import Savefile, LoadException
+from eschalon.savename import Savename
 
 class SaveslotMap(object):
     """
@@ -70,10 +71,9 @@ class Saveslot(object):
         self.savename_loc = os.path.join(directory, 'savename')
         if not os.path.exists(self.savename_loc):
             raise LoadException('"savename" file not found in %s' % (directory))
-        df = Savefile(self.savename_loc)
-        df.open_r()
-        self.savename = df.readstr()
-        df.close()
+        sn = Savename.load(self.savename_loc)
+        sn.read()
+        self.savename = sn.savename
 
         # Set up our charname values
         self.char_loc = os.path.join(directory, 'char')
@@ -86,6 +86,7 @@ class Saveslot(object):
 
         # Load all information if asked
         if load_all:
+            sn.read()
             self.load_maps()
             if book is None:
                 try:
