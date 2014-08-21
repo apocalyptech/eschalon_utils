@@ -390,8 +390,7 @@ class EschalonData(object):
         except:
             pass
         try:
-            path = self.modpath + '/entities.csv'
-            print "Path is " + path
+            path = os.path.join(self.modpath, 'entities.csv')
             df = open(path, 'r')
             self.read_entities(df)
             df.close()
@@ -417,7 +416,6 @@ class EschalonData(object):
             # the first, so we should check for this.
             ent_id_int = int(row['ID'])
             if ent_id_int not in self.entitytable:
-                print "Processed entity " + name
                 self.entitytable[ent_id_int] = EntHelper(name=name,
                     health=int(row['HP']),
                     gfxfile='%s.png' % (row['file']),
