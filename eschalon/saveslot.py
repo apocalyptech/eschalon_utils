@@ -71,9 +71,9 @@ class Saveslot(object):
         self.savename_loc = os.path.join(directory, 'savename')
         if not os.path.exists(self.savename_loc):
             raise LoadException('"savename" file not found in %s' % (directory))
-        sn = Savename.load(self.savename_loc)
-        sn.read()
-        self.savename = sn.savename
+        self.savenameobj = Savename.load(self.savename_loc)
+        self.savenameobj.read()
+        self.savename = self.savenameobj.savename
 
         # Set up our charname values
         self.char_loc = os.path.join(directory, 'char')
@@ -86,7 +86,6 @@ class Saveslot(object):
 
         # Load all information if asked
         if load_all:
-            sn.read()
             self.load_maps()
             if book is None:
                 try:

@@ -33,6 +33,7 @@ from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
 from eschalon.saveslot import Saveslot
 from eschalon.eschalondata import EschalonData
 from eschalon.savefile import Savefile
+from eschalon.savename import Savename
 
 # Load our GTK modules
 try:
@@ -1200,6 +1201,30 @@ class MapGUI(BaseGUI):
         if (not self.require_gfx()):
             return
 
+        # Global Item Name Completion ListStore
+        self.global_item_name_store = None
+
+        # Event mask for processing hotkeys
+        # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
+        self.keymask = gtk.gdk.CONTROL_MASK|gtk.gdk.MOD1_MASK|gtk.gdk.MOD3_MASK
+        self.keymask |= gtk.gdk.MOD4_MASK|gtk.gdk.MOD5_MASK
+
+        # Manually connect a couple more signals that Glade can't handle for us automatically
+        self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
+        self.mainscroll.get_vadjustment().connect('changed', self.scroll_v_changed)
+        self.prev_scroll_h_cur = -1
+        self.prev_scroll_h_max = -1
+        self.prev_scroll_v_cur = -1
+        self.prev_scroll_v_max = -1
+        self.dragging = False
+        self.drawing = False
+        self.erasing = False
+        self.copying = False
+
+        # Set up the statusbar
+        self.statusbar = self.get_widget('mainstatusbar')
+        self.sbcontext = self.statusbar.get_context_id('Main Messages')
+
         # Set up our EschalonData object
         # For the Map editor, we need this to be present
         self.eschalondata = None
@@ -1211,8 +1236,44 @@ class MapGUI(BaseGUI):
             self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
 
-        # Global Item Name Completion ListStore
-        self.global_item_name_store = None
+        # If we were given a filename, load it.  If not, create a new map,
+        # or load one if the user wants.
+        self.last_map_source = None
+        if (self.options['filename'] == None):
+            if not self.on_load():
+                return
+        else:
+            self.last_map_source = MapLoaderDialog.SOURCE_OTHER;
+            if (not self.load_from_file(self.options['filename'])):
+                if (not self.on_load()):
+                    return
+
+        # Figure out if we're looking at a map created using a modded game.
+        # If so, determine the path to the mod
+        try:
+            savename = Savename.load(os.path.join(os.path.dirname(self.mapobj.df.filename), 'savename'))
+            savename.read()
+            modpath = os.path.join(self.get_current_gamedir(), savename.modpath)
+        except Exception, e:
+            # This can fail for various reasons - not Book III, not a
+            # version that supports mods, not a saved game map, etc.  When
+            # that happens, silently ignore it
+            modpath = None
+
+        if modpath == None:
+            modpath = os.path.dirname(self.mapobj.df.filename)
+            if not os.path.exists(os.path.join(modpath, 'entities.csv')):
+                modpath = None
+
+        # Re-load eschalondata, now with a mod path
+        if modpath != None:
+            try:
+                self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir(), modpath)
+                self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
+                c.set_eschalondata(self.eschalondata)
+            except Exception, e:
+                self.errordialog('Error Reloading Game Data', 'Game data could not be reloaded: %s' % (str(e)))
+                sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
         if c.book > 1 and not self.eschalondata.fast_zipfile:
@@ -1239,39 +1300,6 @@ class MapGUI(BaseGUI):
 
         # ... and while we're at it, finish building some GUI elements
         self.map_gui_finish()
-
-        # Event mask for processing hotkeys
-        # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
-        self.keymask = gtk.gdk.CONTROL_MASK|gtk.gdk.MOD1_MASK|gtk.gdk.MOD3_MASK
-        self.keymask |= gtk.gdk.MOD4_MASK|gtk.gdk.MOD5_MASK
-
-        # Manually connect a couple more signals that Glade can't handle for us automatically
-        self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
-        self.mainscroll.get_vadjustment().connect('changed', self.scroll_v_changed)
-        self.prev_scroll_h_cur = -1
-        self.prev_scroll_h_max = -1
-        self.prev_scroll_v_cur = -1
-        self.prev_scroll_v_max = -1
-        self.dragging = False
-        self.drawing = False
-        self.erasing = False
-        self.copying = False
-
-        # Set up the statusbar
-        self.statusbar = self.get_widget('mainstatusbar')
-        self.sbcontext = self.statusbar.get_context_id('Main Messages')
-
-        # If we were given a filename, load it.  If not, create a new map,
-        # or load one if the user wants.
-        self.last_map_source = None
-        if (self.options['filename'] == None):
-            if not self.on_load():
-                return
-        else:
-            self.last_map_source = MapLoaderDialog.SOURCE_OTHER;
-            if (not self.load_from_file(self.options['filename'])):
-                if (not self.on_load()):
-                    return
 
         # Set up our initial zoom levels and connect our signal to
         # the slider adjustment, so things work like we'd want.

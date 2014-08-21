@@ -156,6 +156,10 @@ class B1Savename(Savename):
             # Open the file
             self.df.open_r()
 
+            # This is the most guesswork of the three books since it's
+            # farthest from the B3 format.  It's also harder to tell where
+            # sections begin and end since everything's a 4-byte int.  Not
+            # well checked, probably has bugs.
             self.savename = self.df.readstr()
             self.savedate = self.df.readstr()
             self.savetime = self.df.readstr()
@@ -214,6 +218,9 @@ class B2Savename(Savename):
             # Open the file
             self.df.open_r()
 
+            # Based on BW's B3 spec and looking at the file manually. 
+            # Oddly, lines up better than the B3 format.  Not well checked,
+            # though, and probably has bugs
             self.savename = self.df.readstr()
             self.savedate = self.df.readstr()
             self.savetime = self.df.readstr()
@@ -295,6 +302,11 @@ class B3Savename(B2Savename):
             # Open the file
             self.df.open_r()
 
+            # Based on BW's spec from
+            # http://www.basiliskgames.com/forums/viewtopic.php?f=33&t=9328&start=60#p58108
+            #
+            # We evidently screwed something up, though, since we're off by
+            # 24 bytes at the end. Almost certainly has bugs
             self.savename = self.df.readstr()
             self.savedate = self.df.readstr()
             self.savetime = self.df.readstr()
@@ -327,6 +339,10 @@ class B3Savename(B2Savename):
             self.cloud_alpha = self.df.readfloat()
             self.weather_number = self.df.readint()
             self.weather_active = self.df.readint()
+            # This is bogus - I'm sure we've lost 24 bytes somewhere
+            # along the way
+            for i in range(6):
+                self.unknowns.append(self.df.readint())
             try:
                 self.modpath = self.df.readstr()
             except LoadException:

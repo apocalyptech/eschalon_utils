@@ -208,7 +208,7 @@ class EschalonData(object):
     empty_name = None
     random_name = None
 
-    def __init__(self, gamedir):
+    def __init__(self, gamedir, modpath = None):
         """
         Constructor.  "gamedir" should be the base game directory, whether
         it contains a datapak or a filesystem structure.
@@ -234,6 +234,8 @@ class EschalonData(object):
         # Set our base gamedir.  This also does the work of actually
         # finding out where our data is.
         self.set_gamedir(gamedir)
+
+        self.modpath = modpath
 
     def set_gamedir(self, gamedir):
         """
@@ -383,37 +385,49 @@ class EschalonData(object):
         # Now try to load in all available entity information
         try:
             df = self.get_filehandle('entities.csv', 'data')
-            reader = csv.DictReader(df)
-            for row in reader:
-                if row['file'].strip() == '':
-                    continue
-                xoff = int(row['Xoff'])
-                yoff = int(row['Yoff'])
-                width = 64 + xoff
-                height = 64 + yoff
-                name = row['Name']
-                if (int(row['Dirs']) == 1):
-                    name = '%s *' % (name)
-                script = row['Script'].strip()
-                if script == '*':
-                    script = ''
-                # In the event of multiple IDs found in the file, Eschalon itself will favor
-                # the first, so we should check for this.
-                ent_id_int = int(row['ID'])
-                if ent_id_int not in self.entitytable:
-                    self.entitytable[ent_id_int] = EntHelper(name=name,
-                        health=int(row['HP']),
-                        gfxfile='%s.png' % (row['file']),
-                        friendly=int(row['Align']),
-                        movement=int(row['Move']),
-                        dirs=int(row['Dirs']),
-                        width=width,
-                        height=height,
-                        frames=int(row['Frame']),
-                        entscript=script)
+            self.read_entities(df)
             df.close()
         except:
             pass
+        try:
+            path = self.modpath + '/entities.csv'
+            print "Path is " + path
+            df = open(path, 'r')
+            self.read_entities(df)
+            df.close()
+        except:
+            pass
+
+    def read_entities(self, df):
+        reader = csv.DictReader(df)
+        for row in reader:
+            if row['file'].strip() == '':
+                continue
+            xoff = int(row['Xoff'])
+            yoff = int(row['Yoff'])
+            width = 64 + xoff
+            height = 64 + yoff
+            name = row['Name']
+            if (int(row['Dirs']) == 1):
+                name = '%s *' % (name)
+            script = row['Script'].strip()
+            if script == '*':
+                script = ''
+            # In the event of multiple IDs found in the file, Eschalon itself will favor
+            # the first, so we should check for this.
+            ent_id_int = int(row['ID'])
+            if ent_id_int not in self.entitytable:
+                print "Processed entity " + name
+                self.entitytable[ent_id_int] = EntHelper(name=name,
+                    health=int(row['HP']),
+                    gfxfile='%s.png' % (row['file']),
+                    friendly=int(row['Align']),
+                    movement=int(row['Move']),
+                    dirs=int(row['Dirs']),
+                    width=width,
+                    height=height,
+                    frames=int(row['Frame']),
+                    entscript=script)
 
     def get_itemlist(self):
         """
@@ -473,18 +487,18 @@ class EschalonData(object):
             return None
 
     @staticmethod
-    def new(book, gamedir):
+    def new(book, gamedir, modpath = None):
         """
         Returns a new object of the appropriate type.  For Books 2+3, we'll
         just instantiate ourselves.  For Book 1, we'll use a compatibility
         object.
         """
         if book == 1:
-            return B1EschalonData(gamedir)
+            return B1EschalonData(gamedir, modpath)
         elif book == 2:
-            return B2EschalonData(gamedir)
+            return B2EschalonData(gamedir, modpath)
         else:
-            return B3EschalonData(gamedir)
+            return B3EschalonData(gamedir, modpath)
 
 class B1EschalonData(object):
     """
@@ -494,7 +508,7 @@ class B1EschalonData(object):
     the main EschalonData class.
     """
 
-    def __init__(self, gamedir):
+    def __init__(self, gamedir, modpath = None):
         """
         Initialization - just store our gamedir, primarily.
         """
