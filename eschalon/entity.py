@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalon import constants as c
-from eschalon.savefile import FirstItemLoadException
+from eschalon.savefile import FirstItemLoadException, LoadException
 
 class Entity(object):
     """ A class to hold data about a particular entity on a map. """
@@ -317,20 +317,23 @@ class B2Entity(Entity):
             raise FirstItemLoadException('Reached EOF')
 
         # ... everything else
-        self.entid = df.readuchar()
-        self.x = df.readuchar()
-        self.y = df.readuchar()
-        self.direction = df.readuchar()
-        self.entscript = df.readstr()
-        if (self.savegame):
-            self.friendly = df.readuchar()
-            self.movement = df.readuchar()
-            self.health = df.readint()
-            self.frame = df.readuchar()
-            self.initial_loc = df.readint()
-            self.statuses = []
-            for i in range(self.num_statuses):
-                self.statuses.append(df.readint())
+        try:
+            self.entid = df.readuchar()
+            self.x = df.readuchar()
+            self.y = df.readuchar()
+            self.direction = df.readuchar()
+            self.entscript = df.readstr()
+            if (self.savegame):
+                self.friendly = df.readuchar()
+                self.movement = df.readuchar()
+                self.health = df.readint()
+                self.frame = df.readuchar()
+                self.initial_loc = df.readint()
+                self.statuses = []
+                for i in range(self.num_statuses):
+                    self.statuses.append(df.readint())
+        except LoadException:
+            raise FirstItemLoadException('Reached EOF')
 
     def write(self, df):
         """ Write the entity to the file. """
