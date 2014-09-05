@@ -12,10 +12,8 @@
 APPS="eschalon_utils"
 # Include these python modules
 INCLUDE="gtk,gio,atk,pangocairo"
-# Add these files to each app bundle.  We can't include gtk here because the
-# MachO header rebuild fails with the python library - see below for more
-# info
-RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0"
+# Add these files to each app bundle
+RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0,/usr/local/lib/gtk-2.0"
 # The version numbers for these libraries as they appear in the file names
 PANGO=1.0.0
 GDKPIXBUF=2.0.0
@@ -40,13 +38,20 @@ for APP in $APPS; do
 
   # Run py2app
   py2applet --make-setup "$PRETTY.py"
-  # Set icon file, which evidently can't be specified on the command line
-  perl -i -pe 's/(OPTIONS = {.*?)}/$1, "iconfile":"data\/eschalon1.icns"}/' setup.py
-  python setup.py py2app -i "$INCLUDE" -r "$RESOURCES" -d "$DMG"
+  # We have to skip the macholib header rewrite because it's broken for us -
+  # it complains of "New Mach-O header is too large to relocate".  We'll fix
+  # this manually with install_name_tool later
+  python setup.py py2app \
+   --debug-skip-macholib \
+   --iconfile "data/eschalon1.icns" \
+   -i "$INCLUDE" \
+   -r "$RESOURCES" \
+   -d "$DMG"
 
-  # The libraries are referenced by these names, and py2app doesn't make
-  # the appropriate links, so make them ourselves
+  # py2app isn't copying this itself for some reason
   cd "$DMG"/"$PRETTY".app/Contents/Frameworks
+  mkdir -p Python.framework/Versions/2.7
+  cp -R /System/Library/Frameworks/Python.framework/Versions/2.7/Python Python.framework/Versions/2.7/
 
   # The data directory gets referenced relative to the contents of the
   # site-packages directory.  If it's a zip file as py2app makes, this
@@ -60,34 +65,42 @@ for APP in $APPS; do
 
   # Put the included libraries in the right place
   cd ../../..
-  mv pango gdk-pixbuf-2.0 lib/
-  # Manually copy in the GTK modules. If we ask py2app to do this for us, it
-  # will try to rewrite the library paths with macholib.  That would be fine
-  # except that macholib will error out with "new Mach header too large"
-  # even for 64-bit executables that don't have that limitation. Fortunately
-  # install_name_tool deals with 64-bit executables correctly
-  cp -HR /usr/local/lib/gtk-2.0 lib/
-  cd lib/gtk-2.0
-  # The files are more 444 by default, and install_name_tool can't override
-  chmod -R u+w .
+  mv pango gdk-pixbuf-2.0 gtk-2.0 lib/
+
+  # Fix library references with install_name_tool
+  cd ..
   # Modify library paths in the modules manually with install_name_tool
-  # Stolen from tegaki create_app_bundle.sh
-  for dylib in */*.so */*/*.so; do
-    echo "Modifying library references in $dylib"
-    changes=""
-    for lib in `otool -L $dylib | egrep "(/opt/local|/local/|libs/)" | awk '{print $1}'` ; do
-      base=`basename $lib`
-      changes="$changes -change $lib @executable_path/../Frameworks/$base"
-    done
-    if test "x$changes" != x ; then
-      if ! install_name_tool $changes $dylib ; then
-        echo "Error for $dylib"
+  # Modified from tegaki create_app_bundle.sh
+  # Keep looping as long as we added more libraries
+  newlibs=1
+  while [ $newlibs -gt 0 ]; do
+    # The files are more 444 by default, and install_name_tool can't override
+    chmod -R u+w .
+    newlibs=0
+    for dylib in $(find . -name "*.so" -o -name "*.dylib"); do
+      echo "Modifying library references in $dylib"
+      changes=""
+      for lib in `otool -L $dylib | egrep "(/opt/local|/local/|libs/)" | awk '{print $1}'` ; do
+        base=`basename $lib`
+        changes="$changes -change $lib @executable_path/../Frameworks/$base"
+        # Copy the library in if necessary
+        if [ ! -f "Frameworks/$base" ]; then
+          echo "Copying in $lib"
+          cp $lib Frameworks/
+          # Loop again so we can pick up this library's dependencies
+          newlibs=1
+        fi
+      done
+      if test "x$changes" != x ; then
+        if ! install_name_tool $changes $dylib ; then
+          echo "Error for $dylib"
+        fi
+        install_name_tool -id @executable_path/../$dylib $dylib
       fi
-    fi
-    install_name_tool -id @executable_path/../Resources/lib/gtk-2.0/$dylib $dylib
+    done
   done
 
-  cd ../..
+  cd Resources
   # Create pango config files
   mkdir -p etc/pango
   pango-querymodules |perl -i -pe 's/^[^#].*\///' > etc/pango/pango.modules
@@ -99,6 +112,7 @@ for APP in $APPS; do
 
   # First, double-check that the library version numbers are 6 characters. 
   # If they're not, this won't work.
+  cd ../Frameworks
   for i in libpango-$PANGO libgdk_pixbuf-$GDKPIXBUF; do
     if ! readlink /usr/local/lib/$i.dylib |egrep -q "/Cellar/.*?/.{6}/lib/lib"; then
       echo "Fatal: $i version is not 6 characters long"
@@ -108,7 +122,6 @@ for APP in $APPS; do
 
   # Do the modifications. Our new paths are shorter than the old ones,
   # so null-terminate the string and pad up with dots.
-  cd ../Frameworks
   perl -i -pe 's?/usr/local/Cellar/pango/.{6}/etc/pango?../Resources/etc/pango\x00.................?' libpango-$PANGO.dylib
   perl -i -pe 's?/usr/local/Cellar/pango/.{6}/lib/pango?../Resources/lib/pango\x00.................?' libpango-$PANGO.dylib
   perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/.{6}/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-$GDKPIXBUF.dylib
