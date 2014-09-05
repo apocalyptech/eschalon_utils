@@ -186,6 +186,12 @@ brew install pygtk
 sudo easy_install czipfile
 sudo easy_install pycrypto
 
+You also need to tell the system Python to look for libraries in Homebrew's
+install path, so add this line to the .bash_profile file in your home
+directory. If the file doesn't exist, create it.
+
+export PYTHONPATH=/usr/local/lib/python2.7/site-packages/gtk-2.0:/usr/local/lib/python2.7/site-packages
+
 I recommend running the apps from the Terminal so that you can see any error
 output:
 
