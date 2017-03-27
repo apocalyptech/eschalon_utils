@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # vim: set expandtab tabstop=4 shiftwidth=4:
 
 # I believe this to be AES-256 (in CBC mode).  It uses PKCS7 padding for

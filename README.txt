@@ -58,7 +58,7 @@ editor, so be especially careful when editing maps.  Note that the map files
 As you make backups of the maps you're editing, be sure to back up that file
 as well.
 
-This was developed on Linux, and it uses Python, GTK+, and PyGTK to do
+This was developed on Linux, and it uses Python 2, GTK+, and PyGTK to do
 its stuff.  The application also runs perfectly fine on Windows (see the
 Windows section, below).  With the required Python/GTK+ packages
 installed, it runs correctly on OS X as well.

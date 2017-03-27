@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # vim: set expandtab tabstop=4 shiftwidth=4:
 # $Id: eschalon_b3_map.py,v 1.2 2010/07/28 21:22:05 pez Exp $
 #
