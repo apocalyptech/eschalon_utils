@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # vim: set expandtab tabstop=4 shiftwidth=4:
 #
 # Eschalon Savefile Editor
@@ -62,7 +62,7 @@ for i in range(numfiles):
 
 for filename in fileindex.keys():
   index = fileindex[filename]
-  print filename
+  print (filename)
   df.seek(zeroindex + index.abs_index)
   # On Windows, we need to specify bufsize or memory gets clobbered
   filedata = zlib.decompress(
