@@ -159,13 +159,13 @@ class Item(object):
             ret.append("\t(none)")
         else:
             ret.append("\t%s" % self.item_name)
-            if (c.categorytable.has_key(self.category)):
+            if (self.category in c.categorytable):
                 #ret.append("\tCategory: %s (0x%04X)" % (c.categorytable[self.category], self.category))
                 ret.append("\tCategory: %s" % (c.categorytable[self.category]))
             else:
                 ret.append("\tCategory: 0x%08X" % (self.category))
             if (self.subcategory != 0):
-                if (c.skilltable.has_key(self.subcategory)):
+                if (self.subcategory in c.skilltable):
                     ret.append("\tSubcategory: %s" % (c.skilltable[self.subcategory]))
                 else:
                     ret.append("\tSubcategory: 0x%08X" % (self.subcategory))
@@ -201,7 +201,7 @@ class Item(object):
                 if (self.armor > 0):
                     ret.append("\tSpecial: +%d Armor" % self.armor)
                 if (self.incr > 0):
-                    if (c.itemincrtable.has_key(self.incr)):
+                    if (self.incr in c.itemincrtable):
                         ret.append("\tSpecial: %s +20%%" % c.itemincrtable[self.incr])
                     else:
                         ret.append("\tSpecial: 0x%08X" % self.incr)
