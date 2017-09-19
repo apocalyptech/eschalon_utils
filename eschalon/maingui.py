@@ -659,10 +659,10 @@ class MainGUI(BaseGUI):
         """ Mark a label as changed or unchanged, on the GUI. """
         if (unchanged):
             if (not doitem or self.curitemcategory == self.ITEM_NONE):
-                if self.changed.has_key(name):
+                if name in self.changed:
                     del self.changed[name]
             else:
-                if self.itemchanged.has_key(name):
+                if name in self.itemchanged:
                     del self.itemchanged[name]
                 self.check_item_changed()
             return labelwidget.set_markup(label)
