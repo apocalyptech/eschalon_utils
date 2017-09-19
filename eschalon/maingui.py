@@ -25,9 +25,9 @@ import glob
 # Load GTK Deps
 try:
     import gtk
-except Exception, e:
-    print 'Python GTK Modules not found: %s' % (str(e))
-    print 'Hit enter to exit...'
+except Exception as e:
+    print('Python GTK Modules not found: %s' % (str(e)))
+    print('Hit enter to exit...')
     sys.stdin.readline()
     sys.exit(1)
 
@@ -36,7 +36,7 @@ from eschalon.basegui import BaseGUI
 # Load in our Cairo dep
 try:
     import cairo
-except Exception, e:
+except Exception as e:
     BaseGUI.errordialog('Error loading PyCairo',
                         'PyCairo could not be loaded: %s' % (str(e)))
     sys.exit(1)
@@ -394,8 +394,8 @@ class MainGUI(BaseGUI):
                 self.eschalondata = EschalonData.new(
                     c.book, self.get_current_gamedir())
                 c.set_eschalondata(self.eschalondata)
-            except Exception, e:
-                print 'Exception instantiating EschalonData: %s' % (e)
+            except Exception as e:
+                print('Exception instantiating EschalonData: %s' % (e))
 
         # Set up our graphics cache
         self.gfx = None
@@ -403,8 +403,8 @@ class MainGUI(BaseGUI):
         if self.eschalondata:
             try:
                 self.gfx = Gfx.new(c.book, self.datadir, self.eschalondata)
-            except Exception, e:
-                print 'Exception instantiating Gfx: %s' % (e)
+            except Exception as e:
+                print('Exception instantiating Gfx: %s' % (e))
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
@@ -611,7 +611,7 @@ class MainGUI(BaseGUI):
         try:
             char = Character.load(filename, self.req_book, self.req_book)
             char.read()
-        except LoadException, e:
+        except LoadException as e:
             errordiag = self.get_widget('loaderrorwindow')
             self.get_widget('loaderror_textview').get_buffer().set_text(e.text)
             errordiag.run()
@@ -694,13 +694,13 @@ class MainGUI(BaseGUI):
             return labelwidget.set_markup('<span foreground="red">' + label + '</span>')
 
     def has_unsaved_changes(self):
-        return (len(self.changed.keys()) > 0)
+        return (len(list(self.changed.keys())) > 0)
 
     def clear_all_changes(self):
         """ Clear out all the 'changed' notifiers on the GUI (used mostly just when saving). """
         # We'll have to make a copy of the dict on account of objectness
         mychanged = []
-        for name in self.changed.keys():
+        for name in list(self.changed.keys()):
             mychanged.append(name)
         for name in mychanged:
             (labelwidget, label) = self.get_label_cache(name)
@@ -1186,7 +1186,7 @@ class MainGUI(BaseGUI):
             self.get_widget('fxblock_%d' % (num)).set_value(char.fxblock[num])
 
         if char.book == 1:
-            for key in c.diseasetable.keys():
+            for key in list(c.diseasetable.keys()):
                 if (char.disease & key == key):
                     act = True
                 else:
@@ -1195,7 +1195,7 @@ class MainGUI(BaseGUI):
                 if widget:
                     widget.set_active(act)
         else:
-            for key in c.permstatustable.keys():
+            for key in list(c.permstatustable.keys()):
                 if (char.permstatuses & key == key):
                     act = True
                 else:
@@ -1244,7 +1244,7 @@ class MainGUI(BaseGUI):
                                 (num)).set_text(char.portal_locs[num][1])
                 self.get_widget('portal_loc_mapeng_%d' %
                                 (num)).set_text(char.portal_locs[num][2])
-            for idx in c.alchemytable.keys():
+            for idx in list(c.alchemytable.keys()):
                 self.get_widget('alchemy_book_%d' % (idx)).set_active(
                     char.alchemy_book[idx] > 0)
             for (idx, key) in enumerate(char.keyring):
@@ -1404,7 +1404,7 @@ class MainGUI(BaseGUI):
         # Character Effects (permanent)
         ###
         if c.book > 1:
-            for (statusid, statuslabel) in c.permstatustable.items():
+            for (statusid, statuslabel) in list(c.permstatustable.items()):
                 widget = self.get_widget(
                     'permstatuses_%0.8X_label' % (statusid))
                 if widget:
@@ -1419,7 +1419,7 @@ class MainGUI(BaseGUI):
         for box in [divbox, elembox]:
             for child in box.get_children():
                 box.remove(child)
-        for (idx, spell) in c.spelltable.items():
+        for (idx, spell) in list(c.spelltable.items()):
             if c.spelltype[idx] == 'EL':
                 box = elembox
             else:
@@ -1461,7 +1461,7 @@ class MainGUI(BaseGUI):
             numrows = len(c.alchemytable) / 2
             if (len(c.alchemytable) % 2 == 1):
                 numrows += 1
-            for (idx, recipe) in c.alchemytable.items():
+            for (idx, recipe) in list(c.alchemytable.items()):
                 if (idx < numrows):
                     box = box1
                 else:

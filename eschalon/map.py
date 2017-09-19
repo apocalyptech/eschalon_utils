@@ -398,7 +398,7 @@ class Map(object):
                 self.tiles[tilecontent.y][tilecontent.x].addtilecontent(
                     tilecontent)
             return True
-        except FirstItemLoadException, e:
+        except FirstItemLoadException as e:
             return False
 
     def deltilecontent(self, x, y, idx):
@@ -416,13 +416,13 @@ class Map(object):
             entity.read(self.df_ent)
             if self.tiles[entity.y][entity.x].entity is not None:
                 # TODO: Support this better, perhaps?
-                print 'WARNING: Two entities on a single tile, discarding all but the original'
+                print('WARNING: Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
                 if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
                     self.tiles[entity.y][entity.x].addentity(entity)
             return True
-        except FirstItemLoadException, e:
+        except FirstItemLoadException as e:
             return False
 
     def delentity(self, x, y):
@@ -639,7 +639,7 @@ class Map(object):
                 stringlist.append(df.readstr())
             nextbyte = df.readuchar()
             df.close()
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
         if nextbyte == 1:
@@ -701,11 +701,11 @@ class Map(object):
     @staticmethod
     def directions_between_coords(x1, y1, x2, y2):
         if y1 % 2 == 0:
-            map = dict(Map.DELTA_TO_DIRECTIONS.items() +
-                       Map.DELTA_TO_DIRECTIONS_EVEN.items())
+            map = dict(list(Map.DELTA_TO_DIRECTIONS.items()) +
+                       list(Map.DELTA_TO_DIRECTIONS_EVEN.items()))
         else:
-            map = dict(Map.DELTA_TO_DIRECTIONS.items() +
-                       Map.DELTA_TO_DIRECTIONS_ODD.items())
+            map = dict(list(Map.DELTA_TO_DIRECTIONS.items()) +
+                       list(Map.DELTA_TO_DIRECTIONS_ODD.items()))
 
         xdiff = x2 - x1
         ydiff = y2 - y1
@@ -825,7 +825,7 @@ class B1Map(Map):
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -835,7 +835,7 @@ class B1Map(Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
@@ -848,7 +848,7 @@ class B1Map(Map):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1036,7 +1036,7 @@ class B2Map(Map):
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -1046,7 +1046,7 @@ class B2Map(Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
@@ -1059,7 +1059,7 @@ class B2Map(Map):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1235,7 +1235,7 @@ class B3Map(B2Map):
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -1245,7 +1245,7 @@ class B3Map(B2Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
@@ -1265,7 +1265,7 @@ class B3Map(B2Map):
             self.version = '0.992'
             self.loadhook = 2
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
