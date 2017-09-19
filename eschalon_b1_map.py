@@ -28,20 +28,20 @@ from eschalon.preferences import Prefs
 def usage(full=False):
     #progname = sys.argv[0]
     progname = 'eschalon_b1_map.py'
-    print
-    print "To launch the GUI:"
-    print "\t%s [<mapfile>]" % (progname)
-    print
+    print()
+    print("To launch the GUI:")
+    print(("\t%s [<mapfile>]" % (progname)))
+    print()
     if (full):
-        print "To load a map automatically without going through the GUI dialog,"
-        print "specify the location of the file named with a '.map' extension."
-        print
-        print "Additionally, you may use -h or --help to view this message"
+        print("To load a map automatically without going through the GUI dialog,")
+        print("specify the location of the file named with a '.map' extension.")
+        print()
+        print("Additionally, you may use -h or --help to view this message")
     else:
-        print "To get a full help listing, with text descriptions of all the options:"
-        print "\t%s -h" % (progname)
-        print "\t%s --help" % (progname)
-    print
+        print("To get a full help listing, with text descriptions of all the options:")
+        print(("\t%s -h" % (progname)))
+        print(("\t%s --help" % (progname)))
+    print()
     sys.exit(2)
 
 
@@ -59,8 +59,8 @@ def main(argv=None):
         opts, args = getopt.getopt(argv[1:],
                                    'h',
                                    ['help'])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print((str(err)))
         usage()
 
     # now check to see if they're proper

@@ -28,70 +28,70 @@ from eschalon.preferences import Prefs
 def usage(full=False):
     #progname = sys.argv[0]
     progname = 'eschalon_b2_char.py'
-    print
-    print "To launch the GUI:"
-    print "\t%s [<charfile>]" % (progname)
-    print
-    print "To list character attributes on the console:"
-    print "\t%s -l [-s <all|stats|avatar|magic|equip|inv>] [-u] <charfile>" % (progname)
-    print "\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)
-    print
-    print "To manipulate character data from the console:"
-    print "\t%s [--set-gold=<num>] [--rm-disease] [--reset-hunger]" % (progname)
-    print "\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]"
-    print "\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>"
-    print
+    print()
+    print("To launch the GUI:")
+    print(("\t%s [<charfile>]" % (progname)))
+    print()
+    print("To list character attributes on the console:")
+    print(("\t%s -l [-s <all|stats|avatar|magic|equip|inv>] [-u] <charfile>" % (progname)))
+    print(("\t%s --list [--show=<all|stats|...>] [--unknowns] <charfile>" % (progname)))
+    print()
+    print("To manipulate character data from the console:")
+    print(("\t%s [--set-gold=<num>] [--rm-disease] [--reset-hunger]" % (progname)))
+    print("\t\t[--set-mana-max=<num>] [--set-mana-cur=<num>]")
+    print("\t\t[--set-hp-max=<num>] [--set-hp-cur=<num>] <charfile>")
+    print()
     if (full):
-        print "Wherever <charfile> appears in the above, you should specify the"
-        print "location of the file named 'char' inside your savegame folder."
-        print
-        print "By default, the application will launch the GUI.  Note that"
-        print "specifying a character file is optional when you're launching"
-        print "the GUI, but required when using any of the other commandline"
-        print "options."
-        print
-        print "For a textual representation of the charfile instead, use -l or"
-        print "--list."
-        print
-        print "To only show a listing of specific character information, use"
-        print "the -s or --show option, which can be specified more than once."
-        print "For instance, to show both the basic character stats and the"
-        print "character's magic information, you would use:"
-        print
-        print "\t%s -l -s stats -s magic <charfile>" % (progname)
-        print "\tor"
-        print "\t%s --list --show=stats --show=magic <charfile>" % (progname)
-        print
-        print "Currently, the following arguments are valid for --show:"
-        print
-        print "\tall - Show all information (this is the default)"
-        print "\tstats - Base Character Statistics"
-        print "\tavatar - Avatar information"
-        print "\tmagic - Magic information"
-        print "\talchemy - Alchemy information"
-        print "\tequip - Equipment information (armor, weapons, etc)"
-        print "\tinv - Inventory listings (including \"ready\" slots)"
-        print
-        print "When being shown the listing, specify -u or --unknowns to"
-        print "also show unknown data from the charfile."
-        print
-        print "There are a few options to set your character's gold level, hitpoints,"
-        print "mana, and remove any diseases.  These should be fairly self-explanatory."
-        print "Note that equipped items on your character may increase your effective"
-        print "HP or MP, so even if this util reports that you're at your maximum HP,"
-        print "you may find that you're slightly off when you enter the game.  Using the"
-        print "--set-hp-max or --set-mana-max options will also bring your current HP or"
-        print "MP up to the new Max level."
-        print
-        print "Note that the --reset-hunger option will maximize both hunger and thirst"
-        print "meters."
-        print
-        print "Additionally, you may use -h or --help to view this message"
+        print("Wherever <charfile> appears in the above, you should specify the")
+        print("location of the file named 'char' inside your savegame folder.")
+        print()
+        print("By default, the application will launch the GUI.  Note that")
+        print("specifying a character file is optional when you're launching")
+        print("the GUI, but required when using any of the other commandline")
+        print("options.")
+        print()
+        print("For a textual representation of the charfile instead, use -l or")
+        print("--list.")
+        print()
+        print("To only show a listing of specific character information, use")
+        print("the -s or --show option, which can be specified more than once.")
+        print("For instance, to show both the basic character stats and the")
+        print("character's magic information, you would use:")
+        print()
+        print(("\t%s -l -s stats -s magic <charfile>" % (progname)))
+        print("\tor")
+        print(("\t%s --list --show=stats --show=magic <charfile>" % (progname)))
+        print()
+        print("Currently, the following arguments are valid for --show:")
+        print()
+        print("\tall - Show all information (this is the default)")
+        print("\tstats - Base Character Statistics")
+        print("\tavatar - Avatar information")
+        print("\tmagic - Magic information")
+        print("\talchemy - Alchemy information")
+        print("\tequip - Equipment information (armor, weapons, etc)")
+        print("\tinv - Inventory listings (including \"ready\" slots)")
+        print()
+        print("When being shown the listing, specify -u or --unknowns to")
+        print("also show unknown data from the charfile.")
+        print()
+        print("There are a few options to set your character's gold level, hitpoints,")
+        print("mana, and remove any diseases.  These should be fairly self-explanatory.")
+        print("Note that equipped items on your character may increase your effective")
+        print("HP or MP, so even if this util reports that you're at your maximum HP,")
+        print("you may find that you're slightly off when you enter the game.  Using the")
+        print("--set-hp-max or --set-mana-max options will also bring your current HP or")
+        print("MP up to the new Max level.")
+        print()
+        print("Note that the --reset-hunger option will maximize both hunger and thirst")
+        print("meters.")
+        print()
+        print("Additionally, you may use -h or --help to view this message")
     else:
-        print "To get a full help listing, with text descriptions of all the options:"
-        print "\t%s -h" % (progname)
-        print "\t%s --help" % (progname)
-    print
+        print("To get a full help listing, with text descriptions of all the options:")
+        print(("\t%s -h" % (progname)))
+        print(("\t%s --help" % (progname)))
+    print()
     sys.exit(2)
 
 
@@ -138,8 +138,8 @@ def main(argv=None):
                                     'set-hp-cur=',
                                     'rm-disease',
                                     'reset-hunger'])
-    except getopt.GetoptError, err:
-        print str(err)
+    except getopt.GetoptError as err:
+        print((str(err)))
         usage()
 
     # now check to see if they're proper
@@ -205,7 +205,7 @@ def main(argv=None):
 
     # Make sure we have a filename still
     if (not options['gui'] and options['filename'] == None):
-        print "A filename is required"
+        print("A filename is required")
         usage()
 
     # Now load up the appropriate class
