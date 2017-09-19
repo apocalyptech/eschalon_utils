@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -34,6 +34,7 @@ except:
 
 from eschalon import constants as c
 from eschalon.scripteditor import ScriptEditor
+
 
 class WrapLabel(gtk.Label):
 
@@ -104,6 +105,7 @@ class WrapLabel(gtk.Label):
             self.__wrap_width = width
             self.queue_resize()
 
+
 class ImageSelWindow(gtk.Window):
 
     def __init__(self, object_tabs=False, on_clicked=None, on_motion=None, on_expose=None):
@@ -114,7 +116,8 @@ class ImageSelWindow(gtk.Window):
         vbox = gtk.VBox()
         self.add(vbox)
 
-        label = gtk.Label("Selecting an icon or hitting Escape will close this dialog.")
+        label = gtk.Label(
+            "Selecting an icon or hitting Escape will close this dialog.")
         label.set_alignment(.5, .5)
         label.set_padding(0, 6)
         vbox.pack_start(label, False, False)
@@ -164,7 +167,8 @@ class ImageSelWindow(gtk.Window):
         return True
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
-        (sw, self.drawingarea) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        (sw, self.drawingarea) = self.create_drawing_area(
+            on_clicked, on_motion, on_expose)
         vbox.pack_start(sw, True, True)
 
     def create_drawing_area(self, on_clicked, on_motion, on_expose):
@@ -195,11 +199,11 @@ class ImageSelWindow(gtk.Window):
 class BaseGUI(object):
 
     # Constants
-    ITEM_NONE=0
-    ITEM_EQUIP=1
-    ITEM_INV=2
-    ITEM_READY=3
-    ITEM_MAP=4
+    ITEM_NONE = 0
+    ITEM_EQUIP = 1
+    ITEM_INV = 2
+    ITEM_READY = 3
+    ITEM_MAP = 4
 
     def base_init(self):
         """
@@ -242,9 +246,11 @@ class BaseGUI(object):
         # slightly.)  It would probably make more sense to check some other environment
         # var here, really, but we'll just do this for now.
         if (os.path.dirname(__file__).find('library.zip') == -1):
-            self.datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
+            self.datadir = os.path.join(
+                os.path.dirname(__file__), '..', 'data')
         else:
-            self.datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+            self.datadir = os.path.join(
+                os.path.dirname(__file__), '..', '..', 'data')
 
     def prefs_init(self, prefs):
 
@@ -263,14 +269,21 @@ class BaseGUI(object):
 
         # Prefs fields
         self.prefs_savegame = self.prefsbuilder.get_object('savegame_chooser')
-        self.prefs_savegame_b2 = self.prefsbuilder.get_object('savegame_b2_chooser')
-        self.prefs_savegame_b3 = self.prefsbuilder.get_object('savegame_b3_chooser')
+        self.prefs_savegame_b2 = self.prefsbuilder.get_object(
+            'savegame_b2_chooser')
+        self.prefs_savegame_b3 = self.prefsbuilder.get_object(
+            'savegame_b3_chooser')
         self.prefs_gamedir = self.prefsbuilder.get_object('gamedata_chooser')
-        self.prefs_gamedir_b2 = self.prefsbuilder.get_object('gamedata_b2_chooser')
-        self.prefs_gamedir_b3 = self.prefsbuilder.get_object('gamedata_b3_chooser')
-        self.prefs_default_zoom = self.prefsbuilder.get_object('prefs_default_zoom')
-        self.prefs_warn_global = self.prefsbuilder.get_object('prefs_warn_global')
-        self.prefs_warn_slowzip = self.prefsbuilder.get_object('prefs_warn_slowzip')
+        self.prefs_gamedir_b2 = self.prefsbuilder.get_object(
+            'gamedata_b2_chooser')
+        self.prefs_gamedir_b3 = self.prefsbuilder.get_object(
+            'gamedata_b3_chooser')
+        self.prefs_default_zoom = self.prefsbuilder.get_object(
+            'prefs_default_zoom')
+        self.prefs_warn_global = self.prefsbuilder.get_object(
+            'prefs_warn_global')
+        self.prefs_warn_slowzip = self.prefsbuilder.get_object(
+            'prefs_warn_slowzip')
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
@@ -286,21 +299,24 @@ class BaseGUI(object):
         self.prefssel.connect('changed', self.on_prefs_changed)
 
         # Set up prefs colums
-        store = gtk.ListStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_INT)
+        store = gtk.ListStore(
+            gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_INT)
         self.prefsview.set_model(store)
-        col = gtk.TreeViewColumn('Icon', gtk.CellRendererPixbuf(), pixbuf = 0)
+        col = gtk.TreeViewColumn('Icon', gtk.CellRendererPixbuf(), pixbuf=0)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(50)
         self.prefsview.append_column(col)
-        col = gtk.TreeViewColumn('Text', gtk.CellRendererText(), text = 1)
+        col = gtk.TreeViewColumn('Text', gtk.CellRendererText(), text=1)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(110)
         self.prefsview.append_column(col)
 
         # Set up prefs rows
-        pixbuf = self.prefswindow.render_icon(gtk.STOCK_OPEN, gtk.ICON_SIZE_DIALOG)
+        pixbuf = self.prefswindow.render_icon(
+            gtk.STOCK_OPEN, gtk.ICON_SIZE_DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
-        pixbuf = self.prefswindow.render_icon(gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
+        pixbuf = self.prefswindow.render_icon(
+            gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'Map Editor', 2, 1)
 
         # Update the text on our graphics popups
@@ -310,50 +326,50 @@ class BaseGUI(object):
             gfxfile = 'datapak (or directory containing gfx directory)'
         opt_label = self.prefsbuilder.get_object('gfx_opt_window_mainlabel')
         opt_label.set_markup('We couldn\'t locate the file "%s," which can be used by '
-            'this program to enhance the GUI.  It\'s not required, but it does look '
-            'nicer.'
-            "\n\n"
-            '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
-            'bring up the preferences screen, where you can browse to the installation '
-            'folder and continue.  Alternately, hit Cancel to continue.' % (gfxfile, gfxfile, c.book))
+                             'this program to enhance the GUI.  It\'s not required, but it does look '
+                             'nicer.'
+                             "\n\n"
+                             '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
+                             'bring up the preferences screen, where you can browse to the installation '
+                             'folder and continue.  Alternately, hit Cancel to continue.' % (gfxfile, gfxfile, c.book))
         req_label = self.prefsbuilder.get_object('gfx_req_window_mainlabel')
         req_label.set_markup('We couldn\'t locate the file "%s," which this program needs '
-                'to operate.'
-                "\n\n"
-                '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
-                'bring up the preferences screen, where you can browse to the installation '
-                'folder and continue.  Alternately, hit Cancel to exit this program.' % (
-                    gfxfile, gfxfile, c.book))
+                             'to operate.'
+                             "\n\n"
+                             '%s can be found in the Eschalon Book %d installation folder.  Hit OK to '
+                             'bring up the preferences screen, where you can browse to the installation '
+                             'folder and continue.  Alternately, hit Cancel to exit this program.' % (
+                                 gfxfile, gfxfile, c.book))
 
     def item_signals(self):
         """ Returns the signals that need to be attached for items. """
         return {
-                'on_singleval_changed_str': self.on_singleval_changed_str,
-                'on_item_singleval_changed_str': self.on_item_singleval_changed_str,
-                'on_singleval_changed_int': self.on_singleval_changed_int,
-                'on_item_singleval_changed_int': self.on_item_singleval_changed_int,
-                'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
-                'on_singleval_changed_float': self.on_singleval_changed_float,
-                'on_item_singleval_changed_float': self.on_item_singleval_changed_float,
-                'on_dropdown_changed': self.on_dropdown_changed,
-                'on_item_dropdown_changed': self.on_item_dropdown_changed,
-                'on_category_dropdown_changed': self.on_category_dropdown_changed,
-                'on_checkbox_changed': self.on_checkbox_changed,
-                'on_item_checkbox_changed': self.on_item_checkbox_changed,
-                'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
-                'on_modifier_changed': self.on_modifier_changed,
-                'on_b2_bonus_changed': self.on_b2_bonus_changed,
-                'on_item_close_clicked': self.on_item_close_clicked,
-                'open_itemsel': self.open_itemsel,
-                'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
-                'bypass_delete': self.bypass_delete,
-                'on_b2_item_attr3_treeview_clicked': self.on_b2_item_attr3_treeview_clicked,
-                }
+            'on_singleval_changed_str': self.on_singleval_changed_str,
+            'on_item_singleval_changed_str': self.on_item_singleval_changed_str,
+            'on_singleval_changed_int': self.on_singleval_changed_int,
+            'on_item_singleval_changed_int': self.on_item_singleval_changed_int,
+            'on_singleval_changed_int_itempic': self.on_singleval_changed_int_itempic,
+            'on_singleval_changed_float': self.on_singleval_changed_float,
+            'on_item_singleval_changed_float': self.on_item_singleval_changed_float,
+            'on_dropdown_changed': self.on_dropdown_changed,
+            'on_item_dropdown_changed': self.on_item_dropdown_changed,
+            'on_category_dropdown_changed': self.on_category_dropdown_changed,
+            'on_checkbox_changed': self.on_checkbox_changed,
+            'on_item_checkbox_changed': self.on_item_checkbox_changed,
+            'on_checkbox_bit_changed': self.on_checkbox_bit_changed,
+            'on_modifier_changed': self.on_modifier_changed,
+            'on_b2_bonus_changed': self.on_b2_bonus_changed,
+            'on_item_close_clicked': self.on_item_close_clicked,
+            'open_itemsel': self.open_itemsel,
+            'on_bgcolor_img_clicked': self.on_bgcolor_img_clicked,
+            'bypass_delete': self.bypass_delete,
+            'on_b2_item_attr3_treeview_clicked': self.on_b2_item_attr3_treeview_clicked,
+        }
 
     def register_widget(self, name, widget, doname=True):
         if doname:
             widget.set_name(name)
-        #if name in self.widgetcache:
+        # if name in self.widgetcache:
         #    print 'WARNING: Created duplicate widget "%s"' % (name)
         self.widgetcache[name] = widget
 
@@ -380,8 +396,8 @@ class BaseGUI(object):
         """
         Shows a dialog for the user, with the given attributes.
         """
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
-                type, buttons)
+        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                   type, buttons)
         if parent:
             dialog.set_transient_for(parent)
             dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -430,7 +446,7 @@ class BaseGUI(object):
         """
 
         ###
-        ### Image Selection Window
+        # Image Selection Window
         ###
         self.imgsel_window = ImageSelWindow(
             on_clicked=self.imgsel_on_clicked,
@@ -439,7 +455,7 @@ class BaseGUI(object):
         self.register_widget('item_imgsel_window', self.imgsel_window)
 
         ###
-        ### Item Category and Subcategory dropdowns
+        # Item Category and Subcategory dropdowns
         ###
         category_dd = self.get_widget('category')
         category_dd.get_model().clear()
@@ -452,9 +468,9 @@ class BaseGUI(object):
             subcategory_dd.append_text(subcategory)
 
         ###
-        ### Item attribute modifier dropdowns
-        ### Note that technically we don't need to do this dynamically, since
-        ### these dropdowns only exist for Book 2.
+        # Item attribute modifier dropdowns
+        # Note that technically we don't need to do this dynamically, since
+        # these dropdowns only exist for Book 2.
         ###
         if book > 1:
             boxes = []
@@ -470,58 +486,63 @@ class BaseGUI(object):
             # Also, add in a couple of WrapLabels...
             align = self.get_widget('b2_modifier_3_infoalign')
             label = WrapLabel('The third modifier is the only one which can '
-                    'have a negative value, and uses four bytes instead of '
-                    'one.  Potions and reagents use a flag system (R+R=P).  '
-                    'Double-click to set one of those values, if you want.')
+                              'have a negative value, and uses four bytes instead of '
+                              'one.  Potions and reagents use a flag system (R+R=P).  '
+                              'Double-click to set one of those values, if you want.')
             label.show()
             align.add(label)
 
             align = self.get_widget('b2_item_picid_notealign')
             label = WrapLabel('<i>Note: Picture IDs in Book 2/3 are only '
-                    'unique within their groups: armor, weapons, '
-                    'magic/alchemy, or "other."</i>')
+                              'unique within their groups: armor, weapons, '
+                              'magic/alchemy, or "other."</i>')
             label.show()
             align.add(label)
 
             align = self.get_widget('quantity_align_b23')
-            label = WrapLabel('<i>(This value should always be greater than zero)</i>')
+            label = WrapLabel(
+                '<i>(This value should always be greater than zero)</i>')
             label.show()
             align.add(label)
 
         ###
-        ### Fix some tooltips
+        # Fix some tooltips
         ###
         if book == 1:
-            self.get_widget('rarity').set_tooltip_text('This is generally 1 for ordinary items, and 3 for items which the character hasn\'t identified yet.  Other values\' meanings are unknown.');
-            self.get_widget('quantity').set_tooltip_text('This value only makes sense when \'Can Stack\' is checked, above.  Ordinarily zero for items which can\'t be stacked.');
+            self.get_widget('rarity').set_tooltip_text(
+                'This is generally 1 for ordinary items, and 3 for items which the character hasn\'t identified yet.  Other values\' meanings are unknown.')
+            self.get_widget('quantity').set_tooltip_text(
+                'This value only makes sense when \'Can Stack\' is checked, above.  Ordinarily zero for items which can\'t be stacked.')
         else:
-            self.get_widget('rarity').set_tooltip_text('This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
-            self.get_widget('quantity').set_tooltip_text('This is usually 1 even if \'Can Stack\' is set to No.')
+            self.get_widget('rarity').set_tooltip_text(
+                'This is 1 for items you\'ve identified - other numbers represent the difficulty of identifying the item.  Bar of Mithril is set to 9, for reference.')
+            self.get_widget('quantity').set_tooltip_text(
+                'This is usually 1 even if \'Can Stack\' is set to No.')
 
         ###
-        ### Glade is seriously problematic; handle this TreeView connecting
-        ### stuff by hand.
+        # Glade is seriously problematic; handle this TreeView connecting
+        # stuff by hand.
         ###
-        col = gtk.TreeViewColumn('Potion', gtk.CellRendererText(), text = 0)
+        col = gtk.TreeViewColumn('Potion', gtk.CellRendererText(), text=0)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(0)
         self.get_widget('b2_potion_magic_treeview').append_column(col)
-        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text = 1)
+        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text=1)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(1)
         self.get_widget('b2_potion_magic_treeview').append_column(col)
 
-        col = gtk.TreeViewColumn('Reagent', gtk.CellRendererText(), text = 0)
+        col = gtk.TreeViewColumn('Reagent', gtk.CellRendererText(), text=0)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(0)
         self.get_widget('b2_reagent_magic_treeview').append_column(col)
-        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text = 1)
+        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text=1)
         col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
@@ -529,16 +550,18 @@ class BaseGUI(object):
         self.get_widget('b2_reagent_magic_treeview').append_column(col)
 
         ###
-        ### Script Editor Window
+        # Script Editor Window
         ###
         self.script_editor = ScriptEditor()
-        self.setup_script_editor_launcher(self.get_widget('script_hbox'), self.get_widget('script'), self.window)
+        self.setup_script_editor_launcher(self.get_widget(
+            'script_hbox'), self.get_widget('script'), self.window)
 
     def launch_script_editor(self, widget, script_entry, parent, has_coords=False):
         """
         Launches our script editor
         """
-        res = self.script_editor.launch(script_entry.get_text(), parent, has_coords)
+        res = self.script_editor.launch(
+            script_entry.get_text(), parent, has_coords)
         if res == gtk.RESPONSE_OK:
             script_entry.set_text(self.script_editor.get_command_aggregate())
 
@@ -550,9 +573,11 @@ class BaseGUI(object):
         align = gtk.Alignment(0, .5, 1, 1)
         align.set_padding(0, 0, 6, 0)
         button = gtk.Button()
-        button.add(gtk.image_new_from_stock(gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
+        button.add(gtk.image_new_from_stock(
+            gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
         button.set_tooltip_text('Launch Script Editor')
-        button.connect('clicked', self.launch_script_editor, widget, parent, has_coords)
+        button.connect('clicked', self.launch_script_editor,
+                       widget, parent, has_coords)
         align.add(button)
         container.pack_start(align, False)
         align.show_all()
@@ -642,7 +667,8 @@ class BaseGUI(object):
         else:
             alert_changed = False
         if (self.prefsobj.get_int('mapgui', 'default_zoom')):
-            self.prefs_default_zoom.set_value(self.prefsobj.get_int('mapgui', 'default_zoom'))
+            self.prefs_default_zoom.set_value(
+                self.prefsobj.get_int('mapgui', 'default_zoom'))
         cur_gamedir = self.get_current_gamedir()
         cur_savegamedir = self.get_current_savegame_dir()
         if c.book == 1:
@@ -651,41 +677,46 @@ class BaseGUI(object):
             self.prefsbuilder.get_object('b3_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir
             gui_savegamedir = self.prefs_savegame
-            look_for = [ 'gfx.pak', 'packedgraphics' ]
+            look_for = ['gfx.pak', 'packedgraphics']
         elif c.book == 2:
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').show()
             self.prefsbuilder.get_object('b3_dir_tab').hide()
             gui_gamedir = self.prefs_gamedir_b2
             gui_savegamedir = self.prefs_savegame_b2
-            look_for = [ 'datapak', 'gfx' ]
+            look_for = ['datapak', 'gfx']
         elif c.book == 3:
             self.prefsbuilder.get_object('b1_dir_tab').hide()
             self.prefsbuilder.get_object('b2_dir_tab').hide()
             self.prefsbuilder.get_object('b3_dir_tab').show()
             gui_gamedir = self.prefs_gamedir_b3
             gui_savegamedir = self.prefs_savegame_b3
-            look_for = [ 'datapak', 'gfx' ]
+            look_for = ['datapak', 'gfx']
 
         # In case we have a blank value stored in the prefs file, re-attempt to set it
         # from the default (should theoretically return '' anyway if we can't)
         if cur_gamedir == '':
-            cur_gamedir = self.prefsobj.default('paths', self.get_gamedir_key())
+            cur_gamedir = self.prefsobj.default(
+                'paths', self.get_gamedir_key())
         if cur_savegamedir == '':
-            cur_savegamedir = self.prefsobj.default('paths', self.get_savegame_dir_key())
+            cur_savegamedir = self.prefsobj.default(
+                'paths', self.get_savegame_dir_key())
 
         if cur_gamedir != '':
             gui_gamedir.set_current_folder(cur_gamedir)
         if cur_savegamedir != '':
             gui_savegamedir.set_current_folder(cur_savegamedir)
-        self.prefs_warn_slowzip.set_active(self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
-        #self.prefsnotebook.set_current_page(0)
+        self.prefs_warn_slowzip.set_active(
+            self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
+        # self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
         self.prefswindow.hide()
         if (response == gtk.RESPONSE_OK):
-            self.prefsobj.set_int('mapgui', 'default_zoom', int(self.prefs_default_zoom.get_value()))
-            self.prefsobj.set_bool('mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
+            self.prefsobj.set_int('mapgui', 'default_zoom', int(
+                self.prefs_default_zoom.get_value()))
+            self.prefsobj.set_bool(
+                'mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
 
             # Save our new game directory.  We actually only want to save under two conditions:
             #   1) We had a previous game directory set already
@@ -704,27 +735,29 @@ class BaseGUI(object):
                     if os.path.exists(os.path.join(new_gamedir, i)):
                         found = True
                 if (cur_gamedir != '' or found):
-                    self.prefsobj.set_str('paths', self.get_gamedir_key(), new_gamedir)
+                    self.prefsobj.set_str(
+                        'paths', self.get_gamedir_key(), new_gamedir)
                     if cur_gamedir != new_gamedir:
                         changed = True
 
             # Similar logic applies to the savegame directory
             new_savegamedir = gui_savegamedir.get_filename()
             if (cur_savegamedir != '' or os.path.exists(os.path.join(new_savegamedir, 'slot1'))):
-                self.prefsobj.set_str('paths', self.get_savegame_dir_key(), new_savegamedir)
+                self.prefsobj.set_str(
+                    'paths', self.get_savegame_dir_key(), new_savegamedir)
 
             try:
                 if not self.prefsobj.save():
                     self.warningdialog('Could not save preferences',
-                        '%s %s %s' % ('We were unable to save your preferences because we couldn\'t',
-                        'find the directory to use.  Please report this on the forums so that it',
-                        'can be fixed.'),
-                        self.window);
+                                       '%s %s %s' % ('We were unable to save your preferences because we couldn\'t',
+                                                     'find the directory to use.  Please report this on the forums so that it',
+                                                     'can be fixed.'),
+                                       self.window)
             except Exception, e:
                 self.warningdialog('Could not save preferences',
-                    '%s %s <tt>%s</tt>' % ('We were unable to save your preferences.  Please report this',
-                    "on the forums so that it can be fixed.\n\nThe error: ", e),
-                    self.window);
+                                   '%s %s <tt>%s</tt>' % ('We were unable to save your preferences.  Please report this',
+                                                          "on the forums so that it can be fixed.\n\nThe error: ", e),
+                                   self.window);
 
         return (changed, alert_changed)
 
@@ -756,7 +789,8 @@ class BaseGUI(object):
             obj = self.char.readyitems[self.curitem]
             origobj = self.origchar.readyitems[self.curitem]
         elif (self.curitemcategory == self.ITEM_MAP):
-            obj = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[self.curitem[1]].items[self.curitem[0]]
+            obj = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[self.curitem[1]
+                                                                           ].items[self.curitem[0]]
             origobj = obj
         else:
             obj = self.char
@@ -770,7 +804,8 @@ class BaseGUI(object):
         obj.__dict__[wname] = widget.get_text()
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[
+                                    wname]), wname, labelwidget, label)
 
     def on_item_singleval_changed_str(self, widget):
         """ What to do when a string value changes on the item edit screen. """
@@ -786,7 +821,8 @@ class BaseGUI(object):
         obj.__dict__[wname] = int(widget.get_value())
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[
+                                    wname]), wname, labelwidget, label)
 
     def on_item_singleval_changed_int(self, widget):
         """ What to do when an int value changes on our item screen. """
@@ -803,7 +839,8 @@ class BaseGUI(object):
         # Note that for floats, we shouldn't do exact precision, hence the 1e-6 comparison here.
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((abs(origobj.__dict__[wname] - obj.__dict__[wname])<1e-6), wname, labelwidget, label)
+            self.set_changed_widget(
+                (abs(origobj.__dict__[wname] - obj.__dict__[wname]) < 1e-6), wname, labelwidget, label)
 
     def on_item_singleval_changed_float(self, widget):
         """ What to do when an int value changes on our item screen. """
@@ -815,7 +852,8 @@ class BaseGUI(object):
     def update_itempic_image(self):
         if (self.gfx is not None):
             (obj, origobj) = self.get_comp_objects()
-            self.get_widget('item_pic_image').set_from_pixbuf(self.gfx.get_item(obj))
+            self.get_widget('item_pic_image').set_from_pixbuf(
+                self.gfx.get_item(obj))
 
     def on_singleval_changed_int_itempic(self, widget):
         """ Special-case to handle changing the item picture properly. """
@@ -838,15 +876,16 @@ class BaseGUI(object):
         obj.__dict__[wname] = widget.get_active()
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
-    
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[
+                                    wname]), wname, labelwidget, label)
+
     def on_item_dropdown_changed(self, widget):
         """ What to do when a dropdown changes on our item screen """
         self.on_dropdown_changed(widget)
         if widget.get_active() != 0:
             (obj, origobj) = self.get_comp_objects()
             self.set_item_quantity_nonzero(obj)
-    
+
     def on_category_dropdown_changed(self, widget):
         """
         What to do when the item category dropdown is changed.
@@ -867,7 +906,8 @@ class BaseGUI(object):
             obj.__dict__[wname] = 0
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
+            self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[
+                                    wname]), wname, labelwidget, label)
 
     def on_item_checkbox_changed(self, widget):
         """ What to do when a regular checkbox changes on our item edit screen. """
@@ -889,7 +929,8 @@ class BaseGUI(object):
             obj.__dict__[shortname] = obj.__dict__[shortname] & ~mask
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
-            self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[shortname] & mask), wname, labelwidget, label)
+            self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[
+                                    shortname] & mask), wname, labelwidget, label)
 
     def on_modifier_changed(self, widget):
         """ What to do when our attr or skill modifier changes. """
@@ -907,7 +948,7 @@ class BaseGUI(object):
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(which)
             self.set_changed_widget((origobj.__dict__[modifiertext] == obj.__dict__[modifiertext] and
-                origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
+                                     origobj.__dict__[modifiedtext] == obj.__dict__[modifiedtext]), which, labelwidget, label)
 
     def on_b2_bonus_changed(self, widget):
         """ What to do when a book 2 item attribute changes. """
@@ -932,7 +973,7 @@ class BaseGUI(object):
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(bonusvaluetext)
             self.set_changed_widget((origobj.__dict__[bonusvaluetext] == obj.__dict__[bonusvaluetext] and
-                origobj.__dict__[bonustext] == obj.__dict__[bonustext]), bonusvaluetext, labelwidget, label)
+                                     origobj.__dict__[bonustext] == obj.__dict__[bonustext]), bonusvaluetext, labelwidget, label)
 
     def on_item_close_clicked(self, widget=None, event=None, dohide=True):
         if (self.curitemcategory == self.ITEM_EQUIP):
@@ -960,7 +1001,7 @@ class BaseGUI(object):
         elif (item.category == 0):
             str = '<i>%s (no Category specified)</i>' % (item.item_name)
         else:
-            if (item.canstack and item.quantity>1):
+            if (item.canstack and item.quantity > 1):
                 str = '<i>(%d)</i> ' % (item.quantity)
             if (len(item.item_name) > 0):
                 str = str + item.item_name
@@ -1051,28 +1092,29 @@ class BaseGUI(object):
         # One more note: we've left off the attr_modified and skill_modified
         # controls from here, because of the compound check function
         if item.book == 1:
-            strvals = [ 'item_name', 'script', 'emptystr' ]
-            dropdownvals = [ 'category', 'subcategory', 'incr' ]
-            intvals = [ 'value', 'basedamage', 'basearmor',
-                    'hitpoint', 'mana', 'tohit', 'damage', 'armor',
-                    'rarity', 'duration', 'quantity', 'zero1' ]
-            floatvals = [ 'weight' ]
-            checkboxvals = [ 'canstack' ]
-            checkboxbitvals = [ 'flags_0003' ]
-            modifiervals = [ 'attr_modifier', 'skill_modifier' ]
-            b2modifiervals = [ ]
+            strvals = ['item_name', 'script', 'emptystr']
+            dropdownvals = ['category', 'subcategory', 'incr']
+            intvals = ['value', 'basedamage', 'basearmor',
+                       'hitpoint', 'mana', 'tohit', 'damage', 'armor',
+                       'rarity', 'duration', 'quantity', 'zero1']
+            floatvals = ['weight']
+            checkboxvals = ['canstack']
+            checkboxbitvals = ['flags_0003']
+            modifiervals = ['attr_modifier', 'skill_modifier']
+            b2modifiervals = []
         else:
-            strvals = [ 'item_name', 'script', 'spell' ]
-            dropdownvals = [ 'category', 'subcategory' ]
-            intvals = [ 'value', 'basedamage', 'basearmor',
-                    'rarity', 'quantity',
-                    'cur_hp', 'max_hp',
-                    'quest', 'material', 'spell_power' ]
-            floatvals = [ 'weight' ]
-            checkboxvals = [ 'canstack', 'is_projectile' ]
-            checkboxbitvals = [ ]
-            modifiervals = [ ]
-            b2modifiervals = [ 'bonus_value_1', 'bonus_value_2', 'bonus_value_3' ]
+            strvals = ['item_name', 'script', 'spell']
+            dropdownvals = ['category', 'subcategory']
+            intvals = ['value', 'basedamage', 'basearmor',
+                       'rarity', 'quantity',
+                       'cur_hp', 'max_hp',
+                       'quest', 'material', 'spell_power']
+            floatvals = ['weight']
+            checkboxvals = ['canstack', 'is_projectile']
+            checkboxbitvals = []
+            modifiervals = []
+            b2modifiervals = ['bonus_value_1',
+                              'bonus_value_2', 'bonus_value_3']
         for val in strvals:
             self.on_singleval_changed_str(self.get_widget(val))
         for val in dropdownvals:
@@ -1118,7 +1160,7 @@ class BaseGUI(object):
         self.register_widget('%s_button' % name, itembutton)
         itembutton.connect('clicked', itemcallback)
         align.add(itembutton)
-        
+
         itembutton_hbox = gtk.HBox()
         itembutton_hbox.show()
         itembutton.add(itembutton_hbox)
@@ -1147,10 +1189,14 @@ class BaseGUI(object):
         divlabel.set_size_request(20, -1)
         exphbox.pack_start(divlabel, False)
 
-        exphbox.pack_start(self.gui_itemedit_button(name, 'Cut', 'cut', gtk.STOCK_CUT, itemactioncallback), False)
-        exphbox.pack_start(self.gui_itemedit_button(name, 'Copy', 'copy', gtk.STOCK_COPY, itemactioncallback), False)
-        exphbox.pack_start(self.gui_itemedit_button(name, 'Paste', 'paste', gtk.STOCK_PASTE, itemactioncallback), False)
-        exphbox.pack_start(self.gui_itemedit_button(name, 'Delete', 'delete', gtk.STOCK_DELETE, itemactioncallback), False)
+        exphbox.pack_start(self.gui_itemedit_button(
+            name, 'Cut', 'cut', gtk.STOCK_CUT, itemactioncallback), False)
+        exphbox.pack_start(self.gui_itemedit_button(
+            name, 'Copy', 'copy', gtk.STOCK_COPY, itemactioncallback), False)
+        exphbox.pack_start(self.gui_itemedit_button(
+            name, 'Paste', 'paste', gtk.STOCK_PASTE, itemactioncallback), False)
+        exphbox.pack_start(self.gui_itemedit_button(
+            name, 'Delete', 'delete', gtk.STOCK_DELETE, itemactioncallback), False)
 
         return hbox
 
@@ -1172,10 +1218,10 @@ class BaseGUI(object):
     def open_itemsel(self, widget):
         if (self.gfx is not None):
             self.imgsel_launch(self.get_widget('pictureid'),
-                    self.gfx.item_dim, self.gfx.item_dim, self.gfx.item_cols, self.gfx.item_rows,
-                    self.gfx.get_item,
-                    False, 0,
-                    self.imgsel_item_creation_func)
+                               self.gfx.item_dim, self.gfx.item_dim, self.gfx.item_cols, self.gfx.item_rows,
+                               self.gfx.get_item,
+                               False, 0,
+                               self.imgsel_item_creation_func)
 
     def imgsel_item_creation_func(self, id):
         """
@@ -1191,19 +1237,22 @@ class BaseGUI(object):
         pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, x, y)
         steps = 4
         max = 255
-        stepval = int(max/steps)
+        stepval = int(max / steps)
         stepvals = []
         for i in range(steps):
-            stepvals.insert(0, max-(stepval*i))
+            stepvals.insert(0, max - (stepval * i))
         stepvals.insert(0, 0)
-        stepwidth = int(x/(steps+1))
-        temppixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, stepwidth, y)
+        stepwidth = int(x / (steps + 1))
+        temppixbuf = gtk.gdk.Pixbuf(
+            gtk.gdk.COLORSPACE_RGB, True, 8, stepwidth, y)
         for (i, val) in enumerate(stepvals):
-            color = (val<<24) + (val<<16) + (val<<8) + 255
+            color = (val << 24) + (val << 16) + (val << 8) + 255
             temppixbuf.fill(color)
-            temppixbuf.copy_area(0, 0, stepwidth, y, pixbuf, (i*stepwidth), 0)
+            temppixbuf.copy_area(0, 0, stepwidth, y,
+                                 pixbuf, (i * stepwidth), 0)
         # We have to connect this in the code because there's no interface to do so in Glade
-        self.imgsel_window.eventbox.connect('button-press-event', self.on_bgcolor_img_clicked)
+        self.imgsel_window.eventbox.connect(
+            'button-press-event', self.on_bgcolor_img_clicked)
         self.imgsel_window.image.set_from_pixbuf(pixbuf)
         self.imgsel_bgcolor_pixbuf = pixbuf
 
@@ -1229,8 +1278,8 @@ class BaseGUI(object):
         self.imgsel_height = height
         self.imgsel_cols = cols
         self.imgsel_rows = rows
-        self.imgsel_x = width*cols
-        self.imgsel_y = height*rows
+        self.imgsel_x = width * cols
+        self.imgsel_y = height * rows
         self.imgsel_offset = offset
         self.imgsel_mousex = -1
         self.imgsel_mousey = -1
@@ -1242,7 +1291,7 @@ class BaseGUI(object):
         self.imgsel_getfunc_extraarg = None
         self.imgsel_pixbuffunc = None
         self.imgsel_init_bgcolor()
-        req_width = self.imgsel_x+25
+        req_width = self.imgsel_x + 25
         req_height = 600
         if (self.imgsel_y < 580):
             req_height = self.imgsel_y + 20
@@ -1255,38 +1304,42 @@ class BaseGUI(object):
         self.imgsel_window.show()
 
     def imgsel_on_motion(self, widget, event):
-        self.imgsel_mousex = int(event.x/self.imgsel_width)
-        self.imgsel_mousey = int(event.y/self.imgsel_height)
+        self.imgsel_mousex = int(event.x / self.imgsel_width)
+        self.imgsel_mousey = int(event.y / self.imgsel_height)
         if (self.imgsel_mousex > self.imgsel_cols):
             self.imgsel_mousex = self.imgsel_cols
         if (self.imgsel_mousey > self.imgsel_rows):
             self.imgsel_mousey = self.imgsel_rows
         if (self.imgsel_mousex != self.imgsel_mousex_prev or
-            self.imgsel_mousey != self.imgsel_mousey_prev):
-            self.imgsel_clean.append((self.imgsel_mousex_prev, self.imgsel_mousey_prev))
+                self.imgsel_mousey != self.imgsel_mousey_prev):
+            self.imgsel_clean.append(
+                (self.imgsel_mousex_prev, self.imgsel_mousey_prev))
             self.imgsel_clean.append((self.imgsel_mousex, self.imgsel_mousey))
             self.imgsel_mousex_prev = self.imgsel_mousex
             self.imgsel_mousey_prev = self.imgsel_mousey
         self.imgsel_window.drawingarea.queue_draw()
 
     def imgsel_draw(self, x, y):
-        imgnum = (y*self.imgsel_cols)+x
+        imgnum = (y * self.imgsel_cols) + x
         if (imgnum < 0 or imgnum > (self.imgsel_rows * self.imgsel_cols)):
             return
         if self.imgsel_getfunc_obj_func:
-            loadnum = self.imgsel_getfunc_obj_func(imgnum+self.imgsel_offset)
+            loadnum = self.imgsel_getfunc_obj_func(imgnum + self.imgsel_offset)
         else:
-            loadnum = imgnum+self.imgsel_offset
+            loadnum = imgnum + self.imgsel_offset
         if self.imgsel_getfunc_extraarg is not None:
-            pixbuf = self.imgsel_getfunc(loadnum, None, True, self.imgsel_getfunc_extraarg)
+            pixbuf = self.imgsel_getfunc(
+                loadnum, None, True, self.imgsel_getfunc_extraarg)
         else:
             pixbuf = self.imgsel_getfunc(loadnum, None, True)
         if (self.imgsel_pixbuffunc is not None):
             pixbuf = self.imgsel_pixbuffunc(pixbuf)
         if (pixbuf is None):
             return
-        self.imgsel_pixmap.draw_pixbuf(None, self.imgsel_blank, 0, 0, x*self.imgsel_width, y*self.imgsel_height)
-        self.imgsel_pixmap.draw_pixbuf(None, pixbuf, 0, 0, x*self.imgsel_width, y*self.imgsel_height)
+        self.imgsel_pixmap.draw_pixbuf(
+            None, self.imgsel_blank, 0, 0, x * self.imgsel_width, y * self.imgsel_height)
+        self.imgsel_pixmap.draw_pixbuf(
+            None, pixbuf, 0, 0, x * self.imgsel_width, y * self.imgsel_height)
         if (x == self.imgsel_mousex and y == self.imgsel_mousey):
             color = self.imgsel_gc_white
         elif (x == self.imgsel_curx and y == self.imgsel_cury):
@@ -1295,56 +1348,68 @@ class BaseGUI(object):
             return
 
         # Outline points
-        x1 = x*self.imgsel_width
+        x1 = x * self.imgsel_width
         x2 = x1 + self.imgsel_width - 1
         x3 = x2
         x4 = x1
         x5 = x1
 
-        y1 = y*self.imgsel_height
+        y1 = y * self.imgsel_height
         y2 = y1
         y3 = y2 + self.imgsel_height - 1
         y4 = y3
         y5 = y1
 
-        self.imgsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
-    
+        self.imgsel_pixmap.draw_lines(
+            color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+
     def imgsel_generate_grayscale(self, color):
-        return int((color<<24) + (color<<16) + (color<<8) + 255)
+        return int((color << 24) + (color << 16) + (color << 8) + 255)
 
     def imgsel_on_expose(self, widget, event):
         if (self.imgsel_init):
             for (x, y) in self.imgsel_clean:
                 self.imgsel_draw(x, y)
         else:
-            if (int(self.imgsel_widget.get_value())-self.imgsel_offset < 0):
+            if (int(self.imgsel_widget.get_value()) - self.imgsel_offset < 0):
                 self.imgsel_curx = -1
                 self.imgsel_cury = -1
             else:
-                self.imgsel_curx = (int(self.imgsel_widget.get_value())-self.imgsel_offset) % self.imgsel_cols
-                self.imgsel_cury = int((int(self.imgsel_widget.get_value())-self.imgsel_offset) / self.imgsel_cols)
-            self.imgsel_window.drawingarea.set_size_request(self.imgsel_x, self.imgsel_y)
-            self.imgsel_pixmap = gtk.gdk.Pixmap(self.imgsel_window.drawingarea.window, self.imgsel_x, self.imgsel_y)
-            self.imgsel_blank = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
+                self.imgsel_curx = (
+                    int(self.imgsel_widget.get_value()) - self.imgsel_offset) % self.imgsel_cols
+                self.imgsel_cury = int(
+                    (int(self.imgsel_widget.get_value()) - self.imgsel_offset) / self.imgsel_cols)
+            self.imgsel_window.drawingarea.set_size_request(
+                self.imgsel_x, self.imgsel_y)
+            self.imgsel_pixmap = gtk.gdk.Pixmap(
+                self.imgsel_window.drawingarea.window, self.imgsel_x, self.imgsel_y)
+            self.imgsel_blank = gtk.gdk.Pixbuf(
+                gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
             self.imgsel_blank.fill(self.imgsel_blank_color)
-            self.imgsel_gc_white = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
-            self.imgsel_gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
-            self.imgsel_gc_black = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
+            self.imgsel_gc_white = gtk.gdk.GC(
+                self.imgsel_window.drawingarea.window)
+            self.imgsel_gc_white.set_rgb_fg_color(
+                gtk.gdk.Color(65535, 65535, 65535))
+            self.imgsel_gc_black = gtk.gdk.GC(
+                self.imgsel_window.drawingarea.window)
             self.imgsel_gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.imgsel_gc_green = gtk.gdk.GC(self.imgsel_window.drawingarea.window)
+            self.imgsel_gc_green = gtk.gdk.GC(
+                self.imgsel_window.drawingarea.window)
             self.imgsel_gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
-            self.imgsel_pixmap.draw_rectangle(self.imgsel_gc_black, True, 0, 0, self.imgsel_x, self.imgsel_y)
+            self.imgsel_pixmap.draw_rectangle(
+                self.imgsel_gc_black, True, 0, 0, self.imgsel_x, self.imgsel_y)
             for y in range(self.imgsel_rows):
                 for x in range(self.imgsel_cols):
                     self.imgsel_draw(x, y)
             self.imgsel_init = True
         self.imgsel_clean = []
         self.imgsel_window.drawingarea.window.draw_drawable(self.imgsel_window.drawingarea.get_style().fg_gc[gtk.STATE_NORMAL],
-            self.imgsel_pixmap, 0, 0, 0, 0, self.imgsel_x, self.imgsel_y)
+                                                            self.imgsel_pixmap, 0, 0, 0, 0, self.imgsel_x, self.imgsel_y)
 
     def imgsel_on_clicked(self, widget, event):
         self.imgsel_init = False
-        self.imgsel_widget.set_value(self.imgsel_mousex+(self.imgsel_cols*self.imgsel_mousey)+self.imgsel_offset)
+        self.imgsel_widget.set_value(
+            self.imgsel_mousex + (self.imgsel_cols * self.imgsel_mousey) + self.imgsel_offset)
         self.imgsel_window.hide()
 
     def on_bgcolor_img_clicked(self, widget, event):
@@ -1362,7 +1427,8 @@ class BaseGUI(object):
 
     def get_gamedir_filelist(self, directory, ext, keepext=True, matchprefixes=None):
         if c.book == 1:
-            path = os.path.join(self.prefs.get_str('paths', 'gamedir'), directory)
+            path = os.path.join(self.prefs.get_str(
+                'paths', 'gamedir'), directory)
             files = os.listdir(path)
         else:
             files = []
@@ -1423,7 +1489,7 @@ class BaseGUI(object):
             retarr.append([])
             for x in range(buf.get_width()):
                 retarr[y].append([])
-                for color in unpack(packstr, pixels[idx:idx+channels]):
+                for color in unpack(packstr, pixels[idx:idx + channels]):
                     retarr[y][x].append(color)
                     # Old-style, which was more compatible at one point with get_pixels_array()
                     #retarr[y][x].append((color, 0))
@@ -1438,7 +1504,8 @@ class BaseGUI(object):
         """
         if event.type == gtk.gdk._2BUTTON_PRESS:
             (model, iter) = widget.get_selection().get_selected()
-            self.get_widget('bonus_value_3').set_value(model.get_value(iter, 1))
+            self.get_widget('bonus_value_3').set_value(
+                model.get_value(iter, 1))
 
     def completion_show_text(self, layout, cell, model, iteration, column):
         """

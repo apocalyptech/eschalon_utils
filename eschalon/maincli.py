@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -21,6 +21,7 @@
 from eschalon import constants as c
 from eschalon.character import Character
 from eschalon.savefile import LoadException
+
 
 class MainCLI(object):
 
@@ -31,7 +32,7 @@ class MainCLI(object):
         self.req_book = req_book
 
     def run(self):
-        
+
         options = self.options
 
         # Load in our file
@@ -76,24 +77,24 @@ class MainCLI(object):
         if (options['rm_disease'] > 0):
             if char.book == 1:
                 print 'Old Disease Flags: %04X' % (char.disease)
-                char.clearDiseases();
+                char.clearDiseases()
                 print 'New Disease Flags: %04X' % (char.disease)
             else:
                 print 'Old Permanent Status Flags: %08X' % (char.permstatuses)
-                char.clearDiseases();
+                char.clearDiseases()
                 print 'New Permanent Status Flags: %08X' % (char.permstatuses)
 
         if (options['reset_hunger'] > 0):
             if char.book == 1:
                 print 'Resetting hunger/thirst is only available for Book 2/3 characters'
             else:
-                print 'Old Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger/10.0, char.thirst/10.0)
+                print 'Old Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger / 10.0, char.thirst / 10.0)
                 char.resetHunger()
-                print 'New Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger/10.0, char.thirst/10.0)
-        
+                print 'New Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger / 10.0, char.thirst / 10.0)
+
         # If we've gotten here, write the file
         char.write()
-        
+
         # ... and return
         return True
 
@@ -131,7 +132,7 @@ class MainCLI(object):
 
         if char.book == 1:
             if (char.picid % 256 == 0):
-                print "Profile Picture %d" % (int(char.picid / 256)+1)
+                print "Profile Picture %d" % (int(char.picid / 256) + 1)
             else:
                 print "Profile Picture ID: %d" % char.picid
         else:
@@ -145,9 +146,9 @@ class MainCLI(object):
         print "END: %2d    PCP: %2d    EXP: %d" % (char.endurance, char.perception, char.experience)
         print "SPD: %2d    CCN: %2d   GOLD: %d" % (char.speed, char.concentration, char.gold)
         if (char.book > 1):
-            print "HUNGER: %2d%%    THIRST: %2d%%" % (char.hunger/10.0, char.thirst/10.0)
+            print "HUNGER: %2d%%    THIRST: %2d%%" % (char.hunger / 10.0, char.thirst / 10.0)
         print
-        
+
         print "CHARACTER STATUS"
         print "----------------"
         print
@@ -156,7 +157,8 @@ class MainCLI(object):
                 extra = ''
                 if char.book > 1:
                     if (char.statuses_extra[i] > 0):
-                        extra = '  - extra (casting level): %d' % (char.statuses_extra[i])
+                        extra = '  - extra (casting level): %d' % (
+                            char.statuses_extra[i])
                 if (i in c.statustable):
                     print "\t* %s (Turns left: %d)%s" % (c.statustable[i], char.statuses[i], extra)
                 else:
@@ -195,22 +197,22 @@ class MainCLI(object):
             if (char.fxblock[0] == 1073741824 and
                 char.fxblock[1] == 2111 and
                 char.fxblock[2] == 2560 and
-                char.fxblock[3] == 5120):
+                    char.fxblock[3] == 5120):
                 print "Ordinary FX (no modifiers)"
             elif (char.fxblock[0] == 1803886340 and
-                char.fxblock[1] == 61503 and
-                char.fxblock[2] == 30720 and
-                char.fxblock[3] == 15360):
+                  char.fxblock[1] == 61503 and
+                  char.fxblock[2] == 30720 and
+                  char.fxblock[3] == 15360):
                 print "Gravedigger's Flame is On"
             elif (char.fxblock[0] == 1288490242 and
-                char.fxblock[1] == 41023 and
-                char.fxblock[2] == 38400 and
-                char.fxblock[3] == 32000):
+                  char.fxblock[1] == 41023 and
+                  char.fxblock[2] == 38400 and
+                  char.fxblock[3] == 32000):
                 print "Torch is On"
             elif (char.fxblock[0] == 1803886342 and
-                char.fxblock[1] == 61503 and
-                char.fxblock[2] == 38400 and
-                char.fxblock[3] == 32000):
+                  char.fxblock[1] == 61503 and
+                  char.fxblock[2] == 38400 and
+                  char.fxblock[3] == 32000):
                 print "Torch is On"
                 print "Gravedigger's Flame is On"
             else:
@@ -252,9 +254,9 @@ class MainCLI(object):
         i = 1
         for spell in char.readyslots:
             if (spell[0] != ''):
-                print "\t%d - %s / Level %d" % (i%10, spell[0], spell[1])
+                print "\t%d - %s / Level %d" % (i % 10, spell[0], spell[1])
             else:
-                print "\t%d - (none)" % (i%10)
+                print "\t%d - (none)" % (i % 10)
             i = i + 1
         print
 
@@ -262,7 +264,8 @@ class MainCLI(object):
             portal_locs = []
             for (slot, portal_loc) in enumerate(char.portal_locs):
                 if portal_loc[1] != '':
-                    portal_locs.append("\tSlot %d: %s (%s) at %d" % (slot+1, portal_loc[1], portal_loc[2], portal_loc[0]))
+                    portal_locs.append("\tSlot %d: %s (%s) at %d" % (
+                        slot + 1, portal_loc[1], portal_loc[2], portal_loc[0]))
             if (len(portal_locs) > 0):
                 print "BOUND PORTAL LOCATIONS"
                 print "----------------------"
@@ -324,9 +327,9 @@ class MainCLI(object):
             print char.weap_alt.display(unknowns)
 
         if char.book > 1:
-            slotorder = [ 'Quiver', 'Helm', 'Cloak', 'Amulet', 'Torso',
-                    'Weapon', 'Belt', 'Gauntlet', 'Legs', 'Ring 1', 'Ring 2',
-                    'Shield', 'Feed' ]
+            slotorder = ['Quiver', 'Helm', 'Cloak', 'Amulet', 'Torso',
+                         'Weapon', 'Belt', 'Gauntlet', 'Legs', 'Ring 1', 'Ring 2',
+                         'Shield', 'Feed']
             print
             print "EQUIPMENT SLOT 1"
             print "----------------"
@@ -340,7 +343,7 @@ class MainCLI(object):
             for (idx, slot) in enumerate(slotorder):
                 print "\t%s: %s" % (slotorder[idx], char.equip_slot_2[idx])
             print
-        
+
     def display_inventory(self, unknowns=False):
         """ Print out a textual representation of the character's inventory. """
 
@@ -360,8 +363,8 @@ class MainCLI(object):
         print
         for row in range(char.inv_rows):
             for col in range(char.inv_cols):
-                print "Row %d, Col %d:" % (row+1, col+1)
-                if (row == (char.inv_rows-1) and col == (char.inv_cols-1)):
+                print "Row %d, Col %d:" % (row + 1, col + 1)
+                if (row == (char.inv_rows - 1) and col == (char.inv_cols - 1)):
                     print "\tGold: %d" % (char.gold)
                 else:
                     print char.inventory[row][col].display(unknowns)
