@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python
 # vim: set expandtab tabstop=4 shiftwidth=4:
 
 # I believe this to be AES-256 (in CBC mode).  It uses PKCS7 padding for
@@ -19,6 +19,8 @@
 # Secret: ZOzND3khdZGyczSal4TakWqzSCPXpCyPwuNcHb_zPrk=
 # Encrypted: 2Am9Pff522Nn7JTsjxiNdwQsJsW9aa7VaWaPl0qaiEcvqRC5r3lcKdWXNrrlJhtm
 
+from __future__ import print_function, division, unicode_literals, absolute_import
+
 import os
 import base64
 from Crypto.Cipher import AES
@@ -31,7 +33,7 @@ mode = AES.MODE_CBC
 # Get our secret
 secret = os.urandom(key_size)
 secret_b64 = base64.urlsafe_b64encode(secret)
-print 'Secret: %s' % (secret_b64)
+print ('Secret: %s' % (secret_b64.decode()))
 
 # IV
 iv = os.urandom(block_size)
@@ -44,4 +46,4 @@ data = plain_text + pad * chr(pad)
 # Now actually encrypt
 encrypted = iv + AES.new(secret, mode, iv).encrypt(data)
 encrypted_b64 = base64.urlsafe_b64encode(encrypted)
-print 'Encrypted: %s' % (encrypted_b64)
+print ('Encrypted: %s' % (encrypted_b64.decode()))
