@@ -3,23 +3,24 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalon import constants as c
 from eschalon.savefile import FirstItemLoadException, LoadException
+
 
 class Entity(object):
     """ A class to hold data about a particular entity on a map. """
@@ -141,7 +142,7 @@ class Entity(object):
         """
         Set our initial_loc parameter, given actual (x,y) coordinates.
         """
-        self.initial_loc = (y*100)+x
+        self.initial_loc = (y * 100) + x
 
     def display(self, unknowns=False):
         """ Show a textual description of all fields. """
@@ -173,7 +174,8 @@ class Entity(object):
                             statusstr = 'Unknown Status "%d"' % (i)
                         ret.append("\t%s: %d" % (statusstr, status))
         else:
-            ret.append( "\t(No extra attributes - this is the base map definition file)")
+            ret.append(
+                "\t(No extra attributes - this is the base map definition file)")
 
         return "\n".join(ret)
 
@@ -189,6 +191,7 @@ class Entity(object):
         elif book == 3:
             return B3Entity(savegame)
 
+
 class B1Entity(Entity):
     """
     Entity structure for Book 1
@@ -196,20 +199,20 @@ class B1Entity(Entity):
 
     book = 1
     form_elements = [
-            'wall_01_label', 'wall_01',
-            'wall_04_label', 'wall_04',
-            'exit_north_label', 'exit_north_combo',
-            'exit_west_label', 'exit_west_combo',
-            'exit_east_label', 'exit_east_combo',
-            'exit_south_label', 'exit_south_combo',
-            'map_unknownh1_label', 'map_unknownh1',
-            'parallax_x_label', 'parallax_x',
-            'parallax_y_label', 'parallax_y',
-            'clouds_label', 'clouds',
-            'mapid_label', 'mapid',
-            'unknown5_label', 'unknown5',
-            'map_b1_outsideflag_label', 'map_b1_outsideflag',
-            ]
+        'wall_01_label', 'wall_01',
+        'wall_04_label', 'wall_04',
+        'exit_north_label', 'exit_north_combo',
+        'exit_west_label', 'exit_west_combo',
+        'exit_east_label', 'exit_east_combo',
+        'exit_south_label', 'exit_south_combo',
+        'map_unknownh1_label', 'map_unknownh1',
+        'parallax_x_label', 'parallax_x',
+        'parallax_y_label', 'parallax_y',
+        'clouds_label', 'clouds',
+        'mapid_label', 'mapid',
+        'unknown5_label', 'unknown5',
+        'map_b1_outsideflag_label', 'map_b1_outsideflag',
+    ]
 
     def read(self, df):
         """ Given a file descriptor, read in the entity. """
@@ -248,6 +251,7 @@ class B1Entity(Entity):
             df.writeuchar(self.frame)
             df.writeint(self.initial_loc)
 
+
 class B2Entity(Entity):
     """
     Entity structure for Book 2
@@ -256,23 +260,23 @@ class B2Entity(Entity):
     book = 2
     num_statuses = 26
     form_elements = [
-            'huge_gfx_button',
-            'decalpref_snow', 'decalpref_lava',
-            'b2_barrier_label', 'b2_barrier',
-            'entrancescript_label', 'entrancescript',
-            'returnscript_label', 'returnscript',
-            'exitscript_label', 'exitscript',
-            'random_sound1_label', 'random_sound1_combo',
-            'tile_flag_label', 'tile_flag',
-            'tree_set_label', 'tree_set',
-            'map_flags_label', 'map_flags_table',
-            'random_entity_1_label', 'random_entity_1',
-            'random_entity_2_label', 'random_entity_2',
-            'parallax1_label', 'parallax_x',
-            'parallax2_label', 'parallax_y',
-            'objectplace_loot_spin', 'objectplace_loot_label',
-            'gtk-biggraphic'
-            ]
+        'huge_gfx_button',
+        'decalpref_snow', 'decalpref_lava',
+        'b2_barrier_label', 'b2_barrier',
+        'entrancescript_label', 'entrancescript',
+        'returnscript_label', 'returnscript',
+        'exitscript_label', 'exitscript',
+        'random_sound1_label', 'random_sound1_combo',
+        'tile_flag_label', 'tile_flag',
+        'tree_set_label', 'tree_set',
+        'map_flags_label', 'map_flags_table',
+        'random_entity_1_label', 'random_entity_1',
+        'random_entity_2_label', 'random_entity_2',
+        'parallax1_label', 'parallax_x',
+        'parallax2_label', 'parallax_y',
+        'objectplace_loot_spin', 'objectplace_loot_label',
+        'gtk-biggraphic'
+    ]
 
     def __init__(self, savegame):
         super(B2Entity, self).__init__(savegame)
@@ -352,6 +356,7 @@ class B2Entity(Entity):
             for status in self.statuses:
                 df.writeint(status)
 
+
 class B3Entity(B2Entity):
     """
     Entity structure for Book 3
@@ -360,24 +365,24 @@ class B3Entity(B2Entity):
     book = 3
     num_statuses = 30
     form_elements = [
-            'huge_gfx_button',
-            'decalpref_snow', 'decalpref_lava',
-            'b2_barrier_label', 'b2_barrier',
-            'entrancescript_label', 'entrancescript',
-            'returnscript_label', 'returnscript',
-            'exitscript_label', 'exitscript',
-            'random_sound1_label', 'random_sound1_combo',
-            'random_sound2_label', 'random_sound2_combo',
-            'tile_flag_label', 'tile_flag',
-            'cartography_label', 'cartography',
-            'tree_set_label', 'tree_set',
-            'map_flags_label', 'map_flags_table',
-            'random_entity_1_label', 'random_entity_1',
-            'random_entity_2_label', 'random_entity_2',
-            'parallax_x_label', 'parallax_x',
-            'parallax_y_label', 'parallax_y',
-            'gtk-biggraphic'
-            ]
+        'huge_gfx_button',
+        'decalpref_snow', 'decalpref_lava',
+        'b2_barrier_label', 'b2_barrier',
+        'entrancescript_label', 'entrancescript',
+        'returnscript_label', 'returnscript',
+        'exitscript_label', 'exitscript',
+        'random_sound1_label', 'random_sound1_combo',
+        'random_sound2_label', 'random_sound2_combo',
+        'tile_flag_label', 'tile_flag',
+        'cartography_label', 'cartography',
+        'tree_set_label', 'tree_set',
+        'map_flags_label', 'map_flags_table',
+        'random_entity_1_label', 'random_entity_1',
+        'random_entity_2_label', 'random_entity_2',
+        'parallax_x_label', 'parallax_x',
+        'parallax_y_label', 'parallax_y',
+        'gtk-biggraphic'
+    ]
 
     def __init__(self, savegame):
         super(B3Entity, self).__init__(savegame)
