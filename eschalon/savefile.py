@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-import cStringIO
+import io
 from struct import pack, unpack
 
 
@@ -93,7 +93,7 @@ class Savefile(object):
         if self.stringdata is None:
             self.df = open(self.filename, 'rb')
         else:
-            self.df = cStringIO.StringIO(self.stringdata)
+            self.df = io.StringIO(self.stringdata)
         self.opened_r = True
 
     def open_w(self):

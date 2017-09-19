@@ -114,7 +114,7 @@ class Savename(object):
                 time = df.readstr()
                 map_or_version = df.readstr()
                 df.close()
-            except (IOError, struct.error), e:
+            except (IOError, struct.error) as e:
                 raise LoadException(str(e))
 
             if map_or_version.startswith('book3'):
@@ -182,7 +182,7 @@ class B1Savename(Savename):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def _sub_replicate(self, newsn):
@@ -263,7 +263,7 @@ class B2Savename(Savename):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def _sub_replicate(self, newsn):
@@ -357,7 +357,7 @@ class B3Savename(B2Savename):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def _sub_replicate(self, newsn):

@@ -157,16 +157,16 @@ class Saveslot(object):
         Will print our information out to the console.  Only really useful
         for debugging.
         """
-        print 'Slot: %s' % (self.directory)
-        print 'Save Name: %s' % (self.savename)
-        print 'Character Name: %s' % (self.charname)
+        print('Slot: %s' % (self.directory))
+        print('Save Name: %s' % (self.savename))
+        print('Character Name: %s' % (self.charname))
         if self.maps_loaded:
-            print 'Maps:'
+            print('Maps:')
             for esch_map in self.maps:
-                print ' * %s - %s' % (esch_map.filename_short(), esch_map.mapname)
+                print(' * %s - %s' % (esch_map.filename_short(), esch_map.mapname))
         else:
-            print '(Maps have not been loaded yet)'
-        print
+            print('(Maps have not been loaded yet)')
+        print()
 
     def slotname_short(self):
         """
