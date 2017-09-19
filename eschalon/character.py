@@ -163,7 +163,7 @@ class Character(object):
             newchar.readyslots.append([val[0], val[1]])
 
         # Dicts that need copying
-        for key, val in self.skills.iteritems():
+        for key, val in self.skills.items():
             newchar.skills[key] = val
 
         # Objects that need copying
@@ -287,7 +287,7 @@ class Character(object):
                 initital = df.readuchar()
                 second = df.readuchar()
                 df.close()
-            except (IOError, struct.error), e:
+            except (IOError, struct.error) as e:
                 raise LoadException(str(e))
 
             if second == 0:
@@ -370,7 +370,7 @@ class B1Character(Character):
             self.concentration = self.df.readint()
 
             # Skills
-            for key in c.skilltable.keys():
+            for key in list(c.skilltable.keys()):
                 self.addskill(key, self.df.readint())
 
             # More stats
@@ -492,7 +492,7 @@ class B1Character(Character):
             for i in range(4):
                 try:
                     self.addspell()
-                except struct.error, e:
+                except struct.error as e:
                     # Apparently some versions don't always write these out,
                     # hack in some fake values if that's the case.
                     for j in range(4 - i):
@@ -508,7 +508,7 @@ class B1Character(Character):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -537,7 +537,7 @@ class B1Character(Character):
         self.df.writeint(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeint(skill)
 
         # More stats
@@ -879,7 +879,7 @@ class B2Character(Character):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -907,7 +907,7 @@ class B2Character(Character):
         self.df.writeuchar(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeuchar(skill)
 
         # More stats
@@ -1290,7 +1290,7 @@ class B3Character(Character):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1318,7 +1318,7 @@ class B3Character(Character):
         self.df.writeuchar(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeuchar(skill)
 
         # More stats

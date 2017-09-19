@@ -160,7 +160,7 @@ class B2Constants:
 
     # Should maybe just have a Spell class for this instead
     spelltype = {}
-    for spell in spelltable.keys():
+    for spell in list(spelltable.keys()):
         if (spell < 22):
             spelltype[spell] = 'EL'
         else:
