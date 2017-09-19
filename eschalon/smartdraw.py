@@ -232,7 +232,7 @@ class PremadeObject(object):
                 tile.entity.x = tile.x
                 tile.entity.y = tile.y
                 tile.entity.set_initial(tile.x, tile.y)
-        for (dir, rel_obj) in self.rel_tiles.items():
+        for (dir, rel_obj) in list(self.rel_tiles.items()):
             adjtile = map.tile_relative(tile.x, tile.y, dir)
             if adjtile:
                 rel_obj.apply_to(gui, map, adjtile)
@@ -276,7 +276,7 @@ class PremadeObjectCollection(object):
         return retarr
 
     def set_savegame(self, savegame):
-        for objects in self.collection.values():
+        for objects in list(self.collection.values()):
             for obj in objects:
                 obj.tile.savegame = savegame
                 if obj.tilecontent is not None:
@@ -722,7 +722,7 @@ class SmartDraw(object):
 
         # Get our edge preference type
         idxtype = None
-        for (element, index) in self.gui.decal_edge_pref_map.items():
+        for (element, index) in list(self.gui.decal_edge_pref_map.items()):
             if element.get_active():
                 idxtype = index
                 break
@@ -796,7 +796,7 @@ class SmartDraw(object):
             # We could have exited earlier, but this way we can recurse around ourselves
             # without duplicating much code.
             for idx in full_idx_list:
-                if (tile.decalimg in self.indexes[idx].keys()):
+                if (tile.decalimg in list(self.indexes[idx].keys())):
                     tile.decalimg = 0
 
         else:
@@ -867,7 +867,7 @@ class SmartDraw(object):
 
         # Check our blacklist, after all that, and filter it out if we've been bad
         for item in blacklist:
-            if tile.decalimg in self.indexes[item].keys():
+            if tile.decalimg in list(self.indexes[item].keys()):
                 tile.decalimg = 0
                 break
 
@@ -893,7 +893,7 @@ class SmartDraw(object):
         to process this correctly, we have to recurse an additional level out.
         """
         actiontiles = []
-        for tile in [centertile] + known.values():
+        for tile in [centertile] + list(known.values()):
             if tile is None:
                 continue
             if tile.floorimg not in self.tilesets[idxtype]:
@@ -973,7 +973,7 @@ class SmartDraw(object):
         curfloor = tile.floorimg
         blacklist = []
         for idx in [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]:
-            blacklist.extend(self.indexes[self.IDX_GRASS].keys())
+            blacklist.extend(list(self.indexes[self.IDX_GRASS].keys()))
 
         # Find out if we're drawing a water tile, or one of the sand tiles
         drawing_water = False
@@ -988,7 +988,7 @@ class SmartDraw(object):
 
             # Additionally, set our tile to full-sand so that the recursion
             # stuff can link in properly
-            if tile.floorimg in self.beach_index.keys():
+            if tile.floorimg in list(self.beach_index.keys()):
                 tile.floorimg = self.tilesets[self.IDX_SAND][0]
 
             # We're going to recurse now rather than later
@@ -1000,7 +1000,7 @@ class SmartDraw(object):
                         affected.append(adjtile)
 
         # First find out more-typical adjacent tiles
-        if (tile.floorimg in self.beach_index.keys() + self.water):
+        if (tile.floorimg in list(self.beach_index.keys()) + self.water):
 
             # Let's put down a full-sand tile in place of whatever we actually put in,
             # under the assumption that the tile we're drawing should be mostly sand.
@@ -1017,9 +1017,9 @@ class SmartDraw(object):
                 #  -or-
                 #    2) The adjacent tile is NOT one of our "beach" tiles but is also not water.
                 # We do this because we'd like to consider anything non-sand to be virtually "sand"
-                if ((adjtile.floorimg in self.beach_index.keys() and
+                if ((adjtile.floorimg in list(self.beach_index.keys()) and
                      (self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
-                        or (adjtile.floorimg not in self.beach_index.keys() and adjtile.floorimg not in self.water)):
+                        or (adjtile.floorimg not in list(self.beach_index.keys()) and adjtile.floorimg not in self.water)):
                     connflags = connflags | testdir
                     flagcount += 1
                 else:
@@ -1075,7 +1075,7 @@ class SmartDraw(object):
                         #   2) We must have a tile which matches the resulting connection, of course.
                         # TODO: Seems ugly, would like to simplify.  Also, like above, we should probably
                         # consider any non-"beach" tile to be a connection, yes?
-                        if (adjtile.floorimg in self.beach_index.keys() and
+                        if (adjtile.floorimg in list(self.beach_index.keys()) and
                             ((self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir] or
                              (self.beach_index[adjtile.floorimg] & self.ADJ_DIR[self.REV_DIR[testdir]]) == self.ADJ_DIR[self.REV_DIR[testdir]])):
                             if ((connflags | testdir) in self.beach_revindex):
@@ -1165,23 +1165,23 @@ class B1SmartDraw(SmartDraw):
 
         # Various lists to keep track of which objects should be walls
         self.wall_list = {}
-        self.wall_list['floor_seethrough'] = range(83, 103) + [126]
+        self.wall_list['floor_seethrough'] = list(range(83, 103)) + [126]
         self.wall_list['decal_blocked'] = [55]
         self.wall_list['decal_seethrough'] = [52, 71, 83, 84, 96, 170]
-        self.wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
-                                          range(109, 112) + range(116, 121) + range(125, 144) +
-                                          range(145, 156) + range(161, 214) + range(251, 256) +
+        self.wall_list['wall_blocked'] = (list(range(23, 31)) + list(range(68, 72)) + list(range(80, 85)) +
+                                          list(range(109, 112)) + list(range(116, 121)) + list(range(125, 144)) +
+                                          list(range(145, 156)) + list(range(161, 214)) + list(range(251, 256)) +
                                           [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
-        self.wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
-                                             range(51, 56) + range(60, 68) + range(72, 79) +
-                                             range(85, 89) + range(112, 116) + range(121, 125) +
+        self.wall_list['wall_seethrough'] = (list(range(1, 23)) + list(range(31, 38)) + list(range(44, 49)) +
+                                             list(range(51, 56)) + list(range(60, 68)) + list(range(72, 79)) +
+                                             list(range(85, 89)) + list(range(112, 116)) + list(range(121, 125)) +
                                              [39, 41, 42, 57, 144, 214])
         self.wall_list['walldecal_seethrough'] = [19, 20]
         self.wall_list['wall_restrict'] = []
 
         # Hardcoded Graphics info
         self.wallstarts = [161, 171, 181, 191, 201]
-        self.fenceids = range(73, 79)
+        self.fenceids = list(range(73, 79))
         self.bigfencestarts = [140]
         self.bigfence2starts = [215]
         self.special = 213
@@ -1199,8 +1199,8 @@ class B1SmartDraw(SmartDraw):
             [79, 80, 81, 82]  # "Dry" Grass
         ]
         self.random_decal = [
-            range(13, 19),    # Bloodstains, small-to-med
-            range(26, 31),    # Brown smudges
+            list(range(13, 19)),    # Bloodstains, small-to-med
+            list(range(26, 31)),    # Brown smudges
             [31, 32],         # Hay/Straw
             [37, 43, 49],     # Smudges
             [50, 51, 56, 57],  # Dead bodies
@@ -1627,7 +1627,7 @@ class B1SmartDraw(SmartDraw):
         self.premade_objects.add_category('Sound/Light Generators')
         obj = self.premade_objects.new('Light Source')
         obj.set_tilecontent(25)
-        for (id, name) in c.tilecontenttypetable.items():
+        for (id, name) in list(c.tilecontenttypetable.items()):
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -1636,14 +1636,13 @@ class B1SmartDraw(SmartDraw):
         monsters = {}
         npcs = {}
         entitytable = c.eschalondata.get_entitytable()
-        for (key, item) in entitytable.iteritems():
+        for (key, item) in entitytable.items():
             if item.friendly == 0:
                 table = monsters
             else:
                 table = npcs
             table[item.name] = key
-        npckeys = npcs.keys()
-        npckeys.sort()
+        npckeys = sorted(list(npcs.keys()))
 
         # Enemies
         for (name, table) in [
@@ -1677,22 +1676,22 @@ class B2SmartDraw(SmartDraw):
         self.wall_list = {}
         self.wall_list['floor_seethrough'] = []
         self.wall_list['decal_blocked'] = [134, 150, 151, 152]
-        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
-                                              range(170, 174) + range(185, 191) + range(202, 206))
+        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + list(range(154, 159)) +
+                                              list(range(170, 174)) + list(range(185, 191)) + list(range(202, 206)))
         self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 83, 86, 100, 116, 147] +
-                                          range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
-                                          range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 378) +
-                                          range(384, 396) + [400, 401, 406] + range(251, 256))
-        self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
-                                             range(44, 57) + [58] + range(61, 69) + range(71, 82) + [84, 85] +
-                                             range(87, 97) + [99] + range(101, 107) + range(108, 114) + range(117, 119) +
-                                             range(121, 129) + range(130, 134) + range(136, 147) + range(148, 151) +
-                                             [270, 271] + range(315, 320) + [333] + range(346, 352) +
-                                             [364, 365, 367, 381] + range(396, 400) +
+                                          list(range(256, 267)) + [268] + list(range(272, 283)) + [284] + list(range(286, 298)) + list(range(304, 315)) +
+                                          list(range(320, 332)) + list(range(334, 346)) + list(range(352, 364)) + [366] + list(range(368, 378)) +
+                                          list(range(384, 396)) + [400, 401, 406] + list(range(251, 256)))
+        self.wall_list['wall_seethrough'] = (list(range(1, 25)) + list(range(28, 41)) +
+                                             list(range(44, 57)) + [58] + list(range(61, 69)) + list(range(71, 82)) + [84, 85] +
+                                             list(range(87, 97)) + [99] + list(range(101, 107)) + list(range(108, 114)) + list(range(117, 119)) +
+                                             list(range(121, 129)) + list(range(130, 134)) + list(range(136, 147)) + list(range(148, 151)) +
+                                             [270, 271] + list(range(315, 320)) + [333] + list(range(346, 352)) +
+                                             [364, 365, 367, 381] + list(range(396, 400)) +
                                              [407])
-        self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
-        self.wall_list['wall_restrict'] = ([107] + range(298, 304) + [332, 378, 379, 380, 382, 383] +
-                                           range(402, 406))
+        self.wall_list['walldecal_seethrough'] = (list(range(8, 12)) + [81, 97])
+        self.wall_list['wall_restrict'] = ([107] + list(range(298, 304)) + [332, 378, 379, 380, 382, 383] +
+                                           list(range(402, 406)))
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
@@ -1715,14 +1714,14 @@ class B2SmartDraw(SmartDraw):
         self.random_decal = [
             [87, 103, 104],    # Rubble
             [97, 98, 99],      # Smudges
-            range(113, 120),   # Bloodstains, small-to-med
+            list(range(113, 120)),   # Bloodstains, small-to-med
             [120, 121],        # Bloodstains, large
             [122, 123],        # Slime?
             [106, 107],        # Starfish
             [181, 182],        # Smashed somethingorother
             [167, 168, 184, 199, 200],  # More smashed objects
             [153, 169],        # Strewn papers
-            range(209, 213),   # Brown smudge
+            list(range(209, 213)),   # Brown smudge
             [213, 214],        # Snow texture
             [241, 242, 243],   # Cracks
             [72, 88],          # Hay/Straw
@@ -2160,7 +2159,7 @@ class B2SmartDraw(SmartDraw):
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')
-        for (id, name) in c.tilecontenttypetable.items():
+        for (id, name) in list(c.tilecontenttypetable.items()):
             if name[:13] == 'Light Source ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2168,7 +2167,7 @@ class B2SmartDraw(SmartDraw):
 
         # Sound Generators
         self.premade_objects.add_category('Sound Generators')
-        for (id, name) in c.tilecontenttypetable.items():
+        for (id, name) in list(c.tilecontenttypetable.items()):
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2178,14 +2177,13 @@ class B2SmartDraw(SmartDraw):
         monsters = {}
         npcs = {}
         entitytable = c.eschalondata.get_entitytable()
-        for (key, item) in entitytable.iteritems():
+        for (key, item) in entitytable.items():
             if item.friendly == 0:
                 table = monsters
             else:
                 table = npcs
             table[item.name] = key
-        npckeys = npcs.keys()
-        npckeys.sort()
+        npckeys = sorted(list(npcs.keys()))
 
         # Enemies
         for (name, table) in [
@@ -2223,22 +2221,22 @@ class B3SmartDraw(B2SmartDraw):
         self.wall_list = {}
         self.wall_list['floor_seethrough'] = []
         self.wall_list['decal_blocked'] = [134, 150, 151, 152]
-        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
-                                              range(170, 174) + range(185, 191) + range(202, 206))
+        self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + list(range(154, 159)) +
+                                              list(range(170, 174)) + list(range(185, 191)) + list(range(202, 206)))
         self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 81, 82, 83, 86, 116, 164] +
-                                          range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
-                                          range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 379) +
-                                          range(381, 384) + range(384, 394) + [402, 403, 406] + range(251, 256) + [414])
-        self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
-                                             range(44, 57) + [58] + range(61, 69) + range(71, 81) + [84, 85] +
-                                             range(87, 97) + range(99, 113) + range(117, 119) +
-                                             range(121, 129) + [130, 132] + range(134, 164) + range(165, 169) +
-                                             [270, 271] + range(315, 320) + [333] + range(346, 352) +
-                                             [364, 365, 367, 381, 394, 395] + range(398, 402) +
-                                             range(404, 410) + [412, 413, 415])
-        self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
+                                          list(range(256, 267)) + [268] + list(range(272, 283)) + [284] + list(range(286, 298)) + list(range(304, 315)) +
+                                          list(range(320, 332)) + list(range(334, 346)) + list(range(352, 364)) + [366] + list(range(368, 379)) +
+                                          list(range(381, 384)) + list(range(384, 394)) + [402, 403, 406] + list(range(251, 256)) + [414])
+        self.wall_list['wall_seethrough'] = (list(range(1, 25)) + list(range(28, 41)) +
+                                             list(range(44, 57)) + [58] + list(range(61, 69)) + list(range(71, 81)) + [84, 85] +
+                                             list(range(87, 97)) + list(range(99, 113)) + list(range(117, 119)) +
+                                             list(range(121, 129)) + [130, 132] + list(range(134, 164)) + list(range(165, 169)) +
+                                             [270, 271] + list(range(315, 320)) + [333] + list(range(346, 352)) +
+                                             [364, 365, 367, 381, 394, 395] + list(range(398, 402)) +
+                                             list(range(404, 410)) + [412, 413, 415])
+        self.wall_list['walldecal_seethrough'] = (list(range(8, 12)) + [81, 97])
         self.wall_list['wall_restrict'] = (
-            [120] + range(298, 304) + [332, 379, 380, 396, 397, 410])
+            [120] + list(range(298, 304)) + [332, 379, 380, 396, 397, 410])
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
@@ -2265,14 +2263,14 @@ class B3SmartDraw(B2SmartDraw):
             [108, 124],        # Large Rubble
             [13, 14, 15, 16],  # Dark Rubble
             [97, 98, 99],      # Smudges
-            range(113, 120),   # Bloodstains, small-to-med
+            list(range(113, 120)),   # Bloodstains, small-to-med
             [120, 121],        # Bloodstains, large
             [122, 123],        # Slime?
             [106, 107],        # Starfish
             [181, 182, 213],   # Smashed somethingorother
             [167, 168, 184, 199, 200],  # More smashed objects
             [153, 169],        # Strewn papers
-            range(209, 213),   # Brown smudge
+            list(range(209, 213)),   # Brown smudge
             [214, 215],        # Smashed Boards
             [241, 242, 243],   # Cracks
             [72, 88],          # Hay/Straw
@@ -2705,7 +2703,7 @@ class B3SmartDraw(B2SmartDraw):
 
         # Light Sources
         self.premade_objects.add_category('Light Sources')
-        for (id, name) in c.tilecontenttypetable.items():
+        for (id, name) in list(c.tilecontenttypetable.items()):
             if name[:13] == 'Light Source ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2713,7 +2711,7 @@ class B3SmartDraw(B2SmartDraw):
 
         # Sound Generators
         self.premade_objects.add_category('Sound Generators')
-        for (id, name) in c.tilecontenttypetable.items():
+        for (id, name) in list(c.tilecontenttypetable.items()):
             if name[:16] == 'Sound Generator ':
                 obj = self.premade_objects.new(name)
                 obj.set_tilecontent(id)
@@ -2723,14 +2721,13 @@ class B3SmartDraw(B2SmartDraw):
         monsters = {}
         npcs = {}
         entitytable = c.eschalondata.get_entitytable()
-        for (key, item) in entitytable.iteritems():
+        for (key, item) in entitytable.items():
             if item.friendly == 0:
                 table = monsters
             else:
                 table = npcs
             table[item.name] = key
-        npckeys = npcs.keys()
-        npckeys.sort()
+        npckeys = sorted(list(npcs.keys()))
 
         # Enemies
         for (name, table) in [

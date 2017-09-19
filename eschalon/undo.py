@@ -354,7 +354,7 @@ class Undo(object):
         at all since I just used it for debugging while figuring things out, so it
         may very well fail right now.  Nothing in the code actually calls this.
         """
-        print '%d total tilecontents in map' % (len(self.mapobj.tilecontents))
+        print('%d total tilecontents in map' % (len(self.mapobj.tilecontents)))
         tilecontentcounters = {}
         for tilecontent in self.mapobj.tilecontents:
             tileval = tilecontent.y * 100 + tilecontent.x
@@ -366,14 +366,14 @@ class Undo(object):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
-            print ' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval] + 1, matched)
-        print
-        print '%d total entities in map' % (len(self.mapobj.entities))
+            print(' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval] + 1, matched))
+        print()
+        print('%d total entities in map' % (len(self.mapobj.entities)))
         for entity in self.mapobj.entities:
             tileentity = self.mapobj.tiles[entity.y][entity.x].entity
             if (tileentity == entity):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
-            print ' * (%d, %d), %s' % (entity.x, entity.y, matched)
-        print
+            print(' * (%d, %d), %s' % (entity.x, entity.y, matched))
+        print()
