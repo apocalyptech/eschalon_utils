@@ -3,25 +3,27 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import getopt, sys
+import getopt
+import sys
 from eschalon.character import Character
 from eschalon.maincli import MainCLI
 from eschalon.preferences import Prefs
+
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -92,49 +94,50 @@ def usage(full=False):
     print
     sys.exit(2)
 
+
 def main(argv=None):
 
     # Argument var defaults
     options = {
-            'gui': True,
-            'list': False,
-            'listoptions' : {
-                'all': True,
-                'stats': False,
-                'avatar': False,
-                'magic': False,
-                'alchemy': False,
-                'equip': False,
-                'inv': False
-                },
-            'unknowns': False,
-            'set_gold': 0,
-            'set_mana_max': 0,
-            'set_mana_cur': 0,
-            'set_hp_max': 0,
-            'set_hp_cur': 0,
-            'rm_disease': False,
-            'reset_hunger': False,
-            'filename' : None
-            }
+        'gui': True,
+        'list': False,
+        'listoptions': {
+            'all': True,
+            'stats': False,
+            'avatar': False,
+            'magic': False,
+            'alchemy': False,
+            'equip': False,
+            'inv': False
+        },
+        'unknowns': False,
+        'set_gold': 0,
+        'set_mana_max': 0,
+        'set_mana_cur': 0,
+        'set_hp_max': 0,
+        'set_hp_cur': 0,
+        'rm_disease': False,
+        'reset_hunger': False,
+        'filename': None
+    }
 
     # Parse the args
     if argv is None:
         argv = sys.argv
     try:
         opts, args = getopt.getopt(argv[1:],
-                'hls:u',
-                ['help',
-                 'list',
-                 'show=',
-                 'unknowns',
-                 'set-gold=',
-                 'set-mana-max=',
-                 'set-mana-cur=',
-                 'set-hp-max=',
-                 'set-hp-cur=',
-                 'rm-disease',
-                 'reset-hunger'])
+                                   'hls:u',
+                                   ['help',
+                                    'list',
+                                    'show=',
+                                    'unknowns',
+                                    'set-gold=',
+                                    'set-mana-max=',
+                                    'set-mana-cur=',
+                                    'set-hp-max=',
+                                    'set-hp-cur=',
+                                    'rm-disease',
+                                    'reset-hunger'])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -204,7 +207,7 @@ def main(argv=None):
     if (not options['gui'] and options['filename'] == None):
         print "A filename is required"
         usage()
-    
+
     # Now load up the appropriate class
     if (options['gui']):
         # We're waiting until now to import, so people just using CLI don't need
@@ -217,6 +220,7 @@ def main(argv=None):
 
     # ... and run it
     return prog.run()
+
 
 if __name__ == '__main__':
     sys.exit(main())
