@@ -5,6 +5,7 @@ import re
 import sys
 import subprocess
 
+
 def usage():
     """
     Just prints out our usage and returns
@@ -18,6 +19,7 @@ def usage():
     print "separated by digits"
     print
     sys.exit()
+
 
 # Check our args for validity
 if len(sys.argv) != 2:
@@ -41,12 +43,14 @@ subprocess.call(['git', 'tag', tag])
 print 'Created tag %s' % (tag)
 
 # Build a .tar.gz
-subprocess.call(['git', 'archive', '--format=tar', archive_prefix, '-o', file_tar, tag])
+subprocess.call(['git', 'archive', '--format=tar',
+                 archive_prefix, '-o', file_tar, tag])
 subprocess.call(['gzip', file_tar])
 print 'Wrote to %s' % (file_tgz)
 
 # Build a .zip
-subprocess.call(['git', 'archive', '--format=zip', archive_prefix, '-o', file_zip, tag])
+subprocess.call(['git', 'archive', '--format=zip',
+                 archive_prefix, '-o', file_zip, tag])
 print 'Wrote to %s' % (file_zip)
 
 # Finish
