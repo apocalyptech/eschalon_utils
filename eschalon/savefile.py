@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -21,6 +21,7 @@
 import os
 import cStringIO
 from struct import pack, unpack
+
 
 class LoadException(Exception):
 
@@ -30,8 +31,10 @@ class LoadException(Exception):
     def __str__(self):
         return self.text
 
+
 class FirstItemLoadException(LoadException):
     pass
+
 
 class Savefile(object):
     """ Class that wraps around a file object, to simplify things """
@@ -98,7 +101,8 @@ class Savefile(object):
         if (self.opened_r or self.opened_w):
             raise IOError('File is already open')
         if self.stringdata is not None:
-            raise IOError('Writing is not supported when using a string backend')
+            raise IOError(
+                'Writing is not supported when using a string backend')
         self.df = open(self.filename, 'wb')
         self.df.seek(0)
         self.opened_w = True

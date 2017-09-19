@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,20 +23,21 @@
 app_name = 'Eschalon Savefile Editor'
 version = '1.0.2-pre'
 url = 'http://apocalyptech.com/eschalon/'
-authors = [ 'Main Code - CJ Kucera',
- 'Additional Code / Ideas - WR Goerlich',
- 'Book III / OS X Code - Elliot Kendall', '',
- 'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
+authors = ['Main Code - CJ Kucera',
+           'Additional Code / Ideas - WR Goerlich',
+           'Book III / OS X Code - Elliot Kendall', '',
+           'Some Icons by Axialis Team', 'see http://www.axialis.com/free/icons/']
 
-__all__ = [ 'app_name', 'version', 'url', 'authors'
-        'Savefile', 'Item', 'B1Unknowns', 'B2Unknowns',
-        'Character', 'MainGUI', 'LoadException',
-        'Tile', 'Tilecontent', 'Undo',
-        'constants' ]
+__all__ = ['app_name', 'version', 'url', 'authors'
+           'Savefile', 'Item', 'B1Unknowns', 'B2Unknowns',
+           'Character', 'MainGUI', 'LoadException',
+           'Tile', 'Tilecontent', 'Undo',
+           'constants']
 
 from eschalon.constantsb1 import B1Constants
 from eschalon.constantsb2 import B2Constants
 from eschalon.constantsb3 import B3Constants
+
 
 class Constants:
     """
@@ -48,10 +49,10 @@ class Constants:
 
     def __init__(self, book=1):
         self.groups = {
-                1: B1Constants,
-                2: B2Constants,
-                3: B3Constants
-            }
+            1: B1Constants,
+            2: B2Constants,
+            3: B3Constants
+        }
         self.book = None
         self.eschalondata = None
         self.switch_to_book(book)
@@ -66,7 +67,7 @@ class Constants:
 
     def switch_to_book(self, book):
         if book != self.book:
-            #print "Switching to Book %d Constants" % (book)
+            # print "Switching to Book %d Constants" % (book)
             # First clear out the old constants
             if self.book:
                 for (key, val) in self.groups[self.book].__dict__.items():
@@ -77,5 +78,6 @@ class Constants:
                 if key[0] != '_':
                     self.__dict__[key] = val
             self.book = book
+
 
 constants = Constants()
