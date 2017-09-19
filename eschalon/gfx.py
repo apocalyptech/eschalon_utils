@@ -24,7 +24,7 @@ import math
 import zlib
 import cairo
 import gobject
-import cStringIO
+import io
 from struct import unpack
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
@@ -42,11 +42,11 @@ class GfxCache(object):
     def __init__(self, pngdata, width, height, cols, overlay_func=None):
         # First load the data as a Cairo surface
         self.surface = cairo.ImageSurface.create_from_png(
-            cStringIO.StringIO(pngdata))
+            io.StringIO(pngdata))
 
         if overlay_func:
             self.surface = overlay_func(self.surface, width, height, cols)
-            df = cStringIO.StringIO()
+            df = io.StringIO()
             self.surface.write_to_png(df)
             pngdata = df.getvalue()
             df.close()
@@ -64,7 +64,7 @@ class GfxCache(object):
             self.pixbuf = loader.get_pixbuf()
             loader = None
             self.gdkcache = {}
-        except gobject.GError, e:
+        except gobject.GError as e:
             self.gdkcache = None
 
         # Now assign the rest of our attributes
@@ -324,7 +324,7 @@ class Gfx(object):
         found would require you to loop through and fix each pixel in the
         pixbuf afterwards.
         """
-        df = cStringIO.StringIO()
+        df = io.StringIO()
         surface.write_to_png(df)
         loader = gtk.gdk.PixbufLoader()
         loader.write(df.getvalue())
@@ -407,12 +407,12 @@ class B1Gfx(Gfx):
             self.wall_gfx_group[i] = self.GFX_SET_TREE
 
         # Wall object types
-        for i in (range(127) + range(132, 142) + range(143, 153) +
-                  range(154, 161) + range(214, 251)):
+        for i in (list(range(127)) + list(range(132, 142)) + list(range(143, 153)) +
+                  list(range(154, 161)) + list(range(214, 251))):
             self.wall_types[i] = self.TYPE_OBJ
         for i in range(161, 214):
             self.wall_types[i] = self.TYPE_WALL
-        for i in (range(251, 256) + range(127, 132) + [142, 153]):
+        for i in (list(range(251, 256)) + list(range(127, 132)) + [142, 153]):
             self.wall_types[i] = self.TYPE_TREE
 
         # Restricted entities (only one direction)
@@ -667,16 +667,16 @@ class B2Gfx(Gfx):
             self.wall_gfx_group[i] = self.GFX_SET_WALL
 
         # Wall object types
-        for i in (range(251) + range(266, 272) + range(282, 286) +
-                  range(314, 320) + range(330, 336) + range(346, 352) +
-                  range(364, 368) + range(378, 384) + range(394, 402) +
-                  range(403, 513)):
+        for i in (list(range(251)) + list(range(266, 272)) + list(range(282, 286)) +
+                  list(range(314, 320)) + list(range(330, 336)) + list(range(346, 352)) +
+                  list(range(364, 368)) + list(range(378, 384)) + list(range(394, 402)) +
+                  list(range(403, 513))):
             self.wall_types[i] = self.TYPE_OBJ
         for i in range(251, 256):
             self.wall_types[i] = self.TYPE_TREE
-        for i in (range(256, 266) + range(272, 282) + range(286, 314) +
-                  range(320, 330) + range(336, 346) + range(352, 364) +
-                  range(368, 378) + range(384, 394) + [402]):
+        for i in (list(range(256, 266)) + list(range(272, 282)) + list(range(286, 314)) +
+                  list(range(320, 330)) + list(range(336, 346)) + list(range(352, 364)) +
+                  list(range(368, 378)) + list(range(384, 394)) + [402]):
             self.wall_types[i] = self.TYPE_WALL
 
         # Book 2 specific caches
@@ -704,7 +704,7 @@ class B2Gfx(Gfx):
             self.itemcategory_gfxcache_idx[num] = 'weapons'
         for num in range(3, 11):
             self.itemcategory_gfxcache_idx[num] = 'armor'
-        for num in range(11, 16) + [17]:
+        for num in list(range(11, 16)) + [17]:
             self.itemcategory_gfxcache_idx[num] = 'magic'
 
         # Finally call the parent constructor
@@ -722,9 +722,9 @@ class B2Gfx(Gfx):
         background = self.eschalondata.readfile(
             '%s_icon_blank.png' % (category))
         framesurf = cairo.ImageSurface.create_from_png(
-            cStringIO.StringIO(frame))
+            io.StringIO(frame))
         backsurf = cairo.ImageSurface.create_from_png(
-            cStringIO.StringIO(background))
+            io.StringIO(background))
 
         # Now create a new surface and tile the background over the whole thing
         newsurf = cairo.ImageSurface(

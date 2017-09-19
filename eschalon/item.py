@@ -213,7 +213,7 @@ class Item(object):
                     else:
                         ret.append("\tSpecial: 0x%08X" % self.incr)
                 if (self.flags > 0):
-                    if (c.flagstable.has_key(self.flags)):
+                    if (self.flags in c.flagstable):
                         ret.append("\tSpecial: %s" % c.flagstable[self.flags])
                     else:
                         ret.append("\tSpecial: 0x%08X" % self.flags)
