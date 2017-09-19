@@ -27,8 +27,8 @@ try:
     import gobject
     import pango
 except:
-    print 'Python GTK Modules not found: %s' % (str(e))
-    print 'Hit enter to exit...'
+    print('Python GTK Modules not found: %s' % (str(e)))
+    print('Hit enter to exit...')
     sys.stdin.readline()
     sys.exit(1)
 
@@ -234,7 +234,7 @@ class BaseGUI(object):
         try:
             import numpy
             self.have_numpy = True
-        except ImportError, e:
+        except ImportError as e:
             self.have_numpy = False
 
     def datafile(self, file):
@@ -459,12 +459,12 @@ class BaseGUI(object):
         ###
         category_dd = self.get_widget('category')
         category_dd.get_model().clear()
-        for category in c.categorytable.values():
+        for category in list(c.categorytable.values()):
             category_dd.append_text(category)
         subcategory_dd = self.get_widget('subcategory')
         subcategory_dd.get_model().clear()
         subcategory_dd.append_text('(none)')
-        for subcategory in c.skilltable.values():
+        for subcategory in list(c.skilltable.values()):
             subcategory_dd.append_text(subcategory)
 
         ###
@@ -476,7 +476,7 @@ class BaseGUI(object):
             boxes = []
             for i in range(1, 4):
                 boxes.append(self.get_widget('bonus_%d' % (i)))
-            attributes = c.itemeffecttable.values()
+            attributes = list(c.itemeffecttable.values())
             for box in boxes:
                 box.get_model().clear()
                 box.append_text('')
@@ -731,7 +731,7 @@ class BaseGUI(object):
             found = False
             if new_gamedir:
                 for i in look_for:
-                    print new_gamedir
+                    print(new_gamedir)
                     if os.path.exists(os.path.join(new_gamedir, i)):
                         found = True
                 if (cur_gamedir != '' or found):
@@ -753,7 +753,7 @@ class BaseGUI(object):
                                                      'find the directory to use.  Please report this on the forums so that it',
                                                      'can be fixed.'),
                                        self.window)
-            except Exception, e:
+            except Exception as e:
                 self.warningdialog('Could not save preferences',
                                    '%s %s <tt>%s</tt>' % ('We were unable to save your preferences.  Please report this',
                                                           "on the forums so that it can be fixed.\n\nThe error: ", e),
@@ -985,7 +985,7 @@ class BaseGUI(object):
         elif (self.curitemcategory == self.ITEM_MAP):
             self.populate_mapitem_button(self.curitem[0], self.curitem[1])
         if (self.curitemcategory != self.ITEM_MAP):
-            for name in self.itemchanged.keys():
+            for name in list(self.itemchanged.keys()):
                 (labelwidget, label) = self.get_label_cache(name)
                 self.set_changed_widget(True, name, labelwidget, label, False)
             self.itemchanged = {}
@@ -1035,7 +1035,7 @@ class BaseGUI(object):
         self.get_widget('basearmor').set_value(item.basearmor)
 
         if item.book == 1:
-            for key in c.flagstable.keys():
+            for key in list(c.flagstable.keys()):
                 if (item.flags & key == key):
                     self.get_widget('flags_%04X' % (key)).set_active(True)
                 else:

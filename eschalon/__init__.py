@@ -70,11 +70,11 @@ class Constants:
             # print "Switching to Book %d Constants" % (book)
             # First clear out the old constants
             if self.book:
-                for (key, val) in self.groups[self.book].__dict__.items():
+                for (key, val) in list(self.groups[self.book].__dict__.items()):
                     if key[0] != '_':
                         del(self.__dict__[key])
             # ... and now load in the new ones
-            for (key, val) in self.groups[book].__dict__.items():
+            for (key, val) in list(self.groups[book].__dict__.items()):
                 if key[0] != '_':
                     self.__dict__[key] = val
             self.book = book
