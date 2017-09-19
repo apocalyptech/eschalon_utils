@@ -157,7 +157,7 @@ class MainCLI(object):
                 if char.book > 1:
                     if (char.statuses_extra[i] > 0):
                         extra = '  - extra (casting level): %d' % (char.statuses_extra[i])
-                if (c.statustable.has_key(i)):
+                if (i in c.statustable):
                     print "\t* %s (Turns left: %d)%s" % (c.statustable[i], char.statuses[i], extra)
                 else:
                     print "\t* Status %d (unknown) (Turns left: %d)%s" % (i, char.statuses[i], extra)
@@ -180,7 +180,7 @@ class MainCLI(object):
         print "------"
         print
         for key in c.skilltable.keys():
-            if char.skills.has_key(key) and char.skills[key] != 0:
+            if key in char.skills and char.skills[key] != 0:
                 print "\t%s: %d" % (c.skilltable[key], char.skills[key])
         print
 
@@ -225,7 +225,7 @@ class MainCLI(object):
         print "-----------"
         print
         print "X: %d  Y: %d" % (char.xpos, char.ypos)
-        if (c.dirtable.has_key(char.orientation)):
+        if (char.orientation in c.dirtable):
             print "Facing: %s" % c.dirtable[char.orientation]
         else:
             print "Facing: 0x%08X" % char.orientation
