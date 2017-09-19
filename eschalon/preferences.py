@@ -21,13 +21,13 @@
 import sys
 import os
 import os.path
-import ConfigParser
+import configparser
 from eschalon import app_name
 
 # Load windows registry, if we can
 try:
-    import _winreg
-except ImportError, e:
+    import winreg
+except ImportError as e:
     pass
 
 # TODO: Error handling on load() and save()
@@ -36,7 +36,7 @@ except ImportError, e:
 class Prefs(object):
 
     def __init__(self):
-        self.cp = ConfigParser.ConfigParser()
+        self.cp = configparser.ConfigParser()
         if 'win32' in sys.platform:
             self.platform = 'win32'
             self.default = self.win32_default
@@ -307,25 +307,25 @@ class Prefs(object):
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1'
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book I_is1'
                     )
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(
+                    (val, type) = winreg.QueryValueEx(
                         wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(
+                        (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got
@@ -341,25 +341,25 @@ class Prefs(object):
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book II_is1'
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book II_is1'
                     )
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(
+                    (val, type) = winreg.QueryValueEx(
                         wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(
+                        (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got
@@ -373,25 +373,25 @@ class Prefs(object):
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book III_is1'
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book III_is1'
                     )
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(
+                    (val, type) = winreg.QueryValueEx(
                         wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(
+                        (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got

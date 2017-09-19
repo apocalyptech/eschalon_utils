@@ -39,16 +39,16 @@ from eschalon.savename import Savename
 try:
     import gtk
     import gobject
-except Exception, e:
-    print 'Python GTK Modules not found: %s' % (str(e))
-    print 'Hit enter to exit...'
+except Exception as e:
+    print('Python GTK Modules not found: %s' % (str(e)))
+    print('Hit enter to exit...')
     sys.stdin.readline()
     sys.exit(1)
 
 # Load in Cairo
 try:
     import cairo
-except Exception, e:
+except Exception as e:
     BaseGUI.errordialog('Error loading PyCairo',
                         'PyCairo could not be loaded: %s' % (str(e)))
     sys.exit(1)
@@ -291,7 +291,7 @@ class MapLoaderDialog(gtk.Dialog):
         for slotdir in slotdirs:
             try:
                 self.slots.append(Saveslot(slotdir, c.book))
-            except LoadException, e:
+            except LoadException as e:
                 # If there's an error, just don't show the slot
                 pass
         self.slots.sort()
@@ -484,7 +484,7 @@ class MapLoaderDialog(gtk.Dialog):
                     try:
                         map_list.append(Map.get_mapinfo(map_file))
                         #detected_book, detected_mapname, df
-                    except Exception, e:
+                    except Exception as e:
                         pass
         elif b23maplist is not None and eschalondata is not None:
             for map_file in sorted(b23maplist):
@@ -494,8 +494,8 @@ class MapLoaderDialog(gtk.Dialog):
                         map_df = Savefile(filename=map_file,
                                           stringdata=map_data)
                         map_list.append(Map.get_mapinfo(map_df=map_df))
-                except Exception, e:
-                    print 'Exception: %s' % (e)
+                except Exception as e:
+                    print('Exception: %s' % (e))
                     pass
 
         if len(map_list) > 0:
@@ -1278,7 +1278,7 @@ class MapGUI(BaseGUI):
                 c.book, self.get_current_gamedir())
             self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
             c.set_eschalondata(self.eschalondata)
-        except Exception, e:
+        except Exception as e:
             self.errordialog('Error Loading Graphics',
                              'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
@@ -1303,7 +1303,7 @@ class MapGUI(BaseGUI):
             savename.read()
             modpath = os.path.join(
                 self.get_current_gamedir(), savename.modpath)
-        except Exception, e:
+        except Exception as e:
             # This can fail for various reasons - not Book III, not a
             # version that supports mods, not a saved game map, etc.  When
             # that happens, silently ignore it
@@ -1322,7 +1322,7 @@ class MapGUI(BaseGUI):
                 self.gfx = Gfx.new(
                     self.req_book, self.datadir, self.eschalondata)
                 c.set_eschalondata(self.eschalondata)
-            except Exception, e:
+            except Exception as e:
                 self.errordialog('Error Reloading Game Data',
                                  'Game data could not be reloaded: %s' % (str(e)))
                 sys.exit(1)
@@ -1489,7 +1489,7 @@ class MapGUI(BaseGUI):
                     with open(opq_template, 'rb') as df:
                         with open(self.mapobj.get_opq_path(), 'wb') as odf:
                             odf.write(df.read())
-                except Exception, e:
+                except Exception as e:
                     self.warningdialog('Could not write minimap',
                                        "Could not write this map\'s minimap graphic file.  This can cause corruption on the in-game minimap.\n\nThe error: <tt>%s</tt>" % (
                                            e),
@@ -1645,7 +1645,7 @@ class MapGUI(BaseGUI):
 
             try:
                 self.mapobj.convert_savegame(savegame)
-            except Exception, e:
+            except Exception as e:
                 self.errordialog('Conversion Error', '<b>Error:</b> Map could not be '
                                  'converted to %s format.  The map might be in an '
                                  'inconsistent state.'
@@ -1872,17 +1872,16 @@ class MapGUI(BaseGUI):
         globalstore.append(['(none)', 0])
         monsters = {}
         npcs = {}
-        for (key, item) in self.entitytable.iteritems():
+        for (key, item) in self.entitytable.items():
             if (item.friendly == 0):
                 table = monsters
             else:
                 table = npcs
             table[item.name] = key
-        monsterkeys = monsters.keys()
-        monsterkeys.sort()
+        monsterkeys = sorted(list(monsters.keys()))
         for key in monsterkeys:
             globalstore.append([key, monsters[key]])
-        npckeys = npcs.keys()
+        npckeys = list(npcs.keys())
         npckeys.sort()
         self.entitykeys = monsterkeys
         self.entitykeys.extend(npckeys)
@@ -1969,7 +1968,7 @@ class MapGUI(BaseGUI):
         lockspin = self.get_widget('objectplace_lock_spin')
         lockadj = self.get_widget('objectplace_lock_adj')
         trapstore = self.get_widget('objectplace_trap_store')
-        for (key, name) in c.traptable.items():
+        for (key, name) in list(c.traptable.items()):
             trapstore.append([name, key])
         self.get_widget('objectplace_trap_combo').set_active(0)
         if c.book == 1:
@@ -2038,7 +2037,7 @@ class MapGUI(BaseGUI):
             statvbox.add(table)
 
             # Now add the statuses to table
-            status_inv = dict([v, k] for k, v in c.statustable.items())
+            status_inv = dict([v, k] for k, v in list(c.statustable.items()))
             for (idx, key) in enumerate(sorted(status_inv.keys())):
                 name = 'ent_status_%d' % (status_inv[key])
                 self.input_short(table, idx, name, key, None,
@@ -2314,7 +2313,7 @@ class MapGUI(BaseGUI):
         try:
             ent_data = self.eschalondata.readfile(ent_filename, 'maps')
             ent_df = Savefile(filename=ent_filename, stringdata=ent_data)
-        except LoadException, e:
+        except LoadException as e:
             # Datapak maps without entities don't have an entity file; we'll simulate a
             # zero-length one instead.
             ent_df = Savefile(filename=ent_filename, stringdata='')
@@ -2403,7 +2402,7 @@ class MapGUI(BaseGUI):
         try:
             mapobj = Map.load(filename, self.req_book)
             mapobj.read()
-        except LoadException, e:
+        except LoadException as e:
             self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
                              'be loaded.  Please choose a different file and try again.'
                              "\n\n"
@@ -2456,7 +2455,7 @@ class MapGUI(BaseGUI):
         """
         request_redraw = False
         if c.book == 3 and ('4949' in self.mapobj.df.filename or 'Elderoak Forest' in self.mapobj.mapname):
-            print 'True'
+            print('True')
             elderoak = True
         else:
             elderoak = False
@@ -3056,13 +3055,13 @@ class MapGUI(BaseGUI):
         # Figure out our dimensions
         tier_1_x = []
         tier_1_y = y - 1 - 8
-        tier_2_x = range(x - 1, x + 2)
+        tier_2_x = list(range(x - 1, x + 2))
         tier_2_y = y - 8
         global_x = (x * self.z_width) - self.z_halfwidth
         if ((y % 2) == 0):
-            tier_1_x = range(x - 2, x + 2)
+            tier_1_x = list(range(x - 2, x + 2))
         else:
-            tier_1_x = range(x - 1, x + 3)
+            tier_1_x = list(range(x - 1, x + 3))
             global_x = global_x + self.z_halfwidth
 
         # Set up a surface to use
@@ -3321,14 +3320,14 @@ class MapGUI(BaseGUI):
             # already sent a queue_draw to the main maparea, so we don't have
             # to do it again here.
             if (self.drawing):
-                for (x, y) in self.highlight_tiles.keys():
+                for (x, y) in list(self.highlight_tiles.keys()):
                     self.action_draw_tile(x, y)
             elif (self.erasing):
-                for (x, y) in self.highlight_tiles.keys():
+                for (x, y) in list(self.highlight_tiles.keys()):
                     self.action_erase_tile(x, y)
             elif (self.copying):
                 self.action_copy_tiles(
-                    self.tile_x, self.tile_y, self.highlight_tiles.keys())
+                    self.tile_x, self.tile_y, list(self.highlight_tiles.keys()))
 
         # Update our coordinate label
         self.coords_label.set_markup(
@@ -3389,7 +3388,7 @@ class MapGUI(BaseGUI):
         self.brush_pattern_prev = self.brush_pattern
 
         # Now sort our cleantiles so that they're always drawn back-to-front
-        tiles_sorted = sorted(local_cleantiles.keys(),
+        tiles_sorted = sorted(list(local_cleantiles.keys()),
                               key=lambda c: c[1] * 100 + c[0])
         for coord in tiles_sorted:
             if local_cleantiles[coord] == False:
@@ -3758,17 +3757,17 @@ class MapGUI(BaseGUI):
         self.setup_script_editor_launcher(hbox, entry, self.tilewindow, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
-        if (tile.tilecontents[curpages].trap in c.traptable.keys()):
-            self.tilecontent_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(
-            ), None, self.on_tilecontent_dropdown_changed)
+        if (tile.tilecontents[curpages].trap in list(c.traptable.keys())):
+            self.tilecontent_input_dropdown(curpages, binput, 4, 'trap', 'Trap', list(c.traptable.values(
+            )), None, self.on_tilecontent_dropdown_changed)
         else:
             self.tilecontent_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap',
                                         'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
-        if (tile.tilecontents[curpages].state in c.containertable.keys()):
+        if (tile.tilecontents[curpages].state in list(c.containertable.keys())):
             self.tilecontent_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>",
-                                            c.containertable.values(), None, self.on_tilecontent_dropdown_changed)
+                                            list(c.containertable.values()), None, self.on_tilecontent_dropdown_changed)
         else:
             self.tilecontent_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State',
                                         'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
@@ -4352,7 +4351,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (foo, letter, bar) = wname.split('_', 2)
         if (letter != self.objsel_current):
-            for (key, val) in self.objsel_panes[letter].items():
+            for (key, val) in list(self.objsel_panes[letter].items()):
                 self.__dict__['imgsel_%s' % key] = val
                 if key == 'area':
                     self.objsel_window.drawingarea = val
@@ -4481,7 +4480,7 @@ class MapGUI(BaseGUI):
                 # Should maybe throw an exception here, but instead we'll
                 # just spit something on the console and return.  No need to
                 # get all huffy about it.
-                print "Unknown control toggled, should never get here"
+                print("Unknown control toggled, should never get here")
                 return
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
             self.update_activity_label()
@@ -4611,7 +4610,7 @@ class MapGUI(BaseGUI):
                 # Should maybe throw an exception here, but instead we'll
                 # just spit something on the console and return.  No need to
                 # get all huffy about it.
-                print "Unknown brush toggled, should never get here"
+                print("Unknown brush toggled, should never get here")
                 return
 
         self.tile_highlight_change()
@@ -4646,18 +4645,18 @@ class MapGUI(BaseGUI):
                     self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
-            for (x, y) in self.highlight_tiles.keys():
+            for (x, y) in list(self.highlight_tiles.keys()):
                 self.action_draw_tile(x, y)
         elif (action == self.ACTION_ERASE):
             self.erasing = True
-            for (x, y) in self.highlight_tiles.keys():
+            for (x, y) in list(self.highlight_tiles.keys()):
                 self.action_erase_tile(x, y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_tile(self.tile_x, self.tile_y)
         elif (action == self.ACTION_COPY):
             self.copying = True
             self.action_copy_tiles(
-                self.tile_x, self.tile_y, self.highlight_tiles.keys())
+                self.tile_x, self.tile_y, list(self.highlight_tiles.keys()))
         elif (action == self.ACTION_COPY_SELECT):
             self.action_copy_select(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
@@ -5556,7 +5555,7 @@ class MapGUI(BaseGUI):
         """
         self.mapinit = True
         self.set_zoom_vars(1)
-        print self.options
+        print(self.options)
         for file in self.options['filenames']:
             self.load_from_file(file)
             # self.draw_map()
@@ -5735,7 +5734,7 @@ class MapGUI(BaseGUI):
 
         # Report timing
         time_b = time.time()
-        print "Map rendered in %0.2f seconds" % (time_b - time_a)
+        print("Map rendered in %0.2f seconds" % (time_b - time_a))
 
         # From now on, our map's considered initialized
         self.mapinit = True
