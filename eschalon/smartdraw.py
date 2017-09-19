@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -25,14 +25,17 @@ from eschalon.tile import Tile
 from eschalon.entity import Entity
 from eschalon.tilecontent import Tilecontent
 
+
 class ComplexObjStep(object):
     """
     A single step in a "complex" object.
     """
+
     def __init__(self, tile, dir=None, revdir=None):
         self.tile = tile
         self.dir = dir
         self.revdir = revdir
+
 
 class ComplexObj(object):
     """
@@ -40,50 +43,58 @@ class ComplexObj(object):
     something which, in its atomic form, would take up more than one
     tile (examples being tents, beds, wagons, a carpet, and cliffs)
     """
-    
+
     def __init__(self, name, starttile, wallflag=None):
         self.name = name
         self.steps = [ComplexObjStep(starttile)]
         self.revdir = None
         self.wallflag = wallflag
+
     def add(self, dir, tile):
         step = ComplexObjStep(tile)
         step.dir = dir
         self.steps[-1].revdir = self.revdir[dir]
         self.steps.append(step)
+
     def matches(self, matchtile):
         for step in self.steps:
             if step.tile == matchtile:
                 return True
         return False
+
     def get_steps(self, tile):
         fwd = []
         rev = []
         for (i, step) in enumerate(self.steps):
             if step.tile == tile:
-                for step in self.steps[i+1:]:
+                for step in self.steps[i + 1:]:
                     fwd.append((step.dir, step.tile))
                 for step in reversed(self.steps[0:i]):
                     rev.append((step.revdir, step.tile))
                 break
         return (fwd, rev)
 
+
 class ComplexObjCollection(object):
     """
     Holds a bunch of ComplexObjs for you.
     """
+
     def __init__(self, revdir, var):
         self.objects = []
         self.revdir = revdir
         self.var = var
+
     def add(self, object):
         object.revdir = self.revdir
         self.objects.append(object)
+
     def get(self, id):
         for object in self.objects:
             if object.matches(id):
                 return object
         return None
+
 
 class PremadeObject(object):
     """
@@ -191,17 +202,23 @@ class PremadeObject(object):
                 tile.tilecontents[0].x = tile.x
                 tile.tilecontents[0].y = tile.y
                 if self.do_lock:
-                    tile.tilecontents[0].lock = int(gui.get_widget('objectplace_lock_spin').get_value())
+                    tile.tilecontents[0].lock = int(
+                        gui.get_widget('objectplace_lock_spin').get_value())
                 if self.do_trap:
-                    iter = gui.get_widget('objectplace_trap_combo').get_active_iter()
-                    tile.tilecontents[0].trap = gui.get_widget('objectplace_trap_store').get_value(iter, 1)
+                    iter = gui.get_widget(
+                        'objectplace_trap_combo').get_active_iter()
+                    tile.tilecontents[0].trap = gui.get_widget(
+                        'objectplace_trap_store').get_value(iter, 1)
                 if c.book > 1:
                     if self.do_loot:
-                        tile.tilecontents[0].slider_loot = int(gui.get_widget('objectplace_loot_spin').get_value())
+                        tile.tilecontents[0].slider_loot = int(
+                            gui.get_widget('objectplace_loot_spin').get_value())
                 if self.big_gfx:
-                    wallid = map.big_gfx_mappings.get_id(tile.tilecontents[0].extratext, tile.x, tile.y)
+                    wallid = map.big_gfx_mappings.get_id(
+                        tile.tilecontents[0].extratext, tile.x, tile.y)
                     tile.wallimg = wallid
-                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (tile.wallimg)
+                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (
+                        tile.wallimg)
 
         if self.do_entity:
             if self.entity is not None:
@@ -221,6 +238,7 @@ class PremadeObject(object):
                 rel_obj.apply_to(gui, map, adjtile)
                 extra_affected.append(adjtile)
         return extra_affected
+
 
 class PremadeObjectCollection(object):
     """
@@ -247,7 +265,7 @@ class PremadeObjectCollection(object):
 
     def get(self, cat, idx):
         return self.collection[cat][idx]
-    
+
     def get_all(self):
         return self.collection
 
@@ -265,6 +283,7 @@ class PremadeObjectCollection(object):
                     obj.tilecontent.savegame = savegame
                 if obj.entity is not None:
                     obj.entity.savegame = savegame
+
 
 class SmartDraw(object):
     """
@@ -285,42 +304,42 @@ class SmartDraw(object):
     DIR_NW = Map.DIR_NW
 
     REV_DIR = {
-            DIR_NE: DIR_SW,
-            DIR_SE: DIR_NW,
-            DIR_SW: DIR_NE,
-            DIR_NW: DIR_SE,
-            DIR_N: DIR_S,
-            DIR_E: DIR_W,
-            DIR_S: DIR_N,
-            DIR_W: DIR_E
-        }
+        DIR_NE: DIR_SW,
+        DIR_SE: DIR_NW,
+        DIR_SW: DIR_NE,
+        DIR_NW: DIR_SE,
+        DIR_N: DIR_S,
+        DIR_E: DIR_W,
+        DIR_S: DIR_N,
+        DIR_W: DIR_E
+    }
 
     ADJ_DIR = {
-            DIR_NE: DIR_N|DIR_E,
-            DIR_SE: DIR_S|DIR_E,
-            DIR_SW: DIR_S|DIR_W,
-            DIR_NW: DIR_N|DIR_W,
-            DIR_N: DIR_NE|DIR_NW,
-            DIR_E: DIR_NE|DIR_SE,
-            DIR_S: DIR_SE|DIR_SW,
-            DIR_W: DIR_NW|DIR_SW
-        }
+        DIR_NE: DIR_N | DIR_E,
+        DIR_SE: DIR_S | DIR_E,
+        DIR_SW: DIR_S | DIR_W,
+        DIR_NW: DIR_N | DIR_W,
+        DIR_N: DIR_NE | DIR_NW,
+        DIR_E: DIR_NE | DIR_SE,
+        DIR_S: DIR_SE | DIR_SW,
+        DIR_W: DIR_NW | DIR_SW
+    }
 
     # List of adjacent directions if we're just
     # looking at cardinal directions
-    CARD_ADJ_DIRS ={
-            DIR_N: [DIR_W, DIR_E],
-            DIR_S: [DIR_W, DIR_E],
-            DIR_W: [DIR_N, DIR_S],
-            DIR_E: [DIR_N, DIR_S]
-        }
+    CARD_ADJ_DIRS = {
+        DIR_N: [DIR_W, DIR_E],
+        DIR_S: [DIR_W, DIR_E],
+        DIR_W: [DIR_N, DIR_S],
+        DIR_E: [DIR_N, DIR_S]
+    }
 
     COMP_DIR = {
-            DIR_N|DIR_W: DIR_NW,
-            DIR_N|DIR_E: DIR_NE,
-            DIR_S|DIR_E: DIR_SE,
-            DIR_S|DIR_W: DIR_SW
-        }
+        DIR_N | DIR_W: DIR_NW,
+        DIR_N | DIR_E: DIR_NE,
+        DIR_S | DIR_E: DIR_SE,
+        DIR_S | DIR_W: DIR_SW
+    }
 
     # Note that Beach is a special one, but we put it in the list
     # so that our newer-style decalpref dropdown has a value to use
@@ -337,8 +356,8 @@ class SmartDraw(object):
     def __init__(self):
 
         # One empty dict for each IDX_*
-        self.indexes = [ {}, {}, {}, {}, {}, {}, {}, {}, {} ]
-        self.revindexes = [ {}, {}, {}, {}, {}, {}, {}, {}, {} ]
+        self.indexes = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
+        self.revindexes = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
         self.beach_index = {}
         self.beach_revindex = {}
 
@@ -385,12 +404,12 @@ class SmartDraw(object):
         if (wallgroup is not None and tile.wallimg == self.special):
             return wallgroup
         for start in self.wallstarts:
-            if (tile.wallimg >= start and tile.wallimg < start+10):
+            if (tile.wallimg >= start and tile.wallimg < start + 10):
                 return start
         if (tile.wallimg in self.fenceids):
             return self.fenceids[0]
         for val in (self.bigfencestarts + self.bigfence2starts):
-            if (tile.wallimg == val or tile.wallimg == val+1):
+            if (tile.wallimg == val or tile.wallimg == val + 1):
                 return val
         return None
 
@@ -432,7 +451,7 @@ class SmartDraw(object):
             adjgroup = self.get_wall_group(adjtile, wallgroup)
             if (adjgroup is None or adjgroup != wallgroup):
                 continue
-            connflags = connflags|testdir
+            connflags = connflags | testdir
             flagcount += 1
             if (self.add_wall_connection(wallgroup, adjtile, self.REV_DIR[testdir])):
                 retarr.append(adjtile)
@@ -443,19 +462,21 @@ class SmartDraw(object):
                 connflags = self.indexes[self.IDX_WALL][0]
             elif (flagcount == 1):
                 if ((connflags & self.DIR_NE) == self.DIR_NE or
-                    (connflags & self.DIR_SW) == self.DIR_SW):
+                        (connflags & self.DIR_SW) == self.DIR_SW):
                     connflags = self.indexes[self.IDX_WALL][0]
                 else:
                     connflags = self.indexes[self.IDX_WALL][1]
             else:
-                raise Exception("flagcount isn't 1 or 0 - should figure out why")
+                raise Exception(
+                    "flagcount isn't 1 or 0 - should figure out why")
 
         if (self.revindexes[self.IDX_WALL][connflags] == -1):
             tile.wallimg = self.special
             if c.book > 1:
                 tile.wall = 2
         else:
-            tile.wallimg = wallgroup + self.revindexes[self.IDX_WALL][connflags]
+            tile.wallimg = wallgroup + \
+                self.revindexes[self.IDX_WALL][connflags]
             tile.wall = 1
 
         # And lastly, return.
@@ -501,9 +522,9 @@ class SmartDraw(object):
         # Otherwise, accept the pruning.
         if (conncount == 0):
             if (dir == self.DIR_NE or dir == self.DIR_SW):
-                newflags = self.DIR_NE|self.DIR_SW
+                newflags = self.DIR_NE | self.DIR_SW
             else:
-                newflags = self.DIR_NW|self.DIR_SE
+                newflags = self.DIR_NW | self.DIR_SE
 
         # Now after all that, see if we even changed at all.  If so,
         # make the change and report back.
@@ -555,14 +576,14 @@ class SmartDraw(object):
             adjgroup = self.get_wall_group(adjtile)
             if (adjgroup is None or adjgroup != fencestart):
                 continue
-            connflags = connflags|testdir
+            connflags = connflags | testdir
             flagcount += 1
             if fencestart == self.fenceids[0]:
                 if (self.add_fence_connection(adjtile, self.REV_DIR[testdir])):
                     retarr.append(adjtile)
             else:
                 # Our selection for the "big" fence is highly limited
-                connflags = connflags|self.REV_DIR[testdir]
+                connflags = connflags | self.REV_DIR[testdir]
                 flagcount += 1
                 if (self.add_big_fence_connection(adjtile, self.REV_DIR[testdir], fencestart, idx)):
                     retarr.append(adjtile)
@@ -581,7 +602,8 @@ class SmartDraw(object):
                         if ((connflags & dir) == dir and (self.indexes[idx][fenceidx] & dir) == dir):
                             connflags = self.indexes[idx][fenceidx]
             else:
-                raise Exception("flagcount isn't 1 or 0 - should figure out why")
+                raise Exception(
+                    "flagcount isn't 1 or 0 - should figure out why")
 
         tile.wallimg = fencestart + self.revindexes[idx][connflags]
 
@@ -629,16 +651,17 @@ class SmartDraw(object):
         # Otherwise, accept the pruning.
         if (conncount == 0):
             if (dir == self.DIR_NE or dir == self.DIR_SW):
-                newflags = self.DIR_NE|self.DIR_SW
+                newflags = self.DIR_NE | self.DIR_SW
             else:
-                newflags = self.DIR_NW|self.DIR_SE
+                newflags = self.DIR_NW | self.DIR_SE
 
         # Now after all that, see if we even changed at all.  If so,
         # make the change and report back.
         if (curflags == newflags):
             return False
         else:
-            tile.wallimg = self.fenceids[0] + self.revindexes[self.IDX_FENCE][newflags]
+            tile.wallimg = self.fenceids[0] + \
+                self.revindexes[self.IDX_FENCE][newflags]
             return True
 
     def add_big_fence_connection(self, tile, dir, fencestart, idx):
@@ -649,7 +672,7 @@ class SmartDraw(object):
         basically.
         """
         connflags = dir
-        connflags = connflags|self.REV_DIR[dir]
+        connflags = connflags | self.REV_DIR[dir]
         newimg = fencestart + self.revindexes[idx][connflags]
         if (newimg != tile.wallimg):
             tile.wallimg = newimg
@@ -686,7 +709,7 @@ class SmartDraw(object):
         tiles.  Using 'known' you can pass in any tiles which may have
         already been loaded (which can help avoid unnecessary calls to
         Map.tile_relative().
-        
+
         Returns a list of modified tiles if we're recursing, or just
         true/false otherwise.  (Note that the list does not include the
         original tile, which is just assumed.)
@@ -720,18 +743,20 @@ class SmartDraw(object):
         # If recursing, load in all the tiles we'll need, first
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
-                    self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
+                        self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
                 known[dir] = self.mapobj.tile_relative(tile.x, tile.y, dir)
 
             # Also randomize the floor tile if we're supposed to (we only do
             # this to the tile actually being drawn, not any adjacent tiles)
             if (self.gui.smart_randomize.get_active()):
-                tile.floorimg = random.choice(self.get_random_terrain_pool(curfloor))
+                tile.floorimg = random.choice(
+                    self.get_random_terrain_pool(curfloor))
 
         # Figure out whether to try and fit grass decals or sand decals,
         # and which decal type to strip out
         decalpref_blacklists = {}
-        full_idx_list = [self.IDX_GRASS, self.IDX_SAND, self.IDX_SNOW, self.IDX_LAVA]
+        full_idx_list = [self.IDX_GRASS, self.IDX_SAND,
+                         self.IDX_SNOW, self.IDX_LAVA]
         for idx in full_idx_list:
             decalpref_blacklists[idx] = []
             for inner_idx in full_idx_list:
@@ -745,14 +770,14 @@ class SmartDraw(object):
             if (not adjtile):
                 continue
             if (adjtile.floorimg in self.tilesets[idxtype]):
-                connflags = connflags|testdir
+                connflags = connflags | testdir
                 flagcount += 1
             else:
-                connflags_not = connflags_not|testdir
+                connflags_not = connflags_not | testdir
 
             # Process adjacent tiles if we're supposed to
             if (recurse):
-                if (self.draw_floor(adjtile, straight_path, False, { self.REV_DIR[testdir]: tile })):
+                if (self.draw_floor(adjtile, straight_path, False, {self.REV_DIR[testdir]: tile})):
                     affected.append(adjtile)
 
         # If we're recursing, we'll need to check the cardinal directions as
@@ -762,7 +787,7 @@ class SmartDraw(object):
                 adjtile = self.get_rel(tile, known, testdir)
                 if (not adjtile):
                     continue
-                if (self.draw_floor(adjtile, straight_path, False, { self.REV_DIR[testdir]: tile })):
+                if (self.draw_floor(adjtile, straight_path, False, {self.REV_DIR[testdir]: tile})):
                     affected.append(adjtile)
 
         if (tile.floorimg in self.tilesets[idxtype]):
@@ -810,7 +835,8 @@ class SmartDraw(object):
                         if (straight_path):
                             found_adj_same = False
                             for adjdir in self.CARD_ADJ_DIRS[testdir]:
-                                adjtile = self.get_rel(tile, known, self.COMP_DIR[testdir|adjdir])
+                                adjtile = self.get_rel(
+                                    tile, known, self.COMP_DIR[testdir | adjdir])
                                 if (not adjtile):
                                     continue
                                 if (adjtile.floorimg in self.tilesets[idxtype]):
@@ -818,13 +844,13 @@ class SmartDraw(object):
                                     break
                                 elif (adjtile.decalimg in self.indexes[idxtype]):
                                     adjflags = self.indexes[idxtype][adjtile.decalimg]
-                                    testflag = self.COMP_DIR[self.REV_DIR[adjdir]|testdir]
+                                    testflag = self.COMP_DIR[self.REV_DIR[adjdir] | testdir]
                                     if (adjflags == testflag):
                                         found_adj_same = True
                                         break
                             if (not found_adj_same):
                                 continue
-                    if ((connflags|testdir) in self.revindexes[idxtype]):
+                    if ((connflags | testdir) in self.revindexes[idxtype]):
                         adjtile = self.get_rel(tile, known, testdir)
                         if (not adjtile):
                             continue
@@ -886,7 +912,8 @@ class SmartDraw(object):
                         flagcount += 1
                         connflags = connflags | dir
             if flagcount == 4:
-                actiontiles.append((tile, random.choice(self.tile_fullest[idxtype])))
+                actiontiles.append(
+                    (tile, random.choice(self.tile_fullest[idxtype])))
             elif flagcount == 0:
                 actiontiles.append((tile, 0))
             else:
@@ -956,7 +983,7 @@ class SmartDraw(object):
         # If recursing, load in all the tiles we'll need, first
         if (recurse):
             for dir in [self.DIR_NE, self.DIR_E, self.DIR_SE, self.DIR_S,
-                    self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
+                        self.DIR_SW, self.DIR_W, self.DIR_NW, self.DIR_N]:
                 known[dir] = self.mapobj.tile_relative(tile.x, tile.y, dir)
 
             # Additionally, set our tile to full-sand so that the recursion
@@ -966,10 +993,10 @@ class SmartDraw(object):
 
             # We're going to recurse now rather than later
             for testdir in [self.DIR_NE, self.DIR_SE, self.DIR_SW, self.DIR_NW,
-                self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
+                            self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
                 adjtile = self.get_rel(tile, known, testdir)
                 if (adjtile):
-                    if (self.draw_beach(adjtile, False, { self.REV_DIR[testdir]: tile }, drawing_water)):
+                    if (self.draw_beach(adjtile, False, {self.REV_DIR[testdir]: tile}, drawing_water)):
                         affected.append(adjtile)
 
         # First find out more-typical adjacent tiles
@@ -991,12 +1018,12 @@ class SmartDraw(object):
                 #    2) The adjacent tile is NOT one of our "beach" tiles but is also not water.
                 # We do this because we'd like to consider anything non-sand to be virtually "sand"
                 if ((adjtile.floorimg in self.beach_index.keys() and
-                    (self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
-                    or (adjtile.floorimg not in self.beach_index.keys() and adjtile.floorimg not in self.water)):
-                    connflags = connflags|testdir
+                     (self.beach_index[adjtile.floorimg] & self.REV_DIR[testdir]) == self.REV_DIR[testdir])
+                        or (adjtile.floorimg not in self.beach_index.keys() and adjtile.floorimg not in self.water)):
+                    connflags = connflags | testdir
                     flagcount += 1
                 else:
-                    connflags_not = connflags_not|testdir
+                    connflags_not = connflags_not | testdir
 
             # There's two blocks of code here with varying conditions for running.
             # I think it might be a little less cumbersome to trigger them this way.
@@ -1034,7 +1061,7 @@ class SmartDraw(object):
             else:
                 # See if there's a more-specific tile we could match on
                 for testdir in [self.DIR_N, self.DIR_E, self.DIR_S, self.DIR_W]:
-                    if ((connflags|testdir) in self.beach_revindex):
+                    if ((connflags | testdir) in self.beach_revindex):
                         adjtile = self.get_rel(tile, known, testdir)
                         if (not adjtile):
                             continue
@@ -1126,6 +1153,7 @@ class SmartDraw(object):
         else:
             return B3SmartDraw()
 
+
 class B1SmartDraw(SmartDraw):
     """
     SmartDraw for Book 1
@@ -1141,13 +1169,13 @@ class B1SmartDraw(SmartDraw):
         self.wall_list['decal_blocked'] = [55]
         self.wall_list['decal_seethrough'] = [52, 71, 83, 84, 96, 170]
         self.wall_list['wall_blocked'] = (range(23, 31) + range(68, 72) + range(80, 85) +
-            range(109, 112) + range(116, 121) + range(125, 144) +
-            range(145, 156) + range(161, 214) + range(251, 256) + 
-            [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
+                                          range(109, 112) + range(116, 121) + range(125, 144) +
+                                          range(145, 156) + range(161, 214) + range(251, 256) +
+                                          [38, 40, 43, 49, 50, 58, 59, 79, 89, 101, 103, 105, 107, 215, 216, 219, 220])
         self.wall_list['wall_seethrough'] = (range(1, 23) + range(31, 38) + range(44, 49) +
-            range(51, 56) + range(60, 68) + range(72, 79) +
-            range(85, 89) + range(112, 116) + range(121, 125) +
-            [39, 41, 42, 57, 144, 214])
+                                             range(51, 56) + range(60, 68) + range(72, 79) +
+                                             range(85, 89) + range(112, 116) + range(121, 125) +
+                                             [39, 41, 42, 57, 144, 214])
         self.wall_list['walldecal_seethrough'] = [19, 20]
         self.wall_list['wall_restrict'] = []
 
@@ -1158,146 +1186,157 @@ class B1SmartDraw(SmartDraw):
         self.bigfence2starts = [215]
         self.special = 213
         self.tilesets = {
-                self.IDX_GRASS: [9, 10, 11, 12],
-                self.IDX_SAND: [124, 125],
-                self.IDX_SNOW: [],
-                self.IDX_LAVA: [],
-            }
+            self.IDX_GRASS: [9, 10, 11, 12],
+            self.IDX_SAND: [124, 125],
+            self.IDX_SNOW: [],
+            self.IDX_LAVA: [],
+        }
         self.random_terrain = [
-                [3, 4],          # Red ground of some sort
-                [9, 10, 11, 12], # Regular Grass
-                [34, 35],        # Stone Ground
-                [40, 41],        # Cobbles
-                [79, 80, 81, 82] # "Dry" Grass
-            ]
+            [3, 4],          # Red ground of some sort
+            [9, 10, 11, 12],  # Regular Grass
+            [34, 35],        # Stone Ground
+            [40, 41],        # Cobbles
+            [79, 80, 81, 82]  # "Dry" Grass
+        ]
         self.random_decal = [
-                range(13, 19),    # Bloodstains, small-to-med
-                range(26, 31),    # Brown smudges
-                [31, 32],         # Hay/Straw
-                [37, 43, 49],     # Smudges
-                [50, 51, 56, 57], # Dead bodies
-                [73, 74, 82],     # Scattered wood
-                [75, 76],         # Rubble
-                [77, 78],         # Smashed somethingorother
-                [79, 80],         # Skeletons
-                [88, 89, 90],     # Mushrooms
-                [116, 117, 118, 119], # Cracks
-                [44, 169],        # Greenish smudge
-            ]
+            range(13, 19),    # Bloodstains, small-to-med
+            range(26, 31),    # Brown smudges
+            [31, 32],         # Hay/Straw
+            [37, 43, 49],     # Smudges
+            [50, 51, 56, 57],  # Dead bodies
+            [73, 74, 82],     # Scattered wood
+            [75, 76],         # Rubble
+            [77, 78],         # Smashed somethingorother
+            [79, 80],         # Skeletons
+            [88, 89, 90],     # Mushrooms
+            [116, 117, 118, 119],  # Cracks
+            [44, 169],        # Greenish smudge
+        ]
         self.random_obj = [
-                [91, 92, 93],         # Shrubs
-                [95, 96],             # Marshy Shrubs
-                [127, 128],           # Blossoming Trees
-                [129, 130, 131, 142], # Whithered Trees
-                [219, 220],           # Tall Rocks
-                [251, 252],           # Tall Trees
-                [253, 254]            # Tall Pines
-            ]
+            [91, 92, 93],         # Shrubs
+            [95, 96],             # Marshy Shrubs
+            [127, 128],           # Blossoming Trees
+            [129, 130, 131, 142],  # Whithered Trees
+            [219, 220],           # Tall Rocks
+            [251, 252],           # Tall Trees
+            [253, 254]            # Tall Pines
+        ]
         self.random_walldecal = [
-                [9, 10],    # Wall shadows/smudges (SW->NE)
-                [11, 12],   # Wall shadows/smudges (NW->SE)
-                [27, 28],   # Cracks (NW->SE)
-                [29, 30]    # Cracks (SW->NE)
-            ]
-        self.water = [ 126 ]
+            [9, 10],    # Wall shadows/smudges (SW->NE)
+            [11, 12],   # Wall shadows/smudges (NW->SE)
+            [27, 28],   # Cracks (NW->SE)
+            [29, 30]    # Cracks (SW->NE)
+        ]
+        self.water = [126]
 
         # Wall Indexes
-        self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 0, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 1, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 2, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 3, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 4, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 5, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_WALL, 6, self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 7, self.DIR_NE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 8, self.DIR_NE|self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 9, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, -1, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 0, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 1, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 2, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 3, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 4, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 5, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_WALL, 6, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 7, self.DIR_NE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 8, self.DIR_NE |
+                       self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 9, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
 
         # Fence Indexes
-        self.add_index(self.IDX_FENCE, 0, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_FENCE, 1, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 2, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_FENCE, 3, self.DIR_NW|self.DIR_SW)
-        self.add_index(self.IDX_FENCE, 4, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 5, self.DIR_SE|self.DIR_NE)
+        self.add_index(self.IDX_FENCE, 0, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 1, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 2, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_FENCE, 3, self.DIR_NW | self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 4, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 5, self.DIR_SE | self.DIR_NE)
 
         # "Big" fence Indexes
-        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW | self.DIR_NE)
 
         # "Big" fence Indexes (other direction)
-        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW|self.DIR_NE)
-        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW | self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW | self.DIR_SE)
 
         # Grass Indexes
         self.add_index(self.IDX_GRASS, 97, self.DIR_SE)
         self.add_index(self.IDX_GRASS, 98, self.DIR_SW)
         self.add_index(self.IDX_GRASS, 99, self.DIR_NW)
         self.add_index(self.IDX_GRASS, 100, self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 101, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 102, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 103, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 104, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 105, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 106, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 101, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 102, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 103, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 104, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 105, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 106, self.DIR_NE | self.DIR_SW)
         self.add_index(self.IDX_GRASS, 107, self.DIR_N)
         self.add_index(self.IDX_GRASS, 108, self.DIR_S)
         self.add_index(self.IDX_GRASS, 109, self.DIR_W)
         self.add_index(self.IDX_GRASS, 110, self.DIR_E)
-        self.add_index(self.IDX_GRASS, 126, self.DIR_N|self.DIR_S)
-        self.add_index(self.IDX_GRASS, 143, self.DIR_W|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 157, self.DIR_W|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 158, self.DIR_N|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 159, self.DIR_E|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 160, self.DIR_W|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 161, self.DIR_E|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 162, self.DIR_W|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 163, self.DIR_N|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 164, self.DIR_E|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 165, self.DIR_S|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 166, self.DIR_S|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 167, self.DIR_N|self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 168, self.DIR_S|self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 126, self.DIR_N | self.DIR_S)
+        self.add_index(self.IDX_GRASS, 143, self.DIR_W | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 157, self.DIR_W | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 158, self.DIR_N | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 159, self.DIR_E | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 160, self.DIR_W | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 161, self.DIR_E |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 162, self.DIR_W |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 163, self.DIR_N | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 164, self.DIR_E | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 165, self.DIR_S | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 166, self.DIR_S | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 167, self.DIR_N |
+                       self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 168, self.DIR_S |
+                       self.DIR_NW | self.DIR_NE)
 
         # Sand Indexes
-        self.add_index(self.IDX_SAND, 138, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 144, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 138, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 144, self.DIR_NE | self.DIR_SW)
         self.add_index(self.IDX_SAND, 145, self.DIR_NW)
         self.add_index(self.IDX_SAND, 146, self.DIR_NE)
         self.add_index(self.IDX_SAND, 147, self.DIR_SE)
         self.add_index(self.IDX_SAND, 148, self.DIR_SW)
-        self.add_index(self.IDX_SAND, 149, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 150, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_SAND, 155, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_SAND, 156, self.DIR_NW|self.DIR_NE)
+        self.add_index(self.IDX_SAND, 149, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 150, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_SAND, 155, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_SAND, 156, self.DIR_NW | self.DIR_NE)
 
         # Pool to randomly choose from if we're completely surrounded
         self.tile_fullest = {
-                self.IDX_GRASS: [161, 162, 167, 168],
-                self.IDX_SAND: [138, 144],
-                self.IDX_SNOW: [],
-                self.IDX_LAVA: [],
-            }
+            self.IDX_GRASS: [161, 162, 167, 168],
+            self.IDX_SAND: [138, 144],
+            self.IDX_SNOW: [],
+            self.IDX_LAVA: [],
+        }
 
         # Beach indexes (these are floor tiles, not decals - the directions
         # specified here are the direction that the SAND is in, not the
         # water.  Or to put it another way, these tiles are considered
         # water which happen to bleed into sand a bit.
-        self.add_beach_index(124, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
-        self.add_beach_index(125, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_beach_index(124, self.DIR_NW | self.DIR_NE |
+                             self.DIR_SE | self.DIR_SW)
+        self.add_beach_index(125, self.DIR_NW | self.DIR_NE |
+                             self.DIR_SE | self.DIR_SW)
         self.add_beach_index(127, self.DIR_NW)
         self.add_beach_index(128, self.DIR_SW)
         self.add_beach_index(129, self.DIR_E)
         self.add_beach_index(130, self.DIR_S)
-        self.add_beach_index(131, self.DIR_NW|self.DIR_SW)
-        self.add_beach_index(132, self.DIR_NW|self.DIR_NE)
+        self.add_beach_index(131, self.DIR_NW | self.DIR_SW)
+        self.add_beach_index(132, self.DIR_NW | self.DIR_NE)
         self.add_beach_index(133, self.DIR_SE)
         self.add_beach_index(134, self.DIR_NE)
         self.add_beach_index(135, self.DIR_W)
         self.add_beach_index(136, self.DIR_N)
-        self.add_beach_index(137, self.DIR_NE|self.DIR_SE)
-        self.add_beach_index(138, self.DIR_SW|self.DIR_SE)
+        self.add_beach_index(137, self.DIR_NE | self.DIR_SE)
+        self.add_beach_index(138, self.DIR_SW | self.DIR_SE)
 
         # Now smart Complex Objects
         self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
@@ -1341,7 +1380,7 @@ class B1SmartDraw(SmartDraw):
         chasm_6.add(self.DIR_S, 102)
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
-        
+
         bed_ne = ComplexObj('Bed (NE/SW)', 23, 1)
         self.complex_obj_wall.add(bed_ne)
         bed_ne.add(self.DIR_NE, 24)
@@ -1380,17 +1419,18 @@ class B1SmartDraw(SmartDraw):
         for (start, desc, text) in [
                 (101, 'Wooden', 'a wooden door.'),
                 (105, 'Banded', 'a heavy, reinforced door.')
-                ]:
+        ]:
             cur = start
             for (walldecal, dir, decalimg, framedir, framedecal) in [
                     (21, '/', 21, self.DIR_NE, 46),
                     (22, '\\', 22, self.DIR_NW, 47)
-                    ]:
+            ]:
                 for (state, wall, statenum) in [
                         ('Closed', 1, 1),
                         ('Open', 0, 2)
-                        ]:
-                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s Door %s - %s' % (desc, dir, state))
                     obj.set_wall(wall)
                     obj.set_decalimg(decalimg)
                     obj.set_wallimg(cur)
@@ -1413,15 +1453,17 @@ class B1SmartDraw(SmartDraw):
         for (start, desc, text) in [
                 (7, 'Chest', 'a basic storage chest constructed of hardwood.'),
                 (11, 'Banded Chest', 'a heavy chest built of oak and banded copper.'),
-                (15, 'Metal Chest', 'an amazing chest of steel and gold trim, studded with gemstones.'),
-                ]:
+                (15, 'Metal Chest',
+                 'an amazing chest of steel and gold trim, studded with gemstones.'),
+        ]:
             cur = start
-            for dir in [ '\\', '/' ]:
+            for dir in ['\\', '/']:
                 for (state, statenum) in [
                         ('Closed', 1),
                         ('Open', 2)
-                        ]:
-                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
                     obj.set_tilecontent(3)
@@ -1440,12 +1482,12 @@ class B1SmartDraw(SmartDraw):
         for (start, desc, text) in [
                 (27, 'Small Cabinet \\', 'a sturdy cedar cabinet.'),
                 (49, 'Large Cabinet /', 'a fine hardwood dresser.'),
-                ]:
+        ]:
             cur = start
             for (state, statenum) in [
                     ('Closed', 1),
                     ('Open', 2)
-                    ]:
+            ]:
                 obj = self.premade_objects.new('%s - %s' % (desc, state))
                 obj.set_wall(5)
                 obj.set_wallimg(cur)
@@ -1465,7 +1507,7 @@ class B1SmartDraw(SmartDraw):
         for (wallimg, state, statenum) in [
                 (65, 'Closed', 1),
                 (66, 'Open', 2),
-                ]:
+        ]:
             obj = self.premade_objects.new('Coffin \\ - %s' % (state))
             obj.set_wall(1)
             obj.set_wallimg(wallimg)
@@ -1482,7 +1524,7 @@ class B1SmartDraw(SmartDraw):
                 (115, 'Upright Coffin', 'a coffin.'),
                 (62, 'Sarcophagus /', 'a stone sarcophagus.'),
                 (63, 'Sarcophagus \\', 'a stone sarcophagus.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_wall(1)
             obj.set_wallimg(wallimg)
@@ -1523,22 +1565,22 @@ class B1SmartDraw(SmartDraw):
                 ('Small Sign \\', 53, 'a wooden sign.'),
                 ('Tombstone', 44, 'a granite tombstone.'),
                 ('Cross', 45, 'an old grave marker.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
             obj.set_tilecontent(10)
             obj.create_tilecontentobj(None)
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
         for (name, walldecalimg, text) in [
                 ('Plaque \\', 37, 'a plaque affixed to the wall.'),
                 ('Plaque /', 38, 'a plaque affixed to the wall.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
             obj.set_tilecontent(9)
             obj.create_tilecontentobj(None)
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -1549,7 +1591,7 @@ class B1SmartDraw(SmartDraw):
         obj.set_tilecontent(15)
         obj.create_tilecontentobj(None)
         obj.tilecontent.description = 'a keg of blackpowder.'
-        obj.tilecontent.flags = 0x40 
+        obj.tilecontent.flags = 0x40
         obj.tilecontent.sturdiness = 89
 
         obj = self.premade_objects.new('Well')
@@ -1607,7 +1649,7 @@ class B1SmartDraw(SmartDraw):
         for (name, table) in [
                 ('Enemies', monsters),
                 ('NPCs', npcs)
-                ]:
+        ]:
             self.premade_objects.add_category(name)
             for name in sorted(table.keys()):
                 obj = self.premade_objects.new(name)
@@ -1618,6 +1660,7 @@ class B1SmartDraw(SmartDraw):
                 ent.direction = 1
                 ent.friendly = ent_entry.friendly
                 ent.health = ent_entry.health
+
 
 class B2SmartDraw(SmartDraw):
     """
@@ -1635,21 +1678,21 @@ class B2SmartDraw(SmartDraw):
         self.wall_list['floor_seethrough'] = []
         self.wall_list['decal_blocked'] = [134, 150, 151, 152]
         self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
-            range(170, 174) + range(185, 191) + range(202, 206))
+                                              range(170, 174) + range(185, 191) + range(202, 206))
         self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 83, 86, 100, 116, 147] +
-            range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
-            range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 378) +
-            range(384, 396) + [400, 401, 406] + range(251, 256))
+                                          range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
+                                          range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 378) +
+                                          range(384, 396) + [400, 401, 406] + range(251, 256))
         self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
-            range(44, 57) + [58] + range(61, 69) + range(71, 82) + [84, 85] +
-            range(87, 97) + [99] + range(101, 107) + range(108, 114) + range(117, 119) +
-            range(121, 129) + range(130, 134) + range(136, 147) + range(148, 151) +
-            [270, 271] + range(315, 320) + [333] + range(346, 352) +
-            [364, 365, 367, 381] + range(396, 400) +
-            [407])
+                                             range(44, 57) + [58] + range(61, 69) + range(71, 82) + [84, 85] +
+                                             range(87, 97) + [99] + range(101, 107) + range(108, 114) + range(117, 119) +
+                                             range(121, 129) + range(130, 134) + range(136, 147) + range(148, 151) +
+                                             [270, 271] + range(315, 320) + [333] + range(346, 352) +
+                                             [364, 365, 367, 381] + range(396, 400) +
+                                             [407])
         self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
         self.wall_list['wall_restrict'] = ([107] + range(298, 304) + [332, 378, 379, 380, 382, 383] +
-            range(402, 406))
+                                           range(402, 406))
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
@@ -1658,179 +1701,197 @@ class B2SmartDraw(SmartDraw):
         self.bigfence2starts = [362, 364]
         self.special = 301
         self.tilesets = {
-                self.IDX_GRASS: [1, 2, 3, 4],
-                self.IDX_SAND: [13],
-                self.IDX_SNOW: [81, 82, 83, 84],
-                self.IDX_LAVA: [109]
-            }
+            self.IDX_GRASS: [1, 2, 3, 4],
+            self.IDX_SAND: [13],
+            self.IDX_SNOW: [81, 82, 83, 84],
+            self.IDX_LAVA: [109]
+        }
         self.random_terrain = [
-                [1, 2, 3, 4],      # Regular Grass
-                [9, 10, 11, 12],   # Gravelish
-                [14, 15],          # Cobbles
-                [81, 82, 83, 84],  # Snow
-            ]
+            [1, 2, 3, 4],      # Regular Grass
+            [9, 10, 11, 12],   # Gravelish
+            [14, 15],          # Cobbles
+            [81, 82, 83, 84],  # Snow
+        ]
         self.random_decal = [
-                [87, 103, 104],    # Rubble
-                [97, 98, 99],      # Smudges
-                range(113, 120),   # Bloodstains, small-to-med
-                [120, 121],        # Bloodstains, large
-                [122, 123],        # Slime?
-                [106, 107],        # Starfish
-                [181, 182],        # Smashed somethingorother
-                [167, 168, 184, 199, 200], # More smashed objects
-                [153, 169],        # Strewn papers
-                range(209, 213),   # Brown smudge
-                [213, 214],        # Snow texture
-                [241, 242, 243],   # Cracks
-                [72, 88],          # Hay/Straw
-                [225, 226, 227],   # Mushrooms
-            ]
+            [87, 103, 104],    # Rubble
+            [97, 98, 99],      # Smudges
+            range(113, 120),   # Bloodstains, small-to-med
+            [120, 121],        # Bloodstains, large
+            [122, 123],        # Slime?
+            [106, 107],        # Starfish
+            [181, 182],        # Smashed somethingorother
+            [167, 168, 184, 199, 200],  # More smashed objects
+            [153, 169],        # Strewn papers
+            range(209, 213),   # Brown smudge
+            [213, 214],        # Snow texture
+            [241, 242, 243],   # Cracks
+            [72, 88],          # Hay/Straw
+            [225, 226, 227],   # Mushrooms
+        ]
         self.random_obj = [
-                [33, 34],             # Little tropical trees
-                [49, 50, 51, 52],     # Smashed chests
-                [53, 54],             # Tree Trunks
-                [82, 97, 98],         # Watery plants, greenish
-                [114, 115],           # Watery plants, yellowish
-                [134, 135],           # Mossy overgrowth
-                [378, 379, 380],      # Mountains
-                [381, 382, 383],      # Short snowy rocks
-                [403, 404, 405],      # Short black rocks
-                [251, 252, 253, 255], # Tall Trees
-            ]
+            [33, 34],             # Little tropical trees
+            [49, 50, 51, 52],     # Smashed chests
+            [53, 54],             # Tree Trunks
+            [82, 97, 98],         # Watery plants, greenish
+            [114, 115],           # Watery plants, yellowish
+            [134, 135],           # Mossy overgrowth
+            [378, 379, 380],      # Mountains
+            [381, 382, 383],      # Short snowy rocks
+            [403, 404, 405],      # Short black rocks
+            [251, 252, 253, 255],  # Tall Trees
+        ]
         self.random_walldecal = [
-                [33, 37, 39],   # Wall shadows/smudges (SW->NE)
-                [34, 38, 40],   # Wall shadows/smudges (NW->SE)
-                [21, 22],       # Cracks (NW->SE)
-                [23, 24]        # Cracks (SW->NE)
-            ]
-        self.water = [ 113 ]
+            [33, 37, 39],   # Wall shadows/smudges (SW->NE)
+            [34, 38, 40],   # Wall shadows/smudges (NW->SE)
+            [21, 22],       # Cracks (NW->SE)
+            [23, 24]        # Cracks (SW->NE)
+        ]
+        self.water = [113]
 
         # Wall Indexes
-        self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 0, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 1, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 2, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 3, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 4, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 5, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_WALL, 6, self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 7, self.DIR_NE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 8, self.DIR_NE|self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 9, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, -1, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 0, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 1, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 2, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 3, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 4, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 5, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_WALL, 6, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 7, self.DIR_NE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 8, self.DIR_NE |
+                       self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 9, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
 
         # Fence Indexes
-        self.add_index(self.IDX_FENCE, 0, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 1, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_FENCE, 14, self.DIR_SE|self.DIR_NE)
-        self.add_index(self.IDX_FENCE, 15, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_FENCE, 16, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 17, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 0, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 1, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 14, self.DIR_SE | self.DIR_NE)
+        self.add_index(self.IDX_FENCE, 15, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_FENCE, 16, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 17, self.DIR_NW | self.DIR_SW)
 
         # "Big" fence Indexes
-        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW | self.DIR_NE)
 
         # "Big" fence Indexes (the other direction)
-        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW|self.DIR_NE)
-        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW | self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW | self.DIR_SE)
 
         # Grass Indexes
-        self.add_index(self.IDX_GRASS, 1, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 2, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 3, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 4, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 5, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 6, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 1, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 2, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 3, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 4, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 5, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 6, self.DIR_SW | self.DIR_NW)
         self.add_index(self.IDX_GRASS, 17, self.DIR_NE)
         self.add_index(self.IDX_GRASS, 18, self.DIR_NW)
         self.add_index(self.IDX_GRASS, 19, self.DIR_SE)
         self.add_index(self.IDX_GRASS, 20, self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 33, self.DIR_S|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 34, self.DIR_N|self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 35, self.DIR_W|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 36, self.DIR_E|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 37, self.DIR_N|self.DIR_S)
+        self.add_index(self.IDX_GRASS, 33, self.DIR_S |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 34, self.DIR_N |
+                       self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 35, self.DIR_W |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 36, self.DIR_E |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 37, self.DIR_N | self.DIR_S)
         self.add_index(self.IDX_GRASS, 49, self.DIR_N)
         self.add_index(self.IDX_GRASS, 50, self.DIR_E)
         self.add_index(self.IDX_GRASS, 51, self.DIR_S)
         self.add_index(self.IDX_GRASS, 52, self.DIR_W)
-        self.add_index(self.IDX_GRASS, 53, self.DIR_W|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 65, self.DIR_W|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 66, self.DIR_S|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 67, self.DIR_E|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 68, self.DIR_N|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 81, self.DIR_N|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 82, self.DIR_W|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 83, self.DIR_E|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 84, self.DIR_S|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 53, self.DIR_W | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 65, self.DIR_W | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 66, self.DIR_S | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 67, self.DIR_E | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 68, self.DIR_N | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 81, self.DIR_N | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 82, self.DIR_W | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 83, self.DIR_E | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 84, self.DIR_S | self.DIR_NW)
 
         # Note that these given our current algorithms, will probably never be chosen
-        self.add_index(self.IDX_GRASS, 21, self.DIR_N|self.DIR_E|self.DIR_S|self.DIR_W)
-        self.add_index(self.IDX_GRASS, 22, self.DIR_N|self.DIR_W)
-        self.add_index(self.IDX_GRASS, 38, self.DIR_S|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 54, self.DIR_N|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 69, self.DIR_NE|self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 70, self.DIR_W|self.DIR_S)
-        self.add_index(self.IDX_GRASS, 71, self.DIR_SW|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 85, self.DIR_NW|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 86, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 21, self.DIR_N |
+                       self.DIR_E | self.DIR_S | self.DIR_W)
+        self.add_index(self.IDX_GRASS, 22, self.DIR_N | self.DIR_W)
+        self.add_index(self.IDX_GRASS, 38, self.DIR_S | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 54, self.DIR_N | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 69, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 70, self.DIR_W | self.DIR_S)
+        self.add_index(self.IDX_GRASS, 71, self.DIR_SW |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 85, self.DIR_NW |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 86, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
 
         # Sand Indexes
         self.add_index(self.IDX_SAND, 129, self.DIR_NW)
         self.add_index(self.IDX_SAND, 130, self.DIR_NE)
         self.add_index(self.IDX_SAND, 131, self.DIR_SE)
         self.add_index(self.IDX_SAND, 132, self.DIR_SW)
-        self.add_index(self.IDX_SAND, 133, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 145, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 146, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_SAND, 147, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_SAND, 148, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_SAND, 149, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 133, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 145, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 146, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_SAND, 147, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_SAND, 148, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_SAND, 149, self.DIR_NE | self.DIR_SW)
 
         # Snow Indexes
         self.add_index(self.IDX_SNOW, 230, self.DIR_NW)
         self.add_index(self.IDX_SNOW, 231, self.DIR_NE)
         self.add_index(self.IDX_SNOW, 232, self.DIR_SE)
         self.add_index(self.IDX_SNOW, 233, self.DIR_SW)
-        self.add_index(self.IDX_SNOW, 234, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 246, self.DIR_NW|self.DIR_SW)
-        self.add_index(self.IDX_SNOW, 247, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 248, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 249, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_SNOW, 250, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 234, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 246, self.DIR_NW | self.DIR_SW)
+        self.add_index(self.IDX_SNOW, 247, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 248, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 249, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 250, self.DIR_SW | self.DIR_NE)
 
         # Lava Indexes
         self.add_index(self.IDX_LAVA, 219, self.DIR_NW)
         self.add_index(self.IDX_LAVA, 220, self.DIR_NE)
         self.add_index(self.IDX_LAVA, 221, self.DIR_SE)
         self.add_index(self.IDX_LAVA, 222, self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 223, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 235, self.DIR_NW|self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 236, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 237, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 238, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_LAVA, 239, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 252, self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_LAVA, 253, self.DIR_SW|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_LAVA, 254, self.DIR_NW|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 255, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 223, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 235, self.DIR_NW | self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 236, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 237, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 238, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 239, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 252, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 253, self.DIR_SW |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 254, self.DIR_NW |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 255, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
 
         # Pool to randomly choose from if we're completely surrounded
         self.tile_fullest = {
-                self.IDX_GRASS: [69, 71, 85, 86],
-                self.IDX_SAND: [133, 149],
-                self.IDX_SNOW: [234, 250],
-                self.IDX_LAVA: [252, 253, 254, 255],
-            }
+            self.IDX_GRASS: [69, 71, 85, 86],
+            self.IDX_SAND: [133, 149],
+            self.IDX_SNOW: [234, 250],
+            self.IDX_LAVA: [252, 253, 254, 255],
+        }
 
         # Beach indexes (these are floor tiles, not decals - the directions
         # specified here are the direction that the SAND is in, not the
         # water.  Or to put it another way, these tiles are considered
         # water which happen to bleed into sand a bit.
-        self.add_beach_index(114, self.DIR_NW|self.DIR_SW)
-        self.add_beach_index(115, self.DIR_NW|self.DIR_NE)
-        self.add_beach_index(116, self.DIR_NE|self.DIR_SE)
-        self.add_beach_index(117, self.DIR_SW|self.DIR_SE)
+        self.add_beach_index(114, self.DIR_NW | self.DIR_SW)
+        self.add_beach_index(115, self.DIR_NW | self.DIR_NE)
+        self.add_beach_index(116, self.DIR_NE | self.DIR_SE)
+        self.add_beach_index(117, self.DIR_SW | self.DIR_SE)
         self.add_beach_index(121, self.DIR_E)
         self.add_beach_index(122, self.DIR_S)
         self.add_beach_index(123, self.DIR_W)
@@ -1839,7 +1900,8 @@ class B2SmartDraw(SmartDraw):
         self.add_beach_index(126, self.DIR_NE)
         self.add_beach_index(127, self.DIR_SE)
         self.add_beach_index(128, self.DIR_SW)
-        self.add_beach_index(13, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_beach_index(13, self.DIR_NW | self.DIR_NE |
+                             self.DIR_SE | self.DIR_SW)
 
         # Now smart Complex Objects
         self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
@@ -1867,7 +1929,7 @@ class B2SmartDraw(SmartDraw):
         rcarpet3.add(self.DIR_NW, 44)
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
-        
+
         bed_ne = ComplexObj('Bed (NE/SW)', 1, 1)
         self.complex_obj_wall.add(bed_ne)
         bed_ne.add(self.DIR_NE, 2)
@@ -1912,17 +1974,18 @@ class B2SmartDraw(SmartDraw):
         for (start, desc, text, cond) in [
                 (266, 'Wooden', 'a wooden door.', 550),
                 (282, 'Banded', 'a heavy, reinforced door.', 1100)
-                ]:
+        ]:
             cur = start
             for (walldecal, dir, framedir, framedecal) in [
                     (19, '/', self.DIR_NE, 35),
                     (20, '\\', self.DIR_NW, 36)
-                    ]:
+            ]:
                 for (state, wall, statenum) in [
                         ('Closed', 1, 1),
                         ('Open', 0, 2)
-                        ]:
-                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s Door %s - %s' % (desc, dir, state))
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
@@ -1944,19 +2007,23 @@ class B2SmartDraw(SmartDraw):
                 ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'random'),
                 (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'random'),
                 ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'random'),
-                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'random'),
-                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
-                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'empty'),
-                ]:
+                (None, 21, 'Banded Chest',
+                 'a heavy steel-banded chest.', 800, 'random'),
+                (None, 91, 'Metal Chest',
+                 'a massive chest made of a dense, exotic alloy.', 3000, 'random'),
+                ('Other Containers', 124, 'Coffin',
+                 'a pine coffin.', 150, 'empty'),
+        ]:
             if cat is not None:
                 self.premade_objects.add_category(cat)
             cur = start
-            for dir in [ '\\', '/' ]:
+            for dir in ['\\', '/']:
                 for (state, statenum) in [
                         ('Closed', 1),
                         ('Open', 2)
-                        ]:
-                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
                     obj.set_tilecontent(2)
@@ -2005,13 +2072,13 @@ class B2SmartDraw(SmartDraw):
                 ('Monument', 110, 'a tall, marble grave monument.'),
                 ('Gravestone \\', 111, 'a simple stone grave marker.'),
                 ('Gravestone /', 112, 'a simple stone grave marker.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
             obj.set_tilecontent(10)
             obj.create_tilecontentobj()
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
         for (name, walldecalimg, text) in [
                 ('Plaque /', 61, 'a plaque affixed to the wall.'),
                 ('Plaque \\', 62, 'a plaque affixed to the wall.'),
@@ -2021,12 +2088,12 @@ class B2SmartDraw(SmartDraw):
                 ('Painting 1 \\', 30, 'a painting.'),
                 ('Painting 2 \\', 30, 'a painting.'),
                 ('Painting 3 \\', 30, 'a painting.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
             obj.set_tilecontent(9)
             obj.create_tilecontentobj()
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -2075,7 +2142,7 @@ class B2SmartDraw(SmartDraw):
                 obj.tilecontent.state = toggle
                 obj.tilecontent.script = 'toggle_switch'
                 cur += 1
-        
+
         # Zapper
         obj = self.premade_objects.new('Zapper')
         obj.set_tilecontent(19)
@@ -2124,7 +2191,7 @@ class B2SmartDraw(SmartDraw):
         for (name, table) in [
                 ('Enemies', monsters),
                 ('NPCs', npcs)
-                ]:
+        ]:
             self.premade_objects.add_category(name)
             for name in sorted(table.keys()):
                 obj = self.premade_objects.new(name)
@@ -2137,6 +2204,7 @@ class B2SmartDraw(SmartDraw):
                 ent.health = ent_entry.health
                 ent.movement = ent_entry.movement
                 ent.entscript = ent_entry.entscript
+
 
 class B3SmartDraw(B2SmartDraw):
     """
@@ -2156,20 +2224,21 @@ class B3SmartDraw(B2SmartDraw):
         self.wall_list['floor_seethrough'] = []
         self.wall_list['decal_blocked'] = [134, 150, 151, 152]
         self.wall_list['decal_seethrough'] = ([59, 74, 75, 91] + range(154, 159) +
-            range(170, 174) + range(185, 191) + range(202, 206))
+                                              range(170, 174) + range(185, 191) + range(202, 206))
         self.wall_list['wall_blocked'] = ([26, 27, 41, 42, 43, 57, 59, 60, 69, 70, 81, 82, 83, 86, 116, 164] +
-            range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
-            range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 379) +
-            range(381, 384) + range(384, 394) + [402, 403, 406] + range(251, 256) + [414])
+                                          range(256, 267) + [268] + range(272, 283) + [284] + range(286, 298) + range(304, 315) +
+                                          range(320, 332) + range(334, 346) + range(352, 364) + [366] + range(368, 379) +
+                                          range(381, 384) + range(384, 394) + [402, 403, 406] + range(251, 256) + [414])
         self.wall_list['wall_seethrough'] = (range(1, 25) + range(28, 41) +
-            range(44, 57) + [58] + range(61, 69) + range(71, 81) + [84, 85] +
-            range(87, 97) + range(99, 113) + range(117, 119) +
-            range(121, 129) + [130, 132] + range(134, 164) + range(165, 169) +
-            [270, 271] + range(315, 320) + [333] + range(346, 352) +
-            [364, 365, 367, 381, 394, 395] + range(398, 402) +
-            range(404, 410) + [412, 413, 415])
+                                             range(44, 57) + [58] + range(61, 69) + range(71, 81) + [84, 85] +
+                                             range(87, 97) + range(99, 113) + range(117, 119) +
+                                             range(121, 129) + [130, 132] + range(134, 164) + range(165, 169) +
+                                             [270, 271] + range(315, 320) + [333] + range(346, 352) +
+                                             [364, 365, 367, 381, 394, 395] + range(398, 402) +
+                                             range(404, 410) + [412, 413, 415])
         self.wall_list['walldecal_seethrough'] = (range(8, 12) + [81, 97])
-        self.wall_list['wall_restrict'] = ([120] + range(298, 304) + [332, 379, 380, 396, 397, 410])
+        self.wall_list['wall_restrict'] = (
+            [120] + range(298, 304) + [332, 379, 380, 396, 397, 410])
 
         # Hardcoded Graphics info
         self.wallstarts = [256, 272, 288, 304, 320, 336, 352, 368, 384]
@@ -2178,184 +2247,202 @@ class B3SmartDraw(B2SmartDraw):
         self.bigfence2starts = [362, 364, 382]
         self.special = 301
         self.tilesets = {
-                self.IDX_GRASS: [1, 2, 3, 4],
-                self.IDX_SAND: [20],
-                self.IDX_SNOW: [81, 82, 83, 84],
-                self.IDX_LAVA: [109]
-            }
+            self.IDX_GRASS: [1, 2, 3, 4],
+            self.IDX_SAND: [20],
+            self.IDX_SNOW: [81, 82, 83, 84],
+            self.IDX_LAVA: [109]
+        }
         self.random_terrain = [
-                [1, 2, 3, 4],      # Regular Grass
-                [5, 6, 7, 8],      # Dried-up Grass
-                [13, 14, 15, 16],  # Dark Grass
-                [21, 22, 23],      # Cracked Clay/Mud
-                [31, 32],          # Mossy Cobbles
-                [81, 82, 83, 84],  # Snow
-            ]
+            [1, 2, 3, 4],      # Regular Grass
+            [5, 6, 7, 8],      # Dried-up Grass
+            [13, 14, 15, 16],  # Dark Grass
+            [21, 22, 23],      # Cracked Clay/Mud
+            [31, 32],          # Mossy Cobbles
+            [81, 82, 83, 84],  # Snow
+        ]
         self.random_decal = [
-                [87, 103, 104],    # Rubble
-                [108, 124],        # Large Rubble
-                [13, 14, 15, 16],  # Dark Rubble
-                [97, 98, 99],      # Smudges
-                range(113, 120),   # Bloodstains, small-to-med
-                [120, 121],        # Bloodstains, large
-                [122, 123],        # Slime?
-                [106, 107],        # Starfish
-                [181, 182, 213],   # Smashed somethingorother
-                [167, 168, 184, 199, 200], # More smashed objects
-                [153, 169],        # Strewn papers
-                range(209, 213),   # Brown smudge
-                [214, 215],        # Smashed Boards
-                [241, 242, 243],   # Cracks
-                [72, 88],          # Hay/Straw
-                [225, 226, 227],   # Mushrooms
-            ]
+            [87, 103, 104],    # Rubble
+            [108, 124],        # Large Rubble
+            [13, 14, 15, 16],  # Dark Rubble
+            [97, 98, 99],      # Smudges
+            range(113, 120),   # Bloodstains, small-to-med
+            [120, 121],        # Bloodstains, large
+            [122, 123],        # Slime?
+            [106, 107],        # Starfish
+            [181, 182, 213],   # Smashed somethingorother
+            [167, 168, 184, 199, 200],  # More smashed objects
+            [153, 169],        # Strewn papers
+            range(209, 213),   # Brown smudge
+            [214, 215],        # Smashed Boards
+            [241, 242, 243],   # Cracks
+            [72, 88],          # Hay/Straw
+            [225, 226, 227],   # Mushrooms
+        ]
         self.random_obj = [
-                [33, 34],             # Smashed tables
-                [44, 45, 46],         # Smashed chairs
-                [49, 50],             # Smashed furniture
-                [147, 148],           # Tree Trunks
-                [97, 114, 115, 133],  # Swampy plants
-                [98, 113, 116, 132],  # Bushes
-                [129, 130, 131],      # Different sort of bushes
-                [58, 59, 60],         # Short rocks
-                [378, 379, 380],      # Mountains
-                [394, 395, 396],      # Black mountains
-                [251, 252, 253, 255], # Tall Trees
-            ]
+            [33, 34],             # Smashed tables
+            [44, 45, 46],         # Smashed chairs
+            [49, 50],             # Smashed furniture
+            [147, 148],           # Tree Trunks
+            [97, 114, 115, 133],  # Swampy plants
+            [98, 113, 116, 132],  # Bushes
+            [129, 130, 131],      # Different sort of bushes
+            [58, 59, 60],         # Short rocks
+            [378, 379, 380],      # Mountains
+            [394, 395, 396],      # Black mountains
+            [251, 252, 253, 255],  # Tall Trees
+        ]
         self.random_walldecal = [
-                [33, 37, 39],   # Wall shadows/smudges (SW->NE)
-                [34, 38, 40],   # Wall shadows/smudges (NW->SE)
-                [21, 22],       # Cracks (NW->SE)
-                [23, 24]        # Cracks (SW->NE)
-            ]
-        self.water = [ 113 ]
+            [33, 37, 39],   # Wall shadows/smudges (SW->NE)
+            [34, 38, 40],   # Wall shadows/smudges (NW->SE)
+            [21, 22],       # Cracks (NW->SE)
+            [23, 24]        # Cracks (SW->NE)
+        ]
+        self.water = [113]
 
         # Wall Indexes
-        self.add_index(self.IDX_WALL, -1, self.DIR_NE|self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 0, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 1, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 2, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_WALL, 3, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 4, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 5, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_WALL, 6, self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 7, self.DIR_NE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 8, self.DIR_NE|self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_WALL, 9, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_WALL, -1, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 0, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 1, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 2, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_WALL, 3, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 4, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 5, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_WALL, 6, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 7, self.DIR_NE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 8, self.DIR_NE |
+                       self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_WALL, 9, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
 
         # Fence Indexes
-        self.add_index(self.IDX_FENCE, 0, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 1, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_FENCE, 14, self.DIR_SE|self.DIR_NE)
-        self.add_index(self.IDX_FENCE, 15, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_FENCE, 16, self.DIR_NE|self.DIR_NW)
-        self.add_index(self.IDX_FENCE, 17, self.DIR_NW|self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 0, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 1, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_FENCE, 14, self.DIR_SE | self.DIR_NE)
+        self.add_index(self.IDX_FENCE, 15, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_FENCE, 16, self.DIR_NE | self.DIR_NW)
+        self.add_index(self.IDX_FENCE, 17, self.DIR_NW | self.DIR_SW)
 
         # "Big" fence Indexes
-        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE, 0, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE, 1, self.DIR_SW | self.DIR_NE)
 
         # "Big" fence Indexes (the other direction)
-        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW|self.DIR_NE)
-        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW|self.DIR_SE)
+        self.add_index(self.IDX_BIGFENCE_2, 0, self.DIR_SW | self.DIR_NE)
+        self.add_index(self.IDX_BIGFENCE_2, 1, self.DIR_NW | self.DIR_SE)
 
         # Grass Indexes
-        self.add_index(self.IDX_GRASS, 1, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 2, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 3, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 4, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 5, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 6, self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 1, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 2, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 3, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 4, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 5, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 6, self.DIR_SW | self.DIR_NW)
         self.add_index(self.IDX_GRASS, 17, self.DIR_NE)
         self.add_index(self.IDX_GRASS, 18, self.DIR_NW)
         self.add_index(self.IDX_GRASS, 19, self.DIR_SE)
         self.add_index(self.IDX_GRASS, 20, self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 33, self.DIR_S|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 34, self.DIR_N|self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 35, self.DIR_W|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 36, self.DIR_E|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 37, self.DIR_N|self.DIR_S)
+        self.add_index(self.IDX_GRASS, 33, self.DIR_S |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 34, self.DIR_N |
+                       self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 35, self.DIR_W |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 36, self.DIR_E |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 37, self.DIR_N | self.DIR_S)
         self.add_index(self.IDX_GRASS, 49, self.DIR_N)
         self.add_index(self.IDX_GRASS, 50, self.DIR_E)
         self.add_index(self.IDX_GRASS, 51, self.DIR_S)
         self.add_index(self.IDX_GRASS, 52, self.DIR_W)
-        self.add_index(self.IDX_GRASS, 53, self.DIR_W|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 65, self.DIR_W|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 66, self.DIR_S|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 67, self.DIR_E|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 68, self.DIR_N|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 81, self.DIR_N|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 82, self.DIR_W|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 83, self.DIR_E|self.DIR_NW)
-        self.add_index(self.IDX_GRASS, 84, self.DIR_S|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 53, self.DIR_W | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 65, self.DIR_W | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 66, self.DIR_S | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 67, self.DIR_E | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 68, self.DIR_N | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 81, self.DIR_N | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 82, self.DIR_W | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 83, self.DIR_E | self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 84, self.DIR_S | self.DIR_NW)
 
         # Note that these given our current algorithms, will probably never be chosen
-        self.add_index(self.IDX_GRASS, 21, self.DIR_N|self.DIR_E|self.DIR_S|self.DIR_W)
-        self.add_index(self.IDX_GRASS, 22, self.DIR_N|self.DIR_W)
-        self.add_index(self.IDX_GRASS, 38, self.DIR_S|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 54, self.DIR_N|self.DIR_E)
-        self.add_index(self.IDX_GRASS, 69, self.DIR_NE|self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_GRASS, 70, self.DIR_W|self.DIR_S)
-        self.add_index(self.IDX_GRASS, 71, self.DIR_SW|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_GRASS, 85, self.DIR_NW|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_GRASS, 86, self.DIR_SE|self.DIR_SW|self.DIR_NW)
+        self.add_index(self.IDX_GRASS, 21, self.DIR_N |
+                       self.DIR_E | self.DIR_S | self.DIR_W)
+        self.add_index(self.IDX_GRASS, 22, self.DIR_N | self.DIR_W)
+        self.add_index(self.IDX_GRASS, 38, self.DIR_S | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 54, self.DIR_N | self.DIR_E)
+        self.add_index(self.IDX_GRASS, 69, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_GRASS, 70, self.DIR_W | self.DIR_S)
+        self.add_index(self.IDX_GRASS, 71, self.DIR_SW |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_GRASS, 85, self.DIR_NW |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_GRASS, 86, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
 
         # Sand Indexes
         self.add_index(self.IDX_SAND, 129, self.DIR_NW)
         self.add_index(self.IDX_SAND, 130, self.DIR_NE)
         self.add_index(self.IDX_SAND, 131, self.DIR_SE)
         self.add_index(self.IDX_SAND, 132, self.DIR_SW)
-        self.add_index(self.IDX_SAND, 133, self.DIR_SE|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 145, self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_SAND, 146, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_SAND, 147, self.DIR_SE|self.DIR_SW)
-        self.add_index(self.IDX_SAND, 148, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_SAND, 149, self.DIR_NE|self.DIR_SW)
+        self.add_index(self.IDX_SAND, 133, self.DIR_SE | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 145, self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_SAND, 146, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_SAND, 147, self.DIR_SE | self.DIR_SW)
+        self.add_index(self.IDX_SAND, 148, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_SAND, 149, self.DIR_NE | self.DIR_SW)
 
         # Snow Indexes
         self.add_index(self.IDX_SNOW, 230, self.DIR_NW)
         self.add_index(self.IDX_SNOW, 231, self.DIR_NE)
         self.add_index(self.IDX_SNOW, 232, self.DIR_SE)
         self.add_index(self.IDX_SNOW, 233, self.DIR_SW)
-        self.add_index(self.IDX_SNOW, 234, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 246, self.DIR_NW|self.DIR_SW)
-        self.add_index(self.IDX_SNOW, 247, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 248, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_SNOW, 249, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_SNOW, 250, self.DIR_SW|self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 234, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 246, self.DIR_NW | self.DIR_SW)
+        self.add_index(self.IDX_SNOW, 247, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 248, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_SNOW, 249, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_SNOW, 250, self.DIR_SW | self.DIR_NE)
 
         # Lava Indexes
         self.add_index(self.IDX_LAVA, 219, self.DIR_NW)
         self.add_index(self.IDX_LAVA, 220, self.DIR_NE)
         self.add_index(self.IDX_LAVA, 221, self.DIR_SE)
         self.add_index(self.IDX_LAVA, 222, self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 223, self.DIR_NW|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 235, self.DIR_NW|self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 236, self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 237, self.DIR_SW|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 238, self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_LAVA, 239, self.DIR_NE|self.DIR_SW)
-        self.add_index(self.IDX_LAVA, 252, self.DIR_SE|self.DIR_SW|self.DIR_NW)
-        self.add_index(self.IDX_LAVA, 253, self.DIR_SW|self.DIR_NW|self.DIR_NE)
-        self.add_index(self.IDX_LAVA, 254, self.DIR_NW|self.DIR_NE|self.DIR_SE)
-        self.add_index(self.IDX_LAVA, 255, self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 223, self.DIR_NW | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 235, self.DIR_NW | self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 236, self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 237, self.DIR_SW | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 238, self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 239, self.DIR_NE | self.DIR_SW)
+        self.add_index(self.IDX_LAVA, 252, self.DIR_SE |
+                       self.DIR_SW | self.DIR_NW)
+        self.add_index(self.IDX_LAVA, 253, self.DIR_SW |
+                       self.DIR_NW | self.DIR_NE)
+        self.add_index(self.IDX_LAVA, 254, self.DIR_NW |
+                       self.DIR_NE | self.DIR_SE)
+        self.add_index(self.IDX_LAVA, 255, self.DIR_NE |
+                       self.DIR_SE | self.DIR_SW)
 
         # Pool to randomly choose from if we're completely surrounded
         self.tile_fullest = {
-                self.IDX_GRASS: [69, 71, 85, 86],
-                self.IDX_SAND: [133, 149],
-                self.IDX_SNOW: [234, 250],
-                self.IDX_LAVA: [252, 253, 254, 255],
-            }
+            self.IDX_GRASS: [69, 71, 85, 86],
+            self.IDX_SAND: [133, 149],
+            self.IDX_SNOW: [234, 250],
+            self.IDX_LAVA: [252, 253, 254, 255],
+        }
 
         # Beach indexes (these are floor tiles, not decals - the directions
         # specified here are the direction that the SAND is in, not the
         # water.  Or to put it another way, these tiles are considered
         # water which happen to bleed into sand a bit.
-        self.add_beach_index(114, self.DIR_NW|self.DIR_SW)
-        self.add_beach_index(115, self.DIR_NW|self.DIR_NE)
-        self.add_beach_index(116, self.DIR_NE|self.DIR_SE)
-        self.add_beach_index(117, self.DIR_SW|self.DIR_SE)
+        self.add_beach_index(114, self.DIR_NW | self.DIR_SW)
+        self.add_beach_index(115, self.DIR_NW | self.DIR_NE)
+        self.add_beach_index(116, self.DIR_NE | self.DIR_SE)
+        self.add_beach_index(117, self.DIR_SW | self.DIR_SE)
         self.add_beach_index(121, self.DIR_E)
         self.add_beach_index(122, self.DIR_S)
         self.add_beach_index(123, self.DIR_W)
@@ -2364,7 +2451,8 @@ class B3SmartDraw(B2SmartDraw):
         self.add_beach_index(126, self.DIR_NE)
         self.add_beach_index(127, self.DIR_SE)
         self.add_beach_index(128, self.DIR_SW)
-        self.add_beach_index(13, self.DIR_NW|self.DIR_NE|self.DIR_SE|self.DIR_SW)
+        self.add_beach_index(13, self.DIR_NW | self.DIR_NE |
+                             self.DIR_SE | self.DIR_SW)
 
         # Now smart Complex Objects
         self.complex_obj_floor = ComplexObjCollection(self.REV_DIR, 'floorimg')
@@ -2386,7 +2474,7 @@ class B3SmartDraw(B2SmartDraw):
         rcarpet3.add(self.DIR_NW, 80)
 
         self.complex_obj_wall = ComplexObjCollection(self.REV_DIR, 'wallimg')
-        
+
         bed_ne = ComplexObj('Bed (NE/SW)', 1, 1)
         self.complex_obj_wall.add(bed_ne)
         bed_ne.add(self.DIR_NE, 2)
@@ -2431,17 +2519,18 @@ class B3SmartDraw(B2SmartDraw):
         for (start, desc, text, cond) in [
                 (266, 'Wooden', 'a wooden door.', 550),
                 (282, 'Banded', 'a heavy, reinforced door.', 1100)
-                ]:
+        ]:
             cur = start
             for (walldecal, dir, framedir, framedecal) in [
                     (19, '/', self.DIR_NE, 35),
                     (20, '\\', self.DIR_NW, 36)
-                    ]:
+            ]:
                 for (state, wall, statenum) in [
                         ('Closed', 1, 1),
                         ('Open', 0, 2)
-                        ]:
-                    obj = self.premade_objects.new('%s Door %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s Door %s - %s' % (desc, dir, state))
                     obj.set_wall(wall)
                     obj.set_wallimg(cur)
                     obj.set_walldecalimg(walldecal)
@@ -2463,19 +2552,23 @@ class B3SmartDraw(B2SmartDraw):
                 ('Cabinets', 5, 'Small Cabinet', 'an oak cabinet.', 150, 'RANDOM'),
                 (None, 9, 'Large Cabinet', 'a chest of drawers.', 150, 'RANDOM'),
                 ('Chests', 17, 'Chest', 'a basic oak chest.', 300, 'RANDOM'),
-                (None, 21, 'Banded Chest', 'a heavy steel-banded chest.', 800, 'RANDOM'),
-                (None, 91, 'Metal Chest', 'a massive chest made of a dense, exotic alloy.', 3000, 'RANDOM'),
-                ('Other Containers', 124, 'Coffin', 'a pine coffin.', 150, 'EMPTY'),
-                ]:
+                (None, 21, 'Banded Chest',
+                 'a heavy steel-banded chest.', 800, 'RANDOM'),
+                (None, 91, 'Metal Chest',
+                 'a massive chest made of a dense, exotic alloy.', 3000, 'RANDOM'),
+                ('Other Containers', 124, 'Coffin',
+                 'a pine coffin.', 150, 'EMPTY'),
+        ]:
             if cat is not None:
                 self.premade_objects.add_category(cat)
             cur = start
-            for dir in [ '\\', '/' ]:
+            for dir in ['\\', '/']:
                 for (state, statenum) in [
                         ('Closed', 1),
                         ('Open', 2)
-                        ]:
-                    obj = self.premade_objects.new('%s %s - %s' % (desc, dir, state))
+                ]:
+                    obj = self.premade_objects.new(
+                        '%s %s - %s' % (desc, dir, state))
                     obj.set_wall(5)
                     obj.set_wallimg(cur)
                     obj.set_tilecontent(2)
@@ -2524,13 +2617,13 @@ class B3SmartDraw(B2SmartDraw):
                 ('Monument', 110, 'a tall, marble grave monument.'),
                 ('Gravestone \\', 111, 'a simple stone grave marker.'),
                 ('Gravestone /', 112, 'a simple stone grave marker.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_wall(5)
             obj.set_wallimg(wallimg)
             obj.set_tilecontent(10)
             obj.create_tilecontentobj()
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
         for (name, walldecalimg, text) in [
                 ('Plaque /', 61, 'a plaque affixed to the wall.'),
                 ('Plaque \\', 62, 'a plaque affixed to the wall.'),
@@ -2540,12 +2633,12 @@ class B3SmartDraw(B2SmartDraw):
                 ('Painting 1 \\', 30, 'a painting.'),
                 ('Painting 2 \\', 30, 'a painting.'),
                 ('Painting 3 \\', 30, 'a painting.'),
-                ]:
+        ]:
             obj = self.premade_objects.new(name)
             obj.set_walldecalimg(walldecalimg)
             obj.set_tilecontent(9)
             obj.create_tilecontentobj()
-            obj.tilecontent.description=text
+            obj.tilecontent.description = text
 
         # Misc items
         self.premade_objects.add_category('Misc Items')
@@ -2594,7 +2687,7 @@ class B3SmartDraw(B2SmartDraw):
                 obj.tilecontent.state = toggle
                 obj.tilecontent.script = 'toggle_switch'
                 cur += 1
-        
+
         # Zapper
         obj = self.premade_objects.new('Zapper')
         obj.set_tilecontent(19)
@@ -2643,7 +2736,7 @@ class B3SmartDraw(B2SmartDraw):
         for (name, table) in [
                 ('Enemies', monsters),
                 ('NPCs', npcs)
-                ]:
+        ]:
             self.premade_objects.add_category(name)
             for name in sorted(table.keys()):
                 obj = self.premade_objects.new(name)

@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -22,11 +22,13 @@ import gtk
 
 from eschalon import constants as c
 
+
 def format_completion_text(layout, cell, model, iter, column):
     """
     Formats our completion text for our script commands
     """
     cell.set_property('markup', model.get_value(iter, column))
+
 
 def match_completion(completion, key, iter, column):
     """
@@ -37,6 +39,7 @@ def match_completion(completion, key, iter, column):
     if text.lower().startswith(key.lower()):
         return True
     return False
+
 
 class MapSelector(gtk.Dialog):
     """
@@ -51,18 +54,19 @@ class MapSelector(gtk.Dialog):
 
     def __init__(self, mapgui, parent=None):
         gtk.Dialog.__init__(self, 'Choose a Tile',
-                parent,
-                gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+                            parent,
+                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
         self.mapgui = mapgui
         allocation = self.mapgui.mainscroll.get_allocation()
-        self.set_size_request(allocation.width-50, allocation.height-50)
+        self.set_size_request(allocation.width - 50, allocation.height - 50)
 
         self.saved_mapgui = False
 
         # Info labels
         hbox = gtk.HBox()
-        label = gtk.Label('Left-Click to select a tile.  Middle-click or right-click to drag.')
+        label = gtk.Label(
+            'Left-Click to select a tile.  Middle-click or right-click to drag.')
         label.set_padding(10, 10)
         label.set_alignment(0, .5)
         hbox.pack_start(label, False)
@@ -87,8 +91,8 @@ class MapSelector(gtk.Dialog):
         self.da.connect('button-press-event', self.mapgui.on_clicked)
         self.da.connect('button-release-event', self.mapgui.on_released)
         self.da.add_events(gtk.gdk.POINTER_MOTION_MASK |
-                gtk.gdk.BUTTON_PRESS_MASK |
-                gtk.gdk.BUTTON_RELEASE_MASK)
+                           gtk.gdk.BUTTON_PRESS_MASK |
+                           gtk.gdk.BUTTON_RELEASE_MASK)
 
         self.vbox.add(self.sw)
 
@@ -105,16 +109,17 @@ class MapSelector(gtk.Dialog):
         self.canvas_y = self.mapgui.z_mapsize_y
 
         widget.set_size_request(self.canvas_x, self.canvas_y)
-        self.pixmap = gtk.gdk.Pixmap(widget.window, self.canvas_x, self.canvas_y)
+        self.pixmap = gtk.gdk.Pixmap(
+            widget.window, self.canvas_x, self.canvas_y)
         self.ctx = self.pixmap.cairo_create()
         self.ctx.set_source_surface(self.mapgui.guicache)
         self.ctx.paint()
 
         widget.window.draw_drawable(widget.get_style().fg_gc[gtk.STATE_NORMAL],
-                self.pixmap,
-                0, 0,
-                0, 0,
-                self.canvas_x, self.canvas_y)
+                                    self.pixmap,
+                                    0, 0,
+                                    0, 0,
+                                    self.canvas_x, self.canvas_y)
 
         # This is kind of horrible, but there it is.
         self.save_mapgui()
@@ -198,11 +203,11 @@ class MapSelector(gtk.Dialog):
                 self.mapgui.draw_tile(x, y, True)
 
             widget.window.draw_drawable(
-                    widget.get_style().fg_gc[gtk.STATE_NORMAL],
-                    self.pixmap,
-                    0, 0,
-                    0, 0,
-                    self.canvas_x, self.canvas_y)
+                widget.get_style().fg_gc[gtk.STATE_NORMAL],
+                self.pixmap,
+                0, 0,
+                0, 0,
+                self.canvas_x, self.canvas_y)
 
             # Make sure our to-clean list is empty
             self.mapgui.cleantiles = []
@@ -215,15 +220,16 @@ class MapSelector(gtk.Dialog):
         """
         self.response(gtk.RESPONSE_OK)
 
+
 class ScriptEditorRow(object):
     """
     A Single row on our Script Editor window.
     """
 
     def __init__(self, rownum, table, completion_model, parser,
-            entry_callback, focus_in_callback, focus_scroll_callback,
-            delbutton_callback, upbutton_callback, downbutton_callback,
-            text=''):
+                 entry_callback, focus_in_callback, focus_scroll_callback,
+                 delbutton_callback, upbutton_callback, downbutton_callback,
+                 text=''):
 
         self.parser = parser
         self.table = table
@@ -238,17 +244,20 @@ class ScriptEditorRow(object):
         self.commandentry.set_size_request(250, -1)
         self.tokenlabel = gtk.Label()
         self.delbutton = gtk.Button()
-        self.delbutton.add(gtk.image_new_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
+        self.delbutton.add(gtk.image_new_from_stock(
+            gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
         self.delbutton.set_tooltip_text('Delete this command')
         self.upbutton = gtk.Button()
-        self.upbutton.add(gtk.image_new_from_stock(gtk.STOCK_GO_UP, gtk.ICON_SIZE_BUTTON))
+        self.upbutton.add(gtk.image_new_from_stock(
+            gtk.STOCK_GO_UP, gtk.ICON_SIZE_BUTTON))
         self.upbutton.set_tooltip_text('Move this command up a line')
         self.downbutton = gtk.Button()
-        self.downbutton.add(gtk.image_new_from_stock(gtk.STOCK_GO_DOWN, gtk.ICON_SIZE_BUTTON))
+        self.downbutton.add(gtk.image_new_from_stock(
+            gtk.STOCK_GO_DOWN, gtk.ICON_SIZE_BUTTON))
         self.downbutton.set_tooltip_text('Move this command down a line')
 
         self.widgets = (self.numlabel, self.commandentry, self.tokenlabel,
-                self.delbutton, self.upbutton, self.downbutton)
+                        self.delbutton, self.upbutton, self.downbutton)
 
         # Attach a completion to our text Entry
         completion = gtk.EntryCompletion()
@@ -262,12 +271,18 @@ class ScriptEditorRow(object):
         self.commandentry.set_completion(completion)
 
         # Attach our widgets to the table
-        table.attach(self.numlabel, 0, 1, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.commandentry, 1, 2, rownum, rownum+1, gtk.FILL|gtk.EXPAND, gtk.FILL, 5)
-        table.attach(self.delbutton, 2, 3, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.upbutton, 3, 4, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.downbutton, 4, 5, rownum, rownum+1, gtk.FILL, gtk.FILL)
-        table.attach(self.tokenlabel, 5, 6, rownum, rownum+1, gtk.FILL, gtk.FILL, 5)
+        table.attach(self.numlabel, 0, 1, rownum,
+                     rownum + 1, gtk.FILL, gtk.FILL)
+        table.attach(self.commandentry, 1, 2, rownum, rownum +
+                     1, gtk.FILL | gtk.EXPAND, gtk.FILL, 5)
+        table.attach(self.delbutton, 2, 3, rownum,
+                     rownum + 1, gtk.FILL, gtk.FILL)
+        table.attach(self.upbutton, 3, 4, rownum,
+                     rownum + 1, gtk.FILL, gtk.FILL)
+        table.attach(self.downbutton, 4, 5, rownum,
+                     rownum + 1, gtk.FILL, gtk.FILL)
+        table.attach(self.tokenlabel, 5, 6, rownum,
+                     rownum + 1, gtk.FILL, gtk.FILL, 5)
 
         # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
@@ -307,7 +322,8 @@ class ScriptEditorRow(object):
         table = self.table
         for widget in self.widgets:
             for prop in ['top-attach', 'bottom-attach']:
-                table.child_set_property(widget, prop, table.child_get_property(widget, prop)-1)
+                table.child_set_property(
+                    widget, prop, table.child_get_property(widget, prop) - 1)
         self.rownum -= 1
         self.update_rownum()
 
@@ -318,7 +334,8 @@ class ScriptEditorRow(object):
         table = self.table
         for widget in self.widgets:
             for prop in ['bottom-attach', 'top-attach']:
-                table.child_set_property(widget, prop, table.child_get_property(widget, prop)+1)
+                table.child_set_property(
+                    widget, prop, table.child_get_property(widget, prop) + 1)
         self.rownum += 1
         self.update_rownum()
 
@@ -338,8 +355,10 @@ class ScriptEditorRow(object):
             plural = ''
         else:
             plural = 's'
-        self.tokenlabel.set_markup('<i>(%d token%s)</i>' % (tokencount, plural))
+        self.tokenlabel.set_markup(
+            '<i>(%d token%s)</i>' % (tokencount, plural))
         return tokencount
+
 
 class ScriptEditor(object):
     """
@@ -357,10 +376,10 @@ class ScriptEditor(object):
         self.cur_focus = None
         self.mapgui = None
         self.window = gtk.Dialog('Script Editor',
-                None,
-                gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                    gtk.STOCK_OK, gtk.RESPONSE_OK))
+                                 None,
+                                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                  gtk.STOCK_OK, gtk.RESPONSE_OK))
         self.window.set_size_request(500, 400)
 
         # Header
@@ -394,12 +413,13 @@ class ScriptEditor(object):
         normbutton = gtk.Button()
         align.add(normbutton)
         normhbox = gtk.HBox()
-        normhbox.add(gtk.image_new_from_stock(gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
+        normhbox.add(gtk.image_new_from_stock(
+            gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
         normhbox.add(gtk.Label('Normalize'))
         normbutton.add(normhbox)
         normbutton.connect('clicked', self.normalize_page)
         normbutton.set_tooltip_text('Process any compound statements, get rid of empty '
-                'statements, and close any unclosed parentheses.')
+                                    'statements, and close any unclosed parentheses.')
 
         align = gtk.Alignment(0, .5, 0, 1)
         align.set_padding(7, 7, 9, 9)
@@ -407,12 +427,13 @@ class ScriptEditor(object):
         self.coordbutton = gtk.Button()
         align.add(self.coordbutton)
         coordhbox = gtk.HBox()
-        coordhbox.add(gtk.image_new_from_stock(gtk.STOCK_ZOOM_IN, gtk.ICON_SIZE_BUTTON))
+        coordhbox.add(gtk.image_new_from_stock(
+            gtk.STOCK_ZOOM_IN, gtk.ICON_SIZE_BUTTON))
         coordhbox.add(gtk.Label('Add Coordinate'))
         self.coordbutton.add(coordhbox)
         self.coordbutton.connect('clicked', self.add_coordinate)
         self.coordbutton.set_tooltip_text('Select a tile from the map and insert the '
-            'coordinates at the current cursor location.')
+                                          'coordinates at the current cursor location.')
 
         self.token_total_label = gtk.Label()
         self.token_total_label.set_alignment(1, .5)
@@ -451,15 +472,15 @@ class ScriptEditor(object):
         """
         rownum = len(self.rows)
         self.rows.append(ScriptEditorRow(rownum, self.table,
-            completion_model=self.completion_model,
-            parser=self.command_parser,
-            entry_callback=self.text_changed,
-            delbutton_callback=self.remove_button_clicked,
-            upbutton_callback=self.move_row_up,
-            downbutton_callback=self.move_row_down,
-            focus_in_callback=self.row_focus_in,
-            focus_scroll_callback=self.move_sb_focus,
-            text=text))
+                                         completion_model=self.completion_model,
+                                         parser=self.command_parser,
+                                         entry_callback=self.text_changed,
+                                         delbutton_callback=self.remove_button_clicked,
+                                         upbutton_callback=self.move_row_up,
+                                         downbutton_callback=self.move_row_down,
+                                         focus_in_callback=self.row_focus_in,
+                                         focus_scroll_callback=self.move_sb_focus,
+                                         text=text))
         if self.allow_autoscroll:
             vadj = self.sw.get_vadjustment()
             vadj.set_value(vadj.get_upper())
@@ -470,7 +491,7 @@ class ScriptEditor(object):
         Deletes a line in our script editor window
         """
         to_del = self.rows[rownum]
-        to_shift = self.rows[rownum+1:]
+        to_shift = self.rows[rownum + 1:]
         for widget in to_del.widgets:
             self.table.remove(widget)
         for row in to_shift:
@@ -562,9 +583,11 @@ class ScriptEditor(object):
         for row in self.rows:
             tokens += row.update_tokens()
         if tokens > 50:
-            self.token_total_label.set_markup('<span color="red"><b>Total Tokens:</b> %d</span>' % (tokens))
+            self.token_total_label.set_markup(
+                '<span color="red"><b>Total Tokens:</b> %d</span>' % (tokens))
         else:
-            self.token_total_label.set_markup('<b>Total Tokens:</b> %d' % (tokens))
+            self.token_total_label.set_markup(
+                '<b>Total Tokens:</b> %d' % (tokens))
 
     def command_parser(self, text):
         """
@@ -583,8 +606,8 @@ class ScriptEditor(object):
                     tokens.append(text[cur:lparen])
                 try:
                     rparen = text.index(')', cur)
-                    tokens.append(text[lparen:rparen+1])
-                    cur = rparen+1
+                    tokens.append(text[lparen:rparen + 1])
+                    cur = rparen + 1
                     if cur == len(text):
                         break
                 except ValueError:
@@ -620,7 +643,7 @@ class ScriptEditor(object):
         if len(commands) > 1 and len(commands[-1]) == 0:
             del commands[-1]
 
-        #print commands
+        # print commands
         return commands
 
     def normalize_script(self, text):
@@ -647,9 +670,9 @@ class ScriptEditor(object):
         return ' ; '.join(ret_list)
 
     ###
-    ### Our own handlers
+    # Our own handlers
     ###
-    
+
     def normalize_page(self, widget):
         """
         Normalizes the display so that each command is in its own line
@@ -675,23 +698,24 @@ class ScriptEditor(object):
                 entry = self.cur_focus.commandentry
                 cursor = entry.get_position()
                 curtext = entry.get_text()
-                newtext = '%s %d %s' % (curtext[:cursor].strip(), (new_y*100 + new_x), curtext[cursor:].strip())
+                newtext = '%s %d %s' % (curtext[:cursor].strip(
+                ), (new_y * 100 + new_x), curtext[cursor:].strip())
                 entry.set_text(newtext.strip())
 
     ###
-    ### Handlers called by row elements
+    # Handlers called by row elements
     ###
 
     def text_changed(self, widget, row):
         """
         When our text changes
         """
-        if row.rownum == len(self.rows)-1:
+        if row.rownum == len(self.rows) - 1:
             if widget.get_text() != '':
                 self.add_row()
-        elif row.rownum == len(self.rows)-2:
+        elif row.rownum == len(self.rows) - 2:
             if widget.get_text() == '' and self.rows[-1].commandentry.get_text().strip() == '':
-                self.del_row(len(self.rows)-1)
+                self.del_row(len(self.rows) - 1)
         self.update_token_counts()
 
     def remove_button_clicked(self, widget, row):
@@ -705,14 +729,14 @@ class ScriptEditor(object):
         Move a row up one
         """
         if row.rownum != 0:
-            self.swap_rows(self.rows[row.rownum-1], row)
+            self.swap_rows(self.rows[row.rownum - 1], row)
 
     def move_row_down(self, widget, row):
         """
         Move a row down one
         """
-        if row.rownum != (len(self.rows)-1):
-            self.swap_rows(row, self.rows[row.rownum+1])
+        if row.rownum != (len(self.rows) - 1):
+            self.swap_rows(row, self.rows[row.rownum + 1])
 
     def row_focus_in(self, widget, event, row):
         """
@@ -730,6 +754,6 @@ class ScriptEditor(object):
         adj = self.sw.get_vadjustment()
         alloc = widget.get_allocation()
         if alloc.y < adj.value or alloc.y > adj.value + adj.page_size:
-            adj.set_value(min(alloc.y, adj.upper-adj.page_size))
-        elif alloc.y+alloc.height > adj.value+adj.page_size:
+            adj.set_value(min(alloc.y, adj.upper - adj.page_size))
+        elif alloc.y + alloc.height > adj.value + adj.page_size:
             adj.set_value(alloc.y + alloc.height - adj.page_size)

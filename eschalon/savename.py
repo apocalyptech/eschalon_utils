@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -22,6 +22,7 @@ import struct
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
 from eschalon.constantsb1 import B1Constants
+
 
 class Savename(object):
     book = None
@@ -37,11 +38,11 @@ class Savename(object):
         self.totalturns = 0
         self.totaldays = 0
         self.coloration = 0
-        self.narratives = [] # Has the player seen this narrative? 0=no, 1=yes
+        self.narratives = []  # Has the player seen this narrative? 0=no, 1=yes
         self.quests = []
-        self.npcs = [] # Has the player talked to this NPC? 0=no, 1=yes
+        self.npcs = []  # Has the player talked to this NPC? 0=no, 1=yes
         self.quicktravel = 0
-        self.options = [] # volume controls, tactical grid, etc.
+        self.options = []  # volume controls, tactical grid, etc.
         self.unknowns = []
         self.df = df
 
@@ -90,7 +91,8 @@ class Savename(object):
         pass
 
     def write(self):
-        raise NotImplementedError('Writing savenames is not currently supported')
+        raise NotImplementedError(
+            'Writing savenames is not currently supported')
 
     @staticmethod
     def load(filename, book=None, req_book=None):
@@ -124,7 +126,8 @@ class Savename(object):
 
         # See if we're required to conform to a specific book
         if (req_book is not None and book != req_book):
-            raise LoadException('This utility can only load Book %d Character files; this file is from Book %d' % (req_book, book))
+            raise LoadException(
+                'This utility can only load Book %d Character files; this file is from Book %d' % (req_book, book))
 
         # Now actually return the object
         if book == 1:
@@ -136,6 +139,7 @@ class Savename(object):
         else:
             c.switch_to_book(3)
             return B3Savename(df)
+
 
 class B1Savename(Savename):
     """
@@ -186,6 +190,7 @@ class B1Savename(Savename):
         Replicate our Book 1 specific data
         """
 
+
 class B2Savename(Savename):
     """
     Book 2 Character definitions
@@ -218,7 +223,7 @@ class B2Savename(Savename):
             # Open the file
             self.df.open_r()
 
-            # Based on BW's B3 spec and looking at the file manually. 
+            # Based on BW's B3 spec and looking at the file manually.
             # Oddly, lines up better than the B3 format.  Not well checked,
             # though, and probably has bugs
             self.savename = self.df.readstr()
@@ -280,6 +285,7 @@ class B2Savename(Savename):
 
         for val in self.stats:
             newsn.stats.append(val)
+
 
 class B3Savename(B2Savename):
     """

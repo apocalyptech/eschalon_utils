@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -37,15 +37,16 @@ from eschalon.basegui import BaseGUI
 try:
     import cairo
 except Exception, e:
-    BaseGUI.errordialog('Error loading PyCairo', 'PyCairo could not be loaded: %s' % (str(e)))
+    BaseGUI.errordialog('Error loading PyCairo',
+                        'PyCairo could not be loaded: %s' % (str(e)))
     sys.exit(1)
 
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
     BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
-            'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
-            'older versions.  You\'re welcome to continue, but know that you may encounter '
-            'weird behavior.')
+                          'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
+                          'older versions.  You\'re welcome to continue, but know that you may encounter '
+                          'weird behavior.')
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx
@@ -57,6 +58,7 @@ from eschalon.saveslot import Saveslot
 from eschalon.eschalondata import EschalonData
 from eschalon import constants as c
 from eschalon import app_name, version, url, authors
+
 
 class CharLoaderDialog(gtk.Dialog):
     """
@@ -91,9 +93,9 @@ class CharLoaderDialog(gtk.Dialog):
 
         # Call back to the stock gtk Dialog stuff
         super(CharLoaderDialog, self).__init__(
-                flags = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                    gtk.STOCK_OK, gtk.RESPONSE_OK))
+            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                     gtk.STOCK_OK, gtk.RESPONSE_OK))
 
         # Various defaults for the dialog
         self.set_size_request(950, 680)
@@ -114,7 +116,8 @@ class CharLoaderDialog(gtk.Dialog):
         self.title_align = gtk.Alignment(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
         label = gtk.Label()
-        label.set_markup('<big><b>Eschalon Book %d Character Editor v%s</b></big>' % (c.book, version))
+        label.set_markup(
+            '<big><b>Eschalon Book %d Character Editor v%s</b></big>' % (c.book, version))
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
@@ -141,33 +144,38 @@ class CharLoaderDialog(gtk.Dialog):
         if len(self.slots) > 0:
 
             # Savegame combobox/liststore
-            self.save_dir_store = gtk.ListStore(int, str, str, str, str, int, str)
+            self.save_dir_store = gtk.ListStore(
+                int, str, str, str, str, int, str)
             self.save_dir_tv = gtk.TreeView(self.save_dir_store)
             self.save_dir_tv.connect('row-activated', self.save_dir_activated)
-            col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
+            col = gtk.TreeViewColumn(
+                'Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
             col.set_sort_column_id(self.COL_IDX)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
+            col = gtk.TreeViewColumn(
+                'Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
             col.set_sort_column_id(self.COL_SAVENAME)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn('Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
+            col = gtk.TreeViewColumn(
+                'Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
             col.set_sort_column_id(self.COL_CHARNAME)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.COL_DATE)
+            col = gtk.TreeViewColumn(
+                'Date', gtk.CellRendererText(), text=self.COL_DATE)
             col.set_sort_column_id(self.COL_DATE_EPOCH)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
             for (idx, slot) in enumerate(self.slots):
                 self.save_dir_store.append((idx,
-                    '<b>%s</b>' % (slot.slotname_short()),
-                    slot.savename,
-                    slot.charname,
-                    slot.timestamp,
-                    slot.timestamp_epoch,
-                    slot.char_loc))
+                                            '<b>%s</b>' % (slot.slotname_short()),
+                                            slot.savename,
+                                            slot.charname,
+                                            slot.timestamp,
+                                            slot.timestamp_epoch,
+                                            slot.char_loc))
 
             save_dir_align = gtk.Alignment(0, 0, 1, 1)
             save_dir_align.set_padding(5, 5, 5, 5)
@@ -187,7 +195,8 @@ class CharLoaderDialog(gtk.Dialog):
             save_vbox.pack_start(note_align, False, False)
             save_dir_align.add(save_vbox)
             self.register_page(self.SOURCE_SAVES)
-            self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
+            self.open_notebook.append_page(
+                save_dir_align, gtk.Label('Load from Savegames...'))
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -197,7 +206,8 @@ class CharLoaderDialog(gtk.Dialog):
         self.chooser.set_show_hidden(True)
         arbitrary_align.add(self.chooser)
         self.register_page(self.SOURCE_OTHER)
-        self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
+        self.open_notebook.append_page(
+            arbitrary_align, gtk.Label('Load from Other...'))
 
         # Starting path for chooser
         if starting_path and starting_path != '' and os.path.isdir(starting_path):
@@ -223,11 +233,13 @@ class CharLoaderDialog(gtk.Dialog):
         # Note that the FIRST thing we do is switch to the "other" tab...  If we
         # don't, there's some gtk+ bug where the FileChooserWidget ends up with
         # an ugly-looking horizontal scrollbar which cuts off part of the date.
-        self.open_notebook.set_current_page(self.source_index[self.SOURCE_OTHER])
+        self.open_notebook.set_current_page(
+            self.source_index[self.SOURCE_OTHER])
         if last_source is not None and last_source in self.source_index:
             self.open_notebook.set_current_page(self.source_index[last_source])
         elif self.SOURCE_SAVES in self.source_index:
-            self.open_notebook.set_current_page(self.source_index[self.SOURCE_SAVES])
+            self.open_notebook.set_current_page(
+                self.source_index[self.SOURCE_SAVES])
 
     def register_page(self, source):
         """
@@ -285,6 +297,7 @@ class CharLoaderDialog(gtk.Dialog):
         """
         self.response(gtk.RESPONSE_OK)
 
+
 class MainGUI(BaseGUI):
 
     def __init__(self, options, prefs, req_book):
@@ -336,7 +349,8 @@ class MainGUI(BaseGUI):
         for var in comboboxentries + spellboxentries + readyentries:
             self.register_widget(var, self.get_widget('%s_box' % (var)).child)
         for var in comboboxentries:
-            self.get_widget(var).connect('changed', self.on_singleval_changed_str)
+            self.get_widget(var).connect(
+                'changed', self.on_singleval_changed_str)
         for var in spellboxentries:
             self.get_widget(var).connect('changed', self.on_readyslots_changed)
         for var in readyentries:
@@ -377,7 +391,8 @@ class MainGUI(BaseGUI):
         self.eschalondata = None
         if self.gamedir_set():
             try:
-                self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
+                self.eschalondata = EschalonData.new(
+                    c.book, self.get_current_gamedir())
                 c.set_eschalondata(self.eschalondata)
             except Exception, e:
                 print 'Exception instantiating EschalonData: %s' % (e)
@@ -393,31 +408,31 @@ class MainGUI(BaseGUI):
         self.assert_gfx_buttons()
 
         # Dictionary of signals.
-        dic = { 'gtk_main_quit': self.gtk_main_quit,
-                'on_revert': self.on_revert,
-                'on_reload': self.on_reload,
-                'on_load': self.on_load,
-                'on_about': self.on_about,
-                'on_save_as': self.on_save_as,
-                'on_prefs': self.on_prefs,
-                'save_char': self.save_char,
-                'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
-                'on_checkbox_arr_changed': self.on_checkbox_arr_changed,
-                'on_readyslots_changed': self.on_readyslots_changed,
-                'on_cur_ready_changed': self.on_cur_ready_changed,
-                'on_multarray_changed': self.on_multarray_changed,
-                'on_multarray_text_changed': self.on_multarray_text_changed,
-                'on_multarray_changed_fx': self.on_multarray_changed_fx,
-                'on_portal_loc_changed': self.on_portal_loc_changed,
-                'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
-                'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
-                'on_dropdownplusone_changed_b2': self.on_dropdownplusone_changed_b2,
-                'open_avatarsel': self.open_avatarsel,
-                'avatarsel_on_motion': self.avatarsel_on_motion,
-                'avatarsel_on_expose': self.avatarsel_on_expose,
-                'avatarsel_on_clicked': self.avatarsel_on_clicked,
-                'on_b2picid_changed': self.on_b2picid_changed
-                }
+        dic = {'gtk_main_quit': self.gtk_main_quit,
+               'on_revert': self.on_revert,
+               'on_reload': self.on_reload,
+               'on_load': self.on_load,
+               'on_about': self.on_about,
+               'on_save_as': self.on_save_as,
+               'on_prefs': self.on_prefs,
+               'save_char': self.save_char,
+               'on_fxblock_button_clicked': self.on_fxblock_button_clicked,
+               'on_checkbox_arr_changed': self.on_checkbox_arr_changed,
+               'on_readyslots_changed': self.on_readyslots_changed,
+               'on_cur_ready_changed': self.on_cur_ready_changed,
+               'on_multarray_changed': self.on_multarray_changed,
+               'on_multarray_text_changed': self.on_multarray_text_changed,
+               'on_multarray_changed_fx': self.on_multarray_changed_fx,
+               'on_portal_loc_changed': self.on_portal_loc_changed,
+               'on_singleval_changed_int_avatar': self.on_singleval_changed_int_avatar,
+               'on_dropdownplusone_changed': self.on_dropdownplusone_changed,
+               'on_dropdownplusone_changed_b2': self.on_dropdownplusone_changed_b2,
+               'open_avatarsel': self.open_avatarsel,
+               'avatarsel_on_motion': self.avatarsel_on_motion,
+               'avatarsel_on_expose': self.avatarsel_on_expose,
+               'avatarsel_on_clicked': self.avatarsel_on_clicked,
+               'on_b2picid_changed': self.on_b2picid_changed
+               }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
         # should be fine here, anyway.
@@ -460,15 +475,15 @@ class MainGUI(BaseGUI):
         (changed, alert_changed) = super(MainGUI, self).on_prefs(widget)
         if (changed and alert_changed):
             self.infodialog('Preferences Change Info', '<b>Note:</b> Changes to graphics may '
-                    'not immediately update upon changing.  To ensure that your new settings '
-                    'are completely enabled, please quit and restart the application.', self.window)
+                            'not immediately update upon changing.  To ensure that your new settings '
+                            'are completely enabled, please quit and restart the application.', self.window)
         self.assert_gfx_buttons()
         if (changed and self.gamedir_set()):
             self.gfx = Gfx(self.prefs, self.datadir)
 
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
-        
+
         # Blank out the main area
         self.mainbook.set_sensitive(False)
 
@@ -482,9 +497,9 @@ class MainGUI(BaseGUI):
 
         # Run the dialog and process its return values
         dialog = CharLoaderDialog(starting_path=path,
-                savegame_dir=self.get_current_savegame_dir(),
-                transient=self.window,
-                last_source=self.last_char_source)
+                                  savegame_dir=self.get_current_savegame_dir(),
+                                  transient=self.window,
+                                  last_source=self.last_char_source)
         rundialog = True
         while (rundialog):
             rundialog = False
@@ -496,7 +511,7 @@ class MainGUI(BaseGUI):
                 # Check to see if this was the initial load, started without a filename
                 if (self.char == None):
                     return False
-        
+
         # If we got here, we've successfully chosen and loaded a character
         self.last_char_source = dialog.get_file_source()
 
@@ -544,8 +559,8 @@ class MainGUI(BaseGUI):
             self.save_char()
             self.putstatus('Saved as %s' % (self.char.df.filename))
             self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
-                    'character will be saved to the new filename, not the original '
-                    'filename.', self.window)
+                            'character will be saved to the new filename, not the original '
+                            'filename.', self.window)
 
         # Clean up
         dialog.destroy()
@@ -566,7 +581,8 @@ class MainGUI(BaseGUI):
             about.set_version(version)
             about.set_website(url)
             about.set_authors(authors)
-            licensepath = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'COPYING.txt')
+            licensepath = os.path.join(os.path.split(
+                os.path.dirname(__file__))[0], 'COPYING.txt')
             if (os.path.isfile(licensepath)):
                 try:
                     df = open(licensepath, 'r')
@@ -643,15 +659,18 @@ class MainGUI(BaseGUI):
             (labelwidget, label) = self.get_label_cache(self.curitem)
             labelname = labelwidget.get_name()
             (labelname, foo) = labelname.rsplit('_', 1)
-            self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
+            self.set_changed_widget(
+                (len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         elif self.curitemcategory == self.ITEM_INV:
             labelname = 'inv_%d_%d' % (self.curitem[0], self.curitem[1])
             (labelwidget, label) = self.get_label_cache(labelname)
-            self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
+            self.set_changed_widget(
+                (len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         elif self.curitemcategory == self.ITEM_READY:
             labelname = 'ready_%d' % (self.curitem)
             (labelwidget, label) = self.get_label_cache(labelname)
-            self.set_changed_widget((len(self.itemchanged) == 0), labelname, labelwidget, label, False)
+            self.set_changed_widget(
+                (len(self.itemchanged) == 0), labelname, labelwidget, label, False)
         else:
             pass
 
@@ -692,24 +711,27 @@ class MainGUI(BaseGUI):
         self.on_singleval_changed_int(widget)
         if (int(self.get_widget('picid').get_value()) % 256 == 0):
             if (self.gfx is None):
-                self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+                self.get_widget('picid_image').set_from_stock(
+                    gtk.STOCK_EDIT, 4)
             else:
-                pixbuf = self.gfx.get_avatar(int(widget.get_value())/256)
+                pixbuf = self.gfx.get_avatar(int(widget.get_value()) / 256)
                 if (pixbuf is None):
-                    self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+                    self.get_widget('picid_image').set_from_stock(
+                        gtk.STOCK_EDIT, 4)
                 else:
                     self.get_widget('picid_image').set_from_pixbuf(pixbuf)
         else:
             self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
-    
+
     def on_dropdownplusone_changed(self, widget):
         """ What to do when a dropdown is changed, when our index starts at 1.  """
         wname = widget.get_name()
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[wname] = widget.get_active() + 1
-        self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[wname]), wname, labelwidget, label)
-    
+        self.set_changed_widget((origobj.__dict__[wname] == obj.__dict__[
+                                wname]), wname, labelwidget, label)
+
     def on_dropdownplusone_changed_b2(self, widget):
         """
         What to do when a dropdown is changed, when our index starts at 1.
@@ -720,7 +742,8 @@ class MainGUI(BaseGUI):
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[objwname] = widget.get_active() + 1
-        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
+        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[
+                                objwname]), wname, labelwidget, label)
 
     def on_b2picid_changed(self, widget):
         """
@@ -735,13 +758,15 @@ class MainGUI(BaseGUI):
         else:
             val = widget.get_active() + 1
         obj.__dict__[objwname] = val
-        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[objwname]), wname, labelwidget, label)
+        self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[
+                                objwname]), wname, labelwidget, label)
         if (self.gfx is None):
             self.get_widget('b2_picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
         else:
             pixbuf = self.gfx.get_avatar(val)
             if pixbuf is None:
-                self.get_widget('b2_picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+                self.get_widget('b2_picid_image').set_from_stock(
+                    gtk.STOCK_EDIT, 4)
             else:
                 self.get_widget('b2_picid_image').set_from_pixbuf(pixbuf)
 
@@ -788,7 +813,8 @@ class MainGUI(BaseGUI):
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = widget.get_text()
-        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
+        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[
+                                shortname][arrnum]), wname, labelwidget, label)
 
     def on_multarray_changed(self, widget):
         """ What to do when an int value changes in an array. """
@@ -798,7 +824,8 @@ class MainGUI(BaseGUI):
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = int(widget.get_value())
-        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
+        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[
+                                shortname][arrnum]), wname, labelwidget, label)
 
     def on_checkbox_arr_changed(self, widget):
         """ What to do when a checkbox changes, and it's in an array. """
@@ -812,7 +839,8 @@ class MainGUI(BaseGUI):
         (labelwidget, label) = self.get_label_cache(wname)
         (obj, origobj) = self.get_comp_objects()
         obj.__dict__[shortname][arrnum] = val
-        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[shortname][arrnum]), wname, labelwidget, label)
+        self.set_changed_widget((origobj.__dict__[shortname][arrnum] == obj.__dict__[
+                                shortname][arrnum]), wname, labelwidget, label)
 
     def on_cur_ready_changed(self, widget):
         """ What to do when our currently-readied spell changes (only on Book 2). """
@@ -821,9 +849,10 @@ class MainGUI(BaseGUI):
             return
         (labelwidget, label) = self.get_label_cache('readied_spell')
         obj.readied_spell = self.get_widget('readied_spell').get_text()
-        obj.readied_spell_lvl = int(self.get_widget('readied_spell_lvl').get_value())
+        obj.readied_spell_lvl = int(
+            self.get_widget('readied_spell_lvl').get_value())
         self.set_changed_widget((origobj.readied_spell == obj.readied_spell) and
-            (origobj.readied_spell_lvl == obj.readied_spell_lvl), 'readied_spell', labelwidget, label)
+                                (origobj.readied_spell_lvl == obj.readied_spell_lvl), 'readied_spell', labelwidget, label)
 
     def on_readyslots_changed(self, widget):
         """ What to do when one of our readied-spell slots changes. """
@@ -831,14 +860,15 @@ class MainGUI(BaseGUI):
         (foo, slotnum) = wname.rsplit('_', 1)
         slotnum = int(slotnum)
         spell = self.get_widget('readyslots_spell_%d' % (slotnum)).get_text()
-        level = int(self.get_widget('readyslots_level_%d' % (slotnum)).get_value())
+        level = int(self.get_widget('readyslots_level_%d' %
+                                    (slotnum)).get_value())
         shortname = 'readyslots_%d' % (slotnum)
         (labelwidget, label) = self.get_label_cache(shortname)
         (obj, origobj) = self.get_comp_objects()
         obj.readyslots[slotnum][0] = spell
         obj.readyslots[slotnum][1] = level
         self.set_changed_widget((origobj.readyslots[slotnum][0] == obj.readyslots[slotnum][0] and
-            origobj.readyslots[slotnum][1] == obj.readyslots[slotnum][1]), shortname, labelwidget, label)
+                                 origobj.readyslots[slotnum][1] == obj.readyslots[slotnum][1]), shortname, labelwidget, label)
 
     def on_inv_clicked(self, widget, doshow=True):
         """ What to do when our inventory-item button is clicked. """
@@ -889,7 +919,8 @@ class MainGUI(BaseGUI):
         When loading in a new item, redraw the button and make sure that changes
         are entered into the system properly.
         """
-        self.on_inv_clicked(self.get_widget('inv_%d_%d_button' % (row, col)), False)
+        self.on_inv_clicked(self.get_widget(
+            'inv_%d_%d_button' % (row, col)), False)
         self.on_item_close_clicked(None, None, False)
 
     def register_ready_change(self, num):
@@ -897,7 +928,8 @@ class MainGUI(BaseGUI):
         When loading in a new item, redraw the button and make sure that changes
         are entered into the system properly.
         """
-        self.on_ready_clicked(self.get_widget('ready_%d_button' % (num)), False)
+        self.on_ready_clicked(self.get_widget(
+            'ready_%d_button' % (num)), False)
         self.on_item_close_clicked(None, None, False)
 
     def on_equip_action_clicked(self, widget):
@@ -905,8 +937,10 @@ class MainGUI(BaseGUI):
         wname = widget.get_name()
         (equipname, action) = wname.rsplit('_', 1)
         if (action == 'cut'):
-            self.on_equip_action_clicked(self.get_widget('%s_copy' % equipname))
-            self.on_equip_action_clicked(self.get_widget('%s_delete' % equipname))
+            self.on_equip_action_clicked(
+                self.get_widget('%s_copy' % equipname))
+            self.on_equip_action_clicked(
+                self.get_widget('%s_delete' % equipname))
         elif (action == 'copy'):
             self.itemclipboard = self.char.__dict__[equipname]
         elif (action == 'paste'):
@@ -927,8 +961,10 @@ class MainGUI(BaseGUI):
         row = int(row)
         col = int(col)
         if (action == 'cut'):
-            self.on_inv_action_clicked(self.get_widget('inv_%d_%d_copy' % (row, col)))
-            self.on_inv_action_clicked(self.get_widget('inv_%d_%d_delete' % (row, col)))
+            self.on_inv_action_clicked(
+                self.get_widget('inv_%d_%d_copy' % (row, col)))
+            self.on_inv_action_clicked(
+                self.get_widget('inv_%d_%d_delete' % (row, col)))
         elif (action == 'copy'):
             self.itemclipboard = self.char.inventory[row][col]
         elif (action == 'paste'):
@@ -947,8 +983,10 @@ class MainGUI(BaseGUI):
         (foo, num, action) = wname.rsplit('_', 2)
         num = int(num)
         if (action == 'cut'):
-            self.on_ready_action_clicked(self.get_widget('ready_%d_copy' % (num)))
-            self.on_ready_action_clicked(self.get_widget('ready_%d_delete' % (num)))
+            self.on_ready_action_clicked(
+                self.get_widget('ready_%d_copy' % (num)))
+            self.on_ready_action_clicked(
+                self.get_widget('ready_%d_delete' % (num)))
         elif (action == 'copy'):
             self.itemclipboard = self.char.readyitems[num]
         elif (action == 'paste'):
@@ -1004,30 +1042,31 @@ class MainGUI(BaseGUI):
         if (fx0 == 1073741824 and
             fx1 == 2111 and
             fx2 == 2560 and
-            fx3 == 5120):
+                fx3 == 5120):
             fxstr = 'None'
         elif (fx0 == 1803886340 and
-            fx1 == 61503 and
-            fx2 == 30720 and
-            fx3 == 15360):
+              fx1 == 61503 and
+              fx2 == 30720 and
+              fx3 == 15360):
             fxstr = 'Gravedigger\'s Flame'
         elif (fx0 == 1288490242 and
-            fx1 == 41023 and
-            fx2 == 38400 and
-            fx3 == 32000):
+              fx1 == 41023 and
+              fx2 == 38400 and
+              fx3 == 32000):
             fxstr = 'Torch'
         elif (fx0 == 1803886342 and
-            fx1 == 61503 and
-            fx2 == 38400 and
-            fx3 == 32000):
+              fx1 == 61503 and
+              fx2 == 38400 and
+              fx3 == 32000):
             fxstr = 'Torch and Gravedigger\'s Flame'
-        textwidget.set_markup('<span color="blue" style="italic">%s</span>' % (fxstr))
+        textwidget.set_markup(
+            '<span color="blue" style="italic">%s</span>' % (fxstr))
 
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
         if (self.has_unsaved_changes()):
             response = self.confirmdialog('Confirm Quit', 'You have made unsaved changes '
-                    'to this character.  Really quit?', self.window)
+                                          'to this character.  Really quit?', self.window)
             if (response == gtk.RESPONSE_YES):
                 gtk.main_quit()
             else:
@@ -1050,7 +1089,8 @@ class MainGUI(BaseGUI):
             item = self.origchar.inventory[row][col]
         else:
             item = self.char.inventory[row][col]
-        self.populate_item_button(item, widget, imgwidget, self.get_widget('invtable%d' % (row)))
+        self.populate_item_button(
+            item, widget, imgwidget, self.get_widget('invtable%d' % (row)))
 
     def populate_equip_button(self, name, orig=False):
         widget = self.get_widget('%s_text' % (name))
@@ -1059,7 +1099,8 @@ class MainGUI(BaseGUI):
             item = self.origchar.__dict__[name]
         else:
             item = self.char.__dict__[name]
-        self.populate_item_button(item, widget, imgwidget, self.get_widget('equiptable'))
+        self.populate_item_button(
+            item, widget, imgwidget, self.get_widget('equiptable'))
 
     def populate_ready_button(self, num, orig=False):
         widget = self.get_widget('ready_%d_text' % (num))
@@ -1068,7 +1109,8 @@ class MainGUI(BaseGUI):
             item = self.origchar.readyitems[num]
         else:
             item = self.char.readyitems[num]
-        self.populate_item_button(item, widget, imgwidget, self.get_widget('readytable'))
+        self.populate_item_button(
+            item, widget, imgwidget, self.get_widget('readytable'))
 
     def on_revert(self, widget):
         """ What to do when we're told to Revert. """
@@ -1094,12 +1136,12 @@ class MainGUI(BaseGUI):
             self.get_widget('picid').set_value(char.picid)
             self.on_singleval_changed_int_avatar(self.get_widget('picid'))
         else:
-            self.get_widget('gender').set_active(char.gender-1)
-            self.get_widget('b2origin').set_active(char.origin-1)
-            self.get_widget('b2axiom').set_active(char.axiom-1)
-            self.get_widget('b2classname').set_active(char.classname-1)
+            self.get_widget('gender').set_active(char.gender - 1)
+            self.get_widget('b2origin').set_active(char.origin - 1)
+            self.get_widget('b2axiom').set_active(char.axiom - 1)
+            self.get_widget('b2classname').set_active(char.classname - 1)
             if (char.picid < 13):
-                self.get_widget('b2picid').set_active(char.picid-1)
+                self.get_widget('b2picid').set_active(char.picid - 1)
             else:
                 self.get_widget('b2picid').set_active(12)
             self.get_widget('hunger').set_value(char.hunger)
@@ -1121,17 +1163,20 @@ class MainGUI(BaseGUI):
         self.get_widget('experience').set_value(char.experience)
         self.get_widget('xpos').set_value(char.xpos)
         self.get_widget('ypos').set_value(char.ypos)
-        self.get_widget('orientation').set_active(char.orientation-1)
+        self.get_widget('orientation').set_active(char.orientation - 1)
         self.get_widget('extra_att_points').set_value(char.extra_att_points)
-        self.get_widget('extra_skill_points').set_value(char.extra_skill_points)
+        self.get_widget('extra_skill_points').set_value(
+            char.extra_skill_points)
 
-        for num in range(1, len(c.skilltable)+1):
+        for num in range(1, len(c.skilltable) + 1):
             self.get_widget('skills_%d' % (num)).set_value(char.skills[num])
 
         for num in range(len(c.statustable)):
-            self.get_widget('statuses_%d' % (num)).set_value(char.statuses[num])
+            self.get_widget('statuses_%d' %
+                            (num)).set_value(char.statuses[num])
             if char.book > 1:
-                self.get_widget('statuses_extra_%d' % (num)).set_value(char.statuses_extra[num])
+                self.get_widget('statuses_extra_%d' %
+                                (num)).set_value(char.statuses_extra[num])
 
         if char.book == 1:
             fxblocks = 4
@@ -1163,15 +1208,18 @@ class MainGUI(BaseGUI):
             self.get_widget('spells_%d' % (i)).set_active(char.spells[i])
 
         for i in range(10):
-            self.get_widget('readyslots_spell_%d' % (i)).set_text(char.readyslots[i][0])
-            self.get_widget('readyslots_level_%d' % (i)).set_value(char.readyslots[i][1])
+            self.get_widget('readyslots_spell_%d' %
+                            (i)).set_text(char.readyslots[i][0])
+            self.get_widget('readyslots_level_%d' %
+                            (i)).set_value(char.readyslots[i][1])
         if char.book > 1:
             self.get_widget('readied_spell').set_text(char.readied_spell)
-            self.get_widget('readied_spell_lvl').set_value(char.readied_spell_lvl)
+            self.get_widget('readied_spell_lvl').set_value(
+                char.readied_spell_lvl)
 
-        equiplist = [ 'helm', 'cloak', 'torso', 'gauntlet', 'belt', 'legs', 'feet',
-                'amulet', 'ring1', 'ring2',
-                'quiver', 'weap_prim', 'shield' ]
+        equiplist = ['helm', 'cloak', 'torso', 'gauntlet', 'belt', 'legs', 'feet',
+                     'amulet', 'ring1', 'ring2',
+                     'quiver', 'weap_prim', 'shield']
         if char.book == 1:
             equiplist.append('weap_alt')
         for equip in equiplist:
@@ -1181,7 +1229,7 @@ class MainGUI(BaseGUI):
             for col in range(char.inv_cols):
                 self.populate_inv_button(row, col, True)
 
-        for num in range(char.ready_rows*char.ready_cols):
+        for num in range(char.ready_rows * char.ready_cols):
             self.populate_ready_button(num, True)
 
         self.get_widget('gold').set_value(char.gold)
@@ -1190,11 +1238,15 @@ class MainGUI(BaseGUI):
 
         if char.book > 1:
             for num in range(6):
-                self.get_widget('portal_loc_loc_%d' % (num)).set_value(char.portal_locs[num][0])
-                self.get_widget('portal_loc_map_%d' % (num)).set_text(char.portal_locs[num][1])
-                self.get_widget('portal_loc_mapeng_%d' % (num)).set_text(char.portal_locs[num][2])
+                self.get_widget('portal_loc_loc_%d' %
+                                (num)).set_value(char.portal_locs[num][0])
+                self.get_widget('portal_loc_map_%d' %
+                                (num)).set_text(char.portal_locs[num][1])
+                self.get_widget('portal_loc_mapeng_%d' %
+                                (num)).set_text(char.portal_locs[num][2])
             for idx in c.alchemytable.keys():
-                self.get_widget('alchemy_book_%d' % (idx)).set_active(char.alchemy_book[idx] > 0)
+                self.get_widget('alchemy_book_%d' % (idx)).set_active(
+                    char.alchemy_book[idx] > 0)
             for (idx, key) in enumerate(char.keyring):
                 self.get_widget('keyring_%d' % (idx)).set_text(key)
 
@@ -1225,7 +1277,7 @@ class MainGUI(BaseGUI):
             wind = gtk.ScrolledWindow()
             wind.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
             wind.show()
-            inv_book.append_page(wind, gtk.Label('Row %d' % (num+1)))
+            inv_book.append_page(wind, gtk.Label('Row %d' % (num + 1)))
             vport = gtk.Viewport()
             vport.set_shadow_type(gtk.SHADOW_OUT)
             vport.show()
@@ -1241,21 +1293,21 @@ class MainGUI(BaseGUI):
         self.gui_add_ready_page(ready_viewport)
 
         #####
-        ##### Now construct things that might be dependent on Book
-        ##### (we were handling this in prepare_dynamic_form() on each
-        ##### new character load until we split it out into its own
-        ##### executable)
+        # Now construct things that might be dependent on Book
+        # (we were handling this in prepare_dynamic_form() on each
+        # new character load until we split it out into its own
+        # executable)
         #####
 
         # Make sure to handle the Item window too
         self.item_gui_finish(c.book)
 
         ###
-        ### Front-screen skill table
+        # Front-screen skill table
         ###
         vbox = self.get_widget('charinfo_vbox')
 
-        numrows = len(c.skilltable)/2
+        numrows = len(c.skilltable) / 2
         if (len(c.skilltable) % 2 == 1):
             numrows += 1
 
@@ -1272,21 +1324,23 @@ class MainGUI(BaseGUI):
                 row = idx
                 col = 1
             else:
-                row = idx-numrows
+                row = idx - numrows
                 col = 3
             label = gtk.Label('%s:' % (skill))
             label.set_alignment(1, .5)
             label.set_padding(4, 0)
-            self.register_widget('skills_%d_label' % (idx+1), label)
-            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            
+            self.register_widget('skills_%d_label' % (idx + 1), label)
+            table.attach(label, col, col + 1, row, row + 1,
+                         gtk.FILL, gtk.FILL | gtk.EXPAND)
+
             align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
-            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            table.attach(align, col + 1, col + 2, row, row +
+                         1, gtk.FILL, gtk.FILL | gtk.EXPAND)
             # Note: limit is actually >255 on B1, but I don't think it's unreasonable
             # to clamp it down to 255 in practice, here.
             adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
             spin = gtk.SpinButton(adjust)
-            self.register_widget('skills_%d' % (idx+1), spin)
+            self.register_widget('skills_%d' % (idx + 1), spin)
             align.add(spin)
             spin.connect('value-changed', self.on_multarray_changed)
 
@@ -1294,11 +1348,11 @@ class MainGUI(BaseGUI):
         table.show_all()
 
         ###
-        ### Character Effects (non-permanent)
+        # Character Effects (non-permanent)
         ###
         cont = self.get_widget('status_alignment')
 
-        numrows = len(c.statustable)/2
+        numrows = len(c.statustable) / 2
         if (len(c.statustable) % 2 == 1):
             numrows += 1
 
@@ -1315,16 +1369,18 @@ class MainGUI(BaseGUI):
                 row = idx
                 col = 1
             else:
-                row = idx-numrows
+                row = idx - numrows
                 col = 3
             label = gtk.Label('%s:' % (skill))
             label.set_alignment(1, .5)
             label.set_padding(4, 0)
             self.register_widget('statuses_%d_label' % (idx), label)
-            table.attach(label, col, col+1, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
-            
+            table.attach(label, col, col + 1, row, row + 1,
+                         gtk.FILL, gtk.FILL | gtk.EXPAND)
+
             align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
-            table.attach(align, col+1, col+2, row, row+1, gtk.FILL, gtk.FILL|gtk.EXPAND)
+            table.attach(align, col + 1, col + 2, row, row +
+                         1, gtk.FILL, gtk.FILL | gtk.EXPAND)
             adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
             spin = gtk.SpinButton(adjust)
             self.register_widget('statuses_%d' % (idx), spin)
@@ -1345,16 +1401,17 @@ class MainGUI(BaseGUI):
         table.show_all()
 
         ###
-        ### Character Effects (permanent)
+        # Character Effects (permanent)
         ###
         if c.book > 1:
             for (statusid, statuslabel) in c.permstatustable.items():
-                widget = self.get_widget('permstatuses_%0.8X_label' % (statusid))
+                widget = self.get_widget(
+                    'permstatuses_%0.8X_label' % (statusid))
                 if widget:
                     widget.set_text(statuslabel)
 
         ###
-        ### Spell Checkboxes
+        # Spell Checkboxes
         ###
         # TODO: should we alphabetize these?
         divbox = self.get_widget('divination_vbox')
@@ -1378,7 +1435,7 @@ class MainGUI(BaseGUI):
         divbox.show_all()
 
         ###
-        ### Spell dropdowns
+        # Spell dropdowns
         ###
         boxes = [self.get_widget('readied_spell_box')]
         for i in range(10):
@@ -1391,9 +1448,9 @@ class MainGUI(BaseGUI):
                 box.append_text(spell)
 
         ###
-        ### Alchemy Recipe Book
-        ### Note that technically we don't need to do this dynamically, since
-        ### these dropdowns only exist for Book 2.
+        # Alchemy Recipe Book
+        # Note that technically we don't need to do this dynamically, since
+        # these dropdowns only exist for Book 2.
         ###
         if c.book > 1:
             box1 = self.get_widget('alchemy_vbox_1')
@@ -1401,7 +1458,7 @@ class MainGUI(BaseGUI):
             for box in [box1, box2]:
                 for widget in box.get_children():
                     box.remove(widget)
-            numrows = len(c.alchemytable)/2
+            numrows = len(c.alchemytable) / 2
             if (len(c.alchemytable) % 2 == 1):
                 numrows += 1
             for (idx, recipe) in c.alchemytable.items():
@@ -1455,25 +1512,27 @@ class MainGUI(BaseGUI):
 
     def gui_add_equip_page(self, container):
         """ Create the equipped-item page. """
-        table = self.gui_item_page(container, '<b>Equipped Items</b>', 14, 'equiptable')
+        table = self.gui_item_page(
+            container, '<b>Equipped Items</b>', 14, 'equiptable')
         i = 0
-        for item in [ ('helm', 'Helm'),
-                ('cloak', 'Cloak'),
-                ('torso', 'Torso'),
-                ('gauntlet', 'Gauntlet'),
-                ('belt', 'Belt'),
-                ('legs', 'Legs'),
-                ('feet', 'Feet'),
-                ('amulet', 'Amulet'),
-                ('ring1', 'Ring 1'),
-                ('ring2', 'Ring 2'),
-                ('quiver', 'Quiver'),
-                ('weap_prim', 'Primary Weapon'),
-                ('weap_alt', 'Alternate Weapon'),
-                ('shield', 'Shield') ]:
-            table.attach(self.gui_item_label('%s:' % item[1], '%s_label' % item[0]), 1, 2, i, i+1, gtk.FILL, gtk.FILL, 4)
+        for item in [('helm', 'Helm'),
+                     ('cloak', 'Cloak'),
+                     ('torso', 'Torso'),
+                     ('gauntlet', 'Gauntlet'),
+                     ('belt', 'Belt'),
+                     ('legs', 'Legs'),
+                     ('feet', 'Feet'),
+                     ('amulet', 'Amulet'),
+                     ('ring1', 'Ring 1'),
+                     ('ring2', 'Ring 2'),
+                     ('quiver', 'Quiver'),
+                     ('weap_prim', 'Primary Weapon'),
+                     ('weap_alt', 'Alternate Weapon'),
+                     ('shield', 'Shield')]:
+            table.attach(self.gui_item_label(
+                '%s:' % item[1], '%s_label' % item[0]), 1, 2, i, i + 1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item(item[0], self.on_equip_clicked, self.on_equip_action_clicked),
-                    2, 3, i, i+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+                         2, 3, i, i + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
             i = i + 1
 
     def gui_add_inv_page(self, container, rownum):
@@ -1482,40 +1541,48 @@ class MainGUI(BaseGUI):
             lines_to_alloc = 10
         else:
             lines_to_alloc = 8
-        table = self.gui_item_page(container, '<b>Inventory Row %d</b>' % (rownum+1), lines_to_alloc, 'invtable%d' % (rownum))
+        table = self.gui_item_page(container, '<b>Inventory Row %d</b>' %
+                                   (rownum + 1), lines_to_alloc, 'invtable%d' % (rownum))
         for num in range(8):
-            table.attach(self.gui_item_label('Column %d:' % (num+1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
+            table.attach(self.gui_item_label('Column %d:' % (
+                num + 1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num + 1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('inv_%d_%d' % (rownum, num), self.on_inv_clicked, self.on_inv_action_clicked),
-                    2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+                         2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
         if (rownum == 9):
             goldnote = gtk.Label()
             goldnote.set_alignment(0, 0.5)
-            goldnote.set_markup('<i><b>Note:</b> Column seven is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
+            goldnote.set_markup(
+                '<i><b>Note:</b> Column seven is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote.set_line_wrap(True)
             goldnote.show()
             self.register_widget('b1_gold_note', goldnote)
-            table.attach(goldnote, 2, 3, 8, 9, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+            table.attach(goldnote, 2, 3, 8, 9, gtk.FILL |
+                         gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
             goldnote2 = gtk.Label()
             goldnote2.set_alignment(0, 0.5)
-            goldnote2.set_markup('<i><b>Note:</b> Column eight is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
+            goldnote2.set_markup(
+                '<i><b>Note:</b> Column eight is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote2.set_line_wrap(True)
             goldnote2.show()
             self.register_widget('b2_gold_note', goldnote2)
-            table.attach(goldnote2, 2, 3, 9, 10, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+            table.attach(goldnote2, 2, 3, 9, 10, gtk.FILL |
+                         gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
 
     def gui_add_ready_page(self, container):
         """ Create a page for our readied items. """
-        table = self.gui_item_page(container, '<b>Readied Items</b>', 10, 'readytable')
+        table = self.gui_item_page(
+            container, '<b>Readied Items</b>', 10, 'readytable')
         for num in range(10):
-            table.attach(self.gui_item_label('Item %d:' % (num+1), 'ready_%d_label' % (num)), 1, 2, num, num+1, gtk.FILL, gtk.FILL, 4)
+            table.attach(self.gui_item_label('Item %d:' % (
+                num + 1), 'ready_%d_label' % (num)), 1, 2, num, num + 1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item('ready_%d' % (num), self.on_ready_clicked, self.on_ready_action_clicked),
-                    2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND, 0, 2)
+                         2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
 
     def open_avatarsel(self, widget):
         self.avatarsel.show()
 
     def avatarsel_on_motion(self, widget, event):
-        self.avatarsel_mousex = int(event.x/self.avatarsel_width)
+        self.avatarsel_mousex = int(event.x / self.avatarsel_width)
         if (self.avatarsel_mousex > self.avatarsel_cols):
             self.avatarsel_mousex = self.avatarsel_cols
         if (self.avatarsel_mousex != self.avatarsel_mousex_prev):
@@ -1531,12 +1598,13 @@ class MainGUI(BaseGUI):
             if x == 12:
                 pixbuf = self.gfx.get_avatar(0xFFFFFFFF)
             else:
-                pixbuf = self.gfx.get_avatar(x+1)
+                pixbuf = self.gfx.get_avatar(x + 1)
         else:
             pixbuf = self.gfx.get_avatar(x)
         if (pixbuf is None):
             return
-        self.avatarsel_pixmap.draw_pixbuf(None, pixbuf, 0, 0, x*self.avatarsel_width, 0)
+        self.avatarsel_pixmap.draw_pixbuf(
+            None, pixbuf, 0, 0, x * self.avatarsel_width, 0)
         if (x == self.avatarsel_mousex):
             color = self.gc_white
         elif (x == self.avatarsel_curx):
@@ -1545,7 +1613,7 @@ class MainGUI(BaseGUI):
             return
 
         # Outline points
-        x1 = x*self.avatarsel_width
+        x1 = x * self.avatarsel_width
         x2 = x1 + self.avatarsel_width - 1
         x3 = x2
         x4 = x1
@@ -1557,7 +1625,8 @@ class MainGUI(BaseGUI):
         y4 = y3
         y5 = y1
 
-        self.avatarsel_pixmap.draw_lines(color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
+        self.avatarsel_pixmap.draw_lines(
+            color, [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5)])
 
     def avatarsel_on_expose(self, widget, event):
         if (self.avatarsel_init):
@@ -1566,26 +1635,30 @@ class MainGUI(BaseGUI):
         else:
             if c.book == 1:
                 if (int(self.get_widget('picid').get_value()) % 256 == 0):
-                    self.avatarsel_curx = int(self.get_widget('picid').get_value()) / 256
+                    self.avatarsel_curx = int(
+                        self.get_widget('picid').get_value()) / 256
                 else:
                     self.avatarsel_curx = -1
             else:
                 self.avatarsel_curx = self.get_widget('b2picid').get_active()
-            self.avatarsel_area.set_size_request(self.avatarsel_x, self.avatarsel_y)
-            self.avatarsel_pixmap = gtk.gdk.Pixmap(self.avatarsel_area.window, self.avatarsel_x, self.avatarsel_y)
+            self.avatarsel_area.set_size_request(
+                self.avatarsel_x, self.avatarsel_y)
+            self.avatarsel_pixmap = gtk.gdk.Pixmap(
+                self.avatarsel_area.window, self.avatarsel_x, self.avatarsel_y)
             self.gc_white = gtk.gdk.GC(self.avatarsel_area.window)
             self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
             self.gc_black = gtk.gdk.GC(self.avatarsel_area.window)
             self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
             self.gc_green = gtk.gdk.GC(self.avatarsel_area.window)
             self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
-            self.avatarsel_pixmap.draw_rectangle(self.gc_black, True, 0, 0, self.avatarsel_x, self.avatarsel_y)
+            self.avatarsel_pixmap.draw_rectangle(
+                self.gc_black, True, 0, 0, self.avatarsel_x, self.avatarsel_y)
             for x in range(self.avatarsel_cols):
                 self.avatarsel_draw(x)
             self.avatarsel_init = True
         self.avatarsel_clean = []
         self.avatarsel_area.window.draw_drawable(self.avatarsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
-            self.avatarsel_pixmap, 0, 0, 0, 0, self.avatarsel_x, self.avatarsel_y)
+                                                 self.avatarsel_pixmap, 0, 0, 0, 0, self.avatarsel_x, self.avatarsel_y)
 
     def avatarsel_on_clicked(self, widget, event):
         self.avatarsel_init = False
