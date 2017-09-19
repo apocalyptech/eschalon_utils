@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -21,6 +21,7 @@
 from eschalon import constants as c
 from eschalon.item import Item
 from eschalon.savefile import FirstItemLoadException
+
 
 class Tilecontent(object):
     """
@@ -161,6 +162,7 @@ class Tilecontent(object):
         elif book == 3:
             return B3Tilecontent(savegame)
 
+
 class B1Tilecontent(Tilecontent):
     """
     Object structure for Book 1
@@ -262,7 +264,7 @@ class B1Tilecontent(Tilecontent):
     def write(self, df):
         """ Write the tilecontent to the file. """
 
-        df.writeint((self.y*100)+self.x)
+        df.writeint((self.y * 100) + self.x)
         df.writestr(self.description)
         df.writestr(self.extratext)
         df.writeint(self.zeroi1)
@@ -318,13 +320,15 @@ class B1Tilecontent(Tilecontent):
             if (item.item_name != ''):
                 ret.append("\t\t* %s" % item.item_name)
         if (unknowns):
-            ret.append("\tUnknown Short 3: %d 0x%04X" % (self.unknownh3, self.unknownh3))
+            ret.append("\tUnknown Short 3: %d 0x%04X" %
+                       (self.unknownh3, self.unknownh3))
             ret.append("\tUsually Zero 1: %d" % (self.zeroh1))
             ret.append("\tUsually Zero 2: %d" % (self.zeroi1))
             ret.append("\tUsually Zero 3: %d" % (self.zeroi2))
             ret.append("\tUsually Zero 4: %d" % (self.zeroi3))
 
         return "\n".join(ret)
+
 
 class B2Tilecontent(Tilecontent):
     """
@@ -406,7 +410,7 @@ class B2Tilecontent(Tilecontent):
     def write(self, df):
         """ Write the tilecontent to the file. """
 
-        df.writeint((self.y*100)+self.x)
+        df.writeint((self.y * 100) + self.x)
         df.writestr(self.description)
         df.writestr(self.extratext)
         df.writeint(self.cur_condition)
@@ -434,7 +438,8 @@ class B2Tilecontent(Tilecontent):
         ret.append("\tExtra Text / Map Link Destination: %s" % self.extratext)
         ret.append("\tScript: %s" % self.script)
 
-        ret.append("\tCondition: %d / %d" % (self.cur_condition, self.max_condition))
+        ret.append("\tCondition: %d / %d" %
+                   (self.cur_condition, self.max_condition))
         ret.append("\tOn-Empty flag: %d" % (self.on_empty))
         ret.append("\tLock Level: %d" % self.lock)
         if (self.lock == 12):
@@ -456,6 +461,7 @@ class B2Tilecontent(Tilecontent):
                 ret.append("\t\t* %s" % item.item_name)
 
         return "\n".join(ret)
+
 
 class B3Tilecontent(B2Tilecontent):
     """

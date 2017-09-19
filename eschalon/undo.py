@@ -3,20 +3,21 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 
 class Additional(object):
     """
@@ -90,6 +91,7 @@ class Additional(object):
         tile.wallimg = self.new_wallimg
         tile.floorimg = self.new_floorimg
 
+
 class UndoHistory(object):
     """
     Undo data for single edit.
@@ -103,7 +105,8 @@ class UndoHistory(object):
         self.additional = []
         self.mainchanged = False
         self.oldtile = map.tiles[y][x].replicate()
-        (self.old_entidx, self.old_tilecontentidx) = self.grab_idx(map, map.tiles[y][x])
+        (self.old_entidx, self.old_tilecontentidx) = self.grab_idx(
+            map, map.tiles[y][x])
 
     def set_new(self, map):
         """ Update this record's 'new' tile record """
@@ -149,7 +152,8 @@ class UndoHistory(object):
             if (tilecontent in map.tilecontents):
                 tilecontentidxes.append(map.tilecontents.index(tilecontent))
             else:
-                raise Exception('Script %d in tile not linked in master map list' % (tilecontentcount))
+                raise Exception(
+                    'Script %d in tile not linked in master map list' % (tilecontentcount))
         return (entidx, tilecontentidxes)
 
     def set_text(self, text):
@@ -162,6 +166,7 @@ class UndoHistory(object):
         """
         if (tile):
             self.additional.append(Additional(tile))
+
 
 class Undo(object):
     """
@@ -181,7 +186,7 @@ class Undo(object):
 
     def have_redo(self):
         """ Report whether there are any redos in the stack """
-        return (self.curidx < len(self.history)-1)
+        return (self.curidx < len(self.history) - 1)
 
     def get_undo(self):
         """ Gets the next "undo" action.  Used primarily for changing menu text. """
@@ -193,7 +198,7 @@ class Undo(object):
     def get_redo(self):
         """ Gets the next "redo" action.  Used primarily for changing menu text. """
         if (self.have_redo()):
-            return self.history[self.curidx+1]
+            return self.history[self.curidx + 1]
         else:
             return None
 
@@ -208,7 +213,8 @@ class Undo(object):
             self.history.insert(self.curidx, UndoHistory(self.mapobj, x, y))
             self.finished = False
         else:
-            raise Exception('Previous undo must be finished before storing a new one')
+            raise Exception(
+                'Previous undo must be finished before storing a new one')
 
     def finish(self):
         """
@@ -221,7 +227,7 @@ class Undo(object):
         """
         if (self.have_undo()):
             if (self.history[self.curidx].set_new(self.mapobj)):
-                del self.history[self.curidx+1:]
+                del self.history[self.curidx + 1:]
                 if (len(self.history) > self.maxstack):
                     del self.history[0]
                     self.curidx -= 1
@@ -254,7 +260,7 @@ class Undo(object):
             return True
         else:
             raise Exception('There is no unfinished Undo action to cancel')
-                
+
     def set_text(self, text):
         """
         Sets the label of the current undo action, to provide better text in
@@ -280,14 +286,14 @@ class Undo(object):
         """
         if (self.have_undo()):
             self.curidx -= 1
-            obj = self.history[self.curidx+1]
+            obj = self.history[self.curidx + 1]
             retval = []
             if (obj.mainchanged):
                 self.process_changes(obj.x, obj.y, obj.oldtile,
-                        obj.new_entidx, obj.new_tilecontentidx,
-                        obj.old_entidx, obj.old_tilecontentidx)
+                                     obj.new_entidx, obj.new_tilecontentidx,
+                                     obj.old_entidx, obj.old_tilecontentidx)
                 retval.append((obj.x, obj.y))
-            for add_obj in self.history[self.curidx+1].additional:
+            for add_obj in self.history[self.curidx + 1].additional:
                 add_obj.undo(self.mapobj.tiles[add_obj.y][add_obj.x])
                 retval.append((add_obj.x, add_obj.y))
             return retval
@@ -305,8 +311,8 @@ class Undo(object):
             retval = []
             if (obj.mainchanged):
                 self.process_changes(obj.x, obj.y, obj.newtile,
-                        obj.old_entidx, obj.old_tilecontentidx,
-                        obj.new_entidx, obj.new_tilecontentidx)
+                                     obj.old_entidx, obj.old_tilecontentidx,
+                                     obj.new_entidx, obj.new_tilecontentidx)
                 retval.append((obj.x, obj.y))
             for add_obj in self.history[self.curidx].additional:
                 add_obj.redo(self.mapobj.tiles[add_obj.y][add_obj.x])
@@ -329,7 +335,8 @@ class Undo(object):
         if (from_entidx is not None and from_entidx >= 0):
             del self.mapobj.entities[from_entidx]
         if (to_entidx is not None and to_entidx >= 0):
-            self.mapobj.entities.insert(to_entidx, self.mapobj.tiles[y][x].entity)
+            self.mapobj.entities.insert(
+                to_entidx, self.mapobj.tiles[y][x].entity)
 
         # ... and now Scripts
         idxes = from_tilecontentidx[:]
@@ -337,7 +344,8 @@ class Undo(object):
         for idx in idxes:
             del self.mapobj.tilecontents[idx]
         for (i, idx) in enumerate(to_tilecontentidx):
-            self.mapobj.tilecontents.insert(idx, self.mapobj.tiles[y][x].tilecontents[i])
+            self.mapobj.tilecontents.insert(
+                idx, self.mapobj.tiles[y][x].tilecontents[i])
 
     def report(self):
         """
@@ -349,7 +357,7 @@ class Undo(object):
         print '%d total tilecontents in map' % (len(self.mapobj.tilecontents))
         tilecontentcounters = {}
         for tilecontent in self.mapobj.tilecontents:
-            tileval = tilecontent.y*100+tilecontent.x
+            tileval = tilecontent.y * 100 + tilecontent.x
             if (tileval not in tilecontentcounters):
                 tilecontentcounters[tileval] = -1
             tilecontentcounters[tileval] += 1
@@ -358,7 +366,7 @@ class Undo(object):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
-            print ' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval]+1, matched)
+            print ' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval] + 1, matched)
         print
         print '%d total entities in map' % (len(self.mapobj.entities))
         for entity in self.mapobj.entities:

@@ -3,22 +3,23 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalon.item import Item
+
 
 class B1Unknowns(object):
     """ A class to hold some unknown data, so as not to muddy up the
@@ -41,7 +42,7 @@ class B1Unknowns(object):
         self.anotherint = -1
         self.shortval = -1
         self.emptystr = ''
-        self.iblock2 = [] # These are weird
+        self.iblock2 = []  # These are weird
         self.preinvs1 = ''
         self.preinvs2 = ''
         self.preinvzero1 = -1
@@ -100,18 +101,20 @@ class B1Unknowns(object):
         ret.append("Initial Zero: %d" % self.initzero)
         ret.append("Empty Character String: %s" % self.charstring)
         ret.append("Usually 1: %d" % self.charone)
-        ret.append(self.iblock(1, self.sparseiblock, 'Sparse integers (interleaved with char statuses)'))
+        ret.append(self.iblock(1, self.sparseiblock,
+                               'Sparse integers (interleaved with char statuses)'))
         ret.append(self.iblock(1, self.iblock1))
         ret.append("Block of 2 Strings plus 1 Integer:")
         for i in range(len(self.ssiblocks1)):
-            ret.append("\tBlock %d:" % (i+1))
+            ret.append("\tBlock %d:" % (i + 1))
             ret.append("\t\tString 1: %s" % self.ssiblocks1[i])
             ret.append("\t\tString 2: %s" % self.ssiblocks1[i])
             ret.append("\t\tInt: %d" % self.ssiblocki[i])
         ret.append("Extra string 1: %s" % self.extstr1)
         ret.append("Extra string 2: %s" % self.extstr2)
         ret.append("Another zero: %d" % self.anotherzero)
-        ret.append("Another int (generally a multiple of 256): %d" % self.anotherint)
+        ret.append("Another int (generally a multiple of 256): %d" %
+                   self.anotherint)
         ret.append("A short int: %d" % self.shortval)
         ret.append("A string (always blank for me): %s" % self.emptystr)
         ret.append(self.iblock(2, self.iblock2))
@@ -120,9 +123,11 @@ class B1Unknowns(object):
         ret.append("Pre-inventory zero 1: %d" % self.preinvzero1)
         ret.append("Pre-inventory zero 2: %d" % self.preinvzero2)
         if (len(self.extradata) != 0):
-            ret.append("File has extra data appended at the end: %d bytes" % len(self.extradata))
+            ret.append("File has extra data appended at the end: %d bytes" %
+                       len(self.extradata))
 
         return "\n".join(ret)
+
 
 class B2Unknowns(object):
     """ A class to hold some unknown data, so as not to muddy up the
@@ -132,7 +137,7 @@ class B2Unknowns(object):
         """ A fresh object with no data. """
 
         self.initzero = -1
-        self.version = -1 # I suspect this might be savefile version
+        self.version = -1  # I suspect this might be savefile version
         self.zero1 = -1
         self.zeros = []
         self.strangeblock = []
