@@ -3,22 +3,23 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalon import constants as c
+
 
 class Item(object):
     """Class to hold a single Item's information."""
@@ -42,7 +43,6 @@ class Item(object):
         self.basearmor = -1
         self.script = ''
         self.rarity = -1
-
 
         # Now, after doing all that, zero things out if we were told to do so
         if (zero):
@@ -115,7 +115,7 @@ class Item(object):
         self.item_name = name
 
         if (not savegame and self.item_name != '' and
-                self.item_name.lower() != 'empty' and 
+                self.item_name.lower() != 'empty' and
                 self.item_name.lower() != 'random' and c.eschalondata):
             self.item_name = c.eschalondata.get_global_name(self.item_name)
 
@@ -166,30 +166,36 @@ class Item(object):
                 ret.append("\tCategory: 0x%08X" % (self.category))
             if (self.subcategory != 0):
                 if (self.subcategory in c.skilltable):
-                    ret.append("\tSubcategory: %s" % (c.skilltable[self.subcategory]))
+                    ret.append("\tSubcategory: %s" %
+                               (c.skilltable[self.subcategory]))
                 else:
                     ret.append("\tSubcategory: 0x%08X" % (self.subcategory))
             if self.book == 1:
                 if (self.rarity == 3):
-                    ret.append("\t(Note: this item has not been identified yet)")
+                    ret.append(
+                        "\t(Note: this item has not been identified yet)")
                 elif (self.rarity != 1):
                     ret.append("\tNOTICE: Unknown rarity ID: %d" % self.rarity)
             else:
                 if (self.rarity > 1):
-                    ret.append("\t(Note: this item has not been identified yet, difficulty %d)" % (self.rarity))
+                    ret.append(
+                        "\t(Note: this item has not been identified yet, difficulty %d)" % (self.rarity))
             ret.append("\tPicture ID: %d" % self.pictureid)
             ret.append("\tValue: %d" % self.value)
             if self.book > 1 and self.max_hp > 0:
-                ret.append("\tCondition: %d%% (%d of %d)" % (self.cur_hp/float(self.max_hp)*100, self.cur_hp, self.max_hp))
+                ret.append("\tCondition: %d%% (%d of %d)" % (
+                    self.cur_hp / float(self.max_hp) * 100, self.cur_hp, self.max_hp))
             if (self.basedamage > 0):
                 ret.append("\tBase Damage: %d" % self.basedamage)
             if (self.basearmor > 0):
                 ret.append("\tBase Armor: %d" % self.basearmor)
             if self.book == 1:
                 if (self.attr_modified > 0):
-                    ret.append("\tAttribute Modifier: +%d %s" % (self.attr_modifier, c.attrtable[self.attr_modified]))
+                    ret.append("\tAttribute Modifier: +%d %s" %
+                               (self.attr_modifier, c.attrtable[self.attr_modified]))
                 if (self.skill_modified > 0):
-                    ret.append("\tSkill Modifier: +%d %s" % (self.skill_modifier, c.skilltable[self.skill_modified]))
+                    ret.append("\tSkill Modifier: +%d %s" %
+                               (self.skill_modifier, c.skilltable[self.skill_modified]))
                 if (self.hitpoint > 0):
                     ret.append("\tSpecial: +%d Hit Points" % self.hitpoint)
                 if (self.mana > 0):
@@ -202,7 +208,8 @@ class Item(object):
                     ret.append("\tSpecial: +%d Armor" % self.armor)
                 if (self.incr > 0):
                     if (self.incr in c.itemincrtable):
-                        ret.append("\tSpecial: %s +20%%" % c.itemincrtable[self.incr])
+                        ret.append("\tSpecial: %s +20%%" %
+                                   c.itemincrtable[self.incr])
                     else:
                         ret.append("\tSpecial: 0x%08X" % self.incr)
                 if (self.flags > 0):
@@ -218,7 +225,8 @@ class Item(object):
                         if modified_var > 0 or modifier_var > 0:
                             if modified_var in c.itemeffecttable:
                                 modified_var = c.itemeffecttable[modified_var]
-                            ret.append("\tSpecial (%d): +%d %s" % (i, modifier_var, modified_var))
+                            ret.append("\tSpecial (%d): +%d %s" %
+                                       (i, modifier_var, modified_var))
                 else:
                     for i in range(1, 3):
                         modified_var = self.__dict__['bonus_value_%d' % (i)]
@@ -230,7 +238,8 @@ class Item(object):
                                 operator = '+'
                             else:
                                 operator = '-'
-                            ret.append("\tSpecial (%d): %s%d %s" % (i, operator, modified_var, modifier_var))
+                            ret.append("\tSpecial (%d): %s%d %s" %
+                                       (i, operator, modified_var, modifier_var))
             ret.append("\tWeight: %0.1f lbs" % self.weight)
             if (self.script != ''):
                 ret.append("\tScript: %s" % self.script)
@@ -266,21 +275,22 @@ class Item(object):
         elif book == 3:
             return B3Item(zero)
 
+
 class B1Item(Item):
     """
     Item structure for Book 1
     """
 
     book = 1
-    form_elements = [ 'item_b1_modifier_box',
-            'subcategory_label', 'subcategory',
-            'zero1_label', 'zero1',
-            'emptystr_label', 'emptystr',
-            'duration_label', 'duration'
-            ]
+    form_elements = ['item_b1_modifier_box',
+                     'subcategory_label', 'subcategory',
+                     'zero1_label', 'zero1',
+                     'emptystr_label', 'emptystr',
+                     'duration_label', 'duration'
+                     ]
 
     def __init__(self, zero=False):
-        
+
         # Attributes which only Book 1 has
         self.attr_modified = -1
         self.attr_modifier = -1
@@ -424,14 +434,15 @@ class B1Item(Item):
             item, in the game. """
 
         return (self.attr_modified > 0 or
-            self.skill_modified > 0 or
-            self.hitpoint > 0 or
-            self.mana > 0 or
-            self.tohit > 0 or
-            self.damage > 0 or
-            self.armor > 0 or
-            self.incr > 0 or
-            self.flags > 0)
+                self.skill_modified > 0 or
+                self.hitpoint > 0 or
+                self.mana > 0 or
+                self.tohit > 0 or
+                self.damage > 0 or
+                self.armor > 0 or
+                self.incr > 0 or
+                self.flags > 0)
+
 
 class B2Item(Item):
     """
@@ -439,21 +450,21 @@ class B2Item(Item):
     """
 
     book = 2
-    form_elements = [ 'item_b2_modifier_box',
-            'subcategory_label', 'subcategory',
-            'cur_hp_label', 'cur_hp',
-            'max_hp_label', 'max_hp',
-            'quest', 'quest_label',
-            'material', 'material_label',
-            'spell', 'spell_label',
-            'spell_power', 'spell_power_label',
-            'is_projectile', 'is_projectile_label',
-            'b2_item_picid_notealign',
-            'quantity_label_b23',
-            ]
+    form_elements = ['item_b2_modifier_box',
+                     'subcategory_label', 'subcategory',
+                     'cur_hp_label', 'cur_hp',
+                     'max_hp_label', 'max_hp',
+                     'quest', 'quest_label',
+                     'material', 'material_label',
+                     'spell', 'spell_label',
+                     'spell_power', 'spell_power_label',
+                     'is_projectile', 'is_projectile_label',
+                     'b2_item_picid_notealign',
+                     'quantity_label_b23',
+                     ]
 
     def __init__(self, zero=False):
-        
+
         # Attributes which only Book 2 has
         self.quest = -1
         self.max_hp = -1
@@ -562,10 +573,10 @@ class B2Item(Item):
         self.bonus_3 = 0
         self.bonus_value_3 = 0
         self.material = 0
-        self.spell = ''                 
+        self.spell = ''
         self.spell_power = 0
         self.is_projectile = 0
-                        
+
     def _sub_equals(self, item):
         """
         Book 2 specific equality.
@@ -589,8 +600,9 @@ class B2Item(Item):
             item, in the game. """
 
         return (self.bonus_1 > 0 or
-            self.bonus_2 > 0 or
-            self.bonus_3 > 0)
+                self.bonus_2 > 0 or
+                self.bonus_3 > 0)
+
 
 class B3Item(B2Item):
     """
