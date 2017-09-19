@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -25,11 +25,13 @@ from eschalon.map import Map
 from eschalon.savefile import Savefile, LoadException
 from eschalon.savename import Savename
 
+
 class SaveslotMap(object):
     """
     Simple class to hold some information about maps stored within a
     save slot.  Effectively just a well-defined dict.
     """
+
     def __init__(self, filename, mapname, book):
         self.filename = filename
         self.mapname = mapname
@@ -37,6 +39,7 @@ class SaveslotMap(object):
 
     def filename_short(self):
         return os.path.basename(self.filename)
+
 
 class Saveslot(object):
     """
@@ -58,19 +61,21 @@ class Saveslot(object):
     def __init__(self, directory, load_all=False, book=None):
         """ Empty object. """
         self.directory = directory
-        
+
         # Make sure we really are a directory
         if not os.path.isdir(directory):
             raise LoadException('%s is not a directory' % (directory))
 
         # Store our modification time
         self.timestamp_epoch = os.path.getmtime(directory)
-        self.timestamp = time.strftime('%a %b %d, %Y, %I:%M %p', time.gmtime(self.timestamp_epoch))
+        self.timestamp = time.strftime(
+            '%a %b %d, %Y, %I:%M %p', time.gmtime(self.timestamp_epoch))
 
         # Find the save name
         self.savename_loc = os.path.join(directory, 'savename')
         if not os.path.exists(self.savename_loc):
-            raise LoadException('"savename" file not found in %s' % (directory))
+            raise LoadException(
+                '"savename" file not found in %s' % (directory))
         self.savenameobj = Savename.load(self.savename_loc)
         self.savenameobj.read()
         self.savename = self.savenameobj.savename
@@ -79,7 +84,7 @@ class Saveslot(object):
         self.char_loc = os.path.join(directory, 'char')
         self.charname = 'n/a'
         self.char_loaded = False
-        
+
         # Set up our map list
         self.maps = []
         self.maps_loaded = False
@@ -104,7 +109,8 @@ class Saveslot(object):
         """
         self.maps = []
         self.maps_loaded = True
-        map_filenames = sorted(glob.glob(os.path.join(self.directory, '*.map')))
+        map_filenames = sorted(
+            glob.glob(os.path.join(self.directory, '*.map')))
         for map_filename in map_filenames:
             try:
                 (book, mapname, df) = Map.get_mapinfo(map_filename)
@@ -130,7 +136,8 @@ class Saveslot(object):
             if len(self.maps) > 0:
                 book = self.maps[0].book
             else:
-                raise LoadException('Could not auto-detect which book version to use for charname')
+                raise LoadException(
+                    'Could not auto-detect which book version to use for charname')
 
         # Now do the actual loading
         if not os.path.exists(self.char_loc):
@@ -175,10 +182,10 @@ class Saveslot(object):
         b_short = b.slotname_short()
         try:
             if (a_short[:4] == 'slot' and
-                    str(int(a_short[4:])) == a_short[4:] and
-                    b_short[:4] == 'slot' and
-                    str(int(b_short[4:])) == b_short[4:]
-                ):
+                        str(int(a_short[4:])) == a_short[4:] and
+                        b_short[:4] == 'slot' and
+                        str(int(b_short[4:])) == b_short[4:]
+                    ):
                 return cmp(int(a_short[4:]), int(b_short[4:]))
         except ValueError:
             pass

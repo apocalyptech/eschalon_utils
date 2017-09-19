@@ -3,25 +3,27 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import getopt, sys
+import getopt
+import sys
 from eschalon.map import Map
 from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
+
 
 def usage(full=False):
     #progname = sys.argv[0]
@@ -42,20 +44,21 @@ def usage(full=False):
     print
     sys.exit(2)
 
+
 def main(argv=None):
 
     # Argument var defaults
     options = {
-            'filename' : None
-            }
+        'filename': None
+    }
 
     # Parse the args
     if argv is None:
         argv = sys.argv
     try:
         opts, args = getopt.getopt(argv[1:],
-                'h',
-                ['help'])
+                                   'h',
+                                   ['help'])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -73,11 +76,12 @@ def main(argv=None):
         # TODO: this was here to support me doing mass graphic exports.
         # remove it?
         options['filenames'] = args
-    
+
     prog = MapGUI(options, Prefs(), 1)
 
     # ... and run it
     return prog.run()
+
 
 if __name__ == '__main__':
     sys.exit(main())
