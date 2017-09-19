@@ -164,7 +164,7 @@ class B3Constants:
 
     # Should maybe just have a Spell class for this instead
     spelltype = {}
-    for spell in spelltable.keys():
+    for spell in list(spelltable.keys()):
         if (spell < 24):
             spelltype[spell] = 'EL'
         else:

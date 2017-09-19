@@ -35,7 +35,7 @@ import os
 import csv
 import glob
 import base64
-import cStringIO
+import io
 from eschalon import constants as c
 from eschalon.savefile import LoadException
 
@@ -324,7 +324,7 @@ class EschalonData(object):
                 try:
                     with open(to_open, 'r') as df:
                         return df.read()
-                except IOError, e:
+                except IOError as e:
                     raise LoadException(
                         'Filename %s could not be opened: %s' % (to_open, e))
             else:
@@ -339,7 +339,7 @@ class EschalonData(object):
         its data, using the cStringIO object.  Consequently, the returned filehandle
         will be read-only.  Calls self.readfile() to do most of our work.
         """
-        return cStringIO.StringIO(self.readfile(filename, directory))
+        return io.StringIO(self.readfile(filename, directory))
 
     def populate_datapak_info(self):
         """
@@ -394,7 +394,7 @@ class EschalonData(object):
                 self.itemdict[self.random_name] = True
 
         # Populate a sorted itemlist object as well.
-        self.itemlist = sorted(self.itemdict.keys(), key=lambda s: s.lower())
+        self.itemlist = sorted(list(self.itemdict.keys()), key=lambda s: s.lower())
 
         # Now try to load in all available entity information
         try:
@@ -477,7 +477,7 @@ class EschalonData(object):
         elif item_name[:10] == 'Scroll of ':
             return item_name[10:]
         else:
-            for (key, val) in self.material_items.items():
+            for (key, val) in list(self.material_items.items()):
                 if key in item_name:
                     return val
             return item_name
