@@ -1084,8 +1084,8 @@ class MapGUI(BaseGUI):
         },
     }
 
-    def __init__(self, options, prefs, req_book):
-        self.options = options
+    def __init__(self, filename, prefs, req_book):
+        self.filename = filename
         self.prefs = prefs
         self.editing_a_tile = False
         self.path_init()
@@ -1272,12 +1272,12 @@ class MapGUI(BaseGUI):
         # If we were given a filename, load it.  If not, create a new map,
         # or load one if the user wants.
         self.last_map_source = None
-        if (self.options['filename'] == None):
+        if (self.filename is None):
             if not self.on_load():
                 return
         else:
-            self.last_map_source = MapLoaderDialog.SOURCE_OTHER
-            if (not self.load_from_file(self.options['filename'])):
+            self.last_map_source = MapLoaderDialog.SOURCE_OTHER;
+            if (not self.load_from_file(self.filename)):
                 if (not self.on_load()):
                     return
 
@@ -5543,8 +5543,7 @@ class MapGUI(BaseGUI):
         """
         self.mapinit = True
         self.set_zoom_vars(1)
-        print(self.options)
-        for file in self.options['filenames']:
+        for file in self.filename:
             self.load_from_file(file)
             # self.draw_map()
             (pngfile, junk) = file.split('.')
