@@ -9,20 +9,7 @@ from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
 
 
-class EschalonUtils:
-    options = {
-        'gui': True,
-        'list': False,
-        'listoptions': {
-            'all': False,
-            'tiles': False,
-            'objects': False,
-            'txtmap': False
-        },
-        'unknowns': False,
-        'filename': None
-    }
-
+class EschalonUtils(object):
     def b1char(self, widget, data=None):
         prog = MainGUI(self.options, Prefs(), 1)
         return prog.run()

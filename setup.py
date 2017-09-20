@@ -25,8 +25,7 @@ setup(
 
     },
     scripts=[
-        'eschalon_map.py',
-        'eschalon_char.py',
+        'eschalon_main.py',
         'eschalon_utils.py',
     ],
 

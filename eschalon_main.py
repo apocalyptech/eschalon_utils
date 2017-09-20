@@ -22,6 +22,7 @@ import sys
 
 import argparse as argparse
 
+from eschalon.mapgui import MapGUI
 from eschalon.maincli import MainCLI
 from eschalon.preferences import Prefs
 
@@ -33,7 +34,6 @@ def main():
                         )
     parser.add_argument("-u", "--unknowns", action="store_true")
 
-
     char_manip_group = parser.add_argument_group(title="automated changes", description="sgkljfld")
     char_manip_group.add_argument("--set-gold", type=int)
     char_manip_group.add_argument("--set-mana-max", type=int)
@@ -42,9 +42,10 @@ def main():
     char_manip_group.add_argument("--set-hp-cur", type=int)
     char_manip_group.add_argument("--rm-desease", action="store_true")
 
-    parser.add_argument("filename", type=str, nargs='?')
+    # TODO: more advanced CLI validation checks
+    parser.add_argument("filename", type=str, action='append')
     parser.add_argument("--gui", action="store_true")
-
+    parser.add_argument("--map", action="store_true")
     parser.add_argument("--book", type=int, choices=[1, 2, 3], required=True)
 
     args = parser.parse_args()
@@ -55,6 +56,8 @@ def main():
         # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalon.maingui import MainGUI
         prog = MainGUI(args, Prefs(), args.book)
+    elif args.map:
+        prog = MapGUI(args.filename, Prefs(), args.book)
     else:
         prog = MainCLI(args, Prefs(), args.book)
 
