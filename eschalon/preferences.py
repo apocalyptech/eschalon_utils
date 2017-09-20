@@ -57,7 +57,7 @@ class Prefs(object):
 
         # Initialize our defaults and load, if we can
         self.set_defaults()
-        if (not self.load()):
+        if not self.load():
             # Write out our prefs if one didn't exist
             try:
                 self.save()
@@ -75,14 +75,14 @@ class Prefs(object):
             self.set_bool(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
-        if (self.filename is not None and os.path.isfile(self.filename)):
+        if self.filename is not None and os.path.isfile(self.filename):
             self.cp.read(self.filename)
             return True
         else:
             return False
 
     def save(self):
-        if (self.filename is None):
+        if self.filename is None:
             return False
         else:
             df = open(self.filename, 'w')
@@ -91,7 +91,7 @@ class Prefs(object):
             return True
 
     def set_str(self, cat, name, val):
-        if (not self.cp.has_section(cat)):
+        if not self.cp.has_section(cat):
             self.cp.add_section(cat)
         return self.cp.set(cat, name, val)
 
@@ -99,7 +99,7 @@ class Prefs(object):
         return self.cp.get(cat, name)
 
     def set_int(self, cat, name, val):
-        if (not self.cp.has_section(cat)):
+        if not self.cp.has_section(cat):
             self.cp.add_section(cat)
         return self.cp.set(cat, name, str(val))
 
@@ -107,7 +107,7 @@ class Prefs(object):
         return self.cp.getint(cat, name)
 
     def set_bool(self, cat, name, val):
-        if (not self.cp.has_section(cat)):
+        if not self.cp.has_section(cat):
             self.cp.add_section(cat)
         if val:
             val = 'True'
@@ -120,10 +120,10 @@ class Prefs(object):
 
     def global_default(self, cat, name):
         """ Defaults which are global, regardless of platform. """
-        if (cat == 'mapgui'):
-            if (name == 'default_zoom'):
+        if cat == 'mapgui':
+            if name == 'default_zoom':
                 return 4
-            elif (name == 'warn_slow_zip'):
+            elif name == 'warn_slow_zip':
                 return 'True'
         return None
 
@@ -141,42 +141,42 @@ class Prefs(object):
 
     def linux_default(self, cat, name):
         """ Default values on Linux """
-        if (cat == 'paths'):
-            if (name == 'savegames'):
+        if cat == 'paths':
+            if name == 'savegames':
                 path = os.path.join(os.path.expanduser(
                     '~'), '.eschalon_b1_saved_games')
-                if (not os.path.isdir(path)):
+                if not os.path.isdir(path):
                     path = os.path.join(os.path.expanduser(
                         '~'), 'eschalon_b1_saved_games')
                 return path
-            elif (name == 'savegames_b2'):
+            elif name == 'savegames_b2':
                 return os.path.join(os.path.expanduser('~'), '.basilisk_games', 'book2_saved_games')
-            elif (name == 'savegames_b3'):
+            elif name == 'savegames_b3':
                 return os.path.join(os.path.expanduser('~'), '.basilisk_games', 'book3_saved_games')
-            elif (name == 'gamedir'):
+            elif name == 'gamedir':
                 for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_1')
-                    if (os.path.isdir(os.path.join(fulldir, 'packedgraphics'))):
+                    if os.path.isdir(os.path.join(fulldir, 'packedgraphics')):
                         return fulldir
-                    if (os.path.isfile(os.path.join(fulldir, 'gfx.pak'))):
+                    if os.path.isfile(os.path.join(fulldir, 'gfx.pak')):
                         return fulldir
                 # If nothing found, don't just assume - return a blank string.  This way it
                 # could be picked up again on future runs of the program.
                 return ''
-            elif (name == 'gamedir_b2'):
+            elif name == 'gamedir_b2':
                 for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_2')
-                    if (os.path.isdir(os.path.join(fulldir, 'data'))):
+                    if os.path.isdir(os.path.join(fulldir, 'data')):
                         return fulldir
-                    if (os.path.isfile(os.path.join(fulldir, 'datapak'))):
+                    if os.path.isfile(os.path.join(fulldir, 'datapak')):
                         return fulldir
                 # If nothing found, don't just assume - return a blank string.  This way it
                 # could be picked up again on future runs of the program.
                 return ''
-            elif (name == 'gamedir_b3'):
+            elif name == 'gamedir_b3':
                 for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_3')
-                    if (os.path.isfile(os.path.join(fulldir, 'datapak'))):
+                    if os.path.isfile(os.path.join(fulldir, 'datapak')):
                         return fulldir
                 # If nothing found, don't just assume - return a blank string.  This way it
                 # could be picked up again on future runs of the program.
@@ -187,31 +187,31 @@ class Prefs(object):
         """ Default prefsfile on Darwin """
         prefdir = os.path.join(os.path.expanduser(
             '~'), 'Library', 'Preferences', app_name)
-        if (not os.path.isdir(prefdir)):
+        if not os.path.isdir(prefdir):
             os.mkdir(prefdir)
         return os.path.join(prefdir, 'config.ini')
 
     def darwin_default(self, cat, name):
         """ Default values on Darwin """
-        if (cat == 'paths'):
-            if (name == 'savegames'):
+        if cat == 'paths':
+            if name == 'savegames':
                 return os.path.join(os.path.expanduser('~'), 'Documents', 'Eschalon Book 1 Saved Games')
-            elif (name == 'savegames_b2'):
+            elif name == 'savegames_b2':
                 return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Basilisk Games', 'Book 2 Saved Games')
-            elif (name == 'savegames_b3'):
+            elif name == 'savegames_b3':
                 return os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', 'Basilisk Games', 'Book 3 Saved Games')
-            elif (name == 'gamedir'):
+            elif name == 'gamedir':
                 return '/Applications/Eschalon Book I.app'
-            elif (name == 'gamedir_b2'):
+            elif name == 'gamedir_b2':
                 return '/Applications/Eschalon Book II.app'
-            elif (name == 'gamedir_b3'):
+            elif name == 'gamedir_b3':
                 return '/Applications/Eschalon Book III.app'
         return self.global_default(cat, name)
 
     def win32_prefsfile_final(self, path):
         """ Given a path, spit out our prefsfile from that root. """
         dir = os.path.join(path, app_name)
-        if (not os.path.isdir(dir)):
+        if not os.path.isdir(dir):
             os.mkdir(dir)
         return os.path.join(dir, 'config.ini')
 
@@ -221,7 +221,7 @@ class Prefs(object):
         # First, use %LOCALAPPDATA% like we should be doing.
         if 'LOCALAPPDATA' in os.environ:
             appdir = os.environ['LOCALAPPDATA']
-            if (os.path.isdir(appdir)):
+            if os.path.isdir(appdir):
                 return self.win32_prefsfile_final(appdir)
 
         # ... and if not, loop through various options.  I'm having a hard
@@ -243,17 +243,17 @@ class Prefs(object):
                 # This one should work for 2000, XP, 2003
                 appdir = os.path.join(
                     user_dir_name, 'Local Settings', app_dir_name)
-                if (os.path.isdir(appdir)):
+                if os.path.isdir(appdir):
                     return self.win32_prefsfile_final(appdir)
 
                 # This one should work for Vista, 7, 8
                 appdir = os.path.join(user_dir_name, app_dir_name, 'Local')
-                if (os.path.isdir(appdir)):
+                if os.path.isdir(appdir):
                     return self.win32_prefsfile_final(appdir)
 
                 # This one?  Who knows.  Seems like a good thing to try?
                 appdir = os.path.join(user_dir_name, app_dir_name)
-                if (os.path.isdir(appdir)):
+                if os.path.isdir(appdir):
                     return self.win32_prefsfile_final(appdir)
 
         # If we didn't find anything, return None - we just won't actually
@@ -264,14 +264,14 @@ class Prefs(object):
 
     def win32_default(self, cat, name):
         """ Default values on Windows """
-        if (cat == 'paths'):
-            if (name == 'savegames'):
+        if cat == 'paths':
+            if name == 'savegames':
                 for dir in [self.get_str('paths', 'gamedir'), os.path.join(os.path.expanduser('~'), 'My Documents')]:
                     testdir = os.path.join(dir, 'Eschalon Book 1 Saved Games')
-                    if (os.path.isdir(testdir)):
+                    if os.path.isdir(testdir):
                         return testdir
                 return ''
-            elif (name == 'savegames_b2'):
+            elif name == 'savegames_b2':
                 basedir = os.path.expanduser('~')
                 savedir = os.path.join('Basilisk Games', 'Book 2 Saved Games')
                 # Huzzah for flailing about!
@@ -281,10 +281,10 @@ class Prefs(object):
                             os.path.join(basedir, 'AppData',
                                          'Roaming', savedir),
                             os.path.join(basedir, 'AppData', savedir)]:
-                    if (os.path.isdir(dir)):
+                    if os.path.isdir(dir):
                         return dir
                 return ''
-            elif (name == 'savegames_b3'):
+            elif name == 'savegames_b3':
                 basedir = os.path.expanduser('~')
                 savedir = os.path.join('Basilisk Games', 'Book 3 Saved Games')
                 # Huzzah for flailing about!
@@ -294,15 +294,15 @@ class Prefs(object):
                             os.path.join(basedir, 'AppData',
                                          'Roaming', savedir),
                             os.path.join(basedir, 'AppData', savedir)]:
-                    if (os.path.isdir(dir)):
+                    if os.path.isdir(dir):
                         return dir
                 return ''
-            elif (name == 'gamedir'):
+            elif name == 'gamedir':
                 for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book I')
-                    if (os.path.isdir(os.path.join(testdir, 'packedgraphics'))):
+                    if os.path.isdir(os.path.join(testdir, 'packedgraphics')):
                         return testdir
-                    if (os.path.isfile(os.path.join(testdir, 'gfx.pak'))):
+                    if os.path.isfile(os.path.join(testdir, 'gfx.pak')):
                         return testdir
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
@@ -322,7 +322,7 @@ class Prefs(object):
                     try:
                         (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
-                        if (val[-1:] == '\\'):
+                        if val[-1:] == '\\':
                             val = val[:-1]
                         testdir = val
                     except EnvironmentError as e:
@@ -331,12 +331,12 @@ class Prefs(object):
                 # Close and return what we've got
                 wr.Close()
                 return testdir
-            elif (name == 'gamedir_b2'):
+            elif name == 'gamedir_b2':
                 for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book II')
-                    if (os.path.isdir(os.path.join(testdir, 'data'))):
+                    if os.path.isdir(os.path.join(testdir, 'data')):
                         return testdir
-                    if (os.path.isfile(os.path.join(testdir, 'datapak'))):
+                    if os.path.isfile(os.path.join(testdir, 'datapak')):
                         return testdir
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
@@ -356,7 +356,7 @@ class Prefs(object):
                     try:
                         (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
-                        if (val[-1:] == '\\'):
+                        if val[-1:] == '\\':
                             val = val[:-1]
                         testdir = val
                     except EnvironmentError as e:
@@ -365,10 +365,10 @@ class Prefs(object):
                 # Close and return what we've got
                 wr.Close()
                 return testdir
-            elif (name == 'gamedir_b3'):
+            elif name == 'gamedir_b3':
                 for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book III')
-                    if (os.path.isfile(os.path.join(testdir, 'datapak'))):
+                    if os.path.isfile(os.path.join(testdir, 'datapak')):
                         return testdir
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
@@ -388,7 +388,7 @@ class Prefs(object):
                     try:
                         (val, type) = winreg.QueryValueEx(
                             wr, 'InstallLocation')
-                        if (val[-1:] == '\\'):
+                        if val[-1:] == '\\':
                             val = val[:-1]
                         testdir = val
                     except EnvironmentError as e:

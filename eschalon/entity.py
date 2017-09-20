@@ -48,7 +48,7 @@ class Entity(object):
         self.entid = 1
         self.direction = 1
         self.entscript = ''
-        if (self.savegame):
+        if self.savegame:
             self.movement = 1
             self.friendly = 0
             self.frame = 0
@@ -151,27 +151,27 @@ class Entity(object):
 
         entity = c.eschalondata.get_entity(self.entid)
         if entity:
-            ret.append("\tEntity: %s" % (entity.name))
+            ret.append("\tEntity: %s" % entity.name)
         else:
-            ret.append("\tEntity ID: %d" % (self.entid))
+            ret.append("\tEntity ID: %d" % self.entid)
         ret.append("\tMap Location: (%d, %d)" % (self.x, self.y))
-        if (self.direction in c.dirtable):
+        if self.direction in c.dirtable:
             ret.append("\tFacing %s" % (c.dirtable[self.direction]))
         else:
-            ret.append("\tDirection ID: %d" % (self.direction))
+            ret.append("\tDirection ID: %d" % self.direction)
         ret.append("\tScript: %s" % self.entscript)
-        if (self.savegame):
-            ret.append("\tFriendly: %d" % (self.friendly))
-            ret.append("\tHealth: %d" % (self.health))
+        if self.savegame:
+            ret.append("\tFriendly: %d" % self.friendly)
+            ret.append("\tHealth: %d" % self.health)
             ret.append("\tInitial Tile: %d" % self.initial_loc)
-            ret.append("\tMovement Flag: %d" % (self.movement))
+            ret.append("\tMovement Flag: %d" % self.movement)
             if self.book > 1:
                 for (i, status) in enumerate(self.statuses):
                     if status != 0:
                         if i in c.statustable:
                             statusstr = c.statustable[i]
                         else:
-                            statusstr = 'Unknown Status "%d"' % (i)
+                            statusstr = 'Unknown Status "%d"' % i
                         ret.append("\t%s: %d" % (statusstr, status))
         else:
             ret.append(
@@ -220,7 +220,7 @@ class B1Entity(Entity):
         # We throw an exception because there seems to be an arbitrary
         # number of entities in the file, and no 'entity count' anywhere.
         # TODO: verify that the count isn't in the main map file.
-        if (df.eof()):
+        if df.eof():
             raise FirstItemLoadException('Reached EOF')
 
         # ... everything else
@@ -229,7 +229,7 @@ class B1Entity(Entity):
         self.y = df.readuchar()
         self.direction = df.readuchar()
         self.entscript = df.readstr()
-        if (self.savegame):
+        if self.savegame:
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
             self.health = df.readint()
@@ -244,7 +244,7 @@ class B1Entity(Entity):
         df.writeuchar(self.y)
         df.writeuchar(self.direction)
         df.writestr(self.entscript)
-        if (self.savegame):
+        if self.savegame:
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)
@@ -317,7 +317,7 @@ class B2Entity(Entity):
         # We throw an exception because there seems to be an arbitrary
         # number of entities in the file, and no 'entity count' anywhere.
         # TODO: verify that the count isn't in the main map file.
-        if (df.eof()):
+        if df.eof():
             raise FirstItemLoadException('Reached EOF')
 
         # ... everything else
@@ -327,7 +327,7 @@ class B2Entity(Entity):
             self.y = df.readuchar()
             self.direction = df.readuchar()
             self.entscript = df.readstr()
-            if (self.savegame):
+            if self.savegame:
                 self.friendly = df.readuchar()
                 self.movement = df.readuchar()
                 self.health = df.readint()
@@ -347,7 +347,7 @@ class B2Entity(Entity):
         df.writeuchar(self.y)
         df.writeuchar(self.direction)
         df.writestr(self.entscript)
-        if (self.savegame):
+        if self.savegame:
             df.writeuchar(self.friendly)
             df.writeuchar(self.movement)
             df.writeint(self.health)

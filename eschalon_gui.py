@@ -31,7 +31,7 @@ class EschalonUtils(object):
 
         # First the label
         label = gtk.Label()
-        label.set_markup('<b>Book %s Utilities:</b>' % (book))
+        label.set_markup('<b>Book %s Utilities:</b>' % book)
         align = gtk.Alignment(0, 0, 0, 1)
         align.set_padding(5, 5, 5, 5)
         align.add(label)
@@ -40,7 +40,7 @@ class EschalonUtils(object):
         self.cur_row += 1
 
         # Now the character buttons
-        button = gtk.Button('Book %s Character Editor' % (book))
+        button = gtk.Button('Book %s Character Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
         button.connect("clicked", char_launcher, book_id)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
@@ -51,7 +51,7 @@ class EschalonUtils(object):
                           gtk.EXPAND | gtk.FILL, 0, 5)
 
         # Map button
-        button = gtk.Button('Book %s Map Editor' % (book))
+        button = gtk.Button('Book %s Map Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
         button.connect("clicked", map_launcher, book_id)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
@@ -69,7 +69,7 @@ class EschalonUtils(object):
         """
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_border_width(10)
-        self.window.set_title('Eschalon Map/Character Editor v%s' % (version))
+        self.window.set_title('Eschalon Map/Character Editor v%s' % version)
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
 
@@ -80,7 +80,7 @@ class EschalonUtils(object):
         # detection, but having an icon makes the dialog look less sparse
         label = gtk.Label()
         label.set_markup(
-            '<big><b>Eschalon Map/Character Editor v%s</b></big>' % (version))
+            '<big><b>Eschalon Map/Character Editor v%s</b></big>' % version)
         hbox = gtk.HBox()
         if getattr(sys, 'frozen', False):
             icon_filename = os.path.join(os.path.dirname(
