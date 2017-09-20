@@ -300,8 +300,8 @@ class CharLoaderDialog(gtk.Dialog):
 
 class MainGUI(BaseGUI):
 
-    def __init__(self, options, prefs, req_book):
-        self.options = options
+    def __init__(self, args, prefs, req_book):
+        self.args = args
         self.prefs = prefs
         self.path_init()
         self.req_book = req_book
@@ -445,12 +445,12 @@ class MainGUI(BaseGUI):
         # If we were given a filename, load it.  If not, display the load dialog
         self.changed = {}
         self.last_char_source = None
-        if (self.options['filename'] == None):
+        if (self.args.filename is None):
             if (not self.on_load()):
                 return
         else:
             self.last_char_source = CharLoaderDialog.SOURCE_OTHER
-            if (not self.load_from_file(self.options['filename'])):
+            if (not self.load_from_file(self.args.filename)):
                 if (not self.on_load()):
                     return
 
