@@ -25,12 +25,8 @@ setup(
 
     },
     scripts=[
-        'eschalon_b1_map.py',
-        'eschalon_b2_map.py',
-        'eschalon_b3_map.py',
-        'eschalon_b1_char.py',
-        'eschalon_b2_char.py',
-        'eschalon_b3_char.py',
+        'eschalon_map.py',
+        'eschalon_char.py',
         'eschalon_utils.py',
     ],
 
