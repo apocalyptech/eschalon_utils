@@ -2,7 +2,7 @@
 # vim: set expandtab tabstop=4 shiftwidth=4:
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
+# Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import print_function
 from eschalon import constants as c
 from eschalon.character import Character
 from eschalon.savefile import LoadException
@@ -25,56 +26,54 @@ from eschalon.savefile import LoadException
 
 class MainCLI(object):
 
-    def __init__(self, options, prefs, req_book):
+    def __init__(self, args, prefs, req_book):
         """ A fresh object, with no data. """
-        self.options = options
+        self.args = args
         self.prefs = prefs
         self.req_book = req_book
 
     def run(self):
 
-        options = self.options
-
         # Load in our file
         try:
-            char = Character.load(options['filename'], self.req_book)
+            char = Character.load(self.args.filename, self.req_book)
             char.read()
             self.char = char
         except LoadException as e:
-            print('"' + options['filename'] + '" could not be opened: %s' % (str(e)))
+            print('"' + self.args.filename + '" could not be opened: {}'.format(str(e)))
             return False
 
         # The --list options will return automatically.  Everything
         # else will trigger a write once everything's done
-        if (options['list']):
-            return self.display(options['listoptions'], options['unknowns'])
+        if (self.args.list):
+            return self.display(self.args.list, self.args.unknowns)
 
-        if (options['set_gold'] > 0):
+        if (self.args.set_gold > 0):
             print('Old Gold: %d' % (char.gold))
-            char.setGold(options['set_gold'])
+            char.setGold(self.args.set_gold)
             print('New Gold: %d' % (char.gold))
 
-        if (options['set_hp_max'] > 0):
+        if (self.args.set_hp_max > 0):
             print('Old Max HP: %d' % (char.maxhp))
-            char.setMaxHp(options['set_hp_max'])
+            char.setMaxHp(self.args.set_hp_max)
             print('New Max HP: %d' % (char.maxhp))
 
-        if (options['set_hp_cur'] > 0):
+        if (self.args.set_hp_cur > 0):
             print('Old Current HP: %d' % (char.curhp))
-            char.setCurHp(options['set_hp_cur'])
+            char.setCurHp(self.args.set_hp_cur)
             print('New Current HP: %d' % (char.curhp))
 
-        if (options['set_mana_max'] > 0):
+        if (self.args.set_mana_max > 0):
             print('Old Max Mana: %d' % (char.maxmana))
-            char.setMaxMana(options['set_mana_max'])
+            char.setMaxMana(self.args.set_mana_max)
             print('New Max Mana: %d' % (char.maxmana))
 
-        if (options['set_mana_cur'] > 0):
+        if (self.args.set_mana_cur > 0):
             print('Old Current Mana: %d' % (char.curmana))
-            char.setCurMana(options['set_mana_cur'])
+            char.setCurMana(self.args.set_mana_cur)
             print('New Current Mana: %d' % (char.curmana))
 
-        if (options['rm_disease'] > 0):
+        if (self.args.rm_disease > 0):
             if char.book == 1:
                 print('Old Disease Flags: %04X' % (char.disease))
                 char.clearDiseases()
@@ -84,7 +83,7 @@ class MainCLI(object):
                 char.clearDiseases()
                 print('New Permanent Status Flags: %08X' % (char.permstatuses))
 
-        if (options['reset_hunger'] > 0):
+        if (self.args.reset_hunger > 0):
             if char.book == 1:
                 print('Resetting hunger/thirst is only available for Book 2/3 characters')
             else:
@@ -94,8 +93,6 @@ class MainCLI(object):
 
         # If we've gotten here, write the file
         char.write()
-
-        # ... and return
         return True
 
     def display_header(self):
@@ -125,7 +122,7 @@ class MainCLI(object):
             print(' '.join(str))
         print()
 
-    def display_stats(self):
+    def display_stats(self, unknowns):
         """ Print out a textual representation of the character's stats."""
 
         char = self.char
@@ -186,7 +183,7 @@ class MainCLI(object):
                 print("\t%s: %d" % (c.skilltable[key], char.skills[key]))
         print()
 
-    def display_avatar_info(self):
+    def display_avatar_info(self, unknowns):
         """ Print out a textual representation of the character's avatar information."""
 
         char = self.char
@@ -386,23 +383,18 @@ class MainCLI(object):
 
         self.display_header()
 
-        if (listoptions['all'] or listoptions['stats']):
-            self.display_stats()
+        listables = {
+            'stats': self.display_stats,
+            'avatar': self.display_avatar_info,
+            'magic': self.display_magic,
+            'alchemy': self.display_alchemy,
+            'equip': self.display_equip,
+            'inv': self.display_inventory,
+        }
 
-        if (listoptions['all'] or listoptions['avatar']):
-            self.display_avatar_info()
-
-        if (listoptions['all'] or listoptions['magic']):
-            self.display_magic(unknowns)
-
-        if (listoptions['all'] or listoptions['alchemy']):
-            self.display_alchemy(unknowns)
-
-        if (listoptions['all'] or listoptions['equip']):
-            self.display_equip(unknowns)
-
-        if (listoptions['all'] or listoptions['inv']):
-            self.display_inventory(unknowns)
+        which_listables = listables.keys() if 'all' in self.args.list else self.args.list
+        for l in which_listables:
+            listables.get(l)(unknowns)
 
         if (unknowns):
             print()
