@@ -1,5 +1,5 @@
 Eschalon Savefile Editor
-Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
+Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -129,12 +129,9 @@ The first is PyCrypto: http://www.dlitz.net/software/pycrypto/ This tends to
 be packaged as "python-crypto" by most distributions.  Gentoo uses
 "pycrypto." The second package is czipfile, available here:
 http://pypi.python.org/pypi/czipfile This is probably not packaged by your
-distribution yet.  The easiest way to install it would be via either
-easy_install or pip:
+distribution yet.  The easiest way to install it would be via pip:
 
-  # easy_install czipfile
- or
-  # pip install czipfile
+  # pip install czipfile pycrypto
 
 If those methods don't work for you, you should be able to just download it
 from the above link.  Note that czipfile isn't ACTUALLY required to edit
@@ -183,8 +180,8 @@ Install Homebrew - http://mxcl.github.io/homebrew/
 From the Terminal, run:
 
 brew install pygtk
-sudo easy_install czipfile
-sudo easy_install pycrypto
+pip install --user czipfile
+pip install --user pycrypto
 
 You also need to tell the system Python to look for libraries in Homebrew's
 install path, so add this line to the .bash_profile file in your home
@@ -201,7 +198,7 @@ cd /path/to/eschalon_utils
 If you want to build self-contained OS X application bundles, also get
 py2app:
 
-sudo easy_install py2app
+pip install --user py2app
 
 Then run the make-osx-apps.sh script. The resulting apps should be portable
 to other Macs without having to install any libraries (you will still need
