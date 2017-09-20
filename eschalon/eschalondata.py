@@ -25,7 +25,11 @@ except ImportError:
     import eschalon.fzipfile as zipfile
     fast_zipfile = False
 
-from Crypto.Cipher import AES
+try:
+    from Crypto.Cipher import AES
+    have_aes = True
+except ImportError:
+    have_aes = False
 
 import os
 import csv
