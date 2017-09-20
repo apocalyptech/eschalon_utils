@@ -7,7 +7,7 @@ setup(
     packages=['eschalon_utils'],
     package_dir={'': 'tests'},
     url='',
-    license='',
+    license='GPLv2+',
     author='',
     author_email='',
     description='',
