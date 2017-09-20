@@ -31,27 +31,27 @@ if not re.search('^\d+\.\d+\.\d+$', sys.argv[1]):
 
 # Now a bunch of vars
 tagversion = version.replace('.', '-')
-tag = 'Eschalon-%s' % (tagversion)
-file_base = 'eschalon_utils-%s' % (version)
-file_tar = '%s.tar' % (file_base)
-file_tgz = '%s.gz' % (file_tar)
-file_zip = '%s.zip' % (file_base)
-archive_prefix = '--prefix=%s/' % (file_base)
+tag = 'Eschalon-%s' % tagversion
+file_base = 'eschalon_utils-%s' % version
+file_tar = '%s.tar' % file_base
+file_tgz = '%s.gz' % file_tar
+file_zip = '%s.zip' % file_base
+archive_prefix = '--prefix=%s/' % file_base
 
 # Create the git tag
 subprocess.call(['git', 'tag', tag])
-print(('Created tag %s' % (tag)))
+print(('Created tag %s' % tag))
 
 # Build a .tar.gz
 subprocess.call(['git', 'archive', '--format=tar',
                  archive_prefix, '-o', file_tar, tag])
 subprocess.call(['gzip', file_tar])
-print(('Wrote to %s' % (file_tgz)))
+print(('Wrote to %s' % file_tgz))
 
 # Build a .zip
 subprocess.call(['git', 'archive', '--format=zip',
                  archive_prefix, '-o', file_zip, tag])
-print(('Wrote to %s' % (file_zip)))
+print(('Wrote to %s' % file_zip))
 
 # Finish
 print()
