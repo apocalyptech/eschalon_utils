@@ -1,9 +1,10 @@
+import eschalon
 from setuptools import setup
 
 setup(
     name='eschalon_utils',
-    version='',
-    packages=[''],
+    version=eschalon.version,
+    packages=['eschalon_utils'],
     package_dir={'': 'tests'},
     url='',
     license='',
