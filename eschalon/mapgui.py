@@ -35,22 +35,9 @@ from eschalon.eschalondata import EschalonData
 from eschalon.savefile import Savefile
 from eschalon.savename import Savename
 
-# Load our GTK modules
-try:
-    import gtk
-    import gobject
-except Exception, e:
-    print 'Python GTK Modules not found: %s' % (str(e))
-    print 'Hit enter to exit...'
-    sys.stdin.readline()
-    sys.exit(1)
-
-# Load in Cairo
-try:
-    import cairo
-except Exception, e:
-    BaseGUI.errordialog('Error loading PyCairo', 'PyCairo could not be loaded: %s' % (str(e)))
-    sys.exit(1)
+import gtk
+import gobject
+import cairo
 
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
@@ -2698,11 +2685,13 @@ class MapGUI(BaseGUI):
             else:
                 otherlabel.set_markup('<i>Other Value (0-3):</i>')
         else:
-            sliderloot = self.get_widget('slider_loot_%d_label' % (int(page)))
+            sliderloot_label = self.get_widget('slider_loot_%d_label' % (int(page)))
+            sliderloot_selector = self.get_widget('slider_loot_%d' % (int(page)))
             if (int(widget.get_value()) == 12):
-                sliderloot.set_text('Slider Combination:')
+                sliderloot_label.set_text('Slider Combination:')
             else:
-                sliderloot.set_markup('Loot Level (0-10):')
+                sliderloot_selector.set_range(0, 10)
+                sliderloot_label.set_markup('Loot Level (0-10):')
 
     def update_ent_tile_img(self):
         entity = self.mapobj.tiles[self.tile_y][self.tile_x].entity
