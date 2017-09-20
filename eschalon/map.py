@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -26,6 +26,7 @@ from eschalon.tile import Tile
 from eschalon.tilecontent import Tilecontent
 from eschalon.entity import Entity
 
+
 class BigGraphicMapping(object):
     """
     Class to hold some information about a Wall ID -> Big Graphic mapping.
@@ -36,6 +37,7 @@ class BigGraphicMapping(object):
         self.wallid = wallid
         self.gfx = gfx
         self.tile = tile
+
 
 class BigGraphicMappings(object):
     """
@@ -83,13 +85,16 @@ class BigGraphicMappings(object):
             for (x, tile) in enumerate(row):
                 if tile.wallimg >= 1000 and tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
                     if tile.wallimg > 1003:
-                        messages.append('Tile (%d, %d) is using a Big Graphic Wall ID of %d, but the maximum is 1003' % (x, y, tile.wallimg))
+                        messages.append('Tile (%d, %d) is using a Big Graphic Wall ID of %d, but the maximum is 1003' % (
+                            x, y, tile.wallimg))
                     if not self.update(tile):
                         messages.append(self.last_error)
                 elif tile.wallimg >= 1000 and (tile.tilecontentid != 21 or len(tile.tilecontents) == 0):
-                    messages.append('Tile (%d, %d) is using a Big Graphic Wall ID without a proper Big Graphic object' % (x, y))
+                    messages.append(
+                        'Tile (%d, %d) is using a Big Graphic Wall ID without a proper Big Graphic object' % (x, y))
                 elif tile.wallimg < 1000 and tile.tilecontentid == 21:
-                    messages.append('Tile (%d, %d) is using a Big Graphic Object, but its Wall ID is not a Big Graphic ID' % (x, y))
+                    messages.append(
+                        'Tile (%d, %d) is using a Big Graphic Object, but its Wall ID is not a Big Graphic ID' % (x, y))
         return messages
 
     def get_id(self, gfx, x, y):
@@ -117,10 +122,11 @@ class BigGraphicMappings(object):
             cur_mapping = self.mappings[tile.wallimg]
             if cur_mapping.gfx != new_gfx:
                 self.last_error = 'Big Graphic ID %d is used by more than one graphic - at (%d, %d) it is %s, and at (%d, %d) it is %s' % (
-                        tile.wallimg, cur_mapping.tile[0], cur_mapping.tile[1], cur_mapping.gfx, tile.x, tile.y, new_gfx)
+                    tile.wallimg, cur_mapping.tile[0], cur_mapping.tile[1], cur_mapping.gfx, tile.x, tile.y, new_gfx)
                 return False
         else:
-            self.mappings[tile.wallimg] = BigGraphicMapping(tile.wallimg, new_gfx, (tile.x, tile.y))
+            self.mappings[tile.wallimg] = BigGraphicMapping(
+                tile.wallimg, new_gfx, (tile.x, tile.y))
             # Note that we're not checking to see if there are collisions in mappings_gfx.  The engine
             # doesn't care if the same Big Graphic gets used by more than one ID, so we won't care
             # either.
@@ -140,13 +146,15 @@ class BigGraphicMappings(object):
                     gfx = tile.tilecontents[0].extratext
                     wallimg = self.get_id(gfx, x, y)
                     tile.wallimg = wallimg
-                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (wallimg)
+                    tile.tilecontents[0].description = 'Big Graphic Object #%04d' % (
+                        wallimg)
 
     def get_gfx_mappings(self):
         """
         Returns our graphic-to-ID mapping
         """
         return self.mappings_gfx
+
 
 class Map(object):
     """ The base Map class.  """
@@ -163,26 +171,26 @@ class Map(object):
     DIR_NOT_ADJACENT = 0xFF
 
     DELTA_TO_DIRECTIONS = {
-      (0,0): DIR_NO_CHANGE,
-      (0,-2): DIR_N, (1,0): DIR_E,
-      (0,2): DIR_S, (-1,0): DIR_W }
+        (0, 0): DIR_NO_CHANGE,
+        (0, -2): DIR_N, (1, 0): DIR_E,
+        (0, 2): DIR_S, (-1, 0): DIR_W}
     DELTA_TO_DIRECTIONS_EVEN = {
-      (-1,-1): DIR_NW, (0,-1): DIR_NE,
-      (0,1): DIR_SE, (-1,1): DIR_SW }
+        (-1, -1): DIR_NW, (0, -1): DIR_NE,
+        (0, 1): DIR_SE, (-1, 1): DIR_SW}
     DELTA_TO_DIRECTIONS_ODD = {
-      (0,-1): DIR_NW, (1,-1): DIR_NE,
-      (1,1): DIR_SE, (0,1): DIR_SW }
+        (0, -1): DIR_NW, (1, -1): DIR_NE,
+        (1, 1): DIR_SE, (0, 1): DIR_SW}
 
     DIRECTIONS_TO_DELTA = {
-      DIR_NO_CHANGE: (0,0),
-      DIR_N: (0,-2), DIR_E: (1,0),
-      DIR_S: (0,2), DIR_W: (-1,0) }
+        DIR_NO_CHANGE: (0, 0),
+        DIR_N: (0, -2), DIR_E: (1, 0),
+        DIR_S: (0, 2), DIR_W: (-1, 0)}
     DIRECTIONS_TO_DELTA_EVEN = {
-      DIR_NW: (-1,-1), DIR_NE: (0,-1),
-      DIR_SE: (0,1), DIR_SW: (-1,1) }
+        DIR_NW: (-1, -1), DIR_NE: (0, -1),
+        DIR_SE: (0, 1), DIR_SW: (-1, 1)}
     DIRECTIONS_TO_DELTA_ODD = {
-      DIR_NW: (0,-1), DIR_NE: (1,-1),
-      DIR_SE: (1,1), DIR_SW: (0,1) }
+        DIR_NW: (0, -1), DIR_NE: (1, -1),
+        DIR_SE: (1, 1), DIR_SW: (0, 1)}
 
     def __init__(self, df, ent_df):
         """
@@ -258,7 +266,8 @@ class Map(object):
 
     def set_df_ent(self):
         try:
-            self.df_ent = Savefile(self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
+            self.df_ent = Savefile(
+                self.df.filename[:self.df.filename.rindex('.map')] + '.ent')
         except ValueError:
             self.df_ent = Savefile('')
 
@@ -286,13 +295,16 @@ class Map(object):
             new_df_ent = None
         else:
             new_df_ent = Savefile(self.df_ent.filename, self.df_ent.stringdata)
-        
+
         if self.book == 1:
-            newmap = B1Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
+            newmap = B1Map(Savefile(self.df.filename,
+                                    self.df.stringdata), new_df_ent)
         elif self.book == 2:
-            newmap = B2Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
+            newmap = B2Map(Savefile(self.df.filename,
+                                    self.df.stringdata), new_df_ent)
         elif self.book == 3:
-            newmap = B3Map(Savefile(self.df.filename, self.df.stringdata), new_df_ent)
+            newmap = B3Map(Savefile(self.df.filename,
+                                    self.df.stringdata), new_df_ent)
 
         # Single vals (no need to do actual replication)
         newmap.mapname = self.mapname
@@ -322,7 +334,8 @@ class Map(object):
                 newmap.entities.append(None)
             else:
                 if (entity.y < len(newmap.tiles) and entity.x < len(newmap.tiles[entity.y])):
-                    newmap.entities.append(newmap.tiles[entity.y][entity.x].entity)
+                    newmap.entities.append(
+                        newmap.tiles[entity.y][entity.x].entity)
                 else:
                     newmap.entities.append(entity.replicate())
         tilecontentidxtemp = {}
@@ -336,7 +349,8 @@ class Map(object):
                         tilecontentidxtemp[key] += 1
                     else:
                         tilecontentidxtemp[key] = 0
-                    newmap.tilecontents.append(newmap.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentidxtemp[key]])
+                    newmap.tilecontents.append(
+                        newmap.tiles[tilecontent.y][tilecontent.x].tilecontents[tilecontentidxtemp[key]])
                 else:
                     newmap.tilecontents.append(tilecontent.replicate())
 
@@ -381,9 +395,10 @@ class Map(object):
             # set that to None at some point, manually?
             self.tilecontents.append(tilecontent)
             if (tilecontent.x >= 0 and tilecontent.x < 100 and tilecontent.y >= 0 and tilecontent.y < 200):
-                self.tiles[tilecontent.y][tilecontent.x].addtilecontent(tilecontent)
+                self.tiles[tilecontent.y][tilecontent.x].addtilecontent(
+                    tilecontent)
             return True
-        except FirstItemLoadException, e:
+        except FirstItemLoadException as e:
             return False
 
     def deltilecontent(self, x, y, idx):
@@ -401,13 +416,13 @@ class Map(object):
             entity.read(self.df_ent)
             if self.tiles[entity.y][entity.x].entity is not None:
                 # TODO: Support this better, perhaps?
-                print 'WARNING: Two entities on a single tile, discarding all but the original'
+                print('WARNING: Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
                 if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
                     self.tiles[entity.y][entity.x].addentity(entity)
             return True
-        except FirstItemLoadException, e:
+        except FirstItemLoadException as e:
             return False
 
     def delentity(self, x, y):
@@ -430,54 +445,54 @@ class Map(object):
             if (y < 2):
                 return None
             else:
-                return (x, y-2)
+                return (x, y - 2)
         elif (dir == self.DIR_NE):
             if ((y % 2) == 0):
                 if (y > 0):
-                    return (x, y-1)
+                    return (x, y - 1)
                 else:
                     return None
             elif (x < 99):
-                return (x+1, y-1)
+                return (x + 1, y - 1)
             else:
                 return None
         elif (dir == self.DIR_E):
             if (x < 99):
-                return (x+1, y)
+                return (x + 1, y)
             else:
                 return None
         elif (dir == self.DIR_SE):
             if ((y % 2) == 0):
-                return (x, y+1)
+                return (x, y + 1)
             elif (x < 99 and y < 199):
-                return (x+1, y+1)
+                return (x + 1, y + 1)
             else:
                 return None
         elif (dir == self.DIR_S):
             if (y < 198):
-                return (x, y+2)
+                return (x, y + 2)
             else:
                 return None
         elif (dir == self.DIR_SW):
             if ((y % 2) == 1):
                 if (y < 199):
-                    return (x, y+1)
+                    return (x, y + 1)
                 else:
                     return None
             elif (x > 0):
-                return (x-1, y+1)
+                return (x - 1, y + 1)
             else:
                 return None
         elif (dir == self.DIR_W):
             if (x > 0):
-                return (x-1, y)
+                return (x - 1, y)
             else:
                 return None
         elif (dir == self.DIR_NW):
             if ((y % 2) == 1):
-                return (x, y-1)
+                return (x, y - 1)
             elif (y > 0 and x > 0):
-                return (x-1, y-1)
+                return (x - 1, y - 1)
             else:
                 return None
         else:
@@ -601,13 +616,13 @@ class Map(object):
           will always be 1 (the "loadhook" var, presumably)
         Book 3 files start with 12 strings, the first of which is a version,
           which so far is always 0.992.
-        
+
         So, to figure out dynamically what kind of file we're loading:
           1) Read 9 strings, remember the first one
           2) Read the next uchar - if it's 1, then we're editing Book 2
           3) If the first string is "0.992", then we're editing Book 3
           4) Otherwise, we're editing Book 1
-        
+
         Theoretically, that way this works even if a Book 2 map happens
         to use a mapname of 0.992, in an effort to be cheeky.
         """
@@ -624,7 +639,7 @@ class Map(object):
                 stringlist.append(df.readstr())
             nextbyte = df.readuchar()
             df.close()
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
         if nextbyte == 1:
@@ -642,7 +657,7 @@ class Map(object):
             detected_mapname = stringlist[1]
 
         return (detected_book, detected_mapname, df)
-        
+
     @staticmethod
     def load(filename, req_book=None):
         """
@@ -665,7 +680,8 @@ class Map(object):
 
         # See if we're required to conform to a specific book
         if (req_book is not None and detected_book != req_book):
-            raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (req_book, detected_book))
+            raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (
+                req_book, detected_book))
 
         # Now actually return the object
         if detected_book == 1:
@@ -678,25 +694,28 @@ class Map(object):
             c.switch_to_book(3)
             return B3Map(df)
         else:
-            raise LoadException('Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
+            raise LoadException(
+                'Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
 
     # Find directions from one coordinate set to another
     @staticmethod
     def directions_between_coords(x1, y1, x2, y2):
         if y1 % 2 == 0:
-            map = dict(Map.DELTA_TO_DIRECTIONS.items() + Map.DELTA_TO_DIRECTIONS_EVEN.items())
+            map = dict(list(Map.DELTA_TO_DIRECTIONS.items()) +
+                       list(Map.DELTA_TO_DIRECTIONS_EVEN.items()))
         else:
-            map = dict(Map.DELTA_TO_DIRECTIONS.items() + Map.DELTA_TO_DIRECTIONS_ODD.items())
+            map = dict(list(Map.DELTA_TO_DIRECTIONS.items()) +
+                       list(Map.DELTA_TO_DIRECTIONS_ODD.items()))
 
         xdiff = x2 - x1
         ydiff = y2 - y1
 
         # Base case - adjacent tile
-        if (xdiff,ydiff) in map:
-            if map[(xdiff,ydiff)] == 0:
+        if (xdiff, ydiff) in map:
+            if map[(xdiff, ydiff)] == 0:
                 return []
             else:
-                return [map[(xdiff,ydiff)]]
+                return [map[(xdiff, ydiff)]]
 
         # Not adjacent - recur
         # Looping through cardinal directions first would produce
@@ -713,7 +732,8 @@ class Map(object):
                 return [map[coords]] + Map.directions_between_coords(newx, newy, x2, y2)
 
         # Should never happen
-        raise Exception("Couldn't find a direction from " + str(x1) + "," + str(y1) + " to " + str(x2) + "," + str(y2))
+        raise Exception("Couldn't find a direction from " + str(x1) +
+                        "," + str(y1) + " to " + str(x2) + "," + str(y2))
 
     # Follow a set of directions from a coordinate set
     @staticmethod
@@ -730,7 +750,8 @@ class Map(object):
                 y = y + Map.DIRECTIONS_TO_DELTA_ODD[direction][1]
             else:
                 raise Exception("Unknown direction " + hex(direction))
-        return (x,y)
+        return (x, y)
+
 
 class B1Map(Map):
     """
@@ -797,14 +818,14 @@ class B1Map(Map):
 
             # Tiles
             self.set_tile_savegame()
-            for i in range(200*100):
+            for i in range(200 * 100):
                 self.addtile()
 
             # Tilecontents...  Just keep going until EOF
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -814,20 +835,20 @@ class B1Map(Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata)>0):
+            if (len(self.extradata) > 0):
                 raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -900,7 +921,7 @@ class B1Map(Map):
         # like the first value is 320, so we're just going to invert is_global() instead.
         # Which is really what we should have been doing anyway, but whatever.
         # Savegames are... evil?  I guess?
-        #return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
+        # return (self.savegame_1 == 666 and self.savegame_2 == 666 and self.savegame_3 == 666)
 
     def set_savegame(self, savegame):
         """
@@ -938,6 +959,7 @@ class B1Map(Map):
         newmap.map_b1_last_ypos = self.map_b1_last_ypos
         newmap.map_b1_outsideflag = self.map_b1_outsideflag
 
+
 class B2Map(Map):
     """
     Book 2 Map definitions
@@ -963,7 +985,7 @@ class B2Map(Map):
         self.unusedstr1 = ''
         self.unusedstr2 = ''
         self.unusedstr3 = ''
-        
+
         # Now the base attributes
         super(B2Map, self).__init__(df, ent_df)
 
@@ -1007,14 +1029,14 @@ class B2Map(Map):
 
             # Tiles
             self.set_tile_savegame()
-            for i in range(200*100):
+            for i in range(200 * 100):
                 self.addtile()
 
             # Tilecontents...  Just keep going until EOF
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -1024,20 +1046,20 @@ class B2Map(Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata)>0):
+            if (len(self.extradata) > 0):
                 raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1045,7 +1067,7 @@ class B2Map(Map):
 
         # We require a '.map' extension
         self.check_map_extension()
-        
+
         # Open the file
         self.df.open_w()
 
@@ -1138,6 +1160,7 @@ class B2Map(Map):
         newmap.unusedstr2 = self.unusedstr2
         newmap.unusedstr3 = self.unusedstr3
 
+
 class B3Map(B2Map):
     """
     Book 3 Map definitions
@@ -1205,14 +1228,14 @@ class B3Map(B2Map):
 
             # Tiles
             self.set_tile_savegame()
-            for i in range(200*100):
+            for i in range(200 * 100):
                 self.addtile()
 
             # Tilecontents...  Just keep going until EOF
             try:
                 while (self.addtilecontent()):
                     pass
-            except FirstItemLoadException, e:
+            except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
@@ -1222,14 +1245,14 @@ class B3Map(B2Map):
                 try:
                     while (self.addentity()):
                         pass
-                except FirstItemLoadException, e:
+                except FirstItemLoadException as e:
                     pass
                 self.df_ent.close()
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata)>0):
+            if (len(self.extradata) > 0):
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -1242,7 +1265,7 @@ class B3Map(B2Map):
             self.version = '0.992'
             self.loadhook = 2
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1250,7 +1273,7 @@ class B3Map(B2Map):
 
         # We require a '.map' extension
         self.check_map_extension()
-        
+
         # Open the file
         self.df.open_w()
 

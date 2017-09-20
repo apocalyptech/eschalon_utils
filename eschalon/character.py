@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,6 +23,7 @@ from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
 from eschalon.item import Item
 from eschalon.unknowns import B1Unknowns, B2Unknowns
+
 
 class Character(object):
     """
@@ -162,7 +163,7 @@ class Character(object):
             newchar.readyslots.append([val[0], val[1]])
 
         # Dicts that need copying
-        for key, val in self.skills.iteritems():
+        for key, val in self.skills.items():
             newchar.skills[key] = val
 
         # Objects that need copying
@@ -198,11 +199,11 @@ class Character(object):
         """
         pass
 
-    def setGold(self,goldValue):
+    def setGold(self, goldValue):
         """ Alter gold to new amount. """
         self.gold = goldValue
 
-    def setMaxMana(self,manaValue):
+    def setMaxMana(self, manaValue):
         """
         Alter max mana value & set current to max.
         Note that equipped-item modifiers will raise the actual in-game
@@ -212,11 +213,11 @@ class Character(object):
         if (self.curmana < manaValue):
             self.setCurMana(manaValue)
 
-    def setCurMana(self,manaValue):
+    def setCurMana(self, manaValue):
         """ Replenish mana to input value. """
         self.curmana = manaValue
 
-    def setMaxHp(self,hpValue):
+    def setMaxHp(self, hpValue):
         """
         Alter max HP & set current to max.
         Note that equipped-item modifiers will raise the actual in-game
@@ -226,7 +227,7 @@ class Character(object):
         if (self.curhp < hpValue):
             self.setCurHp(hpValue)
 
-    def setCurHp(self,hpValue):
+    def setCurHp(self, hpValue):
         """ Replenish HP to input value. """
         self.curhp = hpValue
 
@@ -286,7 +287,7 @@ class Character(object):
                 initital = df.readuchar()
                 second = df.readuchar()
                 df.close()
-            except (IOError, struct.error), e:
+            except (IOError, struct.error) as e:
                 raise LoadException(str(e))
 
             if second == 0:
@@ -296,7 +297,8 @@ class Character(object):
 
         # See if we're required to conform to a specific book
         if (req_book is not None and book != req_book):
-            raise LoadException('This utility can only load Book %d Character files; this file is from Book %d' % (req_book, book))
+            raise LoadException(
+                'This utility can only load Book %d Character files; this file is from Book %d' % (req_book, book))
 
         # Now actually return the object
         if book == 1:
@@ -309,6 +311,7 @@ class Character(object):
             c.switch_to_book(3)
             return B3Character(df)
 
+
 class B1Character(Character):
     """
     Book 1 Character definitions
@@ -316,16 +319,16 @@ class B1Character(Character):
 
     book = 1
     form_elements = ['origin_label', 'origin_box',
-            'axiom_label', 'axiom_box',
-            'classname_label', 'classname_box',
-            'picid_label', 'picid_hbox',
-            'disease_label', 'disease_table',
-            'gfx_preset_vbox',
-            'weap_alt_label', 'weap_alt_container',
-            'b1_gold_note',
-            'b1_xypos_warning_label',
-            'b1_xypos_warning_spacer',
-            ]
+                     'axiom_label', 'axiom_box',
+                     'classname_label', 'classname_box',
+                     'picid_label', 'picid_hbox',
+                     'disease_label', 'disease_table',
+                     'gfx_preset_vbox',
+                     'weap_alt_label', 'weap_alt_container',
+                     'b1_gold_note',
+                     'b1_xypos_warning_label',
+                     'b1_xypos_warning_spacer',
+                     ]
 
     def __init__(self, df):
         self.set_inv_size(10, 7, 2, 4)
@@ -367,7 +370,7 @@ class B1Character(Character):
             self.concentration = self.df.readint()
 
             # Skills
-            for key in c.skilltable.keys():
+            for key in list(c.skilltable.keys()):
                 self.addskill(key, self.df.readint())
 
             # More stats
@@ -415,7 +418,7 @@ class B1Character(Character):
             self.orientation = self.df.readint()
             self.xpos = self.df.readint()
             self.ypos = self.df.readint()
-            
+
             # These have *something* to do with your avatar, or effects that your
             # avatar has.  For instance, my avatar ordinarily looks like this:
             #    00 00 00 40    - 1073741824
@@ -466,20 +469,20 @@ class B1Character(Character):
                 self.additem()
 
             # Equipped
-            self.quiver.read(self.df);
-            self.helm.read(self.df);
-            self.cloak.read(self.df);
-            self.amulet.read(self.df);
-            self.torso.read(self.df);
-            self.weap_prim.read(self.df);
-            self.belt.read(self.df);
-            self.gauntlet.read(self.df);
-            self.legs.read(self.df);
-            self.ring1.read(self.df);
-            self.ring2.read(self.df);
-            self.shield.read(self.df);
-            self.feet.read(self.df);
-            self.weap_alt.read(self.df);
+            self.quiver.read(self.df)
+            self.helm.read(self.df)
+            self.cloak.read(self.df)
+            self.amulet.read(self.df)
+            self.torso.read(self.df)
+            self.weap_prim.read(self.df)
+            self.belt.read(self.df)
+            self.gauntlet.read(self.df)
+            self.legs.read(self.df)
+            self.ring1.read(self.df)
+            self.ring2.read(self.df)
+            self.shield.read(self.df)
+            self.feet.read(self.df)
+            self.weap_alt.read(self.df)
 
             # Readied items
             for i in range(8):
@@ -489,28 +492,28 @@ class B1Character(Character):
             for i in range(4):
                 try:
                     self.addspell()
-                except struct.error, e:
+                except struct.error as e:
                     # Apparently some versions don't always write these out,
                     # hack in some fake values if that's the case.
-                    for j in range(4-i):
+                    for j in range(4 - i):
                         self.spells.append(0)
                     break
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.unknown.extradata = self.df.read()
-            if (len(self.unknown.extradata)>0):
+            if (len(self.unknown.extradata) > 0):
                 raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
         """ Writes out the save file to the file descriptor. """
-        
+
         # Open the file
         self.df.open_w()
 
@@ -534,7 +537,7 @@ class B1Character(Character):
         self.df.writeint(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeint(skill)
 
         # More stats
@@ -613,20 +616,20 @@ class B1Character(Character):
                 item.write(self.df)
 
         # Equipped
-        self.quiver.write(self.df);
-        self.helm.write(self.df);
-        self.cloak.write(self.df);
-        self.amulet.write(self.df);
-        self.torso.write(self.df);
-        self.weap_prim.write(self.df);
-        self.belt.write(self.df);
-        self.gauntlet.write(self.df);
-        self.legs.write(self.df);
-        self.ring1.write(self.df);
-        self.ring2.write(self.df);
-        self.shield.write(self.df);
-        self.feet.write(self.df);
-        self.weap_alt.write(self.df);
+        self.quiver.write(self.df)
+        self.helm.write(self.df)
+        self.cloak.write(self.df)
+        self.amulet.write(self.df)
+        self.torso.write(self.df)
+        self.weap_prim.write(self.df)
+        self.belt.write(self.df)
+        self.gauntlet.write(self.df)
+        self.legs.write(self.df)
+        self.ring1.write(self.df)
+        self.ring2.write(self.df)
+        self.shield.write(self.df)
+        self.feet.write(self.df)
+        self.weap_alt.write(self.df)
 
         # Readied items
         for item in self.readyitems:
@@ -658,42 +661,43 @@ class B1Character(Character):
         """ Add a spell. """
         self.spells.append(self.df.readint())
 
+
 class B2Character(Character):
     """
     Book 2 Character definitions
     """
 
     book = 2
-    form_elements = [ 'gender_label', 'gender',
-            'b2origin_label', 'b2origin',
-            'b2axiom_label', 'b2axiom',
-            'b2classname_label', 'b2classname',
-            'b2picid_label', 'b2picid', 'b2_picid_button',
-            'hunger_label', 'hunger_hbox',
-            'thirst_label', 'thirst_hbox',
-            'b2_second_effect_var_label',
-            'permstatus_alignment', 'permstatus_label',
-            'fxblock_4_label', 'fxblock_4',
-            'fxblock_5_label', 'fxblock_5',
-            'fxblock_6_label', 'fxblock_6',
-            'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
-            'b2_portal_header', 'b2_portal_body',
-            'alchemy_tab',
-            'ready_8_label', 'ready_8_container',
-            'ready_9_label', 'ready_9_container',
-            'inv_0_7_label', 'inv_0_7_container',
-            'inv_1_7_label', 'inv_1_7_container',
-            'inv_2_7_label', 'inv_2_7_container',
-            'inv_3_7_label', 'inv_3_7_container',
-            'inv_4_7_label', 'inv_4_7_container',
-            'inv_5_7_label', 'inv_5_7_container',
-            'inv_6_7_label', 'inv_6_7_container',
-            'inv_7_7_label', 'inv_7_7_container',
-            'inv_8_7_label', 'inv_8_7_container',
-            'inv_9_7_label', 'inv_9_7_container',
-            'b2_gold_note',
-            'keyring_label', 'keyring_align'
-            ]
+    form_elements = ['gender_label', 'gender',
+                     'b2origin_label', 'b2origin',
+                     'b2axiom_label', 'b2axiom',
+                     'b2classname_label', 'b2classname',
+                     'b2picid_label', 'b2picid', 'b2_picid_button',
+                     'hunger_label', 'hunger_hbox',
+                     'thirst_label', 'thirst_hbox',
+                     'b2_second_effect_var_label',
+                     'permstatus_alignment', 'permstatus_label',
+                     'fxblock_4_label', 'fxblock_4',
+                     'fxblock_5_label', 'fxblock_5',
+                     'fxblock_6_label', 'fxblock_6',
+                     'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
+                     'b2_portal_header', 'b2_portal_body',
+                     'alchemy_tab',
+                     'ready_8_label', 'ready_8_container',
+                     'ready_9_label', 'ready_9_container',
+                     'inv_0_7_label', 'inv_0_7_container',
+                     'inv_1_7_label', 'inv_1_7_container',
+                     'inv_2_7_label', 'inv_2_7_container',
+                     'inv_3_7_label', 'inv_3_7_container',
+                     'inv_4_7_label', 'inv_4_7_container',
+                     'inv_5_7_label', 'inv_5_7_container',
+                     'inv_6_7_label', 'inv_6_7_container',
+                     'inv_7_7_label', 'inv_7_7_container',
+                     'inv_8_7_label', 'inv_8_7_container',
+                     'inv_9_7_label', 'inv_9_7_container',
+                     'b2_gold_note',
+                     'keyring_label', 'keyring_align'
+                     ]
 
     def __init__(self, df):
         self.set_inv_size(10, 8, 2, 5)
@@ -736,7 +740,8 @@ class B2Character(Character):
             self.classname = self.df.readuchar()
             self.unknown.version = self.df.readuchar()
             if self.unknown.version == 1:
-                raise LoadException('This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
+                raise LoadException(
+                    'This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
             self.strength = self.df.readuchar()
             self.dexterity = self.df.readuchar()
             self.endurance = self.df.readuchar()
@@ -842,19 +847,19 @@ class B2Character(Character):
                 self.additem()
 
             # Equipped
-            self.quiver.read(self.df);
-            self.helm.read(self.df);
-            self.cloak.read(self.df);
-            self.amulet.read(self.df);
-            self.torso.read(self.df);
-            self.weap_prim.read(self.df);
-            self.belt.read(self.df);
-            self.gauntlet.read(self.df);
-            self.legs.read(self.df);
-            self.ring1.read(self.df);
-            self.ring2.read(self.df);
-            self.shield.read(self.df);
-            self.feet.read(self.df);
+            self.quiver.read(self.df)
+            self.helm.read(self.df)
+            self.cloak.read(self.df)
+            self.amulet.read(self.df)
+            self.torso.read(self.df)
+            self.weap_prim.read(self.df)
+            self.belt.read(self.df)
+            self.gauntlet.read(self.df)
+            self.legs.read(self.df)
+            self.ring1.read(self.df)
+            self.ring2.read(self.df)
+            self.shield.read(self.df)
+            self.feet.read(self.df)
 
             # Readied items
             for i in range(10):
@@ -868,13 +873,13 @@ class B2Character(Character):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.unknown.extradata = self.df.read()
-            if (len(self.unknown.extradata)>0):
+            if (len(self.unknown.extradata) > 0):
                 raise LoadException('Extra data at end of file')
 
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -902,7 +907,7 @@ class B2Character(Character):
         self.df.writeuchar(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeuchar(skill)
 
         # More stats
@@ -995,19 +1000,19 @@ class B2Character(Character):
                 item.write(self.df)
 
         # Equipped
-        self.quiver.write(self.df);
-        self.helm.write(self.df);
-        self.cloak.write(self.df);
-        self.amulet.write(self.df);
-        self.torso.write(self.df);
-        self.weap_prim.write(self.df);
-        self.belt.write(self.df);
-        self.gauntlet.write(self.df);
-        self.legs.write(self.df);
-        self.ring1.write(self.df);
-        self.ring2.write(self.df);
-        self.shield.write(self.df);
-        self.feet.write(self.df);
+        self.quiver.write(self.df)
+        self.helm.write(self.df)
+        self.cloak.write(self.df)
+        self.amulet.write(self.df)
+        self.torso.write(self.df)
+        self.weap_prim.write(self.df)
+        self.belt.write(self.df)
+        self.gauntlet.write(self.df)
+        self.legs.write(self.df)
+        self.ring1.write(self.df)
+        self.ring2.write(self.df)
+        self.shield.write(self.df)
+        self.feet.write(self.df)
 
         # Readied items
         for item in self.readyitems:
@@ -1066,42 +1071,43 @@ class B2Character(Character):
         """ Add a spell. """
         self.spells.append(self.df.readuchar())
 
+
 class B3Character(Character):
     """
     Book 3 Character definitions
     """
 
     book = 3
-    form_elements = [ 'gender_label', 'gender',
-            'b2origin_label', 'b2origin',
-            'b2axiom_label', 'b2axiom',
-            'b2classname_label', 'b2classname',
-            'b2picid_label', 'b2picid', 'b2_picid_button',
-            'hunger_label', 'hunger_hbox',
-            'thirst_label', 'thirst_hbox',
-            'b2_second_effect_var_label',
-            'permstatus_alignment', 'permstatus_label',
-            'fxblock_4_label', 'fxblock_4',
-            'fxblock_5_label', 'fxblock_5',
-            'fxblock_6_label', 'fxblock_6',
-            'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
-            'b2_portal_header', 'b2_portal_body',
-            'alchemy_tab',
-            'ready_8_label', 'ready_8_container',
-            'ready_9_label', 'ready_9_container',
-            'inv_0_7_label', 'inv_0_7_container',
-            'inv_1_7_label', 'inv_1_7_container',
-            'inv_2_7_label', 'inv_2_7_container',
-            'inv_3_7_label', 'inv_3_7_container',
-            'inv_4_7_label', 'inv_4_7_container',
-            'inv_5_7_label', 'inv_5_7_container',
-            'inv_6_7_label', 'inv_6_7_container',
-            'inv_7_7_label', 'inv_7_7_container',
-            'inv_8_7_label', 'inv_8_7_container',
-            'inv_9_7_label', 'inv_9_7_container',
-            'b2_gold_note',
-            'keyring_label', 'keyring_align'
-            ]
+    form_elements = ['gender_label', 'gender',
+                     'b2origin_label', 'b2origin',
+                     'b2axiom_label', 'b2axiom',
+                     'b2classname_label', 'b2classname',
+                     'b2picid_label', 'b2picid', 'b2_picid_button',
+                     'hunger_label', 'hunger_hbox',
+                     'thirst_label', 'thirst_hbox',
+                     'b2_second_effect_var_label',
+                     'permstatus_alignment', 'permstatus_label',
+                     'fxblock_4_label', 'fxblock_4',
+                     'fxblock_5_label', 'fxblock_5',
+                     'fxblock_6_label', 'fxblock_6',
+                     'readied_spell_label', 'readied_spell_box', 'readied_spell_lvl',
+                     'b2_portal_header', 'b2_portal_body',
+                     'alchemy_tab',
+                     'ready_8_label', 'ready_8_container',
+                     'ready_9_label', 'ready_9_container',
+                     'inv_0_7_label', 'inv_0_7_container',
+                     'inv_1_7_label', 'inv_1_7_container',
+                     'inv_2_7_label', 'inv_2_7_container',
+                     'inv_3_7_label', 'inv_3_7_container',
+                     'inv_4_7_label', 'inv_4_7_container',
+                     'inv_5_7_label', 'inv_5_7_container',
+                     'inv_6_7_label', 'inv_6_7_container',
+                     'inv_7_7_label', 'inv_7_7_container',
+                     'inv_8_7_label', 'inv_8_7_container',
+                     'inv_9_7_label', 'inv_9_7_container',
+                     'b2_gold_note',
+                     'keyring_label', 'keyring_align'
+                     ]
 
     def __init__(self, df):
         self.set_inv_size(10, 8, 2, 5)
@@ -1144,7 +1150,8 @@ class B3Character(Character):
             self.classname = self.df.readuchar()
             self.unknown.version = self.df.readuchar()
             if self.unknown.version == 1:
-                raise LoadException('This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
+                raise LoadException(
+                    'This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
             self.strength = self.df.readuchar()
             self.dexterity = self.df.readuchar()
             self.endurance = self.df.readuchar()
@@ -1250,19 +1257,19 @@ class B3Character(Character):
                 self.additem()
 
             # Equipped
-            self.quiver.read(self.df);
-            self.helm.read(self.df);
-            self.cloak.read(self.df);
-            self.amulet.read(self.df);
-            self.torso.read(self.df);
-            self.weap_prim.read(self.df);
-            self.belt.read(self.df);
-            self.gauntlet.read(self.df);
-            self.legs.read(self.df);
-            self.ring1.read(self.df);
-            self.ring2.read(self.df);
-            self.shield.read(self.df);
-            self.feet.read(self.df);
+            self.quiver.read(self.df)
+            self.helm.read(self.df)
+            self.cloak.read(self.df)
+            self.amulet.read(self.df)
+            self.torso.read(self.df)
+            self.weap_prim.read(self.df)
+            self.belt.read(self.df)
+            self.gauntlet.read(self.df)
+            self.legs.read(self.df)
+            self.ring1.read(self.df)
+            self.ring2.read(self.df)
+            self.shield.read(self.df)
+            self.feet.read(self.df)
 
             # Readied items
             for i in range(10):
@@ -1283,7 +1290,7 @@ class B3Character(Character):
             # Close the file
             self.df.close()
 
-        except (IOError, struct.error), e:
+        except (IOError, struct.error) as e:
             raise LoadException(str(e))
 
     def write(self):
@@ -1311,7 +1318,7 @@ class B3Character(Character):
         self.df.writeuchar(self.concentration)
 
         # Skills
-        for skill in self.skills.values():
+        for skill in list(self.skills.values()):
             self.df.writeuchar(skill)
 
         # More stats
@@ -1404,19 +1411,19 @@ class B3Character(Character):
                 item.write(self.df)
 
         # Equipped
-        self.quiver.write(self.df);
-        self.helm.write(self.df);
-        self.cloak.write(self.df);
-        self.amulet.write(self.df);
-        self.torso.write(self.df);
-        self.weap_prim.write(self.df);
-        self.belt.write(self.df);
-        self.gauntlet.write(self.df);
-        self.legs.write(self.df);
-        self.ring1.write(self.df);
-        self.ring2.write(self.df);
-        self.shield.write(self.df);
-        self.feet.write(self.df);
+        self.quiver.write(self.df)
+        self.helm.write(self.df)
+        self.cloak.write(self.df)
+        self.amulet.write(self.df)
+        self.torso.write(self.df)
+        self.weap_prim.write(self.df)
+        self.belt.write(self.df)
+        self.gauntlet.write(self.df)
+        self.legs.write(self.df)
+        self.ring1.write(self.df)
+        self.ring2.write(self.df)
+        self.shield.write(self.df)
+        self.feet.write(self.df)
 
         # Readied items
         for item in self.readyitems:

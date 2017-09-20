@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -42,9 +42,9 @@ import cairo
 # Check for minimum GTK+ version
 if (gtk.check_version(2, 18, 0) is not None):
     BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
-            'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
-            'older versions.  You\'re welcome to continue, but know that you may encounter '
-            'weird behavior.')
+                          'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
+                          'older versions.  You\'re welcome to continue, but know that you may encounter '
+                          'weird behavior.')
 
 from eschalon.map import Map
 from eschalon.item import Item
@@ -55,6 +55,7 @@ from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 from eschalon import app_name, version, url, authors
+
 
 class MapNewDialog(gtk.Dialog):
     """
@@ -71,8 +72,8 @@ class MapNewDialog(gtk.Dialog):
         Constructor to set up everything
         """
         super(MapNewDialog, self).__init__(
-                flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
-                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
 
         # Various defaults for the dialog
         self.set_size_request(500, 150)
@@ -92,11 +93,13 @@ class MapNewDialog(gtk.Dialog):
 
         # Buttons
         self.new_global_button = gtk.Button('New Global Map')
-        self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_global_button.set_image(
+            gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
         self.new_global_button.connect('clicked', self.new_global_clicked)
 
         self.new_savegame_button = gtk.Button('New Savegame Map')
-        self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+        self.new_savegame_button.set_image(
+            gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
         self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
 
         self.bbox = gtk.HButtonBox()
@@ -134,6 +137,7 @@ class MapNewDialog(gtk.Dialog):
             return False
         else:
             return True
+
 
 class MapLoaderDialog(gtk.Dialog):
     """
@@ -186,11 +190,11 @@ class MapLoaderDialog(gtk.Dialog):
     NEW_SAVEGAME = 1
 
     def __init__(self, starting_path, savegame_dir, basegame_dir,
-            transient=None,
-            last_source=None,
-            show_new=False,
-            b23maplist=None,
-            eschalondata=None):
+                 transient=None,
+                 last_source=None,
+                 show_new=False,
+                 b23maplist=None,
+                 eschalondata=None):
         """
         Constructor to set up everything
 
@@ -206,9 +210,9 @@ class MapLoaderDialog(gtk.Dialog):
             in b23maplist, if necessary
         """
         super(MapLoaderDialog, self).__init__(
-                flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
-                buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                    gtk.STOCK_OK, gtk.RESPONSE_OK))
+            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                     gtk.STOCK_OK, gtk.RESPONSE_OK))
 
         # Various defaults for the dialog
         self.set_size_request(950, 680)
@@ -231,7 +235,8 @@ class MapLoaderDialog(gtk.Dialog):
         self.title_align = gtk.Alignment(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
         label = gtk.Label()
-        label.set_markup('<big><b>Eschalon Book %d Map Editor v%s</b></big>' % (c.book, version))
+        label.set_markup(
+            '<big><b>Eschalon Book %d Map Editor v%s</b></big>' % (c.book, version))
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
@@ -239,12 +244,15 @@ class MapLoaderDialog(gtk.Dialog):
         self.button_hit = None
         if show_new:
             self.new_global_button = gtk.Button('New Global Map')
-            self.new_global_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_global_button.set_image(
+                gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
             self.new_global_button.connect('clicked', self.new_global_clicked)
 
             self.new_savegame_button = gtk.Button('New Savegame Map')
-            self.new_savegame_button.set_image(gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
-            self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
+            self.new_savegame_button.set_image(
+                gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            self.new_savegame_button.connect(
+                'clicked', self.new_savegame_clicked)
 
             self.bbox = gtk.HButtonBox()
             self.bbox.add(self.new_global_button)
@@ -269,7 +277,7 @@ class MapLoaderDialog(gtk.Dialog):
         for slotdir in slotdirs:
             try:
                 self.slots.append(Saveslot(slotdir, c.book))
-            except LoadException, e:
+            except LoadException as e:
                 # If there's an error, just don't show the slot
                 pass
         self.slots.sort()
@@ -279,25 +287,28 @@ class MapLoaderDialog(gtk.Dialog):
             self.slot_store = gtk.ListStore(int, str, str, str, int, object)
             self.slot_tv = gtk.TreeView(self.slot_store)
             self.slot_tv.connect('cursor-changed', self.slot_changed)
-            col = gtk.TreeViewColumn('Slot', gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
+            col = gtk.TreeViewColumn(
+                'Slot', gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
             col.set_sort_column_id(self.SLOT_COL_IDX)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
-            col = gtk.TreeViewColumn('Save Name', gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
+            col = gtk.TreeViewColumn(
+                'Save Name', gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
             col.set_sort_column_id(self.SLOT_COL_SAVENAME)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
-            col = gtk.TreeViewColumn('Date', gtk.CellRendererText(), text=self.SLOT_COL_DATE)
+            col = gtk.TreeViewColumn(
+                'Date', gtk.CellRendererText(), text=self.SLOT_COL_DATE)
             col.set_sort_column_id(self.SLOT_COL_DATE_EPOCH)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
             for (idx, slot) in enumerate(self.slots):
                 self.slot_store.append((idx,
-                    '<b>%s</b>' % (slot.slotname_short()),
-                    slot.savename,
-                    slot.timestamp,
-                    slot.timestamp_epoch,
-                    slot))
+                                        '<b>%s</b>' % (slot.slotname_short()),
+                                        slot.savename,
+                                        slot.timestamp,
+                                        slot.timestamp_epoch,
+                                        slot))
                 if (starting_path and
                         os.path.normcase(os.path.abspath(slot.directory)) ==
                         os.path.normcase(os.path.abspath(starting_path))):
@@ -307,11 +318,13 @@ class MapLoaderDialog(gtk.Dialog):
             self.map_store = gtk.ListStore(int, str, str, str)
             self.map_tv = gtk.TreeView(self.map_store)
             self.map_tv.connect('row-activated', self.map_activated)
-            col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
+            col = gtk.TreeViewColumn(
+                'Filename', gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
             col.set_sort_column_id(self.MAP_COL_FILENAME)
             col.set_resizable(True)
             self.map_tv.append_column(col)
-            col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
+            col = gtk.TreeViewColumn(
+                'Map Name', gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
             col.set_sort_column_id(self.MAP_COL_MAPNAME)
             col.set_resizable(True)
             self.map_tv.append_column(col)
@@ -331,7 +344,8 @@ class MapLoaderDialog(gtk.Dialog):
             save_vbox.pack_start(note_align, False, False)
             save_dir_align.add(save_vbox)
             self.register_page(self.SOURCE_SAVES)
-            self.open_notebook.append_page(save_dir_align, gtk.Label('Load from Savegames...'))
+            self.open_notebook.append_page(
+                save_dir_align, gtk.Label('Load from Savegames...'))
 
             # Save-dir HPaned contents
             sw = gtk.ScrolledWindow()
@@ -347,39 +361,41 @@ class MapLoaderDialog(gtk.Dialog):
         # Mod info, for Book III v1.0.2
         if c.book == 3:
             (self.mod_list,
-                    self.mod_store,
-                    self.mod_tv) = self.mapdir_page(source=self.SOURCE_MODS,
-                            label='Load from Mods...',
-                            callback=self.mod_activated,
-                            filename_col=self.MOD_COL_FILENAME,
-                            mapname_col=self.MOD_COL_MAPNAME,
-                            directory=os.path.join(basegame_dir, 'mods'),
-                            )
+             self.mod_store,
+             self.mod_tv) = self.mapdir_page(source=self.SOURCE_MODS,
+                                             label='Load from Mods...',
+                                             callback=self.mod_activated,
+                                             filename_col=self.MOD_COL_FILENAME,
+                                             mapname_col=self.MOD_COL_MAPNAME,
+                                             directory=os.path.join(
+                                                 basegame_dir, 'mods'),
+                                             )
 
         # Map data dir, for book I
         if c.book == 1:
             (self.data_list,
-                    self.data_store,
-                    self.data_tv) = self.mapdir_page(source=self.SOURCE_GLOBAL,
-                            label='Load from Datadir...',
-                            callback=self.data_activated,
-                            filename_col=self.DATA_COL_FILENAME,
-                            mapname_col=self.DATA_COL_MAPNAME,
-                            directory=os.path.join(basegame_dir, 'data'),
-                            )
+             self.data_store,
+             self.data_tv) = self.mapdir_page(source=self.SOURCE_GLOBAL,
+                                              label='Load from Datadir...',
+                                              callback=self.data_activated,
+                                              filename_col=self.DATA_COL_FILENAME,
+                                              mapname_col=self.DATA_COL_MAPNAME,
+                                              directory=os.path.join(
+                                                  basegame_dir, 'data'),
+                                              )
 
         # Map datapak records, for books II and III
         if c.book > 1:
             (self.datapak_list,
-                    self.datapak_store,
-                    self.datapak_tv) = self.mapdir_page(source=self.SOURCE_DATAPAK,
-                            label='Load from Datapak...',
-                            callback=self.datapak_activated,
-                            filename_col=self.DATAPAK_COL_FILENAME,
-                            mapname_col=self.DATAPAK_COL_MAPNAME,
-                            b23maplist=b23maplist,
-                            eschalondata=eschalondata,
-                            )
+             self.datapak_store,
+             self.datapak_tv) = self.mapdir_page(source=self.SOURCE_DATAPAK,
+                                                 label='Load from Datapak...',
+                                                 callback=self.datapak_activated,
+                                                 filename_col=self.DATAPAK_COL_FILENAME,
+                                                 mapname_col=self.DATAPAK_COL_MAPNAME,
+                                                 b23maplist=b23maplist,
+                                                 eschalondata=eschalondata,
+                                                 )
 
         # Loading from an arbitrary location
         arbitrary_align = gtk.Alignment(0, 0, 1, 1)
@@ -389,7 +405,8 @@ class MapLoaderDialog(gtk.Dialog):
         self.chooser.set_show_hidden(True)
         arbitrary_align.add(self.chooser)
         self.register_page(self.SOURCE_OTHER)
-        self.open_notebook.append_page(arbitrary_align, gtk.Label('Load from Other...'))
+        self.open_notebook.append_page(
+            arbitrary_align, gtk.Label('Load from Other...'))
 
         # Starting path for chooser
         if starting_path and starting_path != '' and os.path.isdir(starting_path):
@@ -414,11 +431,13 @@ class MapLoaderDialog(gtk.Dialog):
         # Note that the FIRST thing we do is switch to the "other" tab...  If we
         # don't, there's some gtk+ bug where the FileChooserWidget ends up with
         # an ugly-looking horizontal scrollbar which cuts off part of the date.
-        self.open_notebook.set_current_page(self.source_index[self.SOURCE_OTHER])
+        self.open_notebook.set_current_page(
+            self.source_index[self.SOURCE_OTHER])
         if last_source is not None and last_source in self.source_index:
             self.open_notebook.set_current_page(self.source_index[last_source])
         elif self.SOURCE_SAVES in self.source_index:
-            self.open_notebook.set_current_page(self.source_index[self.SOURCE_SAVES])
+            self.open_notebook.set_current_page(
+                self.source_index[self.SOURCE_SAVES])
 
         # Default to the last-used slot if we have one.
         if active_slot:
@@ -433,7 +452,7 @@ class MapLoaderDialog(gtk.Dialog):
         self.source_index[source] = curpages
 
     def mapdir_page(self, source, label, callback, filename_col, mapname_col,
-            directory=None, b23maplist=None, eschalondata=None):
+                    directory=None, b23maplist=None, eschalondata=None):
         """
         Sets up a page on our notebook which loads all maps, either from a given
         directory, or from a book2/3 datapak.  One of either "directory" or
@@ -451,36 +470,39 @@ class MapLoaderDialog(gtk.Dialog):
                     try:
                         map_list.append(Map.get_mapinfo(map_file))
                         #detected_book, detected_mapname, df
-                    except Exception, e:
+                    except Exception as e:
                         pass
         elif b23maplist is not None and eschalondata is not None:
             for map_file in sorted(b23maplist):
                 try:
                     map_data = eschalondata.readfile(map_file, 'maps')
                     if map_data:
-                        map_df = Savefile(filename=map_file, stringdata=map_data)
+                        map_df = Savefile(filename=map_file,
+                                          stringdata=map_data)
                         map_list.append(Map.get_mapinfo(map_df=map_df))
-                except Exception, e:
-                    print 'Exception: %s' % (e)
+                except Exception as e:
+                    print('Exception: %s' % (e))
                     pass
 
         if len(map_list) > 0:
             map_store = gtk.ListStore(int, str, str, str)
             map_tv = gtk.TreeView(map_store)
             map_tv.connect('row-activated', callback)
-            col = gtk.TreeViewColumn('Filename', gtk.CellRendererText(), markup=filename_col)
+            col = gtk.TreeViewColumn(
+                'Filename', gtk.CellRendererText(), markup=filename_col)
             col.set_sort_column_id(filename_col)
             col.set_resizable(True)
             map_tv.append_column(col)
-            col = gtk.TreeViewColumn('Map Name', gtk.CellRendererText(), markup=mapname_col)
+            col = gtk.TreeViewColumn(
+                'Map Name', gtk.CellRendererText(), markup=mapname_col)
             col.set_sort_column_id(mapname_col)
             col.set_resizable(True)
             map_tv.append_column(col)
             for (idx, (map_book, map_mapname, map_df)) in enumerate(map_list):
                 map_store.append((idx,
-                    '<b>%s</b>' % (os.path.basename(map_df.filename)),
-                    map_df.filename,
-                    map_mapname))
+                                  '<b>%s</b>' % (os.path.basename(map_df.filename)),
+                                  map_df.filename,
+                                  map_mapname))
 
             sw = gtk.ScrolledWindow()
             sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -547,7 +569,8 @@ class MapLoaderDialog(gtk.Dialog):
             elif self.page_index[page] == self.SOURCE_DATAPAK:
                 (model, treeiter) = self.datapak_tv.get_selection().get_selected()
                 if model and treeiter:
-                    (filename,) = model.get(treeiter, self.DATAPAK_COL_FILENAME_FULL)
+                    (filename,) = model.get(
+                        treeiter, self.DATAPAK_COL_FILENAME_FULL)
                     return filename
                 else:
                     return None
@@ -587,9 +610,9 @@ class MapLoaderDialog(gtk.Dialog):
         slot.load_maps()
         for (idx, mapobj) in enumerate(slot.maps):
             self.map_store.append((idx,
-                '<b>%s</b>' % (mapobj.filename_short()),
-                mapobj.filename,
-                mapobj.mapname))
+                                   '<b>%s</b>' % (mapobj.filename_short()),
+                                   mapobj.filename,
+                                   mapobj.mapname))
 
     def map_activated(self, widget, path, column):
         """
@@ -641,6 +664,7 @@ class MapLoaderDialog(gtk.Dialog):
         else:
             return True
 
+
 class BigGraphicDialog(gtk.Dialog):
     """
     A dialog to present the user with some information about the Big Graphic
@@ -656,10 +680,12 @@ class BigGraphicDialog(gtk.Dialog):
         "messages" should be a list of problems we know about.  If not passed in,
         we will scan the map ourselves.
         """
-        super(BigGraphicDialog, self).__init__(flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT)
+        super(BigGraphicDialog, self).__init__(
+            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
 
         # Various options for the dialog
-        self.set_title('Eschalon Book %d Map Editor - Big Graphic Status' % (c.book))
+        self.set_title(
+            'Eschalon Book %d Map Editor - Big Graphic Status' % (c.book))
         self.set_default_response(gtk.RESPONSE_CLOSE)
         if transient:
             self.set_transient_for(transient)
@@ -682,7 +708,8 @@ class BigGraphicDialog(gtk.Dialog):
         mapping_treeview = None
         if len(mappings) == 0:
             label = gtk.Label()
-            label.set_markup('There are currently no Big Graphics on this map.')
+            label.set_markup(
+                'There are currently no Big Graphics on this map.')
             label.set_line_wrap(True)
             align = gtk.Alignment(0, 0, 1, 1)
             align.set_padding(5, 5, 5, 5)
@@ -699,7 +726,7 @@ class BigGraphicDialog(gtk.Dialog):
             align.set_padding(5, 5, 15, 15)
             align.add(label)
             self.vbox.pack_start(align, False, True)
-            
+
             store = gtk.ListStore(str, str)
             mapping_treeview = gtk.TreeView(store)
             self.thing = mapping_treeview
@@ -724,7 +751,8 @@ class BigGraphicDialog(gtk.Dialog):
             if len(messages) == 0:
                 self.set_size_request(550, height)
                 label = gtk.Label()
-                label.set_markup('All the Big Graphics in this map are fine.  You can have the editor renumber them if you like, but there is probably no reason to do so.')
+                label.set_markup(
+                    'All the Big Graphics in this map are fine.  You can have the editor renumber them if you like, but there is probably no reason to do so.')
                 label.set_line_wrap(True)
                 label.set_size_request(500, 30)
                 align = gtk.Alignment(0, 0, 1, 1)
@@ -734,7 +762,7 @@ class BigGraphicDialog(gtk.Dialog):
             else:
                 if elderoak:
                     height += 30
-                self.set_size_request(650, height+100)
+                self.set_size_request(650, height + 100)
                 label = gtk.Label()
                 label.set_markup('There were some problems detected with the Big Graphics on this map.  We might be able to fix some of these automatically.  Use the "Renumber" button below to make an attempt.  Note that doing so will renumber the IDs of the Big Graphics on the map:')
                 label.set_line_wrap(True)
@@ -781,7 +809,8 @@ class BigGraphicDialog(gtk.Dialog):
 
         if len(mappings) > 0:
             renumber = gtk.Button('Renumber')
-            renumber.set_image(gtk.image_new_from_stock(gtk.STOCK_REFRESH, gtk.ICON_SIZE_BUTTON))
+            renumber.set_image(gtk.image_new_from_stock(
+                gtk.STOCK_REFRESH, gtk.ICON_SIZE_BUTTON))
             renumber.connect('clicked', self.renumber_clicked)
             hbox.add(renumber)
 
@@ -812,6 +841,7 @@ class BigGraphicDialog(gtk.Dialog):
         """
         self.response(gtk.RESPONSE_CLOSE)
 
+
 class GlobalNameDialog(gtk.Dialog):
     """
     Class to report on Global item name problems on a map
@@ -826,7 +856,7 @@ class GlobalNameDialog(gtk.Dialog):
             2) As a post-global-conversion dialog to show the user what items
                couldn't be automatically massaged into valid global item names
             3) As a dialog launched from the menu to do the same.
-        
+
         item_names should be a list of tuples, each with the following contents:
             1) Tile X
             2) Tile Y
@@ -853,17 +883,19 @@ class GlobalNameDialog(gtk.Dialog):
         be calculating the needed height, but for now it's being hardcoded.
         """
         if confirm:
-            buttons = (gtk.STOCK_NO, gtk.RESPONSE_NO, gtk.STOCK_YES, gtk.RESPONSE_YES)
+            buttons = (gtk.STOCK_NO, gtk.RESPONSE_NO,
+                       gtk.STOCK_YES, gtk.RESPONSE_YES)
         else:
             buttons = (gtk.STOCK_OK, gtk.RESPONSE_OK)
-        super(GlobalNameDialog, self).__init__(flags = gtk.DIALOG_MODAL| gtk.DIALOG_DESTROY_WITH_PARENT,
-                buttons = buttons)
+        super(GlobalNameDialog, self).__init__(flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                                               buttons=buttons)
 
         # Various options for the dialog
         if title:
             self.set_title(title)
         else:
-            self.set_title('Eschalon Book %d Map Editor - Global Item Name Status' % (c.book))
+            self.set_title(
+                'Eschalon Book %d Map Editor - Global Item Name Status' % (c.book))
         if message:
             self.set_size_request(500, 500)
         else:
@@ -891,12 +923,13 @@ class GlobalNameDialog(gtk.Dialog):
             label.set_size_request(460, 230)
         else:
             usual_text_list = ['Some items on this map have names which do not ',
-                    'appear to be valid item names for a global map.  If this map ',
-                    'is saved as a global map and these names are encountered ',
-                    'in-game, they will likely show up as a generic "Widget" object.']
+                               'appear to be valid item names for a global map.  If this map ',
+                               'is saved as a global map and these names are encountered ',
+                               'in-game, they will likely show up as a generic "Widget" object.']
             usual_text = ''.join(usual_text_list)
             if converted:
-                label.set_markup("The map has been converted to a global map.\n\n%s" % (usual_text))
+                label.set_markup(
+                    "The map has been converted to a global map.\n\n%s" % (usual_text))
                 label.set_size_request(460, 100)
             else:
                 label.set_markup(usual_text)
@@ -918,7 +951,8 @@ class GlobalNameDialog(gtk.Dialog):
         col.set_sort_column_id(1)
         col.set_resizable(True)
         tv.append_column(col)
-        col = gtk.TreeViewColumn('Conversion', gtk.CellRendererText(), markup=2)
+        col = gtk.TreeViewColumn(
+            'Conversion', gtk.CellRendererText(), markup=2)
         col.set_sort_column_id(2)
         col.set_resizable(True)
         tv.append_column(col)
@@ -952,31 +986,37 @@ class GlobalNameDialog(gtk.Dialog):
         # Show everything
         self.show_all()
 
+
 class ObjectSelWindow(ImageSelWindow):
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
         self.book = gtk.Notebook()
         vbox.pack_start(self.book, True, True)
 
-        (sw, self.drawingarea_a) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        (sw, self.drawingarea_a) = self.create_drawing_area(
+            on_clicked, on_motion, on_expose)
         self.drawingarea_a.set_name('objsel_a_area')
         self.label_a = gtk.Label('Set A (misc)')
         self.book.append_page(sw, self.label_a)
 
-        (self.scrolltoggle, self.drawingarea_b) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        (self.scrolltoggle, self.drawingarea_b) = self.create_drawing_area(
+            on_clicked, on_motion, on_expose)
         self.drawingarea_b.set_name('objsel_b_area')
         self.label_b = gtk.Label('Set B (misc)')
         self.book.append_page(self.scrolltoggle, self.label_b)
 
-        (sw, self.drawingarea_c) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        (sw, self.drawingarea_c) = self.create_drawing_area(
+            on_clicked, on_motion, on_expose)
         self.drawingarea_c.set_name('objsel_c_area')
         self.label_c = gtk.Label('Set C (walls)')
         self.book.append_page(sw, self.label_c)
 
-        (sw, self.drawingarea_d) = self.create_drawing_area(on_clicked, on_motion, on_expose)
+        (sw, self.drawingarea_d) = self.create_drawing_area(
+            on_clicked, on_motion, on_expose)
         self.drawingarea_d.set_name('objsel_d_area')
         self.label_d = gtk.Label('Set D (trees)')
         self.book.append_page(sw, self.label_d)
+
 
 class MapGUI(BaseGUI):
 
@@ -1011,38 +1051,38 @@ class MapGUI(BaseGUI):
             MOUSE_LEFT: ACTION_EDIT,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_DRAG
-            },
+        },
         MODE_MOVE: {
             MOUSE_LEFT: ACTION_DRAG,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
-            },
+        },
         MODE_DRAW: {
             MOUSE_LEFT: ACTION_DRAW,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
-            },
+        },
         MODE_ERASE: {
             MOUSE_LEFT: ACTION_ERASE,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
-            },
+        },
         MODE_OBJECT: {
             MOUSE_LEFT: ACTION_OBJECT,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_EDIT
-            },
+        },
         MODE_COPY: {
             MOUSE_LEFT: ACTION_COPY,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_COPY_SELECT
-            },
+        },
         MODE_SCRIPT_ED: {
             MOUSE_LEFT: ACTION_SCRIPT_ED,
             MOUSE_MIDDLE: ACTION_DRAG,
             MOUSE_RIGHT: ACTION_DRAG
-            },
-        }
+        },
+    }
 
     def __init__(self, options, prefs, req_book):
         self.options = options
@@ -1073,8 +1113,8 @@ class MapGUI(BaseGUI):
         self.copy_source_drag_x = -1
         self.cleantiles = []
         self.highlight_tiles = {}
-        self.brush_pattern = [ [None] ]
-        self.brush_pattern_prev = [ [None] ]
+        self.brush_pattern = [[None]]
+        self.brush_pattern_prev = [[None]]
 
         self.mapinit = False
         self.undo = None
@@ -1125,14 +1165,17 @@ class MapGUI(BaseGUI):
         self.draw_decal_spin = self.get_widget('draw_decal_spin')
         self.draw_wall_checkbox = self.get_widget('draw_wall_checkbox')
         self.draw_wall_spin = self.get_widget('draw_wall_spin')
-        self.draw_walldecal_checkbox = self.get_widget('draw_walldecal_checkbox')
+        self.draw_walldecal_checkbox = self.get_widget(
+            'draw_walldecal_checkbox')
         self.draw_walldecal_spin = self.get_widget('draw_walldecal_spin')
         self.draw_barrier = self.get_widget('draw_barrier')
-        self.draw_barrier_seethrough = self.get_widget('draw_barrier_seethrough')
+        self.draw_barrier_seethrough = self.get_widget(
+            'draw_barrier_seethrough')
         self.erase_floor_checkbox = self.get_widget('erase_floor_checkbox')
         self.erase_decal_checkbox = self.get_widget('erase_decal_checkbox')
         self.erase_wall_checkbox = self.get_widget('erase_wall_checkbox')
-        self.erase_walldecal_checkbox = self.get_widget('erase_walldecal_checkbox')
+        self.erase_walldecal_checkbox = self.get_widget(
+            'erase_walldecal_checkbox')
         self.erase_barrier = self.get_widget('erase_barrier')
         self.erase_entity_checkbox = self.get_widget('erase_entity_checkbox')
         self.erase_object_checkbox = self.get_widget('erase_object_checkbox')
@@ -1140,7 +1183,8 @@ class MapGUI(BaseGUI):
         self.draw_smart_barrier = self.get_widget('draw_smart_barrier')
         self.draw_smart_wall = self.get_widget('draw_smart_wall')
         self.draw_smart_floor = self.get_widget('draw_smart_floor')
-        self.smartdraw_floor_container = self.get_widget('smartdraw_floor_container')
+        self.smartdraw_floor_container = self.get_widget(
+            'smartdraw_floor_container')
         self.draw_straight_paths = self.get_widget('draw_straight_paths')
         self.draw_smart_walldecal = self.get_widget('draw_smart_walldecal')
         self.smart_randomize = self.get_widget('smart_randomize')
@@ -1174,7 +1218,7 @@ class MapGUI(BaseGUI):
             self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN),
             self.MODE_SCRIPT_ED: None,
             self.MODE_COPY: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_UP),
-            }
+        }
 
         # Initialize item stuff
         self.curitemcategory = self.ITEM_MAP
@@ -1193,8 +1237,8 @@ class MapGUI(BaseGUI):
 
         # Event mask for processing hotkeys
         # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
-        self.keymask = gtk.gdk.CONTROL_MASK|gtk.gdk.MOD1_MASK|gtk.gdk.MOD3_MASK
-        self.keymask |= gtk.gdk.MOD4_MASK|gtk.gdk.MOD5_MASK
+        self.keymask = gtk.gdk.CONTROL_MASK | gtk.gdk.MOD1_MASK | gtk.gdk.MOD3_MASK
+        self.keymask |= gtk.gdk.MOD4_MASK | gtk.gdk.MOD5_MASK
 
         # Manually connect a couple more signals that Glade can't handle for us automatically
         self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
@@ -1216,11 +1260,13 @@ class MapGUI(BaseGUI):
         # For the Map editor, we need this to be present
         self.eschalondata = None
         try:
-            self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir())
+            self.eschalondata = EschalonData.new(
+                c.book, self.get_current_gamedir())
             self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
             c.set_eschalondata(self.eschalondata)
-        except Exception, e:
-            self.errordialog('Error Loading Graphics', 'Graphics could not be initialized: %s' % (str(e)))
+        except Exception as e:
+            self.errordialog('Error Loading Graphics',
+                             'Graphics could not be initialized: %s' % (str(e)))
             sys.exit(1)
 
         # If we were given a filename, load it.  If not, create a new map,
@@ -1230,7 +1276,7 @@ class MapGUI(BaseGUI):
             if not self.on_load():
                 return
         else:
-            self.last_map_source = MapLoaderDialog.SOURCE_OTHER;
+            self.last_map_source = MapLoaderDialog.SOURCE_OTHER
             if (not self.load_from_file(self.options['filename'])):
                 if (not self.on_load()):
                     return
@@ -1238,10 +1284,12 @@ class MapGUI(BaseGUI):
         # Figure out if we're looking at a map created using a modded game.
         # If so, determine the path to the mod
         try:
-            savename = Savename.load(os.path.join(os.path.dirname(self.mapobj.df.filename), 'savename'))
+            savename = Savename.load(os.path.join(
+                os.path.dirname(self.mapobj.df.filename), 'savename'))
             savename.read()
-            modpath = os.path.join(self.get_current_gamedir(), savename.modpath)
-        except Exception, e:
+            modpath = os.path.join(
+                self.get_current_gamedir(), savename.modpath)
+        except Exception as e:
             # This can fail for various reasons - not Book III, not a
             # version that supports mods, not a saved game map, etc.  When
             # that happens, silently ignore it
@@ -1255,11 +1303,14 @@ class MapGUI(BaseGUI):
         # Re-load eschalondata, now with a mod path
         if modpath != None:
             try:
-                self.eschalondata = EschalonData.new(c.book, self.get_current_gamedir(), modpath)
-                self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
+                self.eschalondata = EschalonData.new(
+                    c.book, self.get_current_gamedir(), modpath)
+                self.gfx = Gfx.new(
+                    self.req_book, self.datadir, self.eschalondata)
                 c.set_eschalondata(self.eschalondata)
-            except Exception, e:
-                self.errordialog('Error Reloading Game Data', 'Game data could not be reloaded: %s' % (str(e)))
+            except Exception as e:
+                self.errordialog('Error Reloading Game Data',
+                                 'Game data could not be reloaded: %s' % (str(e)))
                 sys.exit(1)
 
         # Show a slow-loading zip warning if necessary
@@ -1271,7 +1322,8 @@ class MapGUI(BaseGUI):
                 dialog = self.get_widget('slowzipwarndialog')
                 resp = dialog.run()
                 if(self.get_widget('slowzipwarn_check').get_active() != warn):
-                    self.prefs.set_bool('mapgui', 'warn_slow_zip', self.get_widget('slowzipwarn_check').get_active())
+                    self.prefs.set_bool('mapgui', 'warn_slow_zip', self.get_widget(
+                        'slowzipwarn_check').get_active())
                     self.prefs.save()
                 dialog.hide()
                 if resp != gtk.RESPONSE_OK:
@@ -1293,10 +1345,11 @@ class MapGUI(BaseGUI):
         self.zoom_levels = [4, 8, 16, 24, 32, 52]
         if self.req_book > 1:
             self.zoom_levels.append(64)
-        self.get_widget('map_zoom_adj').set_property('upper', len(self.zoom_levels)-1)
-        default_zoom = self.prefs.get_int('mapgui', 'default_zoom')-1
+        self.get_widget('map_zoom_adj').set_property(
+            'upper', len(self.zoom_levels) - 1)
+        default_zoom = self.prefs.get_int('mapgui', 'default_zoom') - 1
         if (default_zoom >= len(self.zoom_levels)):
-            default_zoom = len(self.zoom_levels)-1
+            default_zoom = len(self.zoom_levels) - 1
         elif (default_zoom < 0):
             default_zoom = 0
         self.set_zoom_vars(default_zoom)
@@ -1313,7 +1366,8 @@ class MapGUI(BaseGUI):
         self.populating_entity_tab = False
 
         # Blank pixbuf to use in the tile editing window
-        self.comp_pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height*5)
+        self.comp_pixbuf = gtk.gdk.Pixbuf(
+            gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height * 5)
 
         # Load in our mouse map (to determine which tile we're pointing at)
         self.mousemap = {}
@@ -1345,7 +1399,7 @@ class MapGUI(BaseGUI):
         # Uncomment this to have the app export a PNG of all images
         # on the commandline - also comment out the relevant stuff
         # in draw_map()
-        #self.export_map_pngs()
+        # self.export_map_pngs()
 
         # ... and get into the main gtk loop
         gtk.main()
@@ -1402,7 +1456,7 @@ class MapGUI(BaseGUI):
             self.update_main_map_name()
         else:
             self.infodialog('Reload Not Available', 'Sorry, this map isn\'t reloadable '
-                    'because it has yet to be saved to disk.', self.window)
+                            'because it has yet to be saved to disk.', self.window)
 
     def on_save(self, widget=None):
         """
@@ -1421,10 +1475,11 @@ class MapGUI(BaseGUI):
                     with open(opq_template, 'rb') as df:
                         with open(self.mapobj.get_opq_path(), 'wb') as odf:
                             odf.write(df.read())
-                except Exception, e:
+                except Exception as e:
                     self.warningdialog('Could not write minimap',
-                        "Could not write this map\'s minimap graphic file.  This can cause corruption on the in-game minimap.\n\nThe error: <tt>%s</tt>" % (e),
-                        self.window)
+                                       "Could not write this map\'s minimap graphic file.  This can cause corruption on the in-game minimap.\n\nThe error: <tt>%s</tt>" % (
+                                           e),
+                                       self.window)
             self.putstatus('Saved ' + self.mapobj.df.filename)
             self.update_main_map_name()
 
@@ -1478,8 +1533,9 @@ class MapGUI(BaseGUI):
                     new_filename = '%s.map' % (dialog.get_filename())
                     if os.path.exists(new_filename):
                         new_resp = self.confirmdialog('File Already Exists', 'A file named '
-                                '"%s" already exists.  Do you want to replace it?' % (new_filename),
-                                dialog)
+                                                      '"%s" already exists.  Do you want to replace it?' % (
+                                                          new_filename),
+                                                      dialog)
                         if new_resp != gtk.RESPONSE_YES:
                             continue
                 else:
@@ -1493,11 +1549,12 @@ class MapGUI(BaseGUI):
                     base_map_name = os.path.basename(new_filename)[:-4]
                     if base_map_name != self.mapobj.mapid:
                         resp = self.confirmdialog('Update Map ID Field?', 'You are saving this map '
-                                'to the file "%s", but the Map ID field <i>(available in the Map Properties '
-                                'screen)</i> is set to "%s".  In order for your maps to save properly in '
-                                'the game engine, they should be the same.  Do you want to update the Map '
-                                'ID to match the filename?' % (base_map_name, self.mapobj.mapid),
-                                dialog)
+                                                  'to the file "%s", but the Map ID field <i>(available in the Map Properties '
+                                                  'screen)</i> is set to "%s".  In order for your maps to save properly in '
+                                                  'the game engine, they should be the same.  Do you want to update the Map '
+                                                  'ID to match the filename?' % (
+                                                      base_map_name, self.mapobj.mapid),
+                                                  dialog)
                         if resp == gtk.RESPONSE_YES:
                             self.mapobj.mapid = base_map_name
 
@@ -1506,8 +1563,8 @@ class MapGUI(BaseGUI):
                 self.on_save()
                 self.putstatus('Saved as %s' % (self.mapobj.df.filename))
                 self.infodialog('Notice', '<b>Note:</b> Any further "save" actions to this '
-                        'map will be saved to the new filename, not the original filename.',
-                        self.window)
+                                'map will be saved to the new filename, not the original filename.',
+                                self.window)
                 self.update_main_map_name()
             else:
                 loop = False
@@ -1522,50 +1579,50 @@ class MapGUI(BaseGUI):
         if savegame:
             totype = 'savegame'
             response = self.confirmdialog('Convert Map?', 'Converting to a %s '
-                    'map will clear your undo history and require you to save to '
-                    'a new file.  Proceed?' % (totype),
-                    self.window)
+                                          'map will clear your undo history and require you to save to '
+                                          'a new file.  Proceed?' % (totype),
+                                          self.window)
         else:
             totype = 'global'
             global_warning_list = ['Converting to a global ',
-                'map will clear your undo history and require you to save to ',
-                'a new file.',
-                "\n\n",
-                'Additionally, converting to a global map will lose some ',
-                'data previously stored in the savegame format.  Most noticeably: ',
-                'entities will lose all but their position, orientation, and ',
-                'death script; and items will only be identified by their name. ',
-                'Item names must then exactly match the names given in Eschalon\'s ',
-                '<tt>general_items.csv</tt> file.  Some side effects are that ',
-                'the material can no longer be specified for weapons/armor, ',
-                'gold amounts will be randomized to a certain degree, and spell ',
-                'scrolls must omit the "Scroll of" prefix.',
-                ]
+                                   'map will clear your undo history and require you to save to ',
+                                   'a new file.',
+                                   "\n\n",
+                                   'Additionally, converting to a global map will lose some ',
+                                   'data previously stored in the savegame format.  Most noticeably: ',
+                                   'entities will lose all but their position, orientation, and ',
+                                   'death script; and items will only be identified by their name. ',
+                                   'Item names must then exactly match the names given in Eschalon\'s ',
+                                   '<tt>general_items.csv</tt> file.  Some side effects are that ',
+                                   'the material can no longer be specified for weapons/armor, ',
+                                   'gold amounts will be randomized to a certain degree, and spell ',
+                                   'scrolls must omit the "Scroll of" prefix.',
+                                   ]
             global_warning = ''.join(global_warning_list)
             invalid_items = self.mapobj.get_invalid_global_items()
             if len(invalid_items) > 0:
                 dialog = GlobalNameDialog(item_names=invalid_items,
-                        eschalondata=self.eschalondata,
-                        transient=self.window,
-                        confirm=True,
-                        title='Convert Map?',
-                        message='%s'
-                            "\n\n"
-                            'The following item names will be converted automatically.  '
-                            'Items marked as having no valid conversion will remain '
-                            'as-is but will likely show up as Widgets in the Eschalon '
-                            'game.' % (global_warning),
-                        )
+                                          eschalondata=self.eschalondata,
+                                          transient=self.window,
+                                          confirm=True,
+                                          title='Convert Map?',
+                                          message='%s'
+                                          "\n\n"
+                                          'The following item names will be converted automatically.  '
+                                          'Items marked as having no valid conversion will remain '
+                                          'as-is but will likely show up as Widgets in the Eschalon '
+                                          'game.' % (global_warning),
+                                          )
                 response = dialog.run()
                 dialog.destroy()
             else:
                 response = self.confirmdialog('Convert Map?', '%s'
-                        "\n\n"
-                        'All item names on the current map are valid as global item names, '
-                        'so no conflicts will occur.'
-                        "\n\n"
-                        'Proceed?' % (global_warning),
-                        self.window)
+                                              "\n\n"
+                                              'All item names on the current map are valid as global item names, '
+                                              'so no conflicts will occur.'
+                                              "\n\n"
+                                              'Proceed?' % (global_warning),
+                                              self.window)
 
         if response == gtk.RESPONSE_YES:
 
@@ -1574,18 +1631,20 @@ class MapGUI(BaseGUI):
 
             try:
                 self.mapobj.convert_savegame(savegame)
-            except Exception, e:
+            except Exception as e:
                 self.errordialog('Conversion Error', '<b>Error:</b> Map could not be '
-                        'converted to %s format.  The map might be in an '
-                        'inconsistent state.'
-                        "\n\n"
-                        'It would be advisable to reload the map from scratch.'
-                        "\n\n"
-                        'The actual error: <tt>%s</tt>' % (totype, str(e)),
-                        self.window)
+                                 'converted to %s format.  The map might be in an '
+                                 'inconsistent state.'
+                                 "\n\n"
+                                 'It would be advisable to reload the map from scratch.'
+                                 "\n\n"
+                                 'The actual error: <tt>%s</tt>' % (
+                                     totype, str(e)),
+                                 self.window)
                 return False
             self.update_main_map_name()
-            self.putstatus('Editing %s map "%s"' % (totype, self.mapobj.mapname))
+            self.putstatus('Editing %s map "%s"' %
+                           (totype, self.mapobj.mapname))
 
             # Check our converted item names, if we've converted to global.
             invalid_items = []
@@ -1594,16 +1653,16 @@ class MapGUI(BaseGUI):
 
             if len(invalid_items) > 0:
                 dialog = GlobalNameDialog(item_names=invalid_items,
-                        eschalondata=self.eschalondata,
-                        transient=self.window,
-                        converted=True,
-                        title='Map Converted')
+                                          eschalondata=self.eschalondata,
+                                          transient=self.window,
+                                          converted=True,
+                                          title='Map Converted')
                 dialog.run()
                 dialog.destroy()
             else:
                 self.infodialog('Map Converted', 'The map has been converted to a '
-                        '%s map.' % (totype),
-                        self.window)
+                                '%s map.' % (totype),
+                                self.window)
 
     def on_convert_savegame_item_activate(self, widget):
         """
@@ -1624,14 +1683,14 @@ class MapGUI(BaseGUI):
         invalid_items = self.mapobj.get_invalid_global_items()
         if len(invalid_items) > 0:
             dialog = GlobalNameDialog(item_names=invalid_items,
-                    eschalondata=self.eschalondata,
-                    transient=self.window)
+                                      eschalondata=self.eschalondata,
+                                      transient=self.window)
             dialog.run()
             dialog.destroy()
         else:
             self.infodialog('Global Item Name Status', 'All item names '
-                    'on this map are valid global item names.',
-                    self.window)
+                            'on this map are valid global item names.',
+                            self.window)
 
     def map_gui_finish(self):
         """
@@ -1653,11 +1712,13 @@ class MapGUI(BaseGUI):
 
         # Register ComboBoxEntry child objects since the new Glade doesn't
         comboboxentries = ['exit_north', 'exit_east', 'exit_south', 'exit_west',
-                'music1', 'music2', 'atmos_sound_day', 'atmos_sound_night',
-                'random_sound1', 'random_sound2', 'skybox']
+                           'music1', 'music2', 'atmos_sound_day', 'atmos_sound_night',
+                           'random_sound1', 'random_sound2', 'skybox']
         for var in comboboxentries:
-            self.register_widget(var, self.get_widget('%s_combo' % (var)).child)
-            self.get_widget(var).connect('changed', self.on_singleval_map_changed_str)
+            self.register_widget(
+                var, self.get_widget('%s_combo' % (var)).child)
+            self.get_widget(var).connect(
+                'changed', self.on_singleval_map_changed_str)
 
         # Finish populating Item windows (dependent on Book)
         self.window.set_title('Eschalon Book %d Map Editor' % (c.book))
@@ -1689,7 +1750,7 @@ class MapGUI(BaseGUI):
             (None, None, None, None),
             ('draw', 'Draw', 'd', 'icon-draw.png'),
             ('erase', 'Erase', 'r', 'icon-erase.png'),
-            ('object', 'Object', 'o', 'icon-object.png')]:
+                ('object', 'Object', 'o', 'icon-object.png')]:
             if name is None:
                 vbox.add(hbox)
                 hbox = gtk.HBox()
@@ -1750,18 +1811,23 @@ class MapGUI(BaseGUI):
         self.ctl_copy_toggle = self.get_widget('ctl_copy_toggle')
 
         # Not sure why this doesn't work properly just from Glade
-        self.get_widget('music1_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+        self.get_widget('music1_combo').set_tooltip_markup(
+            'Note that having an empty value here will crash Eschalon')
 
         # Unknown map properties
         table = self.get_widget('map_prop_unknown_table')
         if c.book == 1:
-            self.input_uchar(table, 3, 'map_b1_last_xpos', '<i>Last-seen X Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
-            self.input_uchar(table, 4, 'map_b1_last_ypos', '<i>Last-seen Y Pos:</i>', 'Position your character was last seen at', self.on_singleval_map_changed_int)
+            self.input_uchar(table, 3, 'map_b1_last_xpos', '<i>Last-seen X Pos:</i>',
+                             'Position your character was last seen at', self.on_singleval_map_changed_int)
+            self.input_uchar(table, 4, 'map_b1_last_ypos', '<i>Last-seen Y Pos:</i>',
+                             'Position your character was last seen at', self.on_singleval_map_changed_int)
         else:
 
             # Update sound labels for book 2
-            self.get_widget('atmos_sound_day_label').set_text('Atmosphere (day)')
-            self.get_widget('atmos_sound_day_combo').set_tooltip_markup('Note that having an empty value here will crash Eschalon')
+            self.get_widget('atmos_sound_day_label').set_text(
+                'Atmosphere (day)')
+            self.get_widget('atmos_sound_day_combo').set_tooltip_markup(
+                'Note that having an empty value here will crash Eschalon')
 
         # Populate our wall type dropdown
         wstore = self.get_widget('barrier_store')
@@ -1792,17 +1858,16 @@ class MapGUI(BaseGUI):
         globalstore.append(['(none)', 0])
         monsters = {}
         npcs = {}
-        for (key, item) in self.entitytable.iteritems():
+        for (key, item) in self.entitytable.items():
             if (item.friendly == 0):
                 table = monsters
             else:
                 table = npcs
             table[item.name] = key
-        monsterkeys = monsters.keys()
-        monsterkeys.sort()
+        monsterkeys = sorted(list(monsters.keys()))
         for key in monsterkeys:
             globalstore.append([key, monsters[key]])
-        npckeys = npcs.keys()
+        npckeys = list(npcs.keys())
         npckeys.sort()
         self.entitykeys = monsterkeys
         self.entitykeys.extend(npckeys)
@@ -1816,8 +1881,10 @@ class MapGUI(BaseGUI):
         # Grab some lists of files
         maplist = self.get_gamedir_filelist('data', 'map', False)
         musiclist = self.get_gamedir_filelist('music', 'ogg')
-        atmoslist = self.get_gamedir_filelist('sound', 'wav', True, ['atmos_', 'wolfwood_'])
-        randsoundlist = self.get_gamedir_filelist('sound', 'wav', True, ['rand_'])
+        atmoslist = self.get_gamedir_filelist(
+            'sound', 'wav', True, ['atmos_', 'wolfwood_'])
+        randsoundlist = self.get_gamedir_filelist(
+            'sound', 'wav', True, ['rand_'])
         if c.book == 1:
             skyboxlist = ['back1.png', 'back2.png', 'back3.png']
         elif c.book == 2:
@@ -1850,8 +1917,8 @@ class MapGUI(BaseGUI):
 
         # Populate our smartdraw decal preference menu
         decal_list = [('Grass', self.smartdraw.IDX_GRASS),
-                ('Sand', self.smartdraw.IDX_SAND),
-                ('Beach', self.smartdraw.IDX_BEACH)]
+                      ('Sand', self.smartdraw.IDX_SAND),
+                      ('Beach', self.smartdraw.IDX_BEACH)]
         if c.book > 1:
             decal_list.append(('Snow', self.smartdraw.IDX_SNOW))
             decal_list.append(('Lava', self.smartdraw.IDX_LAVA))
@@ -1872,7 +1939,8 @@ class MapGUI(BaseGUI):
         # Populate our object placement dropdown
         store = self.get_widget('objectplace_treestore')
         renderer = self.get_widget('objectplace_renderer')
-        self.get_widget('objectplace_combo').set_cell_data_func(renderer, self.strip_tree_headers, None)
+        self.get_widget('objectplace_combo').set_cell_data_func(
+            renderer, self.strip_tree_headers, None)
         set_start = False
         for (cat, objects) in self.smartdraw.premade_objects.get_all_sorted():
             catiter = store.append(None, [cat, -1, cat])
@@ -1886,18 +1954,18 @@ class MapGUI(BaseGUI):
         lockspin = self.get_widget('objectplace_lock_spin')
         lockadj = self.get_widget('objectplace_lock_adj')
         trapstore = self.get_widget('objectplace_trap_store')
-        for (key, name) in c.traptable.items():
+        for (key, name) in list(c.traptable.items()):
             trapstore.append([name, key])
         self.get_widget('objectplace_trap_combo').set_active(0)
         if c.book == 1:
             lockspin.set_tooltip_markup('Lock levels run from zero to sixty.  '
-                    'To create a slider lock, edit the object after creation.')
+                                        'To create a slider lock, edit the object after creation.')
             lockadj.set_upper(60)
         else:
             self.get_widget('objectplace_loot_spin').set_tooltip_markup('Loot '
-                    'levels run from zero (poor-quality) to ten (high-quality)')
+                                                                        'levels run from zero (poor-quality) to ten (high-quality)')
             lockspin.set_tooltip_markup('Lock levels run from zero to ten.  '
-                    'To create a combination lock, edit the object after creation.')
+                                        'To create a combination lock, edit the object after creation.')
             lockadj.set_upper(10)
 
         # Resize some images for Book 2 sizes
@@ -1911,18 +1979,22 @@ class MapGUI(BaseGUI):
             self.get_widget('fill_map_img').set_size_request(64, 32)
 
         # Entity death script editor launcher
-        self.setup_script_editor_launcher(self.get_widget('entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
+        self.setup_script_editor_launcher(self.get_widget(
+            'entscript_hbox'), self.get_widget('entscript'), self.tilewindow, True)
 
         # Global Props window script editor launchers
         if c.book > 1:
-            self.setup_script_editor_launcher(self.get_widget('entrancescript_hbox'), self.get_widget('entrancescript'), self.propswindow, True)
-            self.setup_script_editor_launcher(self.get_widget('returnscript_hbox'), self.get_widget('returnscript'), self.propswindow, True)
-            self.setup_script_editor_launcher(self.get_widget('exitscript_hbox'), self.get_widget('exitscript'), self.propswindow, True)
+            self.setup_script_editor_launcher(self.get_widget(
+                'entrancescript_hbox'), self.get_widget('entrancescript'), self.propswindow, True)
+            self.setup_script_editor_launcher(self.get_widget(
+                'returnscript_hbox'), self.get_widget('returnscript'), self.propswindow, True)
+            self.setup_script_editor_launcher(self.get_widget(
+                'exitscript_hbox'), self.get_widget('exitscript'), self.propswindow, True)
 
         # Create our entity status values box
         if c.book > 1:
             container = self.get_widget('entity_data_main_vbox')
-            
+
             vbox = gtk.VBox()
             self.register_widget('entity_status_box', vbox)
             container.pack_start(vbox, False, False)
@@ -1943,7 +2015,7 @@ class MapGUI(BaseGUI):
             notelabel = gtk.Label()
             notelabel.set_alignment(0, .5)
             notelabel.set_markup('<b>Note:</b> Many of these don\'t actually affect the entity, '
-                    'but they\'re all present in the datafile.')
+                                 'but they\'re all present in the datafile.')
             notelabel.set_line_wrap(True)
             statvbox.add(notelabel)
 
@@ -1951,10 +2023,11 @@ class MapGUI(BaseGUI):
             statvbox.add(table)
 
             # Now add the statuses to table
-            status_inv = dict([v,k] for k,v in c.statustable.items())
+            status_inv = dict([v, k] for k, v in list(c.statustable.items()))
             for (idx, key) in enumerate(sorted(status_inv.keys())):
                 name = 'ent_status_%d' % (status_inv[key])
-                self.input_short(table, idx, name, key, None, self.on_ent_status_changed)
+                self.input_short(table, idx, name, key, None,
+                                 self.on_ent_status_changed)
 
             # Don't forget to show everything
             container.show_all()
@@ -1962,16 +2035,16 @@ class MapGUI(BaseGUI):
         # Add a WrapLabel in the Fill dialog
         adjust = self.get_widget('fill_map_text_adjust')
         label = WrapLabel('Select a tile to fill over the entire map.  If you '
-                'check the <i>"Overwrite Existing Tiles"</i> checkbox, this will '
-                'overwrite every single tile on the map.  Without the checkbox, '
-                'any tiles with existing floor images will be left alone.  '
-                'If you have the necessary SmartDraw options enabled, this '
-                'will randomize the terrain somewhat, if possible.  Note '
-                'that this operation is <b>not</b> Undoable at the moment, and '
-                'will erase your Undo stack, so save your map first if you\'re '
-                'not sure.')
+                          'check the <i>"Overwrite Existing Tiles"</i> checkbox, this will '
+                          'overwrite every single tile on the map.  Without the checkbox, '
+                          'any tiles with existing floor images will be left alone.  '
+                          'If you have the necessary SmartDraw options enabled, this '
+                          'will randomize the terrain somewhat, if possible.  Note '
+                          'that this operation is <b>not</b> Undoable at the moment, and '
+                          'will erase your Undo stack, so save your map first if you\'re '
+                          'not sure.')
         # set_alignment doesn't seem to work with our WrapLabel
-        #label.set_alignment(gtk.JUSTIFY_CENTER)
+        # label.set_alignment(gtk.JUSTIFY_CENTER)
         adjust.add(label)
         adjust.show_all()
 
@@ -1983,82 +2056,82 @@ class MapGUI(BaseGUI):
             self.propswindow.set_size_request(cur_width, 750)
 
         # Dictionary of signals.
-        dic = { 'gtk_main_quit': self.gtk_main_quit,
-                'on_new': self.on_new,
-                'on_load': self.on_load,
-                'on_reload': self.on_reload,
-                'on_about': self.on_about,
-                'on_save': self.on_save,
-                'on_save_as': self.on_save_as,
-                'on_export_clicked': self.on_export_clicked,
-                'on_undo': self.on_undo,
-                'on_redo': self.on_redo,
-                'on_fill': self.on_fill,
-                'on_clicked': self.on_clicked,
-                'on_released': self.on_released,
-                'on_control_toggle': self.on_control_toggle,
-                'on_brush_toggle': self.on_brush_toggle,
-                'key_handler': self.key_handler,
-                'zoom_in': self.zoom_in,
-                'zoom_out': self.zoom_out,
-                'format_zoomlevel': self.format_zoomlevel,
-                'on_mouse_changed': self.on_mouse_changed,
-                'expose_map': self.expose_map,
-                'map_toggle': self.map_toggle,
-                'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
-                'on_setinitial_clicked': self.on_setinitial_clicked,
-                'on_entid_changed': self.on_entid_changed,
-                'on_tilecontentid_changed': self.on_tilecontentid_changed,
-                'on_tilecontentid_dd_changed': self.on_tilecontentid_dd_changed,
-                'on_singleval_tile_changed_int': self.on_singleval_tile_changed_int,
-                'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
-                'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
-                'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
-                'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
-                'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
-                'on_direction_changed': self.on_direction_changed,
-                'on_map_flag_changed': self.on_map_flag_changed,
-                'on_barrier_changed': self.on_barrier_changed,
-                'on_entity_toggle': self.on_entity_toggle,
-                'on_tilecontent_add': self.on_tilecontent_add,
-                'on_floor_changed': self.on_floor_changed,
-                'on_draw_floor_changed': self.on_draw_floor_changed,
-                'on_decal_changed': self.on_decal_changed,
-                'on_draw_decal_changed': self.on_draw_decal_changed,
-                'on_wall_changed': self.on_wall_changed,
-                'on_draw_wall_changed': self.on_draw_wall_changed,
-                'on_walldecal_changed': self.on_walldecal_changed,
-                'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
-                'on_colorsel_clicked': self.on_colorsel_clicked,
-                'on_tilewindow_close': self.on_tilewindow_close,
-                'on_prop_button_clicked': self.on_prop_button_clicked,
-                'on_propswindow_close': self.on_propswindow_close,
-                'on_prefs': self.on_prefs,
-                'on_abort_render': self.on_abort_render,
-                'on_big_graphic_info_clicked': self.on_big_graphic_info_clicked,
-                'open_floorsel': self.open_floorsel,
-                'open_draw_floorsel': self.open_draw_floorsel,
-                'open_decalsel': self.open_decalsel,
-                'open_draw_decalsel': self.open_draw_decalsel,
-                'open_walldecalsel': self.open_walldecalsel,
-                'open_draw_walldecalsel': self.open_draw_walldecalsel,
-                'open_draw_objsel': self.open_draw_objsel,
-                'open_objsel': self.open_objsel,
-                'open_fill_floorsel': self.open_fill_floorsel,
-                'on_fill_floor_changed': self.on_fill_floor_changed,
-                'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
-                'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
-                'draw_check_all': self.draw_check_all,
-                'draw_uncheck_all': self.draw_uncheck_all,
-                'highlight_check_all': self.highlight_check_all,
-                'highlight_uncheck_all': self.highlight_uncheck_all,
-                'update_activity_label': self.update_activity_label,
-                'draw_map': self.draw_map,
-                'update_objectplace': self.update_objectplace,
-                'on_convert_savegame_item_activate': self.on_convert_savegame_item_activate,
-                'on_convert_global_item_activate': self.on_convert_global_item_activate,
-                'on_globalnamecheck_activate': self.on_globalnamecheck_activate,
-                }
+        dic = {'gtk_main_quit': self.gtk_main_quit,
+               'on_new': self.on_new,
+               'on_load': self.on_load,
+               'on_reload': self.on_reload,
+               'on_about': self.on_about,
+               'on_save': self.on_save,
+               'on_save_as': self.on_save_as,
+               'on_export_clicked': self.on_export_clicked,
+               'on_undo': self.on_undo,
+               'on_redo': self.on_redo,
+               'on_fill': self.on_fill,
+               'on_clicked': self.on_clicked,
+               'on_released': self.on_released,
+               'on_control_toggle': self.on_control_toggle,
+               'on_brush_toggle': self.on_brush_toggle,
+               'key_handler': self.key_handler,
+               'zoom_in': self.zoom_in,
+               'zoom_out': self.zoom_out,
+               'format_zoomlevel': self.format_zoomlevel,
+               'on_mouse_changed': self.on_mouse_changed,
+               'expose_map': self.expose_map,
+               'map_toggle': self.map_toggle,
+               'on_healthmaxbutton_clicked': self.on_healthmaxbutton_clicked,
+               'on_setinitial_clicked': self.on_setinitial_clicked,
+               'on_entid_changed': self.on_entid_changed,
+               'on_tilecontentid_changed': self.on_tilecontentid_changed,
+               'on_tilecontentid_dd_changed': self.on_tilecontentid_dd_changed,
+               'on_singleval_tile_changed_int': self.on_singleval_tile_changed_int,
+               'on_singleval_ent_changed_int': self.on_singleval_ent_changed_int,
+               'on_singleval_ent_changed_str': self.on_singleval_ent_changed_str,
+               'on_singleval_map_changed_int': self.on_singleval_map_changed_int,
+               'on_singleval_map_changed_str': self.on_singleval_map_changed_str,
+               'on_dropdown_idx_map_changed': self.on_dropdown_idx_map_changed,
+               'on_direction_changed': self.on_direction_changed,
+               'on_map_flag_changed': self.on_map_flag_changed,
+               'on_barrier_changed': self.on_barrier_changed,
+               'on_entity_toggle': self.on_entity_toggle,
+               'on_tilecontent_add': self.on_tilecontent_add,
+               'on_floor_changed': self.on_floor_changed,
+               'on_draw_floor_changed': self.on_draw_floor_changed,
+               'on_decal_changed': self.on_decal_changed,
+               'on_draw_decal_changed': self.on_draw_decal_changed,
+               'on_wall_changed': self.on_wall_changed,
+               'on_draw_wall_changed': self.on_draw_wall_changed,
+               'on_walldecal_changed': self.on_walldecal_changed,
+               'on_draw_walldecal_changed': self.on_draw_walldecal_changed,
+               'on_colorsel_clicked': self.on_colorsel_clicked,
+               'on_tilewindow_close': self.on_tilewindow_close,
+               'on_prop_button_clicked': self.on_prop_button_clicked,
+               'on_propswindow_close': self.on_propswindow_close,
+               'on_prefs': self.on_prefs,
+               'on_abort_render': self.on_abort_render,
+               'on_big_graphic_info_clicked': self.on_big_graphic_info_clicked,
+               'open_floorsel': self.open_floorsel,
+               'open_draw_floorsel': self.open_draw_floorsel,
+               'open_decalsel': self.open_decalsel,
+               'open_draw_decalsel': self.open_draw_decalsel,
+               'open_walldecalsel': self.open_walldecalsel,
+               'open_draw_walldecalsel': self.open_draw_walldecalsel,
+               'open_draw_objsel': self.open_draw_objsel,
+               'open_objsel': self.open_objsel,
+               'open_fill_floorsel': self.open_fill_floorsel,
+               'on_fill_floor_changed': self.on_fill_floor_changed,
+               'on_draw_smart_floor_toggled': self.on_draw_smart_floor_toggled,
+               'on_smartdraw_check_toggled': self.on_smartdraw_check_toggled,
+               'draw_check_all': self.draw_check_all,
+               'draw_uncheck_all': self.draw_uncheck_all,
+               'highlight_check_all': self.highlight_check_all,
+               'highlight_uncheck_all': self.highlight_uncheck_all,
+               'update_activity_label': self.update_activity_label,
+               'draw_map': self.draw_map,
+               'update_objectplace': self.update_objectplace,
+               'on_convert_savegame_item_activate': self.on_convert_savegame_item_activate,
+               'on_convert_global_item_activate': self.on_convert_global_item_activate,
+               'on_globalnamecheck_activate': self.on_globalnamecheck_activate,
+               }
         dic.update(self.item_signals())
         # Really we should only attach the signals that will actually be sent, but this
         # should be fine here, anyway.
@@ -2069,7 +2142,7 @@ class MapGUI(BaseGUI):
         (changed, alert_changed) = super(MapGUI, self).on_prefs(widget)
         if (changed and alert_changed):
             self.infodialog('Preference Change Notification', '<b>Note:</b> You must '
-                'restart the application for the preferences change to take effect.', self.window)
+                            'restart the application for the preferences change to take effect.', self.window)
 
     def on_export_clicked(self, widget=None):
         """ Used to export a PNG of the current map image to disk. """
@@ -2084,7 +2157,8 @@ class MapGUI(BaseGUI):
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         infolabel = gtk.Label()
-        infolabel.set_markup('<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
+        infolabel.set_markup(
+            '<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
         infolabel.set_line_wrap(True)
         dialog.set_extra_widget(infolabel)
         if (self.mapobj != None):
@@ -2125,13 +2199,14 @@ class MapGUI(BaseGUI):
                 self.mapobj.df.filename != '' and
                 os.path.basename(self.mapobj.df.filename)[:-4] != self.mapobj.mapid):
             self.mapname_mainscreen_label.set_markup('%s: %s <span color="red">(Map ID Mismatch)</span>' %
-                    (prefix, self.mapobj.mapname))
+                                                     (prefix, self.mapobj.mapname))
             self.mapname_mainscreen_label.set_tooltip_text('This map is saved to a file named "%s" '
-                    'but the Map ID is set to "%s" - this will cause problems with saving the map '
-                    'state, inside Eschalon.  You should change this value in "Map Properties."' %
-                    (os.path.basename(self.mapobj.df.filename), self.mapobj.mapid))
+                                                           'but the Map ID is set to "%s" - this will cause problems with saving the map '
+                                                           'state, inside Eschalon.  You should change this value in "Map Properties."' %
+                                                           (os.path.basename(self.mapobj.df.filename), self.mapobj.mapid))
         else:
-            self.mapname_mainscreen_label.set_text('%s: %s' % (prefix, self.mapobj.mapname))
+            self.mapname_mainscreen_label.set_text(
+                '%s: %s' % (prefix, self.mapobj.mapname))
             self.mapname_mainscreen_label.set_has_tooltip(False)
 
     def setup_new_map_gui(self):
@@ -2163,7 +2238,8 @@ class MapGUI(BaseGUI):
 
         # Confirm if we already have a map
         if self.mapobj is not None:
-            resp = self.confirmdialog('Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
+            resp = self.confirmdialog(
+                'Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
             if resp != gtk.RESPONSE_YES:
                 return False
 
@@ -2190,7 +2266,7 @@ class MapGUI(BaseGUI):
         # Now create a new map
         self.mapobj = Map.new('', self.req_book)
         self.mapobj.set_savegame(savegame)
-        
+
         # A few values need to be set to avoid crashes
         if c.book == 1:
             self.mapobj.music1 = 'overland_1.ogg'
@@ -2217,12 +2293,13 @@ class MapGUI(BaseGUI):
 
         # Also we'll need to grab our Entity data
         if filename[-4:] != '.map':
-            raise LoadException('Datapak map filenames must end with ".map", passed in "%s"', filename)
+            raise LoadException(
+                'Datapak map filenames must end with ".map", passed in "%s"', filename)
         ent_filename = '%s.ent' % (filename[:-4])
         try:
             ent_data = self.eschalondata.readfile(ent_filename, 'maps')
             ent_df = Savefile(filename=ent_filename, stringdata=ent_data)
-        except LoadException, e:
+        except LoadException as e:
             # Datapak maps without entities don't have an entity file; we'll simulate a
             # zero-length one instead.
             ent_df = Savefile(filename=ent_filename, stringdata='')
@@ -2234,14 +2311,14 @@ class MapGUI(BaseGUI):
         # Some other statuses
         self.putstatus('Editing datapak map "%s"' % (filename))
         self.setup_new_map_gui()
-        
+
         return True
 
     # Use this to display the loading dialog, and deal with the main window accordingly
     def on_load(self, widget=None):
-        
+
         # Blank out the main area
-        #self.mainbook.set_sensitive(False)
+        # self.mainbook.set_sensitive(False)
 
         # Figure out what our initial path should be
         path = ''
@@ -2261,13 +2338,13 @@ class MapGUI(BaseGUI):
         else:
             b23maplist = self.get_gamedir_filelist('maps', 'map')
         dialog = MapLoaderDialog(starting_path=path,
-                savegame_dir=self.get_current_savegame_dir(),
-                basegame_dir=self.get_current_gamedir(),
-                transient=self.window,
-                last_source=self.last_map_source,
-                b23maplist=b23maplist,
-                eschalondata=self.eschalondata,
-                show_new=(self.mapobj is None))
+                                 savegame_dir=self.get_current_savegame_dir(),
+                                 basegame_dir=self.get_current_gamedir(),
+                                 transient=self.window,
+                                 last_source=self.last_map_source,
+                                 b23maplist=b23maplist,
+                                 eschalondata=self.eschalondata,
+                                 show_new=(self.mapobj is None))
 
         # Run the dialog and process its return values
         retval = False
@@ -2311,12 +2388,13 @@ class MapGUI(BaseGUI):
         try:
             mapobj = Map.load(filename, self.req_book)
             mapobj.read()
-        except LoadException, e:
+        except LoadException as e:
             self.errordialog('Load Error', '<b>Error:</b> The specified file could not '
-                    'be loaded.  Please choose a different file and try again.'
-                    "\n\n"
-                    'The actual error given was: <tt>%s</tt>' % (str(e)),
-                    self.window)
+                             'be loaded.  Please choose a different file and try again.'
+                             "\n\n"
+                             'The actual error given was: <tt>%s</tt>' % (
+                                 str(e)),
+                             self.window)
             return False
 
         # Basic vars
@@ -2331,7 +2409,8 @@ class MapGUI(BaseGUI):
         # Check for Big Graphic issues.
         messages = self.mapobj.big_gfx_mappings.load()
         if len(messages) > 0:
-            self.on_big_graphic_info_clicked(messages=messages, do_redraw=False)
+            self.on_big_graphic_info_clicked(
+                messages=messages, do_redraw=False)
 
         # Return success
         return True
@@ -2347,7 +2426,8 @@ class MapGUI(BaseGUI):
 
     def gtk_main_quit(self, widget=None, event=None):
         """ Main quit function. """
-        response = self.confirmdialog('Continue with Quit?', 'Unsaved changes will be lost!  Really quit?', self.window)
+        response = self.confirmdialog(
+            'Continue with Quit?', 'Unsaved changes will be lost!  Really quit?', self.window)
         if (response == gtk.RESPONSE_YES):
             gtk.main_quit()
         else:
@@ -2361,11 +2441,12 @@ class MapGUI(BaseGUI):
         """
         request_redraw = False
         if c.book == 3 and ('4949' in self.mapobj.df.filename or 'Elderoak Forest' in self.mapobj.mapname):
-            print 'True'
+            print('True')
             elderoak = True
         else:
             elderoak = False
-        dialog = BigGraphicDialog(self.mapobj.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
+        dialog = BigGraphicDialog(
+            self.mapobj.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
         response = dialog.run()
         if response == gtk.RESPONSE_APPLY:
             request_redraw = True
@@ -2373,18 +2454,20 @@ class MapGUI(BaseGUI):
             messages = self.mapobj.big_gfx_mappings.load()
             if len(messages) > 0:
                 md = gtk.MessageDialog(
-                        flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
-                        buttons=gtk.BUTTONS_OK)
+                    flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                    buttons=gtk.BUTTONS_OK)
                 md.set_transient_for(dialog)
-                md.set_markup('Note: there are still some unresolved Big Graphic issues.  You can see the list of problems again by selecting "Big Graphic Info" from the "Edit" menu.')
+                md.set_markup(
+                    'Note: there are still some unresolved Big Graphic issues.  You can see the list of problems again by selecting "Big Graphic Info" from the "Edit" menu.')
                 md.run()
                 md.destroy()
             else:
                 md = gtk.MessageDialog(
-                        flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT,
-                        buttons=gtk.BUTTONS_OK)
+                    flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                    buttons=gtk.BUTTONS_OK)
                 md.set_transient_for(dialog)
-                md.set_markup('All Big Graphic issues were successfully resolved.')
+                md.set_markup(
+                    'All Big Graphic issues were successfully resolved.')
                 md.run()
                 md.destroy()
         dialog.destroy()
@@ -2406,7 +2489,8 @@ class MapGUI(BaseGUI):
             about.set_version(version)
             about.set_website(url)
             about.set_authors(authors)
-            licensepath = os.path.join(os.path.split(os.path.dirname(__file__))[0], 'COPYING.txt')
+            licensepath = os.path.join(os.path.split(
+                os.path.dirname(__file__))[0], 'COPYING.txt')
             if (os.path.isfile(licensepath)):
                 try:
                     df = open(licensepath, 'r')
@@ -2423,10 +2507,10 @@ class MapGUI(BaseGUI):
             self.register_widget('aboutwindow', about, False)
 
         # Show the about dialog
-        #self.mainbook.set_sensitive(False)
+        # self.mainbook.set_sensitive(False)
         about.run()
         about.hide()
-        #self.mainbook.set_sensitive(True)
+        # self.mainbook.set_sensitive(True)
 
     def on_draw_smart_floor_toggled(self, widget):
         """ Handle the smart-floor toggling. """
@@ -2456,18 +2540,20 @@ class MapGUI(BaseGUI):
         if (self.undo.have_undo()):
             self.menu_undo.set_sensitive(True)
             history = self.undo.get_undo()
-            self.menu_undo_label.set_text('Undo: %s to (%d, %d)' % (history.text, history.x, history.y))
+            self.menu_undo_label.set_text(
+                'Undo: %s to (%d, %d)' % (history.text, history.x, history.y))
         else:
             self.menu_undo.set_sensitive(False)
             self.menu_undo_label.set_text('Undo')
         if (self.undo.have_redo()):
             self.menu_redo.set_sensitive(True)
             history = self.undo.get_redo()
-            self.menu_redo_label.set_text('Redo: %s to (%d, %d)' % (history.text, history.x, history.y))
+            self.menu_redo_label.set_text(
+                'Redo: %s to (%d, %d)' % (history.text, history.x, history.y))
         else:
             self.menu_redo.set_sensitive(False)
             self.menu_redo_label.set_text('Redo')
-        #self.undo.report()
+        # self.undo.report()
 
     def on_undo(self, widget=None):
         """ Process a user Undo action """
@@ -2548,7 +2634,8 @@ class MapGUI(BaseGUI):
         self.get_widget('objectplace_trap_label').set_sensitive(obj.do_trap)
         self.get_widget('objectplace_trap_combo').set_sensitive(obj.do_trap)
         if c.book > 1:
-            self.get_widget('objectplace_loot_label').set_sensitive(obj.do_loot)
+            self.get_widget(
+                'objectplace_loot_label').set_sensitive(obj.do_loot)
             self.get_widget('objectplace_loot_spin').set_sensitive(obj.do_loot)
 
     def populate_color_selection(self):
@@ -2557,7 +2644,7 @@ class MapGUI(BaseGUI):
         pixbuf.fill(self.mapobj.rgb_color())
         img.set_from_pixbuf(pixbuf)
         self.get_widget('color_rgb_label').set_markup('<i>(RGB: %d, %d, %d)</i>' %
-                (self.mapobj.color_r, self.mapobj.color_g, self.mapobj.color_b))
+                                                      (self.mapobj.color_r, self.mapobj.color_g, self.mapobj.color_b))
 
     def on_prop_button_clicked(self, widget=None):
         """ Show the global properties window. """
@@ -2568,7 +2655,8 @@ class MapGUI(BaseGUI):
         self.get_widget('mapname').set_text(self.mapobj.mapname)
         self.get_widget('music1').set_text(self.mapobj.music1)
         self.get_widget('music2').set_text(self.mapobj.music2)
-        self.get_widget('atmos_sound_day').set_text(self.mapobj.atmos_sound_day)
+        self.get_widget('atmos_sound_day').set_text(
+            self.mapobj.atmos_sound_day)
         if c.book > 1:
             self.cur_tree_set = self.mapobj.tree_set
             for (idx, row) in enumerate(self.get_widget('tree_set').get_model()):
@@ -2576,10 +2664,12 @@ class MapGUI(BaseGUI):
                     self.get_widget('tree_set').set_active(idx)
                     continue
             for flag in [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01]:
-                self.get_widget('map_flags_%02X' % (flag)).set_active(((self.mapobj.map_flags & flag) == flag))
+                self.get_widget('map_flags_%02X' % (flag)).set_active(
+                    ((self.mapobj.map_flags & flag) == flag))
             ent_store = self.get_widget('random_entity_store')
             for (widget, entid) in [
-                    (self.get_widget('random_entity_1'), self.mapobj.random_entity_1),
+                    (self.get_widget('random_entity_1'),
+                     self.mapobj.random_entity_1),
                     (self.get_widget('random_entity_2'), self.mapobj.random_entity_2)]:
                 iter = ent_store.get_iter_first()
                 while iter is not None:
@@ -2598,21 +2688,31 @@ class MapGUI(BaseGUI):
             self.get_widget('exit_east').set_text(self.mapobj.exit_east)
             self.get_widget('exit_south').set_text(self.mapobj.exit_south)
             self.get_widget('exit_west').set_text(self.mapobj.exit_west)
-            self.get_widget('map_unknownh1').set_value(self.mapobj.map_unknownh1)
+            self.get_widget('map_unknownh1').set_value(
+                self.mapobj.map_unknownh1)
             self.get_widget('clouds').set_value(self.mapobj.clouds)
-            self.get_widget('map_b1_last_xpos').set_value(self.mapobj.map_b1_last_xpos)
-            self.get_widget('map_b1_last_ypos').set_value(self.mapobj.map_b1_last_ypos)
-            self.get_widget('map_b1_outsideflag').set_value(self.mapobj.map_b1_outsideflag)
+            self.get_widget('map_b1_last_xpos').set_value(
+                self.mapobj.map_b1_last_xpos)
+            self.get_widget('map_b1_last_ypos').set_value(
+                self.mapobj.map_b1_last_ypos)
+            self.get_widget('map_b1_outsideflag').set_value(
+                self.mapobj.map_b1_outsideflag)
         else:
-            self.get_widget('entrancescript').set_text(self.mapobj.entrancescript)
+            self.get_widget('entrancescript').set_text(
+                self.mapobj.entrancescript)
             self.get_widget('returnscript').set_text(self.mapobj.returnscript)
             self.get_widget('exitscript').set_text(self.mapobj.exitscript)
-            self.get_widget('random_sound1').set_text(self.mapobj.random_sound1)
+            self.get_widget('random_sound1').set_text(
+                self.mapobj.random_sound1)
             if c.book == 3:
-                self.get_widget('atmos_sound_night').set_text(self.mapobj.atmos_sound_night)
-                self.get_widget('random_sound2').set_text(self.mapobj.random_sound2)
-                self.get_widget('cloud_offset_x').set_value(self.mapobj.cloud_offset_x)
-                self.get_widget('cloud_offset_y').set_value(self.mapobj.cloud_offset_y)
+                self.get_widget('atmos_sound_night').set_text(
+                    self.mapobj.atmos_sound_night)
+                self.get_widget('random_sound2').set_text(
+                    self.mapobj.random_sound2)
+                self.get_widget('cloud_offset_x').set_value(
+                    self.mapobj.cloud_offset_x)
+                self.get_widget('cloud_offset_y').set_value(
+                    self.mapobj.cloud_offset_y)
         self.propswindow.show()
 
     def on_propswindow_close(self, widget, event=None):
@@ -2638,15 +2738,15 @@ class MapGUI(BaseGUI):
         dialog = gtk.ColorSelectionDialog('Select Overlay Color')
         dialog.set_transient_for(self.window)
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        dialog.colorsel.set_current_color(gtk.gdk.Color(self.mapobj.color_r*257,
-                                                        self.mapobj.color_g*257,
-                                                        self.mapobj.color_b*257))
+        dialog.colorsel.set_current_color(gtk.gdk.Color(self.mapobj.color_r * 257,
+                                                        self.mapobj.color_g * 257,
+                                                        self.mapobj.color_b * 257))
         response = dialog.run()
         if (response == gtk.RESPONSE_OK):
             color = dialog.colorsel.get_current_color()
-            self.mapobj.color_r = int(color.red/257)
-            self.mapobj.color_g = int(color.green/257)
-            self.mapobj.color_b = int(color.blue/257)
+            self.mapobj.color_r = int(color.red / 257)
+            self.mapobj.color_g = int(color.green / 257)
+            self.mapobj.color_b = int(color.blue / 257)
             self.populate_color_selection()
         dialog.destroy()
 
@@ -2695,9 +2795,11 @@ class MapGUI(BaseGUI):
 
     def update_ent_tile_img(self):
         entity = self.mapobj.tiles[self.tile_y][self.tile_x].entity
-        entbuf = self.gfx.get_entity(entity.entid, entity.direction, None, True)
+        entbuf = self.gfx.get_entity(
+            entity.entid, entity.direction, None, True)
         if (entbuf is None):
-            self.get_widget('ent_tile_img').set_from_stock(gtk.STOCK_MISSING_IMAGE, 2)
+            self.get_widget('ent_tile_img').set_from_stock(
+                gtk.STOCK_MISSING_IMAGE, 2)
         else:
             self.get_widget('ent_tile_img').set_from_pixbuf(entbuf)
 
@@ -2722,10 +2824,13 @@ class MapGUI(BaseGUI):
                     # game engine after loading the main map.  The entscripts found in
                     # the global map files are "special" ones like keys that only certain
                     # monsters drop, etc.
-                    self.get_widget('entscript').set_text(self.entitytable[entid].entscript)
+                    self.get_widget('entscript').set_text(
+                        self.entitytable[entid].entscript)
                 self.get_widget('health').set_value(health)
-                self.get_widget('movement').set_value(self.entitytable[entid].movement)
-                self.get_widget('friendly').set_value(self.entitytable[entid].friendly)
+                self.get_widget('movement').set_value(
+                    self.entitytable[entid].movement)
+                self.get_widget('friendly').set_value(
+                    self.entitytable[entid].friendly)
             self.update_ent_tile_img()
 
     def on_ent_status_changed(self, widget):
@@ -2835,7 +2940,8 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         if do_spin_update:
             self.on_singleval_tile_changed_int(widget)
-        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.mapobj.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(
+            int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
             self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -2844,7 +2950,8 @@ class MapGUI(BaseGUI):
 
     def on_draw_wall_changed(self, widget):
         """ Update the appropriate image when necessary. """
-        (pixbuf, height, offset) = self.gfx.get_object(int(widget.get_value()), None, True, self.mapobj.tree_set)
+        (pixbuf, height, offset) = self.gfx.get_object(
+            int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
             self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
         else:
@@ -2855,7 +2962,8 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('walldecalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('walldecalimg_image').set_from_stock(
+                gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('walldecalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
@@ -2864,7 +2972,8 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('draw_walldecal_img').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('draw_walldecal_img').set_from_stock(
+                gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_walldecal_img').set_from_pixbuf(pixbuf)
 
@@ -2879,7 +2988,7 @@ class MapGUI(BaseGUI):
 
         # All the "fun" stuff ends up happening in here.
         self.redraw_tile(self.tile_x, self.tile_y)
-        
+
         # ... update our GUI stuff for Undo
         self.update_undo_gui()
 
@@ -2934,17 +3043,18 @@ class MapGUI(BaseGUI):
         # Figure out our dimensions
         tier_1_x = []
         tier_1_y = y - 1 - 8
-        tier_2_x = range(x-1, x+2)
+        tier_2_x = list(range(x - 1, x + 2))
         tier_2_y = y - 8
         global_x = (x * self.z_width) - self.z_halfwidth
         if ((y % 2) == 0):
-            tier_1_x = range(x-2, x+2)
+            tier_1_x = list(range(x - 2, x + 2))
         else:
-            tier_1_x = range(x-1, x+3)
+            tier_1_x = list(range(x - 1, x + 3))
             global_x = global_x + self.z_halfwidth
 
         # Set up a surface to use
-        over_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_width*2, self.z_5xheight)
+        over_surf = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.z_width * 2, self.z_5xheight)
         over_ctx = cairo.Context(over_surf)
         over_ctx.set_source_rgba(0, 0, 0, 1)
         over_ctx.paint()
@@ -2952,48 +3062,57 @@ class MapGUI(BaseGUI):
         # Grab some local vars
         tiles = self.mapobj.tiles
         huge_gfx_rows = self.huge_gfx_rows
-        global_offset_x = global_x+1
-        global_offset_y = self.z_halfheight*(y-8)+1
+        global_offset_x = global_x + 1
+        global_offset_y = self.z_halfheight * (y - 8) + 1
 
         # Loop through and composite the new image area
         for i in range(10):
             # Draw tier 1 tiles first, then tier 2
             if (tier_1_y > -1 and tier_1_y < 200):
                 for (tier_i, tier_x) in enumerate(tier_1_x):
-                    yval = self.z_halfheight+((i-5)*self.z_height)
+                    yval = self.z_halfheight + ((i - 5) * self.z_height)
                     if (tier_x > -1 and tier_x < 100):
-                        (op_buf, offset) = self.draw_tile(tier_x, tier_1_y, False, False)
-                        over_ctx.set_source_surface(op_buf, ((-3+(2*tier_i))*self.z_halfwidth)-offset+self.z_halfwidth, yval)
+                        (op_buf, offset) = self.draw_tile(
+                            tier_x, tier_1_y, False, False)
+                        over_ctx.set_source_surface(
+                            op_buf, ((-3 + (2 * tier_i)) * self.z_halfwidth) - offset + self.z_halfwidth, yval)
                         over_ctx.paint()
                 # Redraw any "huge" graphics in this row
                 if c.book > 1:
                     for gfx_x in huge_gfx_rows[tier_1_y]:
-                        self.draw_huge_gfx(tiles[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                        self.draw_huge_gfx(
+                            tiles[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             if (i < 9):
                 if (tier_2_y > -1 and tier_2_y < 200):
                     for (tier_i, tier_x) in enumerate(tier_2_x):
                         if (tier_x > -1 and tier_x < 100):
-                            (op_buf, offset) = self.draw_tile(tier_x, tier_2_y, False, False)
-                            over_ctx.set_source_surface(op_buf, ((-1+tier_i)*self.z_width)-offset+self.z_halfwidth, (i-4)*self.z_height)
+                            (op_buf, offset) = self.draw_tile(
+                                tier_x, tier_2_y, False, False)
+                            over_ctx.set_source_surface(
+                                op_buf, ((-1 + tier_i) * self.z_width) - offset + self.z_halfwidth, (i - 4) * self.z_height)
                             over_ctx.paint()
                 # Redraw any "huge" graphics in this row
                 if c.book > 1:
                     if tier_2_y < 200:
                         for gfx_x in huge_gfx_rows[tier_2_y]:
-                            self.draw_huge_gfx(tiles[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                            self.draw_huge_gfx(
+                                tiles[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             tier_1_y = tier_1_y + 2
             tier_2_y = tier_2_y + 2
 
         # This is a bit overkill, but easier than trying to figure out how far up any
         # big graphics go.
-        for yval in range(tier_1_y-1, 200):
+        for yval in range(tier_1_y - 1, 200):
             for gfx_x in huge_gfx_rows[yval]:
-                self.draw_huge_gfx(tiles[yval][gfx_x], over_ctx, global_offset_x, global_offset_y)
+                self.draw_huge_gfx(
+                    tiles[yval][gfx_x], over_ctx, global_offset_x, global_offset_y)
 
         # Now superimpose that onto our main map image
-        self.guicache_ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
+        self.guicache_ctx.set_source_surface(
+            over_surf, global_offset_x, global_offset_y)
         self.guicache_ctx.paint()
-        self.ctx.set_source_surface(over_surf, global_offset_x, global_offset_y)
+        self.ctx.set_source_surface(
+            over_surf, global_offset_x, global_offset_y)
         self.ctx.paint()
         self.cleantiles.append((x, y))
         self.maparea.queue_draw()
@@ -3002,7 +3121,7 @@ class MapGUI(BaseGUI):
 
     def format_zoomlevel(self, widget, value):
         """ Formats the zoom slider scale. """
-        return 'Lvl %d' % (value+1)
+        return 'Lvl %d' % (value + 1)
 
     def set_zoom_vars(self, scalenum):
         """
@@ -3013,28 +3132,28 @@ class MapGUI(BaseGUI):
         self.curzoomidx = scalenum
         self.curzoom = width
         self.z_width = width
-        self.z_height = int(self.z_width/2)
+        self.z_height = int(self.z_width / 2)
         self.z_halfwidth = self.z_height
-        self.z_halfheight = int(self.z_height/2)
-        self.z_mapsize_x = self.z_width*101
-        self.z_mapsize_y = int(self.z_mapsize_x/2)
+        self.z_halfheight = int(self.z_height / 2)
+        self.z_mapsize_x = self.z_width * 101
+        self.z_mapsize_y = int(self.z_mapsize_x / 2)
 
         # These vars help speed up tile drawing
-        self.z_2xheight = self.z_height*2
-        self.z_3xheight = self.z_height*3
-        self.z_4xheight = self.z_height*4
-        self.z_5xheight = self.z_height*5
+        self.z_2xheight = self.z_height * 2
+        self.z_3xheight = self.z_height * 3
+        self.z_4xheight = self.z_height * 4
+        self.z_5xheight = self.z_height * 5
 
         # Our tilebuf size (the one we draw tiles onto) may vary based on book
         self.z_tilebuf_w = int(self.z_width * self.gfx.tilebuf_mult)
-        self.z_tilebuf_offset = int((self.z_tilebuf_w - self.z_width)/2)
+        self.z_tilebuf_offset = int((self.z_tilebuf_w - self.z_width) / 2)
 
         # Clean up our zoom icons
         if (scalenum == 0):
             self.zoom_out_button.set_sensitive(False)
         else:
             self.zoom_out_button.set_sensitive(True)
-        if (scalenum == len(self.zoom_levels)-1):
+        if (scalenum == len(self.zoom_levels) - 1):
             self.zoom_in_button.set_sensitive(False)
         else:
             self.zoom_in_button.set_sensitive(True)
@@ -3042,7 +3161,8 @@ class MapGUI(BaseGUI):
     def scroll_h_changed(self, widget):
         """ Handle what to do when our scollwindow detects a change in dimensions. """
         if (self.prev_scroll_h_cur != -1):
-            newval = int((self.prev_scroll_h_cur*widget.upper)/self.prev_scroll_h_max)
+            newval = int((self.prev_scroll_h_cur * widget.upper) /
+                         self.prev_scroll_h_max)
             if (widget.upper >= (newval + widget.page_size)):
                 widget.set_value(newval)
         self.prev_scroll_h_max = widget.upper
@@ -3050,7 +3170,8 @@ class MapGUI(BaseGUI):
     def scroll_v_changed(self, widget):
         """ Handle what to do when our scollwindow detects a change in dimensions. """
         if (self.prev_scroll_v_cur != -1):
-            newval = int((self.prev_scroll_v_cur*widget.upper)/self.prev_scroll_v_max)
+            newval = int((self.prev_scroll_v_cur * widget.upper) /
+                         self.prev_scroll_v_max)
             if (widget.upper >= (newval + widget.page_size)):
                 widget.set_value(newval)
         self.prev_scroll_v_max = widget.upper
@@ -3059,8 +3180,8 @@ class MapGUI(BaseGUI):
         """ Take care of everything that needs to be done when we change zoom levels. """
         hadjust = self.mainscroll.get_hadjustment()
         vadjust = self.mainscroll.get_vadjustment()
-        self.prev_scroll_h_cur = (hadjust.page_size/4)+hadjust.value
-        self.prev_scroll_v_cur = (vadjust.page_size/4)+vadjust.value
+        self.prev_scroll_h_cur = (hadjust.page_size / 4) + hadjust.value
+        self.prev_scroll_v_cur = (vadjust.page_size / 4) + vadjust.value
         self.set_zoom_vars(level)
         self.draw_map()
 
@@ -3069,20 +3190,20 @@ class MapGUI(BaseGUI):
         newzoom = int(widget.get_value())
         if (newzoom < 0):
             newzoom = 0
-        if (newzoom > len(self.zoom_levels)-1):
-            newzoom = len(self.zoom_levels)-1
+        if (newzoom > len(self.zoom_levels) - 1):
+            newzoom = len(self.zoom_levels) - 1
         if (newzoom != self.curzoomidx):
             self.zoom_to(newzoom)
 
     def zoom_out(self, widget):
         """ Handle a zoom-out. """
         if (self.curzoomidx != 0):
-            self.zoom_scale.set_value(self.curzoomidx-1)
+            self.zoom_scale.set_value(self.curzoomidx - 1)
 
     def zoom_in(self, widget):
         """ Handle a zoom-in. """
-        if (self.curzoomidx != (len(self.zoom_levels)-1)):
-            self.zoom_scale.set_value(self.curzoomidx+1)
+        if (self.curzoomidx != (len(self.zoom_levels) - 1)):
+            self.zoom_scale.set_value(self.curzoomidx + 1)
 
     def on_mouse_changed(self, widget, event):
         """ Keep track of where the mouse is """
@@ -3092,7 +3213,7 @@ class MapGUI(BaseGUI):
         # or else we risk causing the user to suddenly be editing a
         # different tile
         if (self.editing_a_tile):
-          return
+            return
 
         if (self.dragging):
             if sys.platform != 'win32' and gtk.events_pending():
@@ -3110,24 +3231,24 @@ class MapGUI(BaseGUI):
                 newvalue = adjust.get_value() + diff_x
                 if (newvalue < adjust.lower):
                     newvalue = adjust.lower
-                elif (newvalue > adjust.upper-adjust.page_size):
-                    newvalue = adjust.upper-adjust.page_size
+                elif (newvalue > adjust.upper - adjust.page_size):
+                    newvalue = adjust.upper - adjust.page_size
                 adjust.set_value(newvalue)
             if (diff_y != 0):
                 adjust = self.mainscroll.get_vadjustment()
                 newvalue = adjust.get_value() + diff_y
                 if (newvalue < adjust.lower):
                     newvalue = adjust.lower
-                elif (newvalue > adjust.upper-adjust.page_size):
-                    newvalue = adjust.upper-adjust.page_size
+                elif (newvalue > adjust.upper - adjust.page_size):
+                    newvalue = adjust.upper - adjust.page_size
                 adjust.set_value(newvalue)
             self.hold_x = event.x_root
             self.hold_y = event.y_root
             return
 
         # What x/y values we start with
-        start_x = int(event.x/self.z_width)
-        start_y = int(event.y/self.z_height)
+        start_x = int(event.x / self.z_width)
+        start_y = int(event.y / self.z_height)
         original_x = self.tile_x
         original_y = self.tile_y
 
@@ -3143,17 +3264,17 @@ class MapGUI(BaseGUI):
         # the if/then ended up being about 40% faster or so.
         testval = self.mousemap[self.curzoom][test_y][test_x][0]
         if (testval == 50):
-            self.tile_x = start_x-1
-            self.tile_y = start_y-1
+            self.tile_x = start_x - 1
+            self.tile_y = start_y - 1
         elif (testval == 100):
             self.tile_x = start_x
-            self.tile_y = start_y-1
+            self.tile_y = start_y - 1
         elif (testval == 150):
             self.tile_x = start_x
-            self.tile_y = start_y+1
+            self.tile_y = start_y + 1
         elif (testval == 200):
-            self.tile_x = start_x-1
-            self.tile_y = start_y+1
+            self.tile_x = start_x - 1
+            self.tile_y = start_y + 1
         else:
             self.tile_x = start_x
             self.tile_y = start_y
@@ -3164,8 +3285,10 @@ class MapGUI(BaseGUI):
             # tile moved.  Instead, figure out which direction the selected
             # tile moved and move the copying source tile the same
             # direction.
-            directions = self.mapobj.directions_between_coords(original_x, original_y, self.tile_x, self.tile_y)
-            self.copy_source_drag_x,self.copy_source_drag_y = self.mapobj.follow_directions_from_coord(self.copy_source_drag_x, self.copy_source_drag_y, directions)
+            directions = self.mapobj.directions_between_coords(
+                original_x, original_y, self.tile_x, self.tile_y)
+            self.copy_source_drag_x, self.copy_source_drag_y = self.mapobj.follow_directions_from_coord(
+                self.copy_source_drag_x, self.copy_source_drag_y, directions)
 
         # Some sanity checks
         if (self.tile_x < 0):
@@ -3185,16 +3308,18 @@ class MapGUI(BaseGUI):
             # already sent a queue_draw to the main maparea, so we don't have
             # to do it again here.
             if (self.drawing):
-                for (x, y) in self.highlight_tiles.keys():
+                for (x, y) in list(self.highlight_tiles.keys()):
                     self.action_draw_tile(x, y)
             elif (self.erasing):
-                for (x, y) in self.highlight_tiles.keys():
+                for (x, y) in list(self.highlight_tiles.keys()):
                     self.action_erase_tile(x, y)
             elif (self.copying):
-                self.action_copy_tiles(self.tile_x, self.tile_y, self.highlight_tiles.keys())
+                self.action_copy_tiles(
+                    self.tile_x, self.tile_y, list(self.highlight_tiles.keys()))
 
         # Update our coordinate label
-        self.coords_label.set_markup('<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
+        self.coords_label.set_markup(
+            '<i>(%d, %d)</i>' % (self.tile_x, self.tile_y))
 
     def tile_highlight_change(self):
         """
@@ -3215,7 +3340,8 @@ class MapGUI(BaseGUI):
                 failed = False
                 for direction in pattern:
                     if direction:
-                        newdir = self.mapobj.coords_relative(cur_x, cur_y, direction)
+                        newdir = self.mapobj.coords_relative(
+                            cur_x, cur_y, direction)
                         if newdir:
                             cur_x = newdir[0]
                             cur_y = newdir[1]
@@ -3238,9 +3364,9 @@ class MapGUI(BaseGUI):
                 # just doe some excessive redrawing
                 if (self.mapobj.tiles[y][x].entity is not None):
                     if (x != 0):
-                        local_cleantiles[(x-1, y)] = False
+                        local_cleantiles[(x - 1, y)] = False
                     if (x != 99):
-                        local_cleantiles[(x+1, y)] = False
+                        local_cleantiles[(x + 1, y)] = False
         self.highlight_tiles = {}
         for coord in cur_tiles:
             local_cleantiles[coord] = True
@@ -3250,7 +3376,8 @@ class MapGUI(BaseGUI):
         self.brush_pattern_prev = self.brush_pattern
 
         # Now sort our cleantiles so that they're always drawn back-to-front
-        tiles_sorted = sorted(local_cleantiles.keys(), key=lambda c: c[1]*100+c[0])
+        tiles_sorted = sorted(list(local_cleantiles.keys()),
+                              key=lambda c: c[1] * 100 + c[0])
         for coord in tiles_sorted:
             if local_cleantiles[coord] == False:
                 self.cleantiles.append(coord)
@@ -3289,7 +3416,7 @@ class MapGUI(BaseGUI):
         label.set_justify(gtk.JUSTIFY_RIGHT)
         label.set_padding(5, 4)
         self.register_widget('%s_label' % (name), label)
-        table.attach(label, 0, 1, row, row+1, gtk.FILL, gtk.FILL)
+        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
         return label
 
     def tilecontent_input_label(self, page, table, row, name, text):
@@ -3316,12 +3443,13 @@ class MapGUI(BaseGUI):
             align.add(hbox)
         else:
             align.add(entry)
-        table.attach(align, 1, 2, row, row+1)
+        table.attach(align, 1, 2, row, row + 1)
         return entry
 
     def tilecontent_input_text(self, page, table, row, name, text, tooltip=None, hbox=False):
         varname = '%s_%d' % (name, page)
-        entry = self.input_text(table, row, varname, text, tooltip, self.on_tilecontent_str_changed, 250, hbox)
+        entry = self.input_text(
+            table, row, varname, text, tooltip, self.on_tilecontent_str_changed, 250, hbox)
         tilecontent = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page]
         if (tilecontent is not None):
             if (name[:9] == 'item_name'):
@@ -3351,7 +3479,7 @@ class MapGUI(BaseGUI):
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 1, 2, row, row+1)
+        table.attach(align, 1, 2, row, row + 1)
         return entry
 
     def input_uchar(self, table, row, name, text, tooltip=None, signal=None):
@@ -3374,9 +3502,9 @@ class MapGUI(BaseGUI):
 
     def prop_unknown_input_spin(self, func, type, table, num, row, tooltip=None, signal=None, prefix=''):
         textdict = {
-                'i': 'Int',
-                'c': 'Char',
-                }
+            'i': 'Int',
+            'c': 'Char',
+        }
         if prefix != '':
             prefix = '%s_' % (prefix)
         varname = 'map_%sunknown%s%d' % (prefix, type, num)
@@ -3404,7 +3532,7 @@ class MapGUI(BaseGUI):
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 1, 2, row, row+1)
+        table.attach(align, 1, 2, row, row + 1)
 
     def tilecontent_input_flag(self, page, table, row, name, flagval, text, tooltip=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
@@ -3413,13 +3541,14 @@ class MapGUI(BaseGUI):
         entry = gtk.CheckButton()
         entry.show()
         entry.set_name('%s_%X_%d' % (name, flagval, page))
-        tilecontentval = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].__dict__[name]
+        tilecontentval = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].__dict__[
+            name]
         entry.set_active((tilecontentval & flagval == flagval))
         entry.connect('toggled', self.on_tilecontent_flag_changed)
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         align.add(entry)
-        table.attach(align, 1, 2, row, row+1)
+        table.attach(align, 1, 2, row, row + 1)
 
     def on_flag_changed(self, name, flagval_str, widget, object):
         """
@@ -3457,13 +3586,15 @@ class MapGUI(BaseGUI):
         What to do when our barrier dropdown is changed.
         """
         model = widget.get_model()
-        self.mapobj.tiles[self.tile_y][self.tile_x].wall = model[widget.get_active()][1]
+        self.mapobj.tiles[self.tile_y][self.tile_x].wall = model[widget.get_active(
+        )][1]
 
     def populate_mapitem_button(self, num, page):
         widget = self.get_widget('item_%d_%d_text' % (num, page))
         imgwidget = self.get_widget('item_%d_%d_image' % (num, page))
         item = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num]
-        self.populate_item_button(item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
+        self.populate_item_button(
+            item, widget, imgwidget, self.get_widget('itemtable_%d' % (page)))
 
     def on_tilecontent_dropdown_changed(self, widget):
         """ Handle the trap dropdown change. """
@@ -3480,7 +3611,8 @@ class MapGUI(BaseGUI):
         num = int(num)
         page = int(page)
         self.curitem = (num, page)
-        self.populate_itemform_from_item(self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num])
+        self.populate_itemform_from_item(
+            self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items[num])
         self.get_widget('item_notebook').set_current_page(0)
         if (doshow):
             self.itemwindow.show()
@@ -3490,7 +3622,8 @@ class MapGUI(BaseGUI):
         When loading in a new item, redraw the button and make sure that changes
         are entered into the system properly.
         """
-        self.on_mapitem_clicked(self.get_widget('item_%d_%d_button' % (num, page)), False)
+        self.on_mapitem_clicked(self.get_widget(
+            'item_%d_%d_button' % (num, page)), False)
         self.on_item_close_clicked(None, False)
 
     def on_mapitem_action_clicked(self, widget):
@@ -3501,8 +3634,10 @@ class MapGUI(BaseGUI):
         page = int(page)
         items = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].items
         if (action == 'cut'):
-            self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_copy' % (num, page)))
-            self.on_mapitem_action_clicked(self.get_widget('item_%d_%d_delete' % (num, page)))
+            self.on_mapitem_action_clicked(
+                self.get_widget('item_%d_%d_copy' % (num, page)))
+            self.on_mapitem_action_clicked(
+                self.get_widget('item_%d_%d_delete' % (num, page)))
         elif (action == 'copy'):
             self.itemclipboard = items[num]
         elif (action == 'paste'):
@@ -3550,7 +3685,8 @@ class MapGUI(BaseGUI):
             # These two callbacks can be done with lambdas fairly easily, but
             # they look ugly that way.
             completion.set_match_func(self.completion_match_anywhere, 0)
-            completion.set_cell_data_func(renderer, self.completion_show_text, 0)
+            completion.set_cell_data_func(
+                renderer, self.completion_show_text, 0)
             entry.set_completion(completion)
 
     def append_tilecontent_notebook(self, tilecontent):
@@ -3562,7 +3698,7 @@ class MapGUI(BaseGUI):
         curpages = self.tilecontent_notebook.get_n_pages()
 
         # Label for the notebook
-        label = gtk.Label('Object #%d' % (curpages+1))
+        label = gtk.Label('Object #%d' % (curpages + 1))
         label.show()
 
         # Remove Button
@@ -3598,55 +3734,68 @@ class MapGUI(BaseGUI):
 
         # Basic Inputs
         self.tilecontent_input_text(curpages, binput, 0, 'description', '(to update)',
-                '(to update)')
+                                    '(to update)')
         self.tilecontent_input_text(curpages, binput, 1, 'extratext', '(to update)',
-                '(to update)')
-        entry = self.tilecontent_input_text(curpages, binput, 2, 'script', 'Script', None, True)
+                                    '(to update)')
+        entry = self.tilecontent_input_text(
+            curpages, binput, 2, 'script', 'Script', None, True)
 
         # Script editor launcher
         hbox = entry.get_property('parent')
         self.setup_script_editor_launcher(hbox, entry, self.tilewindow, True)
 
         # We special-case this to handle the weirdly-trapped door at (25, 26) in outpost
-        if (tile.tilecontents[curpages].trap in c.traptable.keys()):
-            self.tilecontent_input_dropdown(curpages, binput, 4, 'trap', 'Trap', c.traptable.values(), None, self.on_tilecontent_dropdown_changed)
+        if (tile.tilecontents[curpages].trap in list(c.traptable.keys())):
+            self.tilecontent_input_dropdown(curpages, binput, 4, 'trap', 'Trap', list(c.traptable.values(
+            )), None, self.on_tilecontent_dropdown_changed)
         else:
-            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap', 'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 4, 'trap', 'Trap',
+                                        'The trap value should be between 0 and 8 ordinarily.  The  current trap is undefined.')
 
         # We special-case this just in case
-        if (tile.tilecontents[curpages].state in c.containertable.keys()):
-            self.tilecontent_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>", c.containertable.values(), None, self.on_tilecontent_dropdown_changed)
+        if (tile.tilecontents[curpages].state in list(c.containertable.keys())):
+            self.tilecontent_input_dropdown(curpages, binput, 5, 'state', "State\n<i><small>(if container, door, or switch)</small></i>",
+                                            list(c.containertable.values()), None, self.on_tilecontent_dropdown_changed)
         else:
-            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State', 'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 5, 'state', 'State',
+                                        'The state value should be between 0 and 5 ordinarily.  The current container state is undefined.')
 
         # Note that row 6 is lock level, but we're skipping it right here
 
         if c.book == 1:
             # Book 1-specific values
-            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other', 'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 7, 'other', 'Other',
+                                        'When the Lock Level is set to 99, this is the combination of the safe.  Otherwise, it appears to be a value from 0 to 3.')
 
             # If we ever get more flags, this'll have to change
             if (tile.tilecontents[curpages].flags & ~0x40 == 0):
-                self.tilecontent_input_flag(curpages, binput, 8, 'flags', 0x40, 'Destructible')
+                self.tilecontent_input_flag(
+                    curpages, binput, 8, 'flags', 0x40, 'Destructible')
             else:
-                self.tilecontent_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags', 'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
+                self.tilecontent_input_spin(self.input_short, curpages, binput, 8, 'flags', 'Flags',
+                                            'Ordinarily this is a bit field, but the only value that I\'ve ever seen is "64" which denotes destructible.  Since this value is different, it\'s being shown here as an integer.')
 
-            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 9, 'sturdiness', 'Sturdiness', '89 is the typical value for most objects.  Lower numbers are more flimsy.')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 9, 'sturdiness', 'Sturdiness',
+                                        '89 is the typical value for most objects.  Lower numbers are more flimsy.')
         else:
             # Book 2-specific values
-            self.tilecontent_input_spin(self.input_short, curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel', 'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
-            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty', 'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
+            self.tilecontent_input_spin(self.input_short, curpages, binput, 7, 'slider_loot', 'Slider/Lootlevel',
+                                        'If the container has a slider lock, this is the combination.  If not, it\'s the relative loot level (0 being appropriate to your class, 10 being the highest in-game)')
+            self.tilecontent_input_spin(self.input_uchar, curpages, binput, 8, 'on_empty', 'On-Empty',
+                                        'Typically 0 for permanent containers, 1 for bags.  There are a couple of exceptions')
 
             # Condition is special, we're using an hbox here
             scr = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[curpages]
-            self.tilecontent_input_label(curpages, binput, 9, 'cur_condition', 'Condition')
+            self.tilecontent_input_label(
+                curpages, binput, 9, 'cur_condition', 'Condition')
             hbox = gtk.HBox()
             curentry = gtk.SpinButton()
             self.register_widget('cur_condition_%d' % (curpages), curentry)
             curentry.set_range(0, 0xFFFFFFFF)
             curentry.set_adjustment(gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
             maxlabel = gtk.Label('out of:')
-            self.register_widget('max_condition_%d_label' % (curpages), maxlabel)
+            self.register_widget('max_condition_%d_label' %
+                                 (curpages), maxlabel)
             maxentry = gtk.SpinButton()
             self.register_widget('max_condition_%d' % (curpages), maxentry)
             maxentry.set_range(0, 0xFFFFFFFF)
@@ -3670,25 +3819,28 @@ class MapGUI(BaseGUI):
             locktip = 'Zero is unlocked, 1 is the easiest lock, 60 is the highest in the game, and 99 denotes a slider lock'
         else:
             locktip = 'Zero is unlocked, 1 is the easiest lock, 10 is the highest in the game, and 12 denotes a slider lock'
-        self.tilecontent_input_spin(self.input_uchar, curpages, binput, 6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
+        self.tilecontent_input_spin(self.input_uchar, curpages, binput,
+                                    6, 'lock', 'Lock Level', locktip, self.on_locklevel_changed)
 
         # Contents
-        contents_box = self.tilecontent_group_box('<b>Contents</b> <i>(If Container)</i>')
+        contents_box = self.tilecontent_group_box(
+            '<b>Contents</b> <i>(If Container)</i>')
         cinput = gtk.Table(8, 3)
         self.register_widget('itemtable_%d' % (curpages), cinput, True)
         cinput.show()
         cspacer = gtk.Label('')
         cspacer.show()
         cspacer.set_padding(11, 0)
-        cinput.attach(cspacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        cinput.attach(cspacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL | gtk.EXPAND)
         contents_box.pack_start(cinput, False, False)
 
         # Contents Inputs (varies based on savefile status)
         if (tile.tilecontents[curpages].savegame):
             for num in range(8):
-                self.tilecontent_input_label(curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num+1))
+                self.tilecontent_input_label(
+                    curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num + 1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
-                        2, 3, num, num+1, gtk.FILL|gtk.EXPAND, gtk.FILL|gtk.EXPAND)
+                              2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND)
                 self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
@@ -3696,7 +3848,7 @@ class MapGUI(BaseGUI):
                                                     cinput,
                                                     num,
                                                     'item_name_%d' % (num),
-                                                    'Item %d' % (num+1))
+                                                    'Item %d' % (num + 1))
                 self.setup_global_item_completion(entry)
 
         # Unknowns
@@ -3706,16 +3858,21 @@ class MapGUI(BaseGUI):
         spacer = gtk.Label('')
         spacer.show()
         spacer.set_padding(11, 0)
-        uinput.attach(spacer, 0, 1, 0, 5, gtk.FILL, gtk.FILL|gtk.EXPAND)
+        uinput.attach(spacer, 0, 1, 0, 5, gtk.FILL, gtk.FILL | gtk.EXPAND)
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
         if c.book == 1:
-            self.tilecontent_input_spin(self.input_short, curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
-            self.tilecontent_input_spin(self.input_short, curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
-            self.tilecontent_input_spin(self.input_int, curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
-            self.tilecontent_input_spin(self.input_int, curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
-            self.tilecontent_input_spin(self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
+            self.tilecontent_input_spin(
+                self.input_short, curpages, uinput, 0, 'unknownh3', '<i>Unknown</i>')
+            self.tilecontent_input_spin(
+                self.input_short, curpages, uinput, 1, 'zeroh1', '<i>Usually Zero 1</i>')
+            self.tilecontent_input_spin(
+                self.input_int, curpages, uinput, 2, 'zeroi1', '<i>Usually Zero 2</i>')
+            self.tilecontent_input_spin(
+                self.input_int, curpages, uinput, 3, 'zeroi2', '<i>Usually Zero 3</i>')
+            self.tilecontent_input_spin(
+                self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
         content = gtk.VBox()
@@ -3834,12 +3991,13 @@ class MapGUI(BaseGUI):
             text_2.set_text('Map Coordinates')
             obj_1.set_tooltip_text('Name of the map to send the player to.')
             obj_2.set_tooltip_text('The coordinates within the map specified above.  '
-                'The coordinate "(56, 129)" would be written "12956"')
+                                   'The coordinate "(56, 129)" would be written "12956"')
         else:
             text_1.set_text('Description')
             text_2.set_text('Extra Text')
             obj_1.set_tooltip_text('A basic description of the tile.')
-            obj_2.set_tooltip_text('More descriptive text (such as on signs or gravestones).')
+            obj_2.set_tooltip_text(
+                'More descriptive text (such as on signs or gravestones).')
 
     def update_all_tilecontentid_type_strings(self, tile):
         """ Update the form text for all tilecontents on a tile. """
@@ -3907,7 +4065,8 @@ class MapGUI(BaseGUI):
         if (tile.tilecontentid in c.tilecontenttypetable):
             self.get_widget('tilecontentid_num_align').hide()
             self.get_widget('tilecontentid_dd_align').show()
-            self.get_widget('tilecontentid_dd').set_active(self.object_type_list[tile.tilecontentid])
+            self.get_widget('tilecontentid_dd').set_active(
+                self.object_type_list[tile.tilecontentid])
         else:
             self.get_widget('tilecontentid_num_align').show()
             self.get_widget('tilecontentid_dd_align').hide()
@@ -3929,20 +4088,21 @@ class MapGUI(BaseGUI):
         self.populating_entity_tab = True
         if (tile.entity.entid in self.entitytable):
             if (self.entitytable[tile.entity.entid].name in self.entitykeys):
-                idx = self.entitykeys.index(self.entitytable[tile.entity.entid].name)
+                idx = self.entitykeys.index(
+                    self.entitytable[tile.entity.entid].name)
                 self.get_widget('entid').set_active(idx)
             else:
                 self.errordialog('Entity Error', 'The application encountered an entity '
-                        'type that we don\'t know anything about.  The values on the entity '
-                        'tab may not be accurate', self.tilewindow)
+                                 'type that we don\'t know anything about.  The values on the entity '
+                                 'tab may not be accurate', self.tilewindow)
                 self.get_widget('entid').set_active(0)
         else:
             self.errordialog('Entity Error', 'The application encountered an entity '
-                    'type that we don\'t know anything about.  The values on the entity '
-                    'tab may not be accurate', self.tilewindow)
+                             'type that we don\'t know anything about.  The values on the entity '
+                             'tab may not be accurate', self.tilewindow)
             self.get_widget('entid').set_active(0)
         self.populating_entity_tab = False
-        self.get_widget('direction').set_active(tile.entity.direction-1)
+        self.get_widget('direction').set_active(tile.entity.direction - 1)
         self.get_widget('entscript').set_text(tile.entity.entscript)
         if (self.mapobj.is_savegame()):
             self.get_widget('friendly').set_value(tile.entity.friendly)
@@ -3979,20 +4139,24 @@ class MapGUI(BaseGUI):
                 if (len(tile.tilecontents) > 0):
                     note.hide()
                 else:
-                    note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
+                    note.set_markup(
+                        '<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                     note.show()
             else:
                 if (len(tile.tilecontents) > 0):
-                    note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
+                    note.set_markup(
+                        '<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                     note.show()
                 else:
                     note.hide()
         else:
             if tile.tilecontentid == 0 and len(tile.tilecontents) > 0:
-                note.set_markup('<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
+                note.set_markup(
+                    '<b>Note:</b> Given the object type specified above, this tile should <i>not</i> have an object.')
                 note.show()
             elif tile.tilecontentid != 19 and tile.tilecontentid != 0 and len(tile.tilecontents) == 0:
-                note.set_markup('<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
+                note.set_markup(
+                    '<b>Note:</b> Given the object type specified above, an object should be created for this tile.')
                 note.show()
             else:
                 note.hide()
@@ -4000,44 +4164,46 @@ class MapGUI(BaseGUI):
     def open_floorsel(self, widget):
         """ Show the floor selection window. """
         self.imgsel_launch(self.get_widget('floorimg'),
-                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
-                self.gfx.get_floor, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                           self.gfx.get_floor, True, 1)
 
     def open_draw_floorsel(self, widget):
         """ Show the floor selection window for our drawing widget. """
         self.imgsel_launch(self.draw_floor_spin,
-                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
-                self.gfx.get_floor, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                           self.gfx.get_floor, True, 1)
 
     def open_fill_floorsel(self, widget):
         """ Show the floor selection window for our "fill" widget. """
         self.imgsel_launch(self.fill_map_spin,
-                self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
-                self.gfx.get_floor, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height, self.gfx.floor_cols, self.gfx.floor_rows,
+                           self.gfx.get_floor, True, 1)
 
     def open_decalsel(self, widget):
         """ Show the decal selection window. """
         self.imgsel_launch(self.get_widget('decalimg'),
-                self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
-                self.gfx.get_decal, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
+                           self.gfx.get_decal, True, 1)
 
     def open_draw_decalsel(self, widget):
         """ Show the decal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_decal_spin,
-                self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
-                self.gfx.get_decal, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height, self.gfx.decal_cols, self.gfx.decal_rows,
+                           self.gfx.get_decal, True, 1)
 
     def open_walldecalsel(self, widget):
         """ Show the wall decal selection window. """
         self.imgsel_launch(self.get_widget('walldecalimg'),
-                self.gfx.tile_width, self.gfx.tile_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
-                self.gfx.get_object_decal, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height *
+                           3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
+                           self.gfx.get_object_decal, True, 1)
 
     def open_draw_walldecalsel(self, widget):
         """ Show the walldecal selection window for our drawing widget. """
         self.imgsel_launch(self.draw_walldecal_spin,
-                self.gfx.tile_width, self.gfx.tile_height*3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
-                self.gfx.get_object_decal, True, 1)
+                           self.gfx.tile_width, self.gfx.tile_height *
+                           3, self.gfx.walldecal_cols, self.gfx.walldecal_rows,
+                           self.gfx.get_object_decal, True, 1)
 
     def objsel_fix_pixbuf(self, pixbuf):
         """ Function to fix the pixbuf, for object loading. """
@@ -4064,7 +4230,8 @@ class MapGUI(BaseGUI):
             self.objsel_window.label_c.set_label('Set B (walls)')
             self.objsel_window.label_d.set_label('Set C (trees)')
         self.imgsel_window = self.get_widget('objselwindow')
-        self.imgsel_window.set_size_request((self.gfx.obj_a_width*self.gfx.obj_a_cols)+60, 600)
+        self.imgsel_window.set_size_request(
+            (self.gfx.obj_a_width * self.gfx.obj_a_cols) + 60, 600)
         if (spinwidget is None):
             self.imgsel_widget = self.get_widget('wallimg')
         else:
@@ -4077,78 +4244,78 @@ class MapGUI(BaseGUI):
         self.imgsel_blank_color = self.imgsel_generate_grayscale(127)
         self.objsel_panes = {}
         self.objsel_panes['a'] = {
-                'init': False,
-                'clean': [],
-                'area': self.objsel_window.drawingarea_a,
-                'width': self.gfx.obj_a_width,
-                'height': self.gfx.obj_a_height,
-                'cols': self.gfx.obj_a_cols,
-                'rows': self.gfx.obj_a_rows,
-                'x': self.gfx.obj_a_width*self.gfx.obj_a_cols,
-                'y': self.gfx.obj_a_height*self.gfx.obj_a_rows,
-                'offset': self.gfx.obj_a_offset,
-                'mousex': -1,
-                'mousey': -1,
-                'mousex_prev': -1,
-                'mousey_prev': -1,
-                'blank': None,
-                'page': 0,
-            }
+            'init': False,
+            'clean': [],
+            'area': self.objsel_window.drawingarea_a,
+            'width': self.gfx.obj_a_width,
+            'height': self.gfx.obj_a_height,
+            'cols': self.gfx.obj_a_cols,
+            'rows': self.gfx.obj_a_rows,
+            'x': self.gfx.obj_a_width * self.gfx.obj_a_cols,
+            'y': self.gfx.obj_a_height * self.gfx.obj_a_rows,
+            'offset': self.gfx.obj_a_offset,
+            'mousex': -1,
+            'mousey': -1,
+            'mousex_prev': -1,
+            'mousey_prev': -1,
+            'blank': None,
+            'page': 0,
+        }
         if c.book == 1:
             self.objsel_panes['b'] = {
-                    'init': False,
-                    'clean': [],
-                    'area': self.objsel_window.drawingarea_b,
-                    'width': self.gfx.obj_b_width,
-                    'height': self.gfx.obj_b_height,
-                    'cols': self.gfx.obj_b_cols,
-                    'rows': self.gfx.obj_b_rows,
-                    'x': self.gfx.obj_b_width*self.gfx.obj_b_cols,
-                    'y': self.gfx.obj_b_height*self.gfx.obj_b_rows,
-                    'offset': self.gfx.obj_b_offset,
-                    'mousex': -1,
-                    'mousey': -1,
-                    'mousex_prev': -1,
-                    'mousey_prev': -1,
-                    'blank': None,
-                    'page': 1,
-                }
+                'init': False,
+                'clean': [],
+                'area': self.objsel_window.drawingarea_b,
+                'width': self.gfx.obj_b_width,
+                'height': self.gfx.obj_b_height,
+                'cols': self.gfx.obj_b_cols,
+                'rows': self.gfx.obj_b_rows,
+                'x': self.gfx.obj_b_width * self.gfx.obj_b_cols,
+                'y': self.gfx.obj_b_height * self.gfx.obj_b_rows,
+                'offset': self.gfx.obj_b_offset,
+                'mousex': -1,
+                'mousey': -1,
+                'mousex_prev': -1,
+                'mousey_prev': -1,
+                'blank': None,
+                'page': 1,
+            }
         self.objsel_panes['c'] = {
-                'init': False,
-                'clean': [],
-                'area': self.objsel_window.drawingarea_c,
-                'width': self.gfx.obj_c_width,
-                'height': self.gfx.obj_c_height,
-                'cols': self.gfx.obj_c_cols,
-                'rows': self.gfx.obj_c_rows,
-                'x': self.gfx.obj_c_width*self.gfx.obj_c_cols,
-                'y': self.gfx.obj_c_height*self.gfx.obj_c_rows,
-                'offset': self.gfx.obj_c_offset,
-                'mousex': -1,
-                'mousey': -1,
-                'mousex_prev': -1,
-                'mousey_prev': -1,
-                'blank': None,
-                'page': 2,
-            }
+            'init': False,
+            'clean': [],
+            'area': self.objsel_window.drawingarea_c,
+            'width': self.gfx.obj_c_width,
+            'height': self.gfx.obj_c_height,
+            'cols': self.gfx.obj_c_cols,
+            'rows': self.gfx.obj_c_rows,
+            'x': self.gfx.obj_c_width * self.gfx.obj_c_cols,
+            'y': self.gfx.obj_c_height * self.gfx.obj_c_rows,
+            'offset': self.gfx.obj_c_offset,
+            'mousex': -1,
+            'mousey': -1,
+            'mousex_prev': -1,
+            'mousey_prev': -1,
+            'blank': None,
+            'page': 2,
+        }
         self.objsel_panes['d'] = {
-                'init': False,
-                'clean': [],
-                'area': self.objsel_window.drawingarea_d,
-                'width': self.gfx.obj_d_width,
-                'height': self.gfx.obj_d_height,
-                'cols': self.gfx.obj_d_cols,
-                'rows': self.gfx.obj_d_rows,
-                'x': self.gfx.obj_d_width*self.gfx.obj_d_cols,
-                'y': self.gfx.obj_d_height*self.gfx.obj_d_rows,
-                'offset': self.gfx.obj_d_offset,
-                'mousex': -1,
-                'mousey': -1,
-                'mousex_prev': -1,
-                'mousey_prev': -1,
-                'blank': None,
-                'page': 3,
-            }
+            'init': False,
+            'clean': [],
+            'area': self.objsel_window.drawingarea_d,
+            'width': self.gfx.obj_d_width,
+            'height': self.gfx.obj_d_height,
+            'cols': self.gfx.obj_d_cols,
+            'rows': self.gfx.obj_d_rows,
+            'x': self.gfx.obj_d_width * self.gfx.obj_d_cols,
+            'y': self.gfx.obj_d_height * self.gfx.obj_d_rows,
+            'offset': self.gfx.obj_d_offset,
+            'mousex': -1,
+            'mousey': -1,
+            'mousex_prev': -1,
+            'mousey_prev': -1,
+            'blank': None,
+            'page': 3,
+        }
         # Set initial page
         curpage = 0
         for letter in letters:
@@ -4172,7 +4339,7 @@ class MapGUI(BaseGUI):
         wname = widget.get_name()
         (foo, letter, bar) = wname.split('_', 2)
         if (letter != self.objsel_current):
-            for (key, val) in self.objsel_panes[letter].items():
+            for (key, val) in list(self.objsel_panes[letter].items()):
                 self.__dict__['imgsel_%s' % key] = val
                 if key == 'area':
                     self.objsel_window.drawingarea = val
@@ -4214,7 +4381,7 @@ class MapGUI(BaseGUI):
                     break
         else:
             self.get_widget('brush_frame').hide()
-            self.brush_pattern = [ [None] ]
+            self.brush_pattern = [[None]]
 
         # Redraw our highlight, in case this change caused a brush change
         self.tile_highlight_change()
@@ -4301,7 +4468,7 @@ class MapGUI(BaseGUI):
                 # Should maybe throw an exception here, but instead we'll
                 # just spit something on the console and return.  No need to
                 # get all huffy about it.
-                print "Unknown control toggled, should never get here"
+                print("Unknown control toggled, should never get here")
                 return
             self.maparea.window.set_cursor(self.cursor_map[self.edit_mode])
             self.update_activity_label()
@@ -4316,122 +4483,122 @@ class MapGUI(BaseGUI):
         if (widget.get_active()):
             if clicked == 'brush_tile_1_toggle':
                 # 1x1 Square
-                self.brush_pattern = [ [None] ]
+                self.brush_pattern = [[None]]
 
             elif clicked == 'brush_tile_3_toggle':
                 # 3x3 Square
-                self.brush_pattern = [ [Map.DIR_N],
-                        [Map.DIR_NW],
-                        [Map.DIR_NE],
-                        [Map.DIR_W],
-                        [None],
-                        [Map.DIR_E],
-                        [Map.DIR_SW],
-                        [Map.DIR_SE],
-                        [Map.DIR_S]]
+                self.brush_pattern = [[Map.DIR_N],
+                                      [Map.DIR_NW],
+                                      [Map.DIR_NE],
+                                      [Map.DIR_W],
+                                      [None],
+                                      [Map.DIR_E],
+                                      [Map.DIR_SW],
+                                      [Map.DIR_SE],
+                                      [Map.DIR_S]]
 
             elif clicked == 'brush_tile_5_toggle':
                 # 5x5 Square
-                self.brush_pattern = [ [Map.DIR_W, Map.DIR_W],
-                        [Map.DIR_W, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_N],
-                        [Map.DIR_N, Map.DIR_N],
-                        [Map.DIR_W, Map.DIR_SW],
-                        [Map.DIR_W],
-                        [Map.DIR_NW],
-                        [Map.DIR_N],
-                        [Map.DIR_N, Map.DIR_NE],
-                        [Map.DIR_SW, Map.DIR_SW],
-                        [Map.DIR_SW],
-                        [None],
-                        [Map.DIR_NE],
-                        [Map.DIR_NE, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_SW],
-                        [Map.DIR_S],
-                        [Map.DIR_SE],
-                        [Map.DIR_E],
-                        [Map.DIR_E, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_S],
-                        [Map.DIR_S, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_E],
-                        [Map.DIR_E, Map.DIR_E],
-                        ]
-                        
+                self.brush_pattern = [[Map.DIR_W, Map.DIR_W],
+                                      [Map.DIR_W, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_N],
+                                      [Map.DIR_N, Map.DIR_N],
+                                      [Map.DIR_W, Map.DIR_SW],
+                                      [Map.DIR_W],
+                                      [Map.DIR_NW],
+                                      [Map.DIR_N],
+                                      [Map.DIR_N, Map.DIR_NE],
+                                      [Map.DIR_SW, Map.DIR_SW],
+                                      [Map.DIR_SW],
+                                      [None],
+                                      [Map.DIR_NE],
+                                      [Map.DIR_NE, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_SW],
+                                      [Map.DIR_S],
+                                      [Map.DIR_SE],
+                                      [Map.DIR_E],
+                                      [Map.DIR_E, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_S],
+                                      [Map.DIR_S, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_E],
+                                      [Map.DIR_E, Map.DIR_E],
+                                      ]
+
             elif clicked == 'brush_tile_2_toggle':
                 # Circle with radius of 2 (ish)
                 # Actually just a 5x5 square with the corners cut
                 self.brush_pattern = [[Map.DIR_W, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_N],
-                        [Map.DIR_W, Map.DIR_SW],
-                        [Map.DIR_W],
-                        [Map.DIR_NW],
-                        [Map.DIR_N],
-                        [Map.DIR_N, Map.DIR_NE],
-                        [Map.DIR_SW, Map.DIR_SW],
-                        [Map.DIR_SW],
-                        [None],
-                        [Map.DIR_NE],
-                        [Map.DIR_NE, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_SW],
-                        [Map.DIR_S],
-                        [Map.DIR_SE],
-                        [Map.DIR_E],
-                        [Map.DIR_E, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_E],
-                        ]
+                                      [Map.DIR_NW, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_N],
+                                      [Map.DIR_W, Map.DIR_SW],
+                                      [Map.DIR_W],
+                                      [Map.DIR_NW],
+                                      [Map.DIR_N],
+                                      [Map.DIR_N, Map.DIR_NE],
+                                      [Map.DIR_SW, Map.DIR_SW],
+                                      [Map.DIR_SW],
+                                      [None],
+                                      [Map.DIR_NE],
+                                      [Map.DIR_NE, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_SW],
+                                      [Map.DIR_S],
+                                      [Map.DIR_SE],
+                                      [Map.DIR_E],
+                                      [Map.DIR_E, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_E],
+                                      ]
 
             elif clicked == 'brush_tile_4_toggle':
                 # Circle with radius of 4 (ish)
                 # Actually a 5x5 square with EXTRA stuff on it
-                self.brush_pattern = [ [Map.DIR_NW, Map.DIR_NW, Map.DIR_W],
-                        [Map.DIR_NW, Map.DIR_NW, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_NW, Map.DIR_N],
-                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_N],
-                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_NE],
-                        [Map.DIR_NE, Map.DIR_NE, Map.DIR_E],
-                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_W],
-                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_SW],
-                        [Map.DIR_SW, Map.DIR_SW, Map.DIR_S],
-                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_S],
-                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_SE, Map.DIR_E],
-                        [Map.DIR_W, Map.DIR_W],
-                        [Map.DIR_W, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_NW],
-                        [Map.DIR_NW, Map.DIR_N],
-                        [Map.DIR_N, Map.DIR_N],
-                        [Map.DIR_W, Map.DIR_SW],
-                        [Map.DIR_W],
-                        [Map.DIR_NW],
-                        [Map.DIR_N],
-                        [Map.DIR_N, Map.DIR_NE],
-                        [Map.DIR_SW, Map.DIR_SW],
-                        [Map.DIR_SW],
-                        [None],
-                        [Map.DIR_NE],
-                        [Map.DIR_NE, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_SW],
-                        [Map.DIR_S],
-                        [Map.DIR_SE],
-                        [Map.DIR_E],
-                        [Map.DIR_E, Map.DIR_NE],
-                        [Map.DIR_S, Map.DIR_S],
-                        [Map.DIR_S, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_SE],
-                        [Map.DIR_SE, Map.DIR_E],
-                        [Map.DIR_E, Map.DIR_E],
-                        ]
+                self.brush_pattern = [[Map.DIR_NW, Map.DIR_NW, Map.DIR_W],
+                                      [Map.DIR_NW, Map.DIR_NW, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_NW, Map.DIR_N],
+                                      [Map.DIR_NE, Map.DIR_NE, Map.DIR_N],
+                                      [Map.DIR_NE, Map.DIR_NE, Map.DIR_NE],
+                                      [Map.DIR_NE, Map.DIR_NE, Map.DIR_E],
+                                      [Map.DIR_SW, Map.DIR_SW, Map.DIR_W],
+                                      [Map.DIR_SW, Map.DIR_SW, Map.DIR_SW],
+                                      [Map.DIR_SW, Map.DIR_SW, Map.DIR_S],
+                                      [Map.DIR_SE, Map.DIR_SE, Map.DIR_S],
+                                      [Map.DIR_SE, Map.DIR_SE, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_SE, Map.DIR_E],
+                                      [Map.DIR_W, Map.DIR_W],
+                                      [Map.DIR_W, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_NW],
+                                      [Map.DIR_NW, Map.DIR_N],
+                                      [Map.DIR_N, Map.DIR_N],
+                                      [Map.DIR_W, Map.DIR_SW],
+                                      [Map.DIR_W],
+                                      [Map.DIR_NW],
+                                      [Map.DIR_N],
+                                      [Map.DIR_N, Map.DIR_NE],
+                                      [Map.DIR_SW, Map.DIR_SW],
+                                      [Map.DIR_SW],
+                                      [None],
+                                      [Map.DIR_NE],
+                                      [Map.DIR_NE, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_SW],
+                                      [Map.DIR_S],
+                                      [Map.DIR_SE],
+                                      [Map.DIR_E],
+                                      [Map.DIR_E, Map.DIR_NE],
+                                      [Map.DIR_S, Map.DIR_S],
+                                      [Map.DIR_S, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_SE],
+                                      [Map.DIR_SE, Map.DIR_E],
+                                      [Map.DIR_E, Map.DIR_E],
+                                      ]
 
             else:
                 # Should maybe throw an exception here, but instead we'll
                 # just spit something on the console and return.  No need to
                 # get all huffy about it.
-                print "Unknown brush toggled, should never get here"
+                print("Unknown brush toggled, should never get here")
                 return
 
         self.tile_highlight_change()
@@ -4455,25 +4622,29 @@ class MapGUI(BaseGUI):
             if (self.tile_y < len(self.mapobj.tiles)):
                 if (self.tile_x < len(self.mapobj.tiles[self.tile_y])):
                     if c.book > 1:
-                        self.store_hugegfx_state(self.mapobj.tiles[self.tile_y][self.tile_x])
+                        self.store_hugegfx_state(
+                            self.mapobj.tiles[self.tile_y][self.tile_x])
                     self.undo.store(self.tile_x, self.tile_y)
-                    self.populate_tilewindow_from_tile(self.mapobj.tiles[self.tile_y][self.tile_x])
-                    self.get_widget('tilelabel').set_markup('<b>Map Tile (%d, %d)</b>' % (self.tile_x, self.tile_y))
+                    self.populate_tilewindow_from_tile(
+                        self.mapobj.tiles[self.tile_y][self.tile_x])
+                    self.get_widget('tilelabel').set_markup(
+                        '<b>Map Tile (%d, %d)</b>' % (self.tile_x, self.tile_y))
                     self.editing_a_tile = True
                     self.tilewindow.show()
         elif (action == self.ACTION_DRAW):
             self.drawing = True
-            for (x, y) in self.highlight_tiles.keys():
+            for (x, y) in list(self.highlight_tiles.keys()):
                 self.action_draw_tile(x, y)
         elif (action == self.ACTION_ERASE):
             self.erasing = True
-            for (x, y) in self.highlight_tiles.keys():
+            for (x, y) in list(self.highlight_tiles.keys()):
                 self.action_erase_tile(x, y)
         elif (action == self.ACTION_OBJECT):
             self.action_place_object_tile(self.tile_x, self.tile_y)
         elif (action == self.ACTION_COPY):
             self.copying = True
-            self.action_copy_tiles(self.tile_x, self.tile_y, self.highlight_tiles.keys())
+            self.action_copy_tiles(
+                self.tile_x, self.tile_y, list(self.highlight_tiles.keys()))
         elif (action == self.ACTION_COPY_SELECT):
             self.action_copy_select(self.tile_x, self.tile_y)
         elif (action == self.ACTION_SCRIPT_ED):
@@ -4501,14 +4672,16 @@ class MapGUI(BaseGUI):
 
         # Report our Exception to the user (let it go to stderr as well)
         exceptionType, exceptionValue, exceptionTraceback = exception_info
-        traceback.print_exception(exceptionType, exceptionValue, exceptionTraceback, file=sys.stderr)
-        exceptionStr = ''.join(traceback.format_exception(exceptionType, exceptionValue, exceptionTraceback))
+        traceback.print_exception(
+            exceptionType, exceptionValue, exceptionTraceback, file=sys.stderr)
+        exceptionStr = ''.join(traceback.format_exception(
+            exceptionType, exceptionValue, exceptionTraceback))
         buf = self.map_exception_view.get_buffer()
         buf.set_text(exceptionStr)
         buf.place_cursor(buf.get_start_iter())
         self.map_exception_window.run()
         self.map_exception_window.hide()
-        
+
         # Cancel out of the Undo so that the app isn't locked up
         # TODO: *should* we try to finish the undo instead, so it may be able
         # to back out *some* data at least?
@@ -4554,7 +4727,7 @@ class MapGUI(BaseGUI):
                 # barriers here...  as it is, if you leave all the "drawing" checkboxes off
                 # but draw around, this function will update barrier information as it goes.
                 # Ah well.  For now I'm just going to let it do that.
-                #if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
+                # if (self.draw_wall_checkbox.get_active() or self.draw_floor_checkbox.get_active() or
                 #        self.draw_decal_checkbox.get_active()):
                 if (tile.walldecalimg in self.smartdraw.wall_list['walldecal_seethrough']):
                     tile.wall = 5
@@ -4576,14 +4749,16 @@ class MapGUI(BaseGUI):
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
+                    self.undo.add_additional(
+                        self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_wall(tile)
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Draw')
                     for adjtile in affected_tiles:
                         self.redraw_tile(adjtile.x, adjtile.y)
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_tiles) = self.smartdraw.draw_smart_complex_wall(tile, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_wall(
+                    tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Wall Draw (%s)' % (text))
                     for adjtile in affected_tiles:
@@ -4595,14 +4770,17 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
-                affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
+                    self.undo.add_additional(
+                        self.mapobj.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_floor(
+                    tile, self.draw_straight_paths.get_active())
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Draw')
                     for adjtile in affected_tiles:
                         self.redraw_tile(adjtile.x, adjtile.y)
             if (self.draw_floor_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_tiles) = self.smartdraw.draw_smart_complex_floor(tile, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_floor(
+                    tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
                     for adjtile in affected_tiles:
@@ -4616,7 +4794,8 @@ class MapGUI(BaseGUI):
 
             # Smart decals (triggered by the floor checkbox for now)
             if (self.draw_decal_checkbox.get_active() and self.smartdraw_check.get_active() and self.smart_complex_objects.get_active()):
-                (text, affected_tiles) = self.smartdraw.draw_smart_complex_decal(tile, self.undo)
+                (text, affected_tiles) = self.smartdraw.draw_smart_complex_decal(
+                    tile, self.undo)
                 if (text is not None):
                     self.undo.set_text('Smart Draw (%s)' % (text))
                     for adjtile in affected_tiles:
@@ -4648,7 +4827,7 @@ class MapGUI(BaseGUI):
         self.undo.set_text('Erase')
 
         try:
-            
+
             # Grab our tile object
             tile = self.mapobj.tiles[y][x]
             if c.book > 1:
@@ -4664,7 +4843,7 @@ class MapGUI(BaseGUI):
                 tile.floorimg = 0
             if (self.erase_decal_checkbox.get_active()):
                 if (self.smartdraw_check.get_active() and self.draw_smart_barrier.get_active()):
-                    if (tile.decalimg in self.smartdraw.wall_list['decal_blocked']+self.smartdraw.wall_list['decal_seethrough']):
+                    if (tile.decalimg in self.smartdraw.wall_list['decal_blocked'] + self.smartdraw.wall_list['decal_seethrough']):
                         tile.wall = 0
                 tile.decalimg = 0
             if (self.erase_wall_checkbox.get_active()):
@@ -4690,7 +4869,8 @@ class MapGUI(BaseGUI):
             # Handle "smart" walls if requested
             if (self.draw_wall_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_wall.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_SE, Map.DIR_SW, Map.DIR_NW]:
-                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
+                    self.undo.add_additional(
+                        self.mapobj.tile_relative(x, y, dir))
                 affected_tiles = self.smartdraw.draw_wall(tile)
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Wall Erase')
@@ -4703,8 +4883,10 @@ class MapGUI(BaseGUI):
                     self.smartdraw_check.get_active() and
                     self.draw_smart_floor.get_active()):
                 for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
-                    self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
-                affected_tiles = self.smartdraw.draw_floor(tile, self.draw_straight_paths.get_active())
+                    self.undo.add_additional(
+                        self.mapobj.tile_relative(x, y, dir))
+                affected_tiles = self.smartdraw.draw_floor(
+                    tile, self.draw_straight_paths.get_active())
                 if (affected_tiles is not None):
                     self.undo.set_text('Smart Erase')
                     for adjtile in affected_tiles:
@@ -4712,7 +4894,7 @@ class MapGUI(BaseGUI):
 
             # Handles "smart" wall decals if needed
             # This just randomizes, so don't bother here.
-            #if (self.erase_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
+            # if (self.erase_walldecal_checkbox.get_active() and self.smartdraw_check.get_active() and self.draw_smart_walldecal.get_active()):
             #    self.smartdraw.draw_walldecal(tile)
 
             # And then close off our undo and redraw if needed
@@ -4738,14 +4920,16 @@ class MapGUI(BaseGUI):
         sourcey = self.copy_source_drag_y
         oldx = None
         oldy = None
-        for (x, y) in [(x,y)] + coords:
+        for (x, y) in [(x, y)] + coords:
             # First store our undo state
             self.undo.store(x, y)
             self.undo.set_text('Copy')
 
             if oldx != None and oldy != None:
-                directions = self.mapobj.directions_between_coords(oldx, oldy, x, y)
-                sourcex,sourcey = self.mapobj.follow_directions_from_coord(sourcex, sourcey, directions)
+                directions = self.mapobj.directions_between_coords(
+                    oldx, oldy, x, y)
+                sourcex, sourcey = self.mapobj.follow_directions_from_coord(
+                    sourcex, sourcey, directions)
 
             # If we're off the map, this is a silent no-op
             if (sourcex < 0 or sourcex > 99 or sourcey < 0 or sourcey > 199):
@@ -4818,7 +5002,7 @@ class MapGUI(BaseGUI):
             # Load those in now.
             for dir in [Map.DIR_NE, Map.DIR_E, Map.DIR_SE, Map.DIR_S, Map.DIR_SW, Map.DIR_W, Map.DIR_NW, Map.DIR_N]:
                 self.undo.add_additional(self.mapobj.tile_relative(x, y, dir))
-            
+
             # Grab our tile object
             tile = self.mapobj.tiles[y][x]
             if c.book > 1:
@@ -4871,7 +5055,7 @@ class MapGUI(BaseGUI):
 
     def draw_check_set_to(self, status):
         return self.mass_update_checkboxes(status, [self.floor_toggle, self.decal_toggle, self.object_toggle,
-            self.wall_toggle, self.tree_toggle, self.objectdecal_toggle, self.entity_toggle, self.huge_gfx_toggle])
+                                                    self.wall_toggle, self.tree_toggle, self.objectdecal_toggle, self.entity_toggle, self.huge_gfx_toggle])
 
     def draw_check_all(self, widget):
         self.draw_check_set_to(True)
@@ -4976,24 +5160,24 @@ class MapGUI(BaseGUI):
         #      2
         #   1     3
         #      4
-        xstart = (x*self.z_width)+xpad
-        x1 = xstart+1
-        x3 = xstart+self.z_width-1
+        xstart = (x * self.z_width) + xpad
+        x1 = xstart + 1
+        x3 = xstart + self.z_width - 1
 
-        ystart = y*self.z_halfheight
-        y2 = ystart+1
-        y4 = ystart+self.z_height-1
-        #if (y4-y2<3):
+        ystart = y * self.z_halfheight
+        y2 = ystart + 1
+        y4 = ystart + self.z_height - 1
+        # if (y4-y2<3):
         #    # This is for our two most-zoomed-out levels
         #    y4 = y4 + 1
         #    y2 = y2 - 1
 
         # Area we're actually drawing
-        top = y2-(self.z_4xheight)
+        top = y2 - (self.z_4xheight)
         height = self.z_5xheight
         buftop = 0
-        if (top<0):
-            height = height+top
+        if (top < 0):
+            height = height + top
             buftop = -top
             top = 0
 
@@ -5001,7 +5185,8 @@ class MapGUI(BaseGUI):
         if (do_main_paint and usecache and not pointer):
             main_ctx.save()
             main_ctx.set_operator(cairo.OPERATOR_SOURCE)
-            main_ctx.rectangle(x1-self.z_tilebuf_offset, top, self.z_tilebuf_w, height)
+            main_ctx.rectangle(x1 - self.z_tilebuf_offset,
+                               top, self.z_tilebuf_w, height)
             main_ctx.set_source_surface(self.guicache, 0, 0)
             main_ctx.fill()
             main_ctx.restore()
@@ -5025,7 +5210,8 @@ class MapGUI(BaseGUI):
         if (tile.floorimg > 0 and self.floor_toggle.get_active()):
             pixbuf = self.gfx.get_floor(tile.floorimg, self.curzoom)
             if (pixbuf is not None):
-                tile_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_4xheight)
+                tile_ctx.set_source_surface(
+                    pixbuf, self.z_tilebuf_offset, self.z_4xheight)
                 tile_ctx.paint()
                 drawn = True
 
@@ -5033,19 +5219,22 @@ class MapGUI(BaseGUI):
         if (tile.decalimg > 0 and self.decal_toggle.get_active()):
             pixbuf = self.gfx.get_decal(tile.decalimg, self.curzoom)
             if (pixbuf is not None):
-                tile_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_4xheight)
+                tile_ctx.set_source_surface(
+                    pixbuf, self.z_tilebuf_offset, self.z_4xheight)
                 tile_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
                 if ((self.req_book == 1 and tile.decalimg == 52) or
-                    (self.req_book > 1 and tile.decalimg == 101)):
+                        (self.req_book > 1 and tile.decalimg == 101)):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
                         # TODO: in book 2, campfire wall objects will overwrite some of our campfire flame
                         # (note that the campfire wall object will NOT provide an in-game flame on its own)
-                        xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_tilebuf_offset
-                        yoffset = int(self.z_height*0.4)
-                        tile_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
+                        xoffset = self.z_halfwidth - \
+                            int(pixbuf.get_width() / 2) + self.z_tilebuf_offset
+                        yoffset = int(self.z_height * 0.4)
+                        tile_ctx.set_source_surface(
+                            pixbuf, xoffset, self.z_3xheight + yoffset)
                         tile_ctx.paint()
 
         # Draw "walls," though only if we should
@@ -5060,32 +5249,41 @@ class MapGUI(BaseGUI):
 
             # Draw the object
             if (walltype == self.gfx.TYPE_OBJ and self.object_toggle.get_active()):
-                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
+                (pixbuf, pixheight, offset) = self.gfx.get_object(
+                    wallid, self.curzoom)
                 if (pixbuf is not None):
-                    tile_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
+                    tile_ctx.set_source_surface(
+                        pixbuf, offset + self.z_tilebuf_offset, self.z_height * (4 - pixheight))
                     tile_ctx.paint()
                     drawn = True
                     if (self.req_book > 1 and (tile.wallimg == 349 or tile.wallimg == 350)):
                         pixbuf = self.gfx.get_flame(self.curzoom)
                         if (pixbuf is not None):
-                            xoffset = self.z_halfwidth-int(pixbuf.get_width()/2)+self.z_tilebuf_offset
-                            yoffset = int(self.z_height*0.3)
-                            tile_ctx.set_source_surface(pixbuf, xoffset, self.z_height+yoffset)
+                            xoffset = self.z_halfwidth - \
+                                int(pixbuf.get_width() / 2) + \
+                                self.z_tilebuf_offset
+                            yoffset = int(self.z_height * 0.3)
+                            tile_ctx.set_source_surface(
+                                pixbuf, xoffset, self.z_height + yoffset)
                             tile_ctx.paint()
 
             # Draw walls
             elif (walltype == self.gfx.TYPE_WALL and self.wall_toggle.get_active()):
-                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom)
+                (pixbuf, pixheight, offset) = self.gfx.get_object(
+                    wallid, self.curzoom)
                 if (pixbuf is not None):
-                    tile_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
+                    tile_ctx.set_source_surface(
+                        pixbuf, offset + self.z_tilebuf_offset, self.z_height * (4 - pixheight))
                     tile_ctx.paint()
                     drawn = True
 
             # Draw trees
             elif (walltype == self.gfx.TYPE_TREE and self.tree_toggle.get_active()):
-                (pixbuf, pixheight, offset) = self.gfx.get_object(wallid, self.curzoom, False, self.mapobj.tree_set)
+                (pixbuf, pixheight, offset) = self.gfx.get_object(
+                    wallid, self.curzoom, False, self.mapobj.tree_set)
                 if (pixbuf is not None):
-                    tile_ctx.set_source_surface(pixbuf, offset+self.z_tilebuf_offset, self.z_height*(4-pixheight))
+                    tile_ctx.set_source_surface(
+                        pixbuf, offset + self.z_tilebuf_offset, self.z_height * (4 - pixheight))
                     tile_ctx.paint()
                     drawn = True
 
@@ -5095,29 +5293,33 @@ class MapGUI(BaseGUI):
             if pixbuf is not None:
                 xoffset = self.z_tilebuf_offset
                 yoffset = 0
-                tile_ctx.set_source_surface(pixbuf, xoffset, self.z_3xheight+yoffset)
+                tile_ctx.set_source_surface(
+                    pixbuf, xoffset, self.z_3xheight + yoffset)
                 tile_ctx.paint()
 
         # Draw the object decal
         if (tile.walldecalimg > 0 and self.objectdecal_toggle.get_active()):
             pixbuf = self.gfx.get_object_decal(tile.walldecalimg, self.curzoom)
             if (pixbuf is not None):
-                tile_ctx.set_source_surface(pixbuf, self.z_tilebuf_offset, self.z_2xheight)
+                tile_ctx.set_source_surface(
+                    pixbuf, self.z_tilebuf_offset, self.z_2xheight)
                 tile_ctx.paint()
                 drawn = True
                 # Check to see if we should draw a flame
                 if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
-                    (self.req_book > 1 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
+                        (self.req_book > 1 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                     pixbuf = self.gfx.get_flame(self.curzoom)
                     if (pixbuf is not None):
-                        xoffset = int(pixbuf.get_width()*0.3)
-                        yoffset = int(self.z_height/4)
+                        xoffset = int(pixbuf.get_width() * 0.3)
+                        yoffset = int(self.z_height / 4)
                         if (self.req_book == 2):
                             yoffset -= 1
                         if (tile.walldecalimg == 17 or tile.walldecalimg == 2):
-                            tile_ctx.set_source_surface(pixbuf, self.curzoom-pixbuf.get_width()-xoffset+self.z_tilebuf_offset, self.z_2xheight+yoffset)
+                            tile_ctx.set_source_surface(pixbuf, self.curzoom - pixbuf.get_width(
+                            ) - xoffset + self.z_tilebuf_offset, self.z_2xheight + yoffset)
                         else:
-                            tile_ctx.set_source_surface(pixbuf, xoffset+self.z_tilebuf_offset, self.z_2xheight+yoffset)
+                            tile_ctx.set_source_surface(
+                                pixbuf, xoffset + self.z_tilebuf_offset, self.z_2xheight + yoffset)
                         tile_ctx.paint()
 
         # Draw the entity if needed
@@ -5127,34 +5329,40 @@ class MapGUI(BaseGUI):
         op_ctx = tile_ctx
         op_xoffset = 0
         if (tile.entity is not None and self.entity_toggle.get_active()):
-            ent_img = self.gfx.get_entity(tile.entity.entid, tile.entity.direction, self.curzoom)
+            ent_img = self.gfx.get_entity(
+                tile.entity.entid, tile.entity.direction, self.curzoom)
             if (ent_img is not None):
                 if (ent_img.get_width() > self.z_tilebuf_w):
                     # This whole bit here will copy our tilebuf into a larger surface, centered
                     # (so, transparent on the side)
-                    self.ent_surf = cairo.ImageSurface(cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
+                    self.ent_surf = cairo.ImageSurface(
+                        cairo.FORMAT_ARGB32, ent_img.get_width(), self.z_5xheight)
                     self.ent_ctx = cairo.Context(self.ent_surf)
-                    op_xoffset = int((ent_img.get_width()-self.z_tilebuf_w)/2)
+                    op_xoffset = int(
+                        (ent_img.get_width() - self.z_tilebuf_w) / 2)
                     self.ent_ctx.set_source_surface(op_surf, op_xoffset, 0)
                     self.ent_ctx.paint()
                     op_surf = self.ent_surf
                     op_ctx = self.ent_ctx
                 if (op_surf.get_width() > ent_img.get_width()):
-                    offset = int((op_surf.get_width() - ent_img.get_width())/2)
+                    offset = int(
+                        (op_surf.get_width() - ent_img.get_width()) / 2)
                 else:
                     offset = 0
-                op_ctx.set_source_surface(ent_img, offset, self.z_5xheight-ent_img.get_height())
+                op_ctx.set_source_surface(
+                    ent_img, offset, self.z_5xheight - ent_img.get_height())
                 op_ctx.paint()
                 drawn = True
 
-        # Now, before we do highlights, see if we've drawn anything.  If not, 
+        # Now, before we do highlights, see if we've drawn anything.  If not,
         # overlay our basic black tile, so that highlighting shows up if it
         # needs to.  If we *have* drawn something, just let it be.  (We do this
         # primarily to avoid graphical glitches on cliff-face graphics, where
         # having the black tile overlay makes things look bad.)  Additionally
         # only do it if we would have done some highlighting.
         drawbarrier = (barrier and self.barrier_hi_toggle.get_active())
-        drawtilecontent = (tilecontent and self.tilecontent_hi_toggle.get_active())
+        drawtilecontent = (
+            tilecontent and self.tilecontent_hi_toggle.get_active())
         drawentity = (entity and self.entity_hi_toggle.get_active())
         if (not drawn and (drawbarrier or drawtilecontent or drawentity)):
             tile_ctx.set_source_surface(self.basictile)
@@ -5177,14 +5385,16 @@ class MapGUI(BaseGUI):
             if (usecache):
                 # We only get here when we're the pointer
                 self.composite_simple(op_ctx, op_surf, pointer)
-                main_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_tilebuf_offset, top-buftop)
+                main_ctx.set_source_surface(
+                    op_surf, x1 - op_xoffset - self.z_tilebuf_offset, top - buftop)
                 main_ctx.paint()
             else:
                 # This is only for the initial map population
-                self.guicache_ctx.set_source_surface(op_surf, x1-op_xoffset-self.z_tilebuf_offset, top-buftop)
+                self.guicache_ctx.set_source_surface(
+                    op_surf, x1 - op_xoffset - self.z_tilebuf_offset, top - buftop)
                 self.guicache_ctx.paint()
 
-        return (op_surf, op_xoffset+self.z_tilebuf_offset)
+        return (op_surf, op_xoffset + self.z_tilebuf_offset)
 
     def draw_huge_gfx(self, tile, ctx=None, xoff=None, yoff=None):
         """
@@ -5192,7 +5402,8 @@ class MapGUI(BaseGUI):
         Only used in Book 2.
         """
         if tile.tilecontentid == 21 and len(tile.tilecontents) > 0:
-            img = self.gfx.get_huge_gfx(tile.tilecontents[0].extratext, self.curzoom)
+            img = self.gfx.get_huge_gfx(
+                tile.tilecontents[0].extratext, self.curzoom)
             if img:
                 x = tile.x
                 y = tile.y
@@ -5203,8 +5414,9 @@ class MapGUI(BaseGUI):
                 else:
                     xpad = 0
 
-                xstart = (x*self.z_width)+xpad - int(img.get_width()/2) + self.z_height
-                ystart = y*self.z_halfheight + self.z_height
+                xstart = (x * self.z_width) + xpad - \
+                    int(img.get_width() / 2) + self.z_height
+                ystart = y * self.z_halfheight + self.z_height
 
                 if ctx is None:
                     ctx = self.guicache_ctx
@@ -5212,7 +5424,7 @@ class MapGUI(BaseGUI):
                     xstart -= xoff
                     ystart -= yoff
 
-                ctx.set_source_surface(img, xstart, ystart-img.get_height())
+                ctx.set_source_surface(img, xstart, ystart - img.get_height())
                 ctx.paint()
 
     def update_composite(self):
@@ -5231,11 +5443,11 @@ class MapGUI(BaseGUI):
 
         # Sizing vars
         width = self.gfx.tile_width
-        width_x2 = width*2
+        width_x2 = width * 2
         height_x4 = width_x2
         height = self.gfx.tile_height
         height_x2 = width
-        height_x3 = height*3
+        height_x3 = height * 3
 
         # These torch numbers are rather Magic.  They come from
         # when we still had everything hardcoded (from Book 1, since it
@@ -5245,78 +5457,79 @@ class MapGUI(BaseGUI):
         torchbuf = self.gfx.get_flame(width, True)
         torchwidth = torchbuf.get_property('width')
         torchheight = torchbuf.get_property('height')
-        torchdecalyoff = int((88/104.0)*height_x4)
-        torchwallyoff = int((35/104.0)*height_x4)
-        torchwallyoff2 = int((30/104.0)*height_x4)
-        torchsconceyoff = int((58/104.0)*height_x4)
-        torchsconceyoff2 = int((30/104.0)*height_x4)
-        torchsconcexoff = int((29/52.0)*width)
-        torchsconcexoff2 = int((5/52.0)*width)
+        torchdecalyoff = int((88 / 104.0) * height_x4)
+        torchwallyoff = int((35 / 104.0) * height_x4)
+        torchwallyoff2 = int((30 / 104.0) * height_x4)
+        torchsconceyoff = int((58 / 104.0) * height_x4)
+        torchsconceyoff2 = int((30 / 104.0) * height_x4)
+        torchsconcexoff = int((29 / 52.0) * width)
+        torchsconcexoff2 = int((5 / 52.0) * width)
 
         # Now do all the actual compositing
         if (tile.floorimg > 0):
             pixbuf = self.gfx.get_floor(tile.floorimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
-                        0, height_x4,
-                        width, height,
-                        0, height_x4,
-                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 0, height_x4,
+                                 width, height,
+                                 0, height_x4,
+                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (tile.decalimg > 0):
             pixbuf = self.gfx.get_decal(tile.decalimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
-                        0, height_x4,
-                        width, height,
-                        0, height_x4,
-                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 0, height_x4,
+                                 width, height,
+                                 0, height_x4,
+                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if ((self.req_book == 1 and tile.decalimg == 52) or
                 (self.req_book == 2 and tile.decalimg == 101) or
-                (self.req_book == 3 and tile.decalimg == 101)):
+                    (self.req_book == 3 and tile.decalimg == 101)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
-                            torchwidth-1, torchdecalyoff,
-                            torchwidth, torchheight,
-                            torchwidth-1, torchdecalyoff,
-                            1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                       torchwidth - 1, torchdecalyoff,
+                                       torchwidth, torchheight,
+                                       torchwidth - 1, torchdecalyoff,
+                                       1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (tile.wallimg > 0):
-            (pixbuf, pixheight, offset) = self.gfx.get_object(tile.wallimg, width, True, self.mapobj.tree_set)
+            (pixbuf, pixheight, offset) = self.gfx.get_object(
+                tile.wallimg, width, True, self.mapobj.tree_set)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
-                        0, height*(4-pixheight),
-                        width, height*(pixheight+1),
-                        offset, height*(4-pixheight),
-                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 0, height * (4 - pixheight),
+                                 width, height * (pixheight + 1),
+                                 offset, height * (4 - pixheight),
+                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if (self.req_book == 2 and (tile.wallimg == 349 or tile.wallimg == 350)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
-                            torchwidth-1, torchwallyoff,
-                            torchwidth, torchwallyoff2,
-                            torchwidth-1, torchwallyoff,
-                            1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                       torchwidth - 1, torchwallyoff,
+                                       torchwidth, torchwallyoff2,
+                                       torchwidth - 1, torchwallyoff,
+                                       1, 1, gtk.gdk.INTERP_NEAREST, 255)
         if (tile.walldecalimg > 0):
             pixbuf = self.gfx.get_object_decal(tile.walldecalimg, width, True)
             if (pixbuf is not None):
                 pixbuf.composite(comp_pixbuf,
-                        0, height_x2,
-                        width, height_x3,
-                        0, height_x2,
-                        1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 0, height_x2,
+                                 width, height_x3,
+                                 0, height_x2,
+                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
             if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
-                (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
+                    (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                 if (torchbuf is not None):
                     if (tile.walldecalimg == 17 or tile.walldecalimg == 2):
                         torchbuf.composite(comp_pixbuf,
-                                torchsconcexoff, torchsconceyoff,
-                                torchwidth, torchsconceyoff2,
-                                torchsconcexoff, torchsconceyoff,
-                                1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                           torchsconcexoff, torchsconceyoff,
+                                           torchwidth, torchsconceyoff2,
+                                           torchsconcexoff, torchsconceyoff,
+                                           1, 1, gtk.gdk.INTERP_NEAREST, 255)
                     elif (tile.walldecalimg == 18 or tile.walldecalimg == 4):
                         torchbuf.composite(comp_pixbuf,
-                                torchsconcexoff2, torchsconceyoff,
-                                torchwidth, torchsconceyoff2,
-                                torchsconcexoff2, torchsconceyoff,
-                                1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                           torchsconcexoff2, torchsconceyoff,
+                                           torchwidth, torchsconceyoff2,
+                                           torchsconcexoff2, torchsconceyoff,
+                                           1, 1, gtk.gdk.INTERP_NEAREST, 255)
 
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
@@ -5330,10 +5543,10 @@ class MapGUI(BaseGUI):
         """
         self.mapinit = True
         self.set_zoom_vars(1)
-        print self.options
+        print(self.options)
         for file in self.options['filenames']:
             self.load_from_file(file)
-            #self.draw_map()
+            # self.draw_map()
             (pngfile, junk) = file.split('.')
             pngfile = '%s.png' % (pngfile)
             self.guicache.write_to_png(pngfile)
@@ -5399,7 +5612,8 @@ class MapGUI(BaseGUI):
         self.drawstatuswindow.show()
 
         self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
-        self.pixmap = gtk.gdk.Pixmap(self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
+        self.pixmap = gtk.gdk.Pixmap(
+            self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 
         self.ctx = self.pixmap.cairo_create()
         # Comment the next two lines out if you're exporting map PNGs
@@ -5408,9 +5622,11 @@ class MapGUI(BaseGUI):
         self.ctx.set_source_rgba(0, 0, 0, 1)
         self.ctx.paint()
 
-        self.tilebuf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        self.tilebuf = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
         self.tilebuf_ctx = cairo.Context(self.tilebuf)
-        self.guicache = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
+        self.guicache = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.z_mapsize_x, self.z_mapsize_y)
         self.guicache_ctx = cairo.Context(self.guicache)
         # Here, for PNG exports
         self.guicache_ctx.set_source_rgba(0, 0, 0, 1)
@@ -5441,7 +5657,8 @@ class MapGUI(BaseGUI):
             self.erase_object_checkbox.set_active(False)
 
         # Set up a "blank" tile to draw everything else on top of
-        self.blanktile = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        self.blanktile = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
         tile_ctx = cairo.Context(self.blanktile)
         tile_ctx.save()
         tile_ctx.set_operator(cairo.OPERATOR_CLEAR)
@@ -5449,13 +5666,18 @@ class MapGUI(BaseGUI):
         tile_ctx.restore()
 
         # Set up a default tile with just a black tile, for otherwise-empty tiles
-        self.basictile = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
+        self.basictile = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.z_tilebuf_w, self.z_5xheight)
         basic_ctx = cairo.Context(self.basictile)
         basic_ctx.set_source_rgba(0, 0, 0, 1)
-        basic_ctx.move_to(self.z_tilebuf_offset+0, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_tilebuf_offset+self.z_halfwidth, self.z_4xheight)
-        basic_ctx.line_to(self.z_tilebuf_offset+self.z_width, self.z_4xheight+self.z_halfheight)
-        basic_ctx.line_to(self.z_tilebuf_offset+self.z_halfwidth, self.z_5xheight)
+        basic_ctx.move_to(self.z_tilebuf_offset + 0,
+                          self.z_4xheight + self.z_halfheight)
+        basic_ctx.line_to(self.z_tilebuf_offset +
+                          self.z_halfwidth, self.z_4xheight)
+        basic_ctx.line_to(self.z_tilebuf_offset + self.z_width,
+                          self.z_4xheight + self.z_halfheight)
+        basic_ctx.line_to(self.z_tilebuf_offset +
+                          self.z_halfwidth, self.z_5xheight)
         basic_ctx.close_path()
         basic_ctx.fill()
 
@@ -5477,36 +5699,36 @@ class MapGUI(BaseGUI):
                     self.draw_huge_gfx(tile)
                     self.huge_gfx_rows[y].append(tile.x)
             if (y % 10 == 0):
-                self.drawstatusbar.set_fraction(y/float(len(self.mapobj.tiles)))
+                self.drawstatusbar.set_fraction(
+                    y / float(len(self.mapobj.tiles)))
                 while gtk.events_pending():
                     gtk.main_iteration()
         #time_d = time.time()
-        #print 'Inner loop: %0.2f' % (time_d-time_c)
+        # print 'Inner loop: %0.2f' % (time_d-time_c)
 
         # Finish drawing
         self.ctx.set_source_surface(self.guicache, 0, 0)
         self.ctx.paint()
-        
+
         # ... and draw onto our main area (this is duplicated below, in expose_map)
         self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
-                self.pixmap,
-                0, 0,
-                0, 0,
-                self.z_mapsize_x, self.z_mapsize_y)
+                                          self.pixmap,
+                                          0, 0,
+                                          0, 0,
+                                          self.z_mapsize_x, self.z_mapsize_y)
 
         # Clean up our statusbar
         self.drawstatuswindow.hide()
 
         # Report timing
         time_b = time.time()
-        print "Map rendered in %0.2f seconds" % (time_b-time_a)
+        print("Map rendered in %0.2f seconds" % (time_b - time_a))
 
         # From now on, our map's considered initialized
         self.mapinit = True
 
         # Make sure we only do this once, when called from idle_add initially
         return False
-
 
     def expose_map(self, widget, event):
 
@@ -5519,11 +5741,11 @@ class MapGUI(BaseGUI):
 
             # Render to the window (this is duplicated above, in draw_map)
             self.maparea.window.draw_drawable(
-                    self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
-                    self.pixmap,
-                    0, 0,
-                    0, 0,
-                    self.z_mapsize_x, self.z_mapsize_y)
+                self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
+                self.pixmap,
+                0, 0,
+                0, 0,
+                self.z_mapsize_x, self.z_mapsize_y)
 
             # Make sure our to-clean list is empty
             self.cleantiles = []

@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -21,21 +21,22 @@
 import sys
 import os
 import os.path
-import ConfigParser
+import configparser
 from eschalon import app_name
 
 # Load windows registry, if we can
 try:
-    import _winreg
-except ImportError, e:
+    import winreg
+except ImportError as e:
     pass
 
 # TODO: Error handling on load() and save()
 
+
 class Prefs(object):
 
     def __init__(self):
-        self.cp = ConfigParser.ConfigParser()
+        self.cp = configparser.ConfigParser()
         if 'win32' in sys.platform:
             self.platform = 'win32'
             self.default = self.win32_default
@@ -142,16 +143,18 @@ class Prefs(object):
         """ Default values on Linux """
         if (cat == 'paths'):
             if (name == 'savegames'):
-                path = os.path.join(os.path.expanduser('~'), '.eschalon_b1_saved_games')
+                path = os.path.join(os.path.expanduser(
+                    '~'), '.eschalon_b1_saved_games')
                 if (not os.path.isdir(path)):
-                    path = os.path.join(os.path.expanduser('~'), 'eschalon_b1_saved_games')
+                    path = os.path.join(os.path.expanduser(
+                        '~'), 'eschalon_b1_saved_games')
                 return path
             elif (name == 'savegames_b2'):
                 return os.path.join(os.path.expanduser('~'), '.basilisk_games', 'book2_saved_games')
             elif (name == 'savegames_b3'):
                 return os.path.join(os.path.expanduser('~'), '.basilisk_games', 'book3_saved_games')
             elif (name == 'gamedir'):
-                for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
+                for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_1')
                     if (os.path.isdir(os.path.join(fulldir, 'packedgraphics'))):
                         return fulldir
@@ -161,7 +164,7 @@ class Prefs(object):
                 # could be picked up again on future runs of the program.
                 return ''
             elif (name == 'gamedir_b2'):
-                for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
+                for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_2')
                     if (os.path.isdir(os.path.join(fulldir, 'data'))):
                         return fulldir
@@ -171,7 +174,7 @@ class Prefs(object):
                 # could be picked up again on future runs of the program.
                 return ''
             elif (name == 'gamedir_b3'):
-                for dir in [ '/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games' ]:
+                for dir in ['/usr/games', '/opt', '/opt/games', '/usr/share/games', '/usr/local/games']:
                     fulldir = os.path.join(dir, 'eschalon_book_3')
                     if (os.path.isfile(os.path.join(fulldir, 'datapak'))):
                         return fulldir
@@ -182,7 +185,8 @@ class Prefs(object):
 
     def darwin_prefsfile(self):
         """ Default prefsfile on Darwin """
-        prefdir = os.path.join(os.path.expanduser('~'), 'Library', 'Preferences', app_name)
+        prefdir = os.path.join(os.path.expanduser(
+            '~'), 'Library', 'Preferences', app_name)
         if (not os.path.isdir(prefdir)):
             os.mkdir(prefdir)
         return os.path.join(prefdir, 'config.ini')
@@ -237,7 +241,8 @@ class Prefs(object):
             for app_dir_name in ['Application Data', 'AppData']:
 
                 # This one should work for 2000, XP, 2003
-                appdir = os.path.join(user_dir_name, 'Local Settings', app_dir_name)
+                appdir = os.path.join(
+                    user_dir_name, 'Local Settings', app_dir_name)
                 if (os.path.isdir(appdir)):
                     return self.win32_prefsfile_final(appdir)
 
@@ -261,7 +266,7 @@ class Prefs(object):
         """ Default values on Windows """
         if (cat == 'paths'):
             if (name == 'savegames'):
-                for dir in [ self.get_str('paths', 'gamedir'), os.path.join(os.path.expanduser('~'), 'My Documents') ]:
+                for dir in [self.get_str('paths', 'gamedir'), os.path.join(os.path.expanduser('~'), 'My Documents')]:
                     testdir = os.path.join(dir, 'Eschalon Book 1 Saved Games')
                     if (os.path.isdir(testdir)):
                         return testdir
@@ -270,11 +275,12 @@ class Prefs(object):
                 basedir = os.path.expanduser('~')
                 savedir = os.path.join('Basilisk Games', 'Book 2 Saved Games')
                 # Huzzah for flailing about!
-                for dir in [ os.path.join(basedir, 'Local Settings', 'Application Data', savedir),
-                        os.path.join(basedir, 'Application Data', savedir),
-                        os.path.join(basedir, 'My Documents', savedir),
-                        os.path.join(basedir, 'AppData', 'Roaming', savedir),
-                        os.path.join(basedir, 'AppData', savedir)]:
+                for dir in [os.path.join(basedir, 'Local Settings', 'Application Data', savedir),
+                            os.path.join(basedir, 'Application Data', savedir),
+                            os.path.join(basedir, 'My Documents', savedir),
+                            os.path.join(basedir, 'AppData',
+                                         'Roaming', savedir),
+                            os.path.join(basedir, 'AppData', savedir)]:
                     if (os.path.isdir(dir)):
                         return dir
                 return ''
@@ -282,16 +288,17 @@ class Prefs(object):
                 basedir = os.path.expanduser('~')
                 savedir = os.path.join('Basilisk Games', 'Book 3 Saved Games')
                 # Huzzah for flailing about!
-                for dir in [ os.path.join(basedir, 'Local Settings', 'Application Data', savedir),
-                        os.path.join(basedir, 'Application Data', savedir),
-                        os.path.join(basedir, 'My Documents', savedir),
-                        os.path.join(basedir, 'AppData', 'Roaming', savedir),
-                        os.path.join(basedir, 'AppData', savedir)]:
+                for dir in [os.path.join(basedir, 'Local Settings', 'Application Data', savedir),
+                            os.path.join(basedir, 'Application Data', savedir),
+                            os.path.join(basedir, 'My Documents', savedir),
+                            os.path.join(basedir, 'AppData',
+                                         'Roaming', savedir),
+                            os.path.join(basedir, 'AppData', savedir)]:
                     if (os.path.isdir(dir)):
                         return dir
                 return ''
             elif (name == 'gamedir'):
-                for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
+                for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book I')
                     if (os.path.isdir(os.path.join(testdir, 'packedgraphics'))):
                         return testdir
@@ -300,30 +307,32 @@ class Prefs(object):
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book I_is1'
-                        )
-                except EnvironmentError, e:
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book I_is1'
+                    )
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(wr, 'Inno Setup: App Path')
+                    (val, type) = winreg.QueryValueEx(
+                        wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(wr, 'InstallLocation')
+                        (val, type) = winreg.QueryValueEx(
+                            wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got
                 wr.Close()
                 return testdir
             elif (name == 'gamedir_b2'):
-                for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
+                for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book II')
                     if (os.path.isdir(os.path.join(testdir, 'data'))):
                         return testdir
@@ -332,53 +341,57 @@ class Prefs(object):
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book II_is1'
-                        )
-                except EnvironmentError, e:
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book II_is1'
+                    )
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(wr, 'Inno Setup: App Path')
+                    (val, type) = winreg.QueryValueEx(
+                        wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(wr, 'InstallLocation')
+                        (val, type) = winreg.QueryValueEx(
+                            wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got
                 wr.Close()
                 return testdir
             elif (name == 'gamedir_b3'):
-                for dir in [ 'C:\\Games', 'C:\\Program Files' ]:
+                for dir in ['C:\\Games', 'C:\\Program Files']:
                     testdir = os.path.join(dir, 'Eschalon Book III')
                     if (os.path.isfile(os.path.join(testdir, 'datapak'))):
                         return testdir
                 # If we got here, it wasn't found - check the registry.  If there
                 # are any errors, just return our most recent testdir
                 try:
-                    wr = _winreg.OpenKey(
-                        _winreg.HKEY_LOCAL_MACHINE,
-                        'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Eschalon Book III_is1'
-                        )
-                except EnvironmentError, e:
+                    wr = winreg.OpenKey(
+                        winreg.HKEY_LOCAL_MACHINE,
+                        'SOFTWARE\Microsoft\Windows\CurrentVersion\\Uninstall\Eschalon Book III_is1'
+                    )
+                except EnvironmentError as e:
                     return ''
 
                 try:
-                    (val, type) = _winreg.QueryValueEx(wr, 'Inno Setup: App Path')
+                    (val, type) = winreg.QueryValueEx(
+                        wr, 'Inno Setup: App Path')
                     testdir = val
-                except EnvironmentError, e:
+                except EnvironmentError as e:
                     try:
-                        (val, type) = _winreg.QueryValueEx(wr, 'InstallLocation')
+                        (val, type) = winreg.QueryValueEx(
+                            wr, 'InstallLocation')
                         if (val[-1:] == '\\'):
                             val = val[:-1]
                         testdir = val
-                    except EnvironmentError, e:
+                    except EnvironmentError as e:
                         testdir = ''
 
                 # Close and return what we've got

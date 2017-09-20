@@ -3,22 +3,23 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from eschalon import constants as c
+
 
 class Tile(object):
     """ A class to hold data about a particular tile on a map. """
@@ -64,7 +65,7 @@ class Tile(object):
         # Arrays
         for tilecontent in self.tilecontents:
             newtile.tilecontents.append(tilecontent.replicate())
-        
+
         # Objects
         if (self.entity is not None):
             newtile.entity = self.entity.replicate()
@@ -140,7 +141,7 @@ class Tile(object):
     def _sub_hasdata(self):
         """ Stub for superclasses to define. """
         pass
-    
+
     def addtilecontent(self, tilecontent):
         """
         Add a tilecontent to our tilecontent list.  Just an internal construct which isn't actually
@@ -177,7 +178,8 @@ class Tile(object):
         ret.append("    Wall Image: %d" % self.wallimg)
         ret.append("    Wall Decal Image: %d" % self.walldecalimg)
         if (self.tilecontentid in c.tilecontenttypetable):
-            ret.append("    Object Type: %s" % c.tilecontenttypetable[self.tilecontentid])
+            ret.append("    Object Type: %s" %
+                       c.tilecontenttypetable[self.tilecontentid])
         else:
             ret.append("    Object Type: %d" % self.tilecontentid)
         if (unknowns):
@@ -204,7 +206,7 @@ class Tile(object):
 
         # Return
         return "\n".join(ret)
-    
+
     @staticmethod
     def new(book, x, y):
         """
@@ -216,6 +218,7 @@ class Tile(object):
             return B2Tile(x, y)
         elif book == 3:
             return B3Tile(x, y)
+
 
 class B1Tile(Tile):
     """
@@ -270,6 +273,7 @@ class B1Tile(Tile):
         Do we have data in our B1-specific elements?
         """
         return (self.unknown5 != 0)
+
 
 class B2Tile(Tile):
     """
@@ -332,6 +336,7 @@ class B2Tile(Tile):
         """
         super(B2Tile, self)._convert_savegame(savegame)
         self.tile_flag = 0
+
 
 class B3Tile(B2Tile):
     """

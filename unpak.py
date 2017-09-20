@@ -70,12 +70,12 @@ for filename in list(fileindex.keys()):
     filedata = zlib.decompress(
         df.read(index.size_compressed), 15, index.size_real)
 
-for filename in fileindex.keys():
-  index = fileindex[filename]
-  print (filename)
-  df.seek(zeroindex + index.abs_index)
-  # On Windows, we need to specify bufsize or memory gets clobbered
-  filedata = zlib.decompress(
-    df.read(index.size_compressed), 15, index.size_real)
-  with open(filename, 'wb') as f:
-      f.write(filedata)
+for filename in list(fileindex.keys()):
+    index = fileindex[filename]
+    print(filename)
+    df.seek(zeroindex + index.abs_index)
+    # On Windows, we need to specify bufsize or memory gets clobbered
+    filedata = zlib.decompress(
+        df.read(index.size_compressed), 15, index.size_real)
+    with open(filename, 'wb') as f:
+        f.write(filedata)

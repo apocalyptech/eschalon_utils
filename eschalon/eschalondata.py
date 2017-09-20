@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,9 +35,10 @@ import os
 import csv
 import glob
 import base64
-import cStringIO
+import io
 from eschalon import constants as c
 from eschalon.savefile import LoadException
+
 
 class GoldRanges(object):
     """
@@ -49,6 +50,7 @@ class GoldRanges(object):
 
     Note that the Book III values haven't actually been experimentally verified.
     """
+
     def __init__(self):
         """
         Initialize our empty fields.  "exact" is a dict used to match an
@@ -74,7 +76,8 @@ class GoldRanges(object):
             elif parts[2][0] == '(' and parts[2][-1] == ')':
                 item_ranges = parts[2][1:-1].split('-')
                 if len(item_ranges) == 2:
-                    self.ranges.append((int(item_ranges[0]), int(item_ranges[1])))
+                    self.ranges.append(
+                        (int(item_ranges[0]), int(item_ranges[1])))
                     self.labels.append(parts[0])
                     if int(item_ranges[1]) > self.max_seen:
                         self.max_seen = int(item_ranges[1])
@@ -122,6 +125,7 @@ class GoldRanges(object):
         # Default, just return our passed-in name
         return item_name
 
+
 class EntHelper(object):
     """
     Class to store data about our entities.  Basically just a glorified
@@ -145,6 +149,7 @@ class EntHelper(object):
         self.height = height
         self.frames = frames
         self.entscript = entscript
+
 
 class Datapak(object):
     """
@@ -184,13 +189,15 @@ class Datapak(object):
         try:
             return self.zipobj.read(filename)
         except KeyError:
-            raise LoadException('Filename %s not found in datapak' % (filename))
+            raise LoadException(
+                'Filename %s not found in datapak' % (filename))
 
     def filelist(self):
         """
         Returns a list of all files inside the datapak.
         """
         return self.zipobj.namelist()
+
 
 class EschalonData(object):
     """
@@ -203,12 +210,12 @@ class EschalonData(object):
     this class might end up doing a bit more than it does now.
     """
 
-    DATA_DIRS = [ 'data', 'gfx', 'maps', 'music', 'sound' ]
+    DATA_DIRS = ['data', 'gfx', 'maps', 'music', 'sound']
 
     empty_name = None
     random_name = None
 
-    def __init__(self, gamedir, modpath = None):
+    def __init__(self, gamedir, modpath=None):
         """
         Constructor.  "gamedir" should be the base game directory, whether
         it contains a datapak or a filesystem structure.
@@ -256,7 +263,8 @@ class EschalonData(object):
         self.gamedir = gamedir
 
         if not os.path.isdir(self.gamedir):
-            raise LoadException('"%s" is not a valid directory' % (self.gamedir))
+            raise LoadException(
+                '"%s" is not a valid directory' % (self.gamedir))
 
         # Check to see if we have a local Eschalon data structure
         found_dirs = True
@@ -277,10 +285,10 @@ class EschalonData(object):
                     self.datapak = Datapak(datapak_file)
                 else:
                     raise LoadException('Book 2/3 Graphics requires pycrypto, please install it:'
-                        "\n\n\t"
-                        'http://www.dlitz.net/software/pycrypto/'
-                        "\n\n"
-                        'For most Linux distributions, the package name is "python-crypto"')
+                                        "\n\n\t"
+                                        'http://www.dlitz.net/software/pycrypto/'
+                                        "\n\n"
+                                        'For most Linux distributions, the package name is "python-crypto"')
             else:
                 raise LoadException('Could not find datapak or gfx directory!')
 
@@ -291,7 +299,8 @@ class EschalonData(object):
         if self.datapak is None:
             namelist = []
             for directory in self.DATA_DIRS:
-                namelist = namelist + glob.glob(os.path.join(self.gamedir, directory, '*'))
+                namelist = namelist + \
+                    glob.glob(os.path.join(self.gamedir, directory, '*'))
             retlist = []
             for filename in namelist:
                 retlist.append(os.path.relpath(filename, self.gamedir))
@@ -305,7 +314,7 @@ class EschalonData(object):
         not specified, since historically the majority of files we intend to open are
         in the gfx directory.  Returns the data of the file requested, not a file-like
         object.
-        
+
         This can raise a LoadException if the file is not found, or if other errors
         occur.
         """
@@ -315,10 +324,12 @@ class EschalonData(object):
                 try:
                     with open(to_open, 'r') as df:
                         return df.read()
-                except IOError, e:
-                    raise LoadException('Filename %s could not be opened: %s' % (to_open, e))
+                except IOError as e:
+                    raise LoadException(
+                        'Filename %s could not be opened: %s' % (to_open, e))
             else:
-                raise LoadException('Filename %s could not be found' % (to_open))
+                raise LoadException(
+                    'Filename %s could not be found' % (to_open))
         else:
             return self.datapak.readfile(filename, directory)
 
@@ -328,7 +339,7 @@ class EschalonData(object):
         its data, using the cStringIO object.  Consequently, the returned filehandle
         will be read-only.  Calls self.readfile() to do most of our work.
         """
-        return cStringIO.StringIO(self.readfile(filename, directory))
+        return io.StringIO(self.readfile(filename, directory))
 
     def populate_datapak_info(self):
         """
@@ -360,13 +371,16 @@ class EschalonData(object):
                 materialid = int(row['Material'])
                 if materialid == 1:
                     for material in c.materials_wood:
-                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+                        self.material_items['%s %s' % (
+                            material, row['DESCRIPTION'])] = row['DESCRIPTION']
                 elif materialid == 2:
                     for material in c.materials_metal:
-                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+                        self.material_items['%s %s' % (
+                            material, row['DESCRIPTION'])] = row['DESCRIPTION']
                 elif materialid == 3:
                     for material in c.materials_fabric:
-                        self.material_items['%s %s' % (material, row['DESCRIPTION'])] = row['DESCRIPTION']
+                        self.material_items['%s %s' % (
+                            material, row['DESCRIPTION'])] = row['DESCRIPTION']
             df.close()
         except:
             pass
@@ -380,7 +394,7 @@ class EschalonData(object):
                 self.itemdict[self.random_name] = True
 
         # Populate a sorted itemlist object as well.
-        self.itemlist = sorted(self.itemdict.keys(), key=lambda s: s.lower())
+        self.itemlist = sorted(list(self.itemdict.keys()), key=lambda s: s.lower())
 
         # Now try to load in all available entity information
         try:
@@ -417,15 +431,19 @@ class EschalonData(object):
             ent_id_int = int(row['ID'])
             if ent_id_int not in self.entitytable:
                 self.entitytable[ent_id_int] = EntHelper(name=name,
-                    health=int(row['HP']),
-                    gfxfile='%s.png' % (row['file']),
-                    friendly=int(row['Align']),
-                    movement=int(row['Move']),
-                    dirs=int(row['Dirs']),
-                    width=width,
-                    height=height,
-                    frames=int(row['Frame']),
-                    entscript=script)
+                                                         health=int(row['HP']),
+                                                         gfxfile='%s.png' % (
+                                                             row['file']),
+                                                         friendly=int(
+                                                             row['Align']),
+                                                         movement=int(
+                                                             row['Move']),
+                                                         dirs=int(row['Dirs']),
+                                                         width=width,
+                                                         height=height,
+                                                         frames=int(
+                                                             row['Frame']),
+                                                         entscript=script)
 
     def get_itemlist(self):
         """
@@ -459,7 +477,7 @@ class EschalonData(object):
         elif item_name[:10] == 'Scroll of ':
             return item_name[10:]
         else:
-            for (key, val) in self.material_items.items():
+            for (key, val) in list(self.material_items.items()):
                 if key in item_name:
                     return val
             return item_name
@@ -485,7 +503,7 @@ class EschalonData(object):
             return None
 
     @staticmethod
-    def new(book, gamedir, modpath = None):
+    def new(book, gamedir, modpath=None):
         """
         Returns a new object of the appropriate type.  For Books 2+3, we'll
         just instantiate ourselves.  For Book 1, we'll use a compatibility
@@ -498,6 +516,7 @@ class EschalonData(object):
         else:
             return B3EschalonData(gamedir, modpath)
 
+
 class B1EschalonData(object):
     """
     Class to mimic functionality of EschalonData for Book 1.  This is
@@ -506,7 +525,7 @@ class B1EschalonData(object):
     the main EschalonData class.
     """
 
-    def __init__(self, gamedir, modpath = None):
+    def __init__(self, gamedir, modpath=None):
         """
         Initialization - just store our gamedir, primarily.
         """
@@ -521,7 +540,8 @@ class B1EschalonData(object):
         self.gamedir = gamedir
 
         if not os.path.isdir(self.gamedir):
-            raise LoadException('"%s" is not a valid directory' % (self.gamedir))
+            raise LoadException(
+                '"%s" is not a valid directory' % (self.gamedir))
 
     def filelist(self):
         """
@@ -531,7 +551,8 @@ class B1EschalonData(object):
         namelist = []
         for (dirpath, dirnames, filenames) in os.walk(self.gamedir):
             for filename in filenames:
-                namelist.append(os.path.relpath(os.path.join(dirpath, filename), self.gamedir))
+                namelist.append(os.path.relpath(
+                    os.path.join(dirpath, filename), self.gamedir))
         return namelist
 
     def readfile(self, filename, directory=''):
@@ -552,78 +573,78 @@ class B1EschalonData(object):
         # Entities
         self.entitytable = {
 
-                # Enemies
-                0x01: EntHelper('Fanged Salamander', 9, 1, 0, 1),
-                0x02: EntHelper('Bloodsipper', 17, 2, 0, 1),
-                0x03: EntHelper('Raptor', 95, 3, 0, 1), 
-                0x04: EntHelper('Noximander', 35, 4, 0, 1), 
-                0x05: EntHelper('Fungal Slime', 25, 5, 0, 1),
-                0x06: EntHelper('Walking Corpse', 55, 6, 0, 1),
-                0x07: EntHelper('Acid Grubb', 70, 7, 0, 1),
-                0x08: EntHelper('Timberland Giant', 140, 8, 0, 1),
-                0x09: EntHelper('Goblin Hacker', 38, 9, 0, 1),
-                0x0A: EntHelper('Goblin Archer', 45, 10, 0, 1),
-                0x0B: EntHelper('Goblin Warlord', 75, 11, 0, 1),
-                0x0C: EntHelper('Hive Drone', 40, 12, 0, 1), 
-                0x0D: EntHelper('Hive Queen', 100, 13, 0, 1),
-                0x0E: EntHelper('Thug', 40, 14, 0, 1), 
-                0x0F: EntHelper('Dimensional Eye', 80, 15, 0, 1),
-                0x10: EntHelper('Giant Arachnid', 70, 16, 0, 1),
-                0x11: EntHelper('Dirachnid', 250, 17, 0, 1),
-                0x12: EntHelper('Skeleton', 50, 18, 0, 1),
-                0x13: EntHelper('Goblin Bombthug', 15, 19, 0, 1),
-                0x14: EntHelper('Poltergeist', 60, 20, 0, 1),
-                0x15: EntHelper('Barrea Mercenary', 90, 21, 0, 1), 
-                0x16: EntHelper('Taurax', 140, 22, 0, 1),
-                0x17: EntHelper('Spire Guard', 300, 60, 0, 1),
+            # Enemies
+            0x01: EntHelper('Fanged Salamander', 9, 1, 0, 1),
+            0x02: EntHelper('Bloodsipper', 17, 2, 0, 1),
+            0x03: EntHelper('Raptor', 95, 3, 0, 1),
+            0x04: EntHelper('Noximander', 35, 4, 0, 1),
+            0x05: EntHelper('Fungal Slime', 25, 5, 0, 1),
+            0x06: EntHelper('Walking Corpse', 55, 6, 0, 1),
+            0x07: EntHelper('Acid Grubb', 70, 7, 0, 1),
+            0x08: EntHelper('Timberland Giant', 140, 8, 0, 1),
+            0x09: EntHelper('Goblin Hacker', 38, 9, 0, 1),
+            0x0A: EntHelper('Goblin Archer', 45, 10, 0, 1),
+            0x0B: EntHelper('Goblin Warlord', 75, 11, 0, 1),
+            0x0C: EntHelper('Hive Drone', 40, 12, 0, 1),
+            0x0D: EntHelper('Hive Queen', 100, 13, 0, 1),
+            0x0E: EntHelper('Thug', 40, 14, 0, 1),
+            0x0F: EntHelper('Dimensional Eye', 80, 15, 0, 1),
+            0x10: EntHelper('Giant Arachnid', 70, 16, 0, 1),
+            0x11: EntHelper('Dirachnid', 250, 17, 0, 1),
+            0x12: EntHelper('Skeleton', 50, 18, 0, 1),
+            0x13: EntHelper('Goblin Bombthug', 15, 19, 0, 1),
+            0x14: EntHelper('Poltergeist', 60, 20, 0, 1),
+            0x15: EntHelper('Barrea Mercenary', 90, 21, 0, 1),
+            0x16: EntHelper('Taurax', 140, 22, 0, 1),
+            0x17: EntHelper('Spire Guard', 300, 60, 0, 1),
 
-                # NPCs
-                0x33: EntHelper('Maddock', 15, 51, 1, 1),
-                0x34: EntHelper('Michael', 36, 52, 1, 1),
-                0x35: EntHelper('Farwick', 50, 53, 1, 1),
-                0x36: EntHelper('Abygale', 25, 62, 1, 1),
-                0x37: EntHelper('Eleanor *', 1, 55, 1, 2),
-                0x38: EntHelper('Garrett *', 1, 50, 1, 2),
-                0x39: EntHelper('Porter', 32, 56, 1, 1),
-                0x3A: EntHelper('Oswell *', 1, 58, 1, 2),
-                0x3B: EntHelper('Lilith', 130, 54, 1, 1),
-                0x3C: EntHelper('Town Guard', 120, 60, 1, 1),
-                0x3D: EntHelper('Gruzz', 16, 9, 1, 1),
-                0x3E: EntHelper('Gatekeeper', 45, 60, 1, 1),
-                0x3F: EntHelper('Eeru', 50, 65, 1, 1),
-                0x40: EntHelper('Erik', 45, 53, 1, 1),
-                0x41: EntHelper('Darkford Guard', 120, 60, 1, 1),
-                0x42: EntHelper('Gunther', 85, 53, 1, 1),
-                0x43: EntHelper('Leurik', 22, 65, 1, 1),
-                0x44: EntHelper('Vault Master', 5, 9, 1, 1),
-                0x45: EntHelper('Paul', 15, 51, 1, 1),
-                0x46: EntHelper('Krista', 70, 57, 1, 1),
-                0x47: EntHelper('Gamfari', 20, 64, 1, 1),
-                0x48: EntHelper('Larrus *', 1, 66, 1, 2),
-                0x49: EntHelper('Mary', 2, 63, 1, 1),
-                0x4A: EntHelper('Vekkar *', 1, 67, 1, 2),
-                0x4B: EntHelper('Jonathon', 36, 52, 1, 1),
-                0x4C: EntHelper('Shady Character (1)', 90, 14, 1, 1),
-                0x4D: EntHelper('Oolaseph *', 1, 54, 1, 2),
-                0x4E: EntHelper('Vault Guard', 50, 60, 1, 1),
-                0x4F: EntHelper('Vidar the Knife', 50, 14, 1, 1),
-                0x50: EntHelper('Walter', 15, 68, 1, 1),
-                0x51: EntHelper('Azure Guard', 120, 60, 1, 1),
-                0x52: EntHelper('Captain Morgan', 120, 60, 1, 1),
-                0x53: EntHelper('Erubor', 80, 69, 1, 1),
-                0x54: EntHelper('Shadowmirk Acolyte', 15, 68, 1, 1),
-                0x55: EntHelper('Phillip', 15, 65, 1, 1),
-                0x56: EntHelper('Omar', 140, 8, 1, 1),
-                0x57: EntHelper('Gramuk', 45, 70, 1, 1),
-                0x58: EntHelper('Shady Character (2)', 110, 14, 1, 1),
-                0x5A: EntHelper('Chancellor Malcolm *', 4, 71, 1, 2),
-                0x5B: EntHelper('Sonya', 160, 59, 1, 1),
-                0x5C: EntHelper('Aaron', 70, 61, 1, 1),
-                0x5D: EntHelper('Penelope', 2, 62, 1, 1),
-                0x5E: EntHelper('Siam', 80, 65, 1, 1),
-                0x5F: EntHelper('William', 60, 51, 1, 1),
-                0x60: EntHelper('Hesham', 60, 65, 1, 1)
-            }
+            # NPCs
+            0x33: EntHelper('Maddock', 15, 51, 1, 1),
+            0x34: EntHelper('Michael', 36, 52, 1, 1),
+            0x35: EntHelper('Farwick', 50, 53, 1, 1),
+            0x36: EntHelper('Abygale', 25, 62, 1, 1),
+            0x37: EntHelper('Eleanor *', 1, 55, 1, 2),
+            0x38: EntHelper('Garrett *', 1, 50, 1, 2),
+            0x39: EntHelper('Porter', 32, 56, 1, 1),
+            0x3A: EntHelper('Oswell *', 1, 58, 1, 2),
+            0x3B: EntHelper('Lilith', 130, 54, 1, 1),
+            0x3C: EntHelper('Town Guard', 120, 60, 1, 1),
+            0x3D: EntHelper('Gruzz', 16, 9, 1, 1),
+            0x3E: EntHelper('Gatekeeper', 45, 60, 1, 1),
+            0x3F: EntHelper('Eeru', 50, 65, 1, 1),
+            0x40: EntHelper('Erik', 45, 53, 1, 1),
+            0x41: EntHelper('Darkford Guard', 120, 60, 1, 1),
+            0x42: EntHelper('Gunther', 85, 53, 1, 1),
+            0x43: EntHelper('Leurik', 22, 65, 1, 1),
+            0x44: EntHelper('Vault Master', 5, 9, 1, 1),
+            0x45: EntHelper('Paul', 15, 51, 1, 1),
+            0x46: EntHelper('Krista', 70, 57, 1, 1),
+            0x47: EntHelper('Gamfari', 20, 64, 1, 1),
+            0x48: EntHelper('Larrus *', 1, 66, 1, 2),
+            0x49: EntHelper('Mary', 2, 63, 1, 1),
+            0x4A: EntHelper('Vekkar *', 1, 67, 1, 2),
+            0x4B: EntHelper('Jonathon', 36, 52, 1, 1),
+            0x4C: EntHelper('Shady Character (1)', 90, 14, 1, 1),
+            0x4D: EntHelper('Oolaseph *', 1, 54, 1, 2),
+            0x4E: EntHelper('Vault Guard', 50, 60, 1, 1),
+            0x4F: EntHelper('Vidar the Knife', 50, 14, 1, 1),
+            0x50: EntHelper('Walter', 15, 68, 1, 1),
+            0x51: EntHelper('Azure Guard', 120, 60, 1, 1),
+            0x52: EntHelper('Captain Morgan', 120, 60, 1, 1),
+            0x53: EntHelper('Erubor', 80, 69, 1, 1),
+            0x54: EntHelper('Shadowmirk Acolyte', 15, 68, 1, 1),
+            0x55: EntHelper('Phillip', 15, 65, 1, 1),
+            0x56: EntHelper('Omar', 140, 8, 1, 1),
+            0x57: EntHelper('Gramuk', 45, 70, 1, 1),
+            0x58: EntHelper('Shady Character (2)', 110, 14, 1, 1),
+            0x5A: EntHelper('Chancellor Malcolm *', 4, 71, 1, 2),
+            0x5B: EntHelper('Sonya', 160, 59, 1, 1),
+            0x5C: EntHelper('Aaron', 70, 61, 1, 1),
+            0x5D: EntHelper('Penelope', 2, 62, 1, 1),
+            0x5E: EntHelper('Siam', 80, 65, 1, 1),
+            0x5F: EntHelper('William', 60, 51, 1, 1),
+            0x60: EntHelper('Hesham', 60, 65, 1, 1)
+        }
 
     def get_itemlist(self):
         """
@@ -666,12 +687,14 @@ class B1EschalonData(object):
         except KeyError:
             return None
 
+
 class B2EschalonData(EschalonData):
     """
     Book 2 specific Eschalon Data
     """
     empty_name = 'empty'
     random_name = 'random'
+
 
 class B3EschalonData(EschalonData):
     """

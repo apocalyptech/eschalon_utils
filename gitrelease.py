@@ -5,19 +5,21 @@ import re
 import sys
 import subprocess
 
+
 def usage():
     """
     Just prints out our usage and returns
     """
-    print
-    print "USAGE: %s <version>" % (sys.argv[0])
-    print
-    print "ie: %s 0.8.0" % (sys.argv[0])
-    print
-    print "Note that the version MUST currently be three numbers"
-    print "separated by digits"
-    print
+    print()
+    print(("USAGE: %s <version>" % (sys.argv[0])))
+    print()
+    print(("ie: %s 0.8.0" % (sys.argv[0])))
+    print()
+    print("Note that the version MUST currently be three numbers")
+    print("separated by digits")
+    print()
     sys.exit()
+
 
 # Check our args for validity
 if len(sys.argv) != 2:
@@ -38,17 +40,19 @@ archive_prefix = '--prefix=%s/' % (file_base)
 
 # Create the git tag
 subprocess.call(['git', 'tag', tag])
-print 'Created tag %s' % (tag)
+print(('Created tag %s' % (tag)))
 
 # Build a .tar.gz
-subprocess.call(['git', 'archive', '--format=tar', archive_prefix, '-o', file_tar, tag])
+subprocess.call(['git', 'archive', '--format=tar',
+                 archive_prefix, '-o', file_tar, tag])
 subprocess.call(['gzip', file_tar])
-print 'Wrote to %s' % (file_tgz)
+print(('Wrote to %s' % (file_tgz)))
 
 # Build a .zip
-subprocess.call(['git', 'archive', '--format=zip', archive_prefix, '-o', file_zip, tag])
-print 'Wrote to %s' % (file_zip)
+subprocess.call(['git', 'archive', '--format=zip',
+                 archive_prefix, '-o', file_zip, tag])
+print(('Wrote to %s' % (file_zip)))
 
 # Finish
-print
-print "Don't forget to 'git push --tags' if everything is kosher"
+print()
+print("Don't forget to 'git push --tags' if everything is kosher")

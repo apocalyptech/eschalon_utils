@@ -8,35 +8,41 @@ from eschalon.maingui import MainGUI
 from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
 
+
 class EschalonUtils:
     options = {
-            'gui': True,
-            'list': False,
-            'listoptions' : {
-                'all': False,
-                'tiles': False,
-                'objects': False,
-                'txtmap': False
-                },
-            'unknowns': False,
-            'filename' : None
-            }
+        'gui': True,
+        'list': False,
+        'listoptions': {
+            'all': False,
+            'tiles': False,
+            'objects': False,
+            'txtmap': False
+        },
+        'unknowns': False,
+        'filename': None
+    }
 
     def b1char(self, widget, data=None):
         prog = MainGUI(self.options, Prefs(), 1)
         return prog.run()
+
     def b1map(self, widget, data=None):
         prog = MapGUI(self.options, Prefs(), 1)
         return prog.run()
+
     def b2char(self, widget, data=None):
         prog = MainGUI(self.options, Prefs(), 2)
         return prog.run()
+
     def b2map(self, widget, data=None):
         prog = MapGUI(self.options, Prefs(), 2)
         return prog.run()
+
     def b3char(self, widget, data=None):
         prog = MainGUI(self.options, Prefs(), 3)
         return prog.run()
+
     def b3map(self, widget, data=None):
         prog = MapGUI(self.options, Prefs(), 3)
         return prog.run()
@@ -58,8 +64,8 @@ class EschalonUtils:
         align = gtk.Alignment(0, 0, 0, 1)
         align.set_padding(5, 5, 5, 5)
         align.add(label)
-        self.table.attach(align, 0, 2, self.cur_row, self.cur_row+1,
-                gtk.EXPAND|gtk.FILL, 0, 5)
+        self.table.attach(align, 0, 2, self.cur_row, self.cur_row + 1,
+                          gtk.EXPAND | gtk.FILL, 0, 5)
         self.cur_row += 1
 
         # Now the character buttons
@@ -70,8 +76,8 @@ class EschalonUtils:
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 20, 5)
         align.add(button)
-        self.table.attach(align, 0, 1, self.cur_row, self.cur_row+1,
-                gtk.EXPAND|gtk.FILL, 0, 5)
+        self.table.attach(align, 0, 1, self.cur_row, self.cur_row + 1,
+                          gtk.EXPAND | gtk.FILL, 0, 5)
 
         # Map button
         button = gtk.Button('Book %s Map Editor' % (book))
@@ -81,8 +87,8 @@ class EschalonUtils:
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 5, 5)
         align.add(button)
-        self.table.attach(align, 1, 2, self.cur_row, self.cur_row+1,
-                gtk.EXPAND|gtk.FILL, 0, 5)
+        self.table.attach(align, 1, 2, self.cur_row, self.cur_row + 1,
+                          gtk.EXPAND | gtk.FILL, 0, 5)
 
         self.cur_row += 1
 
@@ -102,12 +108,15 @@ class EschalonUtils:
         # First our header.  We're duplicating some code from basegui with the path
         # detection, but having an icon makes the dialog look less sparse
         label = gtk.Label()
-        label.set_markup('<big><b>Eschalon Map/Character Editor v%s</b></big>' % (version))
+        label.set_markup(
+            '<big><b>Eschalon Map/Character Editor v%s</b></big>' % (version))
         hbox = gtk.HBox()
         if getattr(sys, 'frozen', False):
-            icon_filename = os.path.join(os.path.dirname(sys.executable), 'data', 'eb1_icon_64.png')
+            icon_filename = os.path.join(os.path.dirname(
+                sys.executable), 'data', 'eb1_icon_64.png')
         else:
-            icon_filename = os.path.join(os.path.dirname(__file__), 'data', 'eb1_icon_64.png')
+            icon_filename = os.path.join(os.path.dirname(
+                __file__), 'data', 'eb1_icon_64.png')
         hbox.pack_start(gtk.image_new_from_file(icon_filename), False, False)
         hbox.pack_start(label, False, False)
         align = gtk.Alignment(0, 0, 1, 1)
@@ -139,6 +148,7 @@ class EschalonUtils:
 
     def main(self):
         gtk.main()
+
 
 if __name__ == '__main__':
     eutils = EschalonUtils()

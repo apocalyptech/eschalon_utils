@@ -9,10 +9,10 @@
 from cx_Freeze import setup, Executable
 
 
-
 # Process the includes, excludes and packages first
 
-includes = ['cairo', 'gobject', 'gtk', 'pango', 'pangocairo', 'Crypto.Cipher', 'czipfile']
+includes = ['cairo', 'gobject', 'gtk', 'pango',
+            'pangocairo', 'Crypto.Cipher', 'czipfile']
 excludes = ['_gtkagg', '_tkagg', 'bsddb', 'curses', 'email', 'pywin.debugger',
             'pywin.debugger.dbgcon', 'pywin.dialogs', 'tcl',
             'Tkconstants', 'Tkinter']
@@ -21,9 +21,10 @@ path = []
 
 # These will give us a nice-looking gtk+ theme on the Windows side
 include_files = [
-        ('win32support/gtkrc', 'etc/gtk-2.0/gtkrc'),
-        ('win32support/libclearlooks.dll', 'lib/gtk-2.0/2.10.0/engines/libclearlooks.dll'),
-    ]
+    ('win32support/gtkrc', 'etc/gtk-2.0/gtkrc'),
+    ('win32support/libclearlooks.dll',
+     'lib/gtk-2.0/2.10.0/engines/libclearlooks.dll'),
+]
 
 # This is a place where the user custom code may go. You can do almost
 # whatever you want, even modify the data_files, includes and friends
@@ -38,102 +39,102 @@ include_files = [
 
 GUI2Exe_Target_1 = Executable(
     # what to build
-    script = "eschalon_b1_char.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b1_char.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b1_char.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b1_char.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 GUI2Exe_Target_2 = Executable(
     # what to build
-    script = "eschalon_b1_map.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b1_map.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b1_map.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b1_map.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 
 GUI2Exe_Target_3 = Executable(
     # what to build
-    script = "eschalon_b2_char.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b2_char.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b2_char.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b2_char.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 GUI2Exe_Target_4 = Executable(
     # what to build
-    script = "eschalon_b2_map.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b2_map.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b2_map.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b2_map.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 GUI2Exe_Target_5 = Executable(
     # what to build
-    script = "eschalon_b3_char.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b3_char.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b3_char.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b3_char.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 GUI2Exe_Target_6 = Executable(
     # what to build
-    script = "eschalon_b3_map.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_b3_map.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_b3_map.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_b3_map.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 GUI2Exe_Target_7 = Executable(
     # what to build
-    script = "eschalon_utils.py",
-    initScript = None,
-    base = None,
-    targetDir = r"dist",
-    targetName = "eschalon_utils.exe",
-    compress = True,
-    copyDependentFiles = False,
-    appendScriptToExe = False,
-    appendScriptToLibrary = False,
-    icon = None
-    )
+    script="eschalon_utils.py",
+    initScript=None,
+    base=None,
+    targetDir=r"dist",
+    targetName="eschalon_utils.exe",
+    compress=True,
+    copyDependentFiles=False,
+    appendScriptToExe=False,
+    appendScriptToLibrary=False,
+    icon=None
+)
 
 
 # That's serious now: we have all (or almost all) the options cx_Freeze
@@ -141,21 +142,21 @@ GUI2Exe_Target_7 = Executable(
 # and not used. Some of them I didn't even know about.
 
 setup(
-    
-    version = "1.0.2",
-    description = "Eschalon Utilities",
-    author = "CJ Kucera",
-    name = "Eschalon Utilities",
-    
-    options = {"build_exe": {"includes": includes,
-                             "excludes": excludes,
-                             "packages": packages,
-                             "path": path,
-                             "include_files": include_files,
-                             }
-               },
-                           
-    executables = [
+
+    version="1.0.2",
+    description="Eschalon Utilities",
+    author="CJ Kucera",
+    name="Eschalon Utilities",
+
+    options={"build_exe": {"includes": includes,
+                           "excludes": excludes,
+                           "packages": packages,
+                           "path": path,
+                           "include_files": include_files,
+                           }
+             },
+
+    executables=[
         GUI2Exe_Target_1,
         GUI2Exe_Target_2,
         GUI2Exe_Target_3,
@@ -163,8 +164,8 @@ setup(
         GUI2Exe_Target_5,
         GUI2Exe_Target_6,
         GUI2Exe_Target_7,
-        ]
-    )
+    ]
+)
 
 # This is a place where any post-compile code may go.
 # You can add as much code as you want, which can be used, for example,
@@ -175,4 +176,3 @@ setup(
 
 
 # And we are done. That's a setup script :-D
-

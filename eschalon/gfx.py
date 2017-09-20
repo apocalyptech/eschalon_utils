@@ -3,17 +3,17 @@
 #
 # Eschalon Savefile Editor
 # Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -24,10 +24,11 @@ import math
 import zlib
 import cairo
 import gobject
-import cStringIO
+import io
 from struct import unpack
 from eschalon import constants as c
 from eschalon.savefile import Savefile, LoadException
+
 
 class GfxCache(object):
     """
@@ -40,11 +41,12 @@ class GfxCache(object):
 
     def __init__(self, pngdata, width, height, cols, overlay_func=None):
         # First load the data as a Cairo surface
-        self.surface = cairo.ImageSurface.create_from_png(cStringIO.StringIO(pngdata))
+        self.surface = cairo.ImageSurface.create_from_png(
+            io.StringIO(pngdata))
 
         if overlay_func:
             self.surface = overlay_func(self.surface, width, height, cols)
-            df = cStringIO.StringIO()
+            df = io.StringIO()
             self.surface.write_to_png(df)
             pngdata = df.getvalue()
             df.close()
@@ -62,7 +64,7 @@ class GfxCache(object):
             self.pixbuf = loader.get_pixbuf()
             loader = None
             self.gdkcache = {}
-        except gobject.GError, e:
+        except gobject.GError as e:
             self.gdkcache = None
 
         # Now assign the rest of our attributes
@@ -79,13 +81,14 @@ class GfxCache(object):
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.cache):
-            copy_x_from = int(col*self.width)
-            copy_y_from = int(row*self.height)
-            if (copy_x_from+self.width > self.surface.get_width() or
-                copy_y_from+self.height > self.surface.get_height()):
+            copy_x_from = int(col * self.width)
+            copy_y_from = int(row * self.height)
+            if (copy_x_from + self.width > self.surface.get_width() or
+                    copy_y_from + self.height > self.surface.get_height()):
                 return None
             self.cache[number] = {}
-            self.cache[number]['orig'] = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height)
+            self.cache[number]['orig'] = cairo.ImageSurface(
+                cairo.FORMAT_ARGB32, self.width, self.height)
             ctx = cairo.Context(self.cache[number]['orig'])
             # Note the negative values here; nothing to be worried about.
             ctx.set_source_surface(self.surface, -copy_x_from, -copy_y_from)
@@ -95,13 +98,14 @@ class GfxCache(object):
             return self.cache[number]['orig']
         else:
             if (sizex not in self.cache[number]):
-                sizey = (sizex*self.height)/self.width
+                sizey = (sizex * self.height) / self.width
                 # This is crazy, seems like a million calls just to resize a bitmap
                 if (sizex > sizey):
-                    scale = float(self.width)/sizex
+                    scale = float(self.width) / sizex
                 else:
-                    scale = float(self.height)/sizey
-                self.cache[number][sizex] = cairo.ImageSurface(cairo.FORMAT_ARGB32, sizex, sizey)
+                    scale = float(self.height) / sizey
+                self.cache[number][sizex] = cairo.ImageSurface(
+                    cairo.FORMAT_ARGB32, sizex, sizey)
                 imgpat = cairo.SurfacePattern(self.cache[number]['orig'])
                 scaler = cairo.Matrix()
                 scaler.scale(scale, scale)
@@ -120,30 +124,32 @@ class GfxCache(object):
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.gdkcache):
-            copy_x_from = int(col*self.width)
-            copy_y_from = int(row*self.height)
-            if (copy_x_from+self.width > self.pixbuf.get_property('width') or
-                copy_y_from+self.height > self.pixbuf.get_property('height')):
+            copy_x_from = int(col * self.width)
+            copy_y_from = int(row * self.height)
+            if (copy_x_from + self.width > self.pixbuf.get_property('width') or
+                    copy_y_from + self.height > self.pixbuf.get_property('height')):
                 return None
             self.gdkcache[number] = {}
             self.gdkcache[number]['orig'] = gtk.gdk.Pixbuf(self.pixbuf.get_colorspace(),
-                    self.pixbuf.get_has_alpha(),
-                    self.pixbuf.get_bits_per_sample(),
-                    self.width, self.height)
+                                                           self.pixbuf.get_has_alpha(),
+                                                           self.pixbuf.get_bits_per_sample(),
+                                                           self.width, self.height)
             self.pixbuf.copy_area(copy_x_from,
-                    copy_y_from,
-                    self.width,
-                    self.height,
-                    self.gdkcache[number]['orig'],
-                    0, 0)
+                                  copy_y_from,
+                                  self.width,
+                                  self.height,
+                                  self.gdkcache[number]['orig'],
+                                  0, 0)
             self.gdkcache[number][self.width] = self.gdkcache[number]['orig']
         if (sizex is None):
             return self.gdkcache[number]['orig']
         else:
             if (sizex not in self.gdkcache[number]):
-                sizey = (sizex*self.height)/self.width
-                self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(sizex, sizey, gtk.gdk.INTERP_BILINEAR)
+                sizey = (sizex * self.height) / self.width
+                self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(
+                    sizex, sizey, gtk.gdk.INTERP_BILINEAR)
             return self.gdkcache[number][sizex]
+
 
 class B1GfxEntCache(GfxCache):
     """
@@ -152,6 +158,7 @@ class B1GfxEntCache(GfxCache):
     the various image sizes are.  Also, we can save some memory by lopping
     off much of the loaded image.
     """
+
     def __init__(self, pngdata, cols=15, rows=8):
 
         # Read in the data as usual, with junk for width and height
@@ -160,14 +167,15 @@ class B1GfxEntCache(GfxCache):
         # ... and now that we have the image dimensions, fix that junk
         imgwidth = self.surface.get_width()
         imgheight = self.surface.get_height()
-        self.width = int(imgwidth/cols)
-        self.height = int(imgheight/rows)
+        self.width = int(imgwidth / cols)
+        self.height = int(imgheight / rows)
 
         # Some information on size scaling
-        self.size_scale = self.width/52.0
+        self.size_scale = self.width / 52.0
 
         # Lop off the data we don't need, to save on memory usage
-        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, imgheight)
+        newsurf = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.width, imgheight)
         newctx = cairo.Context(newsurf)
         newctx.set_source_surface(self.surface, 0, 0)
         newctx.paint()
@@ -175,15 +183,18 @@ class B1GfxEntCache(GfxCache):
 
         # (and on our pixbuf copy as well)
         if (self.gdkcache is not None):
-            newbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
+            newbuf = gtk.gdk.Pixbuf(
+                gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
             self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
             self.pixbuf = newbuf
+
 
 class B23GfxEntCache(GfxCache):
     """
     A class to hold image data about entity graphics.  We're doing all kinds
     of things here to support Book 2.
     """
+
     def __init__(self, ent, pngdata):
 
         # Read in the data as usual, with junk for width and height
@@ -194,14 +205,15 @@ class B23GfxEntCache(GfxCache):
         imgheight = self.surface.get_height()
         self.width = ent.width
         self.height = ent.height
-        cols = int(imgwidth/ent.width)
-        #print '%s - %d x %d: %d cols' % (ent.name, self.width, self.height, cols)
+        cols = int(imgwidth / ent.width)
+        # print '%s - %d x %d: %d cols' % (ent.name, self.width, self.height, cols)
 
         # Some information on size scaling
-        self.size_scale = self.width/64.0
+        self.size_scale = self.width / 64.0
 
         # Construct an abbreviated image with just one frame per direction
-        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, self.width, self.height*ent.dirs)
+        newsurf = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, self.width, self.height * ent.dirs)
         newctx = cairo.Context(newsurf)
         newctx.save()
         for i in range(ent.dirs):
@@ -209,8 +221,9 @@ class B23GfxEntCache(GfxCache):
             col = (frame % cols)
             row = int(frame / cols)
             newctx.set_operator(cairo.OPERATOR_SOURCE)
-            newctx.set_source_surface(self.surface, -col*self.width, -row*self.height + (i*self.height))
-            newctx.rectangle(0, i*self.height, self.width, self.height)
+            newctx.set_source_surface(
+                self.surface, -col * self.width, -row * self.height + (i * self.height))
+            newctx.rectangle(0, i * self.height, self.width, self.height)
             newctx.fill()
         newctx.restore()
         self.surface = newsurf
@@ -220,11 +233,13 @@ class B23GfxEntCache(GfxCache):
         if (self.gdkcache is not None):
             self.pixbuf = Gfx.surface_to_pixbuf(newsurf)
 
+
 class SingleImageGfxCache(GfxCache):
     """
     Class to take care of "huge" images, mostly, in which we just want to cache resized graphics.
     Only used for Book 2 at the moment, hence our "64" hardcode down below.
     """
+
     def __init__(self, pngdata, scale=64.0):
 
         # Read the data as usual, with junk for width and height
@@ -233,18 +248,20 @@ class SingleImageGfxCache(GfxCache):
         # And now set the image dimensions appropriately
         self.width = self.surface.get_width()
         self.height = self.surface.get_height()
-        self.size_scale = self.width/scale
+        self.size_scale = self.width / scale
+
 
 class PakIndex(object):
     """ A class to hold information on an individual file in the pak. """
 
     def __init__(self, data):
         (self.size_compressed,
-                self.abs_index,
-                self.size_real,
-                self.unknowni1) = unpack('<IIII', data[:16])
+         self.abs_index,
+         self.size_real,
+         self.unknowni1) = unpack('<IIII', data[:16])
         self.filename = data[16:]
         self.filename = self.filename[:self.filename.index("\x00")]
+
 
 class Gfx(object):
     """ A class to hold graphics data. """
@@ -273,7 +290,7 @@ class Gfx(object):
             253: 1,
             254: 2,
             255: 3
-            }
+        }
 
         # Some graphic-specific indexes/flags
         self.floorcache = None
@@ -307,7 +324,7 @@ class Gfx(object):
         found would require you to loop through and fix each pixel in the
         pixbuf afterwards.
         """
-        df = cStringIO.StringIO()
+        df = io.StringIO()
         surface.write_to_png(df)
         loader = gtk.gdk.PixbufLoader()
         loader.write(df.getvalue())
@@ -327,7 +344,9 @@ class Gfx(object):
         elif book == 3:
             return B3Gfx(datadir, eschalondata)
         else:
-            raise LoadException('Book number must be 1, 2, or 3 (passed %d)' % (book))
+            raise LoadException(
+                'Book number must be 1, 2, or 3 (passed %d)' % (book))
+
 
 class B1Gfx(Gfx):
     """
@@ -388,12 +407,12 @@ class B1Gfx(Gfx):
             self.wall_gfx_group[i] = self.GFX_SET_TREE
 
         # Wall object types
-        for i in (range(127) + range(132, 142) + range(143, 153) +
-                range(154, 161) + range(214, 251)):
+        for i in (list(range(127)) + list(range(132, 142)) + list(range(143, 153)) +
+                  list(range(154, 161)) + list(range(214, 251))):
             self.wall_types[i] = self.TYPE_OBJ
         for i in range(161, 214):
             self.wall_types[i] = self.TYPE_WALL
-        for i in (range(251, 256) + range(127, 132) + [142, 153]):
+        for i in (list(range(251, 256)) + list(range(127, 132)) + [142, 153]):
             self.wall_types[i] = self.TYPE_TREE
 
         # Restricted entities (only one direction)
@@ -427,12 +446,14 @@ class B1Gfx(Gfx):
     def readfile(self, filename):
         """ Reads a given filename out of the PAK. """
         if self.loaded:
-            filepath = os.path.join(self.eschalondata.gamedir, 'packedgraphics', filename)
+            filepath = os.path.join(
+                self.eschalondata.gamedir, 'packedgraphics', filename)
             if os.path.isfile(filepath):
                 return open(filepath, 'rb').read()
             if (filename in self.fileindex):
                 self.df.open_r()
-                self.df.seek(self.zeroindex + self.fileindex[filename].abs_index)
+                self.df.seek(self.zeroindex +
+                             self.fileindex[filename].abs_index)
                 # On Windows, we need to specify bufsize or memory gets clobbered
                 filedata = zlib.decompress(
                     self.df.read(self.fileindex[filename].size_compressed),
@@ -441,7 +462,8 @@ class B1Gfx(Gfx):
                 self.df.close()
                 return filedata
             else:
-                raise LoadException('Filename %s not found in archive' % (filename))
+                raise LoadException(
+                    'Filename %s not found in archive' % (filename))
         else:
             raise LoadException('PAK Index has not been loaded')
 
@@ -458,7 +480,7 @@ class B1Gfx(Gfx):
         if (header != '!PAK'):
             df.close()
             raise LoadException('Invalid PAK header')
-        
+
         # Initial Values
         self.unknownh1 = df.readshort()
         self.unknownh2 = df.readshort()
@@ -482,21 +504,24 @@ class B1Gfx(Gfx):
 
     def get_item(self, item, size=None, gdk=True):
         if (self.itemcache is None):
-            self.itemcache = GfxCache(self.readfile('items_mastersheet.png'), 42, 42, 10)
-        return self.itemcache.getimg(item.pictureid+1, size, gdk)
+            self.itemcache = GfxCache(self.readfile(
+                'items_mastersheet.png'), 42, 42, 10)
+        return self.itemcache.getimg(item.pictureid + 1, size, gdk)
 
     def get_floor(self, floornum, size=None, gdk=False):
         if (floornum == 0):
             return None
         if (self.floorcache is None):
-            self.floorcache = GfxCache(self.readfile('iso_tileset_base.png'), 52, 26, 6)
+            self.floorcache = GfxCache(self.readfile(
+                'iso_tileset_base.png'), 52, 26, 6)
         return self.floorcache.getimg(floornum, size, gdk)
 
     def get_decal(self, decalnum, size=None, gdk=False):
         if (decalnum == 0):
             return None
         if (self.decalcache is None):
-            self.decalcache = GfxCache(self.readfile('iso_tileset_base_decals.png'), 52, 26, 6)
+            self.decalcache = GfxCache(self.readfile(
+                'iso_tileset_base_decals.png'), 52, 26, 6)
         return self.decalcache.getimg(decalnum, size, gdk)
 
     # Returns a tuple, first item is the surface, second is the extra height to add while drawing
@@ -512,19 +537,23 @@ class B1Gfx(Gfx):
             return (None, 0, 0)
         if gfxgroup == self.GFX_SET_A:
             if (self.objcache1 is None):
-                self.objcache1 = GfxCache(self.readfile('iso_tileset_obj_a.png'), 52, 52, 6)
+                self.objcache1 = GfxCache(self.readfile(
+                    'iso_tileset_obj_a.png'), 52, 52, 6)
             return (self.objcache1.getimg(objnum, size, gdk), 1, 0)
         elif gfxgroup == self.GFX_SET_B:
             if (self.objcache2 is None):
-                self.objcache2 = GfxCache(self.readfile('iso_tileset_obj_b.png'), 52, 78, 6)
-            return (self.objcache2.getimg(objnum-100, size, gdk), 2, 0)
+                self.objcache2 = GfxCache(self.readfile(
+                    'iso_tileset_obj_b.png'), 52, 78, 6)
+            return (self.objcache2.getimg(objnum - 100, size, gdk), 2, 0)
         elif gfxgroup == self.GFX_SET_C:
             if (self.objcache3 is None):
-                self.objcache3 = GfxCache(self.readfile('iso_tileset_obj_c.png'), 52, 78, 6)
-            return (self.objcache3.getimg(objnum-160, size, gdk), 2, 0)
+                self.objcache3 = GfxCache(self.readfile(
+                    'iso_tileset_obj_c.png'), 52, 78, 6)
+            return (self.objcache3.getimg(objnum - 160, size, gdk), 2, 0)
         else:
             if (self.objcache4 is None):
-                self.objcache4 = GfxCache(self.readfile('iso_trees.png'), 52, 130, 5)
+                self.objcache4 = GfxCache(
+                    self.readfile('iso_trees.png'), 52, 130, 5)
             if (objnum in self.treemap):
                 return (self.objcache4.getimg(self.treemap[objnum], size, gdk), 4, 0)
             else:
@@ -534,7 +563,8 @@ class B1Gfx(Gfx):
         if (decalnum == 0):
             return None
         if (self.objdecalcache is None):
-            self.objdecalcache = GfxCache(self.readfile('iso_tileset_obj_decals.png'), 52, 78, 6)
+            self.objdecalcache = GfxCache(self.readfile(
+                'iso_tileset_obj_decals.png'), 52, 78, 6)
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
     def get_flame(self, size=None, gdk=False):
@@ -550,7 +580,7 @@ class B1Gfx(Gfx):
             self.flamecache = B1GfxEntCache(flamedata, 1, 1)
         if (size is None):
             size = self.tile_width
-        return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
+        return self.flamecache.getimg(1, int(size * self.flamecache.size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
         entity = self.eschalondata.get_entity(entnum)
@@ -560,13 +590,14 @@ class B1Gfx(Gfx):
         if (entnum not in self.entcache):
             filename = 'mo%d.png' % (entnum)
             if (entnum in self.restrict_ents):
-                self.entcache[entnum] = B1GfxEntCache(self.readfile(filename), 2, 1)
+                self.entcache[entnum] = B1GfxEntCache(
+                    self.readfile(filename), 2, 1)
             else:
                 self.entcache[entnum] = B1GfxEntCache(self.readfile(filename))
         cache = self.entcache[entnum]
         if (size is None):
             size = self.tile_width
-        return cache.getimg(direction, int(size*cache.size_scale), gdk)
+        return cache.getimg(direction, int(size * cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
         if (avatarnum < 0 or avatarnum > 7):
@@ -574,12 +605,15 @@ class B1Gfx(Gfx):
         if (avatarnum not in self.avatarcache):
             if (avatarnum == 7):
                 if (os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png'))):
-                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.eschalondata.gamedir, 'mypic.png'))
+                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
+                        os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                 else:
                     return None
             else:
-                self.avatarcache[avatarnum] = GfxCache(self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
+                self.avatarcache[avatarnum] = GfxCache(
+                    self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
         return self.avatarcache[avatarnum]
+
 
 class B2Gfx(Gfx):
     """
@@ -633,33 +667,33 @@ class B2Gfx(Gfx):
             self.wall_gfx_group[i] = self.GFX_SET_WALL
 
         # Wall object types
-        for i in (range(251) + range(266, 272) + range(282, 286) +
-                range(314, 320) + range(330, 336) + range(346, 352) +
-                range(364, 368) + range(378, 384) + range(394, 402) +
-                range(403, 513)):
+        for i in (list(range(251)) + list(range(266, 272)) + list(range(282, 286)) +
+                  list(range(314, 320)) + list(range(330, 336)) + list(range(346, 352)) +
+                  list(range(364, 368)) + list(range(378, 384)) + list(range(394, 402)) +
+                  list(range(403, 513))):
             self.wall_types[i] = self.TYPE_OBJ
         for i in range(251, 256):
             self.wall_types[i] = self.TYPE_TREE
-        for i in (range(256, 266) + range(272, 282) + range(286, 314) +
-                range(320, 330) + range(336, 346) + range(352, 364) +
-                range(368, 378) + range(384, 394) + [402]):
+        for i in (list(range(256, 266)) + list(range(272, 282)) + list(range(286, 314)) +
+                  list(range(320, 330)) + list(range(336, 346)) + list(range(352, 364)) +
+                  list(range(368, 378)) + list(range(384, 394)) + [402]):
             self.wall_types[i] = self.TYPE_WALL
 
         # Book 2 specific caches
-        self.treecache = [ None, None, None ]
+        self.treecache = [None, None, None]
         self.hugegfxcache = {}
         self.itemcache = {
-                'armor': None,
-                'magic': None,
-                'misc': None,
-                'weapons': None
-            }
+            'armor': None,
+            'magic': None,
+            'misc': None,
+            'weapons': None
+        }
         self.itemcache_overlayfunc = {
-                'armor': self.item_overlayfunc_armor,
-                'magic': None,
-                'misc': None,
-                'weapons': self.item_overlayfunc_weapon
-            }
+            'armor': self.item_overlayfunc_armor,
+            'magic': None,
+            'misc': None,
+            'weapons': self.item_overlayfunc_weapon
+        }
         self.zappercache = None
 
         # Item category graphic file lookups
@@ -670,7 +704,7 @@ class B2Gfx(Gfx):
             self.itemcategory_gfxcache_idx[num] = 'weapons'
         for num in range(3, 11):
             self.itemcategory_gfxcache_idx[num] = 'armor'
-        for num in range(11, 16) + [17]:
+        for num in list(range(11, 16)) + [17]:
             self.itemcategory_gfxcache_idx[num] = 'magic'
 
         # Finally call the parent constructor
@@ -685,18 +719,22 @@ class B2Gfx(Gfx):
 
         # First load in the background and its frame
         frame = self.eschalondata.readfile('icon_frame.png')
-        background = self.eschalondata.readfile('%s_icon_blank.png' % (category))
-        framesurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(frame))
-        backsurf = cairo.ImageSurface.create_from_png(cStringIO.StringIO(background))
+        background = self.eschalondata.readfile(
+            '%s_icon_blank.png' % (category))
+        framesurf = cairo.ImageSurface.create_from_png(
+            io.StringIO(frame))
+        backsurf = cairo.ImageSurface.create_from_png(
+            io.StringIO(background))
 
         # Now create a new surface and tile the background over the whole thing
-        newsurf = cairo.ImageSurface(cairo.FORMAT_ARGB32, surface.get_width(), surface.get_height())
+        newsurf = cairo.ImageSurface(
+            cairo.FORMAT_ARGB32, surface.get_width(), surface.get_height())
         newctx = cairo.Context(newsurf)
-        rows = int(surface.get_height()/height)
+        rows = int(surface.get_height() / height)
         for row in range(rows):
             for col in range(cols):
-                newctx.set_source_surface(backsurf, col*width, row*height)
-                newctx.rectangle(col*width, row*height, width, height)
+                newctx.set_source_surface(backsurf, col * width, row * height)
+                newctx.rectangle(col * width, row * height, width, height)
                 newctx.paint()
 
         # Overlay our passed-in surface on top
@@ -707,8 +745,8 @@ class B2Gfx(Gfx):
         # Now tile the frame on top of every item
         for row in range(rows):
             for col in range(cols):
-                newctx.set_source_surface(framesurf, col*width, row*height)
-                newctx.rectangle(col*width, row*height, width, height)
+                newctx.set_source_surface(framesurf, col * width, row * height)
+                newctx.rectangle(col * width, row * height, width, height)
                 newctx.paint()
 
         return newsurf
@@ -725,21 +763,24 @@ class B2Gfx(Gfx):
         else:
             idx = self.itemcategory_gfxcache_idx[item.category]
         if (self.itemcache[idx] is None):
-            self.itemcache[idx] = GfxCache(self.eschalondata.readfile('%s_sheet.png' % (idx)), 50, 50, 10, self.itemcache_overlayfunc[idx])
-        return self.itemcache[idx].getimg(item.pictureid+1, size, gdk)
+            self.itemcache[idx] = GfxCache(self.eschalondata.readfile(
+                '%s_sheet.png' % (idx)), 50, 50, 10, self.itemcache_overlayfunc[idx])
+        return self.itemcache[idx].getimg(item.pictureid + 1, size, gdk)
 
     def get_floor(self, floornum, size=None, gdk=False):
         if (floornum == 0):
             return None
         if (self.floorcache is None):
-            self.floorcache = GfxCache(self.eschalondata.readfile('iso_base.png'), 64, 32, 8)
+            self.floorcache = GfxCache(
+                self.eschalondata.readfile('iso_base.png'), 64, 32, 8)
         return self.floorcache.getimg(floornum, size, gdk)
 
     def get_decal(self, decalnum, size=None, gdk=False):
         if (decalnum == 0):
             return None
         if (self.decalcache is None):
-            self.decalcache = GfxCache(self.eschalondata.readfile('iso_basedecals.png'), 64, 32, 16)
+            self.decalcache = GfxCache(self.eschalondata.readfile(
+                'iso_basedecals.png'), 64, 32, 16)
         return self.decalcache.getimg(decalnum, size, gdk)
 
     # Returns a tuple, first item is the surface, second is the extra height to add while drawing
@@ -752,20 +793,23 @@ class B2Gfx(Gfx):
             return (None, 0, 0)
         if (walltype == self.GFX_SET_OBJ):
             if (self.objcache1 is None):
-                self.objcache1 = GfxCache(self.eschalondata.readfile('iso_obj.png'), 64, 64, 16)
+                self.objcache1 = GfxCache(
+                    self.eschalondata.readfile('iso_obj.png'), 64, 64, 16)
             return (self.objcache1.getimg(objnum, size, gdk), 1, 0)
         elif (walltype == self.GFX_SET_WALL):
             if (self.objcache2 is None):
-                self.objcache2 = GfxCache(self.eschalondata.readfile('iso_walls.png'), 64, 96, 16)
-            return (self.objcache2.getimg(objnum-255, size, gdk), 2, 0)
+                self.objcache2 = GfxCache(
+                    self.eschalondata.readfile('iso_walls.png'), 64, 96, 16)
+            return (self.objcache2.getimg(objnum - 255, size, gdk), 2, 0)
         elif (walltype == self.GFX_SET_TREE):
             if (self.treecache[treeset] is None):
-                self.treecache[treeset] = GfxCache(self.eschalondata.readfile('iso_trees%d.png' % (treeset)), 96, 160, 5)
+                self.treecache[treeset] = GfxCache(self.eschalondata.readfile(
+                    'iso_trees%d.png' % (treeset)), 96, 160, 5)
             if (objnum in self.treemap):
                 # note the size difference for Book 2 trees (50% wider)
                 if not size:
                     size = self.tile_width
-                offset = -int(size/4)
+                offset = -int(size / 4)
                 size = int(size * 1.5)
                 return (self.treecache[treeset].getimg(self.treemap[objnum], size, gdk), 4, offset)
             else:
@@ -775,7 +819,8 @@ class B2Gfx(Gfx):
         if (decalnum == 0):
             return None
         if (self.objdecalcache is None):
-            self.objdecalcache = GfxCache(self.eschalondata.readfile('iso_objdecals.png'), 64, 96, 16)
+            self.objdecalcache = GfxCache(
+                self.eschalondata.readfile('iso_objdecals.png'), 64, 96, 16)
         return self.objdecalcache.getimg(decalnum, size, gdk)
 
     def get_flame(self, size=None, gdk=False):
@@ -794,7 +839,7 @@ class B2Gfx(Gfx):
             self.flamecache = SingleImageGfxCache(flamedata, 52.0)
         if (size is None):
             size = self.tile_width
-        return self.flamecache.getimg(1, int(size*self.flamecache.size_scale), gdk)
+        return self.flamecache.getimg(1, int(size * self.flamecache.size_scale), gdk)
 
     def get_zapper(self, size=None, gdk=False):
         """
@@ -807,7 +852,7 @@ class B2Gfx(Gfx):
             self.zappercache = SingleImageGfxCache(zapperdata)
         if (size is None):
             size = self.tile_width
-        return self.zappercache.getimg(1, int(size*self.zappercache.size_scale), gdk)
+        return self.zappercache.getimg(1, int(size * self.zappercache.size_scale), gdk)
 
     def get_huge_gfx(self, filename, size=None, gdk=False):
         """
@@ -818,12 +863,13 @@ class B2Gfx(Gfx):
             if (filename.find('/') != -1 or filename.find('..') != -1 or filename.find('\\') != -1):
                 return None
             try:
-                self.hugegfxcache[filename] = SingleImageGfxCache(self.eschalondata.readfile(filename))
+                self.hugegfxcache[filename] = SingleImageGfxCache(
+                    self.eschalondata.readfile(filename))
             except LoadException:
                 return None
         if (size is None):
             size = self.tile_width
-        return self.hugegfxcache[filename].getimg(1, int(size*self.hugegfxcache[filename].size_scale), gdk)
+        return self.hugegfxcache[filename].getimg(1, int(size * self.hugegfxcache[filename].size_scale), gdk)
 
     def get_entity(self, entnum, direction, size=None, gdk=False):
         ent = self.eschalondata.get_entity(entnum)
@@ -831,25 +877,29 @@ class B2Gfx(Gfx):
             return None
         if (entnum not in self.entcache):
             filename = ent.gfxfile
-            self.entcache[entnum] = B23GfxEntCache(ent, self.eschalondata.readfile(filename))
+            self.entcache[entnum] = B23GfxEntCache(
+                ent, self.eschalondata.readfile(filename))
         cache = self.entcache[entnum]
         if (size is None):
             size = self.tile_width
-        return cache.getimg(direction, int(size*cache.size_scale), gdk)
+        return cache.getimg(direction, int(size * cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
         if (avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12)):
             if (avatarnum not in self.avatarcache):
                 if (avatarnum == 0xFFFFFFFF):
                     if (os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png'))):
-                        self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(os.path.join(self.eschalondata.gamedir, 'mypic.png'))
+                        self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
+                            os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                     else:
                         return None
                 else:
-                    self.avatarcache[avatarnum] = GfxCache(self.eschalondata.readfile('port%d.png' % (avatarnum)), 64, 64, 1).pixbuf
+                    self.avatarcache[avatarnum] = GfxCache(self.eschalondata.readfile(
+                        'port%d.png' % (avatarnum)), 64, 64, 1).pixbuf
             return self.avatarcache[avatarnum]
         else:
             return None
+
 
 class B3Gfx(B2Gfx):
     """
@@ -865,4 +915,4 @@ class B3Gfx(B2Gfx):
         super(B3Gfx, self).__init__(datadir, eschalondata)
 
         # Book III has four tree sets
-        self.treecache = [ None, None, None, None ]
+        self.treecache = [None, None, None, None]
