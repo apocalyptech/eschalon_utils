@@ -26,7 +26,7 @@ setup(
     },
     scripts=[
         'eschalon_main.py',
-        'eschalon_utils.py',
+        'eschalon_gui.py',
     ],
 
 )
