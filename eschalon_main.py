@@ -20,7 +20,7 @@
 
 import sys
 
-import argparse as argparse
+import argparse
 
 from eschalon.mapgui import MapGUI
 from eschalon.maincli import MainCLI
