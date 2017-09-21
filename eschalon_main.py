@@ -22,7 +22,7 @@ import sys
 
 import argparse
 
-from eschalon.maincli import MainCLI
+
 from eschalon.preferences import Prefs
 
 
@@ -42,23 +42,24 @@ def main():
     char_manip_group.add_argument("--rm-desease", action="store_true")
 
     # TODO: more advanced CLI validation checks
-    parser.add_argument("filename", type=str, action='append')
+    parser.add_argument("filename", type=str, nargs='?')
     parser.add_argument("--gui", action="store_true")
     parser.add_argument("--map", action="store_true")
     parser.add_argument("--book", type=int, choices=[1, 2, 3], required=True)
 
     args = parser.parse_args()
 
+    # We're waiting until now to import, so people just using CLI don't need
+    # PyGTK installed, etc). I *am* aware that doing this is discouraged.
     if args.gui:
-        # We're waiting until now to import, so people just using CLI don't need
-        # PyGTK installed, etc).  Not that this program follows PEP8-recommended
-        # practices anyway, but I *am* aware that doing this is discouraged.
         from eschalon.maingui import MainGUI
-        prog = MainGUI(args, Prefs(), args.book)
+        prog = MainGUI(args.filename, Prefs(), args.book)
     elif args.map:
+        from eschalon.mapgui import MapGUI
         prog = MapGUI(args.filename, Prefs(), args.book)
     else:
-        prog = MainCLI(args, Prefs(), args.book)
+        from eschalon.maincli import MainCLI
+        prog = MainCLI(args.filename, Prefs(), args.book , args)
 
     return prog.run()
 

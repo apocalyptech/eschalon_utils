@@ -26,9 +26,10 @@ from eschalon.savefile import LoadException
 
 class MainCLI(object):
 
-    def __init__(self, args, prefs, req_book):
+    def __init__(self, filename, req_book, prefs, args):
         """ A fresh object, with no data. """
         self.args = args
+        self.filename = filename
         self.prefs = prefs
         self.req_book = req_book
 
@@ -36,11 +37,11 @@ class MainCLI(object):
 
         # Load in our file
         try:
-            char = Character.load(self.args.filename, self.req_book)
+            char = Character.load(self.filename, self.req_book)
             char.read()
             self.char = char
         except LoadException as e:
-            print('"' + self.args.filename + '" could not be opened: {}'.format(str(e)))
+            print('"' + self.filename + '" could not be opened: {}'.format(str(e)))
             return False
 
         # The --list options will return automatically.  Everything
