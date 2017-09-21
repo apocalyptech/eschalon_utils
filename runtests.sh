@@ -1,3 +1,3 @@
 #!/bin/sh
-nosetests-2.7
-nosetests-3.6
+nosetests-2.7 --with-coverage "$@"
+nosetests-3.6 --with-coverage "$@"

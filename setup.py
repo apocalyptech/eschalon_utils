@@ -28,5 +28,8 @@ setup(
         'eschalon_main.py',
         'eschalon_gui.py',
     ],
+    tests_require= [
+        'coverage'
+    ]
 
 )

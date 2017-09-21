@@ -38,12 +38,11 @@ class TestSavefile(unittest.TestCase):
         s.writestr("yellow".encode("UTF-8"))
         s.df.seek(0)
         orig_content = s.df.read()
+        self.assertEquals(orig_content, b"yellow\r\n")
         s = eschalon.savefile.Savefile(stringdata=orig_content)
         s.open_r()
         new_string = s.readstr()
         self.assertEquals(new_string, b"yellow")
-
-
 
 
 if __name__ == '__main__':
