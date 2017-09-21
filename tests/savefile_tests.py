@@ -109,5 +109,22 @@ class TestSavefile(unittest.TestCase):
             fn_to_read=eschalon.savefile.Savefile.readsint,
         )
 
+    def test_write_signed_short(self):
+        self._test_packed_write_and_read(
+            value=3,
+            pack_string='<H',
+            fn_to_write=eschalon.savefile.Savefile.writeshort,
+            fn_to_read=eschalon.savefile.Savefile.readshort,
+        )
+
+
+    def test_write_uchar(self):
+        self._test_packed_write_and_read(
+            value=1,
+            pack_string='B',
+            fn_to_write=eschalon.savefile.Savefile.writeuchar,
+            fn_to_read=eschalon.savefile.Savefile.readuchar,
+        )
+
 if __name__ == '__main__':
     unittest.main()
