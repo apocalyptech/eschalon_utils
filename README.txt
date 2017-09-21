@@ -177,8 +177,8 @@ py2app:
 pip install --user py2app
 
 Then run the make-osx-apps.sh script. The resulting apps should be portable
-to other Macs without having to install any libraries (you will still need
-X11.app).  TODO: when you first run these apps and identify the location of
+to other Macs without having to install any libraries.
+TODO: when you first run these apps and identify the location of
 the save files and data files, they crash afterward.  Just re-launch them
 and you shouldn't have any further problems.
 
