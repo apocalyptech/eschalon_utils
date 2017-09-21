@@ -46,11 +46,11 @@ class Savefile(object):
         will use a BytesIO object instead.
         """
 
+        if bool(filename is None) == bool(stringdata is None):
+            raise LoadException('Must include filename xor stringdata')
+
         self.filename = filename
         self.stringdata = stringdata
-
-        if bool(self.filename is None) == bool(self.stringdata is None):
-            raise LoadException('Must include filename xor stringdata')
 
         self.df = None
         self.opened_r = False
@@ -74,10 +74,10 @@ class Savefile(object):
 
     def exists(self):
         """ Returns true if the file currently exists. """
-        if self.stringdata is None:
-            return os.path.exists(self.filename)
-        else:
+        if self.is_stringdata():
             return True
+        else:
+            return os.path.exists(self.filename)
 
     def close(self):
         """ Closes the filehandle. """
@@ -86,25 +86,23 @@ class Savefile(object):
             self.opened_r = False
             self.opened_w = False
 
-    def open_r(self):
-        """ Opens a file for reading.  Throws IOError if unavailable"""
+    def _open_mode(self, mode):
         if self.opened_r or self.opened_w:
             raise IOError('File is already open')
-        if self.stringdata is None:
-            self.df = open(self.filename, 'rb')
-        else:
+        if self.is_stringdata():
             self.df = BytesIO(self.stringdata)
+        else:
+            self.df = open(self.filename, mode)
+        self.df.seek(0)
+
+    def open_r(self):
+        """ Opens a file for reading.  Throws IOError if unavailable"""
+        self._open_mode('rb')
         self.opened_r = True
 
     def open_w(self):
         """ Opens a file for writing.  Throws IOError if unavailable"""
-        if self.opened_r or self.opened_w:
-            raise IOError('File is already open')
-        if self.stringdata is None:
-            self.df = open(self.filename, 'wb')
-        else:
-            self.df = BytesIO(self.stringdata)
-        self.df.seek(0)
+        self._open_mode('wb')
         self.opened_w = True
 
     def eof(self):
