@@ -262,7 +262,7 @@ class Map(object):
         might not warn on overwriting, now, because of this.
         """
         if self.df.filename[-4:].lower() != '.map':
-            self.df.filename = '%s.map' % (self.df.filename)
+            self.df.filename = '%s.map' % self.df.filename
 
     def set_df_ent(self):
         try:
@@ -330,22 +330,22 @@ class Map(object):
         # loop through our list to repopulate from the new objects, so that
         # our referential comparisons still work on the new copy.
         for entity in self.entities:
-            if (entity is None):
+            if entity is None:
                 newmap.entities.append(None)
             else:
-                if (entity.y < len(newmap.tiles) and entity.x < len(newmap.tiles[entity.y])):
+                if entity.y < len(newmap.tiles) and entity.x < len(newmap.tiles[entity.y]):
                     newmap.entities.append(
                         newmap.tiles[entity.y][entity.x].entity)
                 else:
                     newmap.entities.append(entity.replicate())
         tilecontentidxtemp = {}
         for tilecontent in self.tilecontents:
-            if (tilecontent is None):
+            if tilecontent is None:
                 newmap.tilecontents.append(None)
             else:
-                if (tilecontent.y < len(newmap.tiles) and tilecontent.x < len(newmap.tiles[tilecontent.y])):
+                if tilecontent.y < len(newmap.tiles) and tilecontent.x < len(newmap.tiles[tilecontent.y]):
                     key = '%d%02d' % (tilecontent.y, tilecontent.x)
-                    if (key in tilecontentidxtemp):
+                    if key in tilecontentidxtemp:
                         tilecontentidxtemp[key] += 1
                     else:
                         tilecontentidxtemp[key] = 0
@@ -378,7 +378,7 @@ class Map(object):
             left-to-right, top-to-bottom format in the map. """
         self.tiles[self.cursqrow][self.cursqcol].read(self.df)
         self.cursqcol = self.cursqcol + 1
-        if (self.cursqcol == 100):
+        if self.cursqcol == 100:
             self.cursqcol = 0
             self.cursqrow = self.cursqrow + 1
 
@@ -394,7 +394,7 @@ class Map(object):
             # ... does that object then get put into a garbage collector or something?  Do we have to
             # set that to None at some point, manually?
             self.tilecontents.append(tilecontent)
-            if (tilecontent.x >= 0 and tilecontent.x < 100 and tilecontent.y >= 0 and tilecontent.y < 200):
+            if tilecontent.x >= 0 and tilecontent.x < 100 and tilecontent.y >= 0 and tilecontent.y < 200:
                 self.tiles[tilecontent.y][tilecontent.x].addtilecontent(
                     tilecontent)
             return True
@@ -405,7 +405,7 @@ class Map(object):
         """ Deletes a tilecontent, both from the associated tile, and our internal list. """
         tile = self.tiles[y][x]
         tilecontent = tile.tilecontents[idx]
-        if (tilecontent is not None):
+        if tilecontent is not None:
             self.tilecontents.remove(tilecontent)
             self.tiles[y][x].deltilecontent(tilecontent)
 
@@ -419,7 +419,7 @@ class Map(object):
                 print('WARNING: Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
-                if (entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200):
+                if entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200:
                     self.tiles[entity.y][entity.x].addentity(entity)
             return True
         except FirstItemLoadException as e:
@@ -429,70 +429,70 @@ class Map(object):
         """ Deletes an entity, both from the associated tile, and our internal list. """
         tile = self.tiles[y][x]
         ent = tile.entity
-        if (ent is not None):
+        if ent is not None:
             self.entities.remove(ent)
             tile.delentity()
 
     def rgb_color(self):
-        return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + (0xFF)
+        return (self.color_r << 24) + (self.color_g << 16) + (self.color_b << 8) + 0xFF
 
     def coords_relative(self, x, y, dir):
         """
         Static method to return coordinates for the tile
         relative to the given coords.  1 = N, 2 = NE, etc
         """
-        if (dir == self.DIR_N):
-            if (y < 2):
+        if dir == self.DIR_N:
+            if y < 2:
                 return None
             else:
-                return (x, y - 2)
-        elif (dir == self.DIR_NE):
-            if ((y % 2) == 0):
-                if (y > 0):
-                    return (x, y - 1)
+                return x, y - 2
+        elif dir == self.DIR_NE:
+            if (y % 2) == 0:
+                if y > 0:
+                    return x, y - 1
                 else:
                     return None
-            elif (x < 99):
-                return (x + 1, y - 1)
+            elif x < 99:
+                return x + 1, y - 1
             else:
                 return None
-        elif (dir == self.DIR_E):
-            if (x < 99):
-                return (x + 1, y)
+        elif dir == self.DIR_E:
+            if x < 99:
+                return x + 1, y
             else:
                 return None
-        elif (dir == self.DIR_SE):
-            if ((y % 2) == 0):
-                return (x, y + 1)
-            elif (x < 99 and y < 199):
-                return (x + 1, y + 1)
+        elif dir == self.DIR_SE:
+            if (y % 2) == 0:
+                return x, y + 1
+            elif x < 99 and y < 199:
+                return x + 1, y + 1
             else:
                 return None
-        elif (dir == self.DIR_S):
-            if (y < 198):
-                return (x, y + 2)
+        elif dir == self.DIR_S:
+            if y < 198:
+                return x, y + 2
             else:
                 return None
-        elif (dir == self.DIR_SW):
-            if ((y % 2) == 1):
-                if (y < 199):
-                    return (x, y + 1)
+        elif dir == self.DIR_SW:
+            if (y % 2) == 1:
+                if y < 199:
+                    return x, y + 1
                 else:
                     return None
-            elif (x > 0):
-                return (x - 1, y + 1)
+            elif x > 0:
+                return x - 1, y + 1
             else:
                 return None
-        elif (dir == self.DIR_W):
-            if (x > 0):
-                return (x - 1, y)
+        elif dir == self.DIR_W:
+            if x > 0:
+                return x - 1, y
             else:
                 return None
-        elif (dir == self.DIR_NW):
-            if ((y % 2) == 1):
-                return (x, y - 1)
-            elif (y > 0 and x > 0):
-                return (x - 1, y - 1)
+        elif dir == self.DIR_NW:
+            if (y % 2) == 1:
+                return x, y - 1
+            elif y > 0 and x > 0:
+                return x - 1, y - 1
             else:
                 return None
         else:
@@ -501,7 +501,7 @@ class Map(object):
     def tile_relative(self, x, y, dir):
         """ Returns a tile object relative to the given coords. """
         coords = self.coords_relative(x, y, dir)
-        if (coords):
+        if coords:
             return self.tiles[coords[1]][coords[0]]
         else:
             return None
@@ -600,7 +600,7 @@ class Map(object):
             c.switch_to_book(3)
             return B3Map(df, ent_df)
         else:
-            raise LoadException('Unknown book version specified: %d' % (book))
+            raise LoadException('Unknown book version specified: %d' % book)
 
     @staticmethod
     def get_mapinfo(filename=None, map_df=None):
@@ -656,7 +656,7 @@ class Map(object):
             detected_book = 1
             detected_mapname = stringlist[1]
 
-        return (detected_book, detected_mapname, df)
+        return detected_book, detected_mapname, df
 
     @staticmethod
     def load(filename, req_book=None):
@@ -679,7 +679,7 @@ class Map(object):
         (detected_book, detected_mapname, df) = Map.get_mapinfo(filename)
 
         # See if we're required to conform to a specific book
-        if (req_book is not None and detected_book != req_book):
+        if req_book is not None and detected_book != req_book:
             raise LoadException('This utility can only load Book %d map files; this file is from Book %d' % (
                 req_book, detected_book))
 
@@ -695,7 +695,7 @@ class Map(object):
             return B3Map(df)
         else:
             raise LoadException(
-                'Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % (filename))
+                'Unknown book version found for "%s"; perhaps it is not an Eschalon map file' % filename)
 
     # Find directions from one coordinate set to another
     @staticmethod
@@ -750,7 +750,7 @@ class Map(object):
                 y = y + Map.DIRECTIONS_TO_DELTA_ODD[direction][1]
             else:
                 raise Exception("Unknown direction " + hex(direction))
-        return (x, y)
+        return x, y
 
 
 class B1Map(Map):
@@ -823,17 +823,17 @@ class B1Map(Map):
 
             # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addtilecontent()):
+                while self.addtilecontent():
                     pass
             except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
             # Also note that we have to support situations where there is no entity file
-            if (self.df_ent.exists()):
+            if self.df_ent.exists():
                 self.df_ent.open_r()
                 try:
-                    while (self.addentity()):
+                    while self.addentity():
                         pass
                 except FirstItemLoadException as e:
                     pass
@@ -842,7 +842,7 @@ class B1Map(Map):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata) > 0):
+            if len(self.extradata) > 0:
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -896,7 +896,7 @@ class B1Map(Map):
             tilecontent.write(self.df)
 
         # Any extra data we might have
-        if (len(self.extradata) > 0):
+        if len(self.extradata) > 0:
             self.df.writestr(self.extradata)
 
         # Clean up
@@ -912,7 +912,7 @@ class B1Map(Map):
         self.df_ent.close()
 
     def is_global(self):
-        return (self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0)
+        return self.savegame_1 == 0 and self.savegame_2 == 0 and self.savegame_3 == 0
 
     def is_savegame(self):
         return not self.is_global()
@@ -1034,17 +1034,17 @@ class B2Map(Map):
 
             # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addtilecontent()):
+                while self.addtilecontent():
                     pass
             except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
             # Also note that we have to support situations where there is no entity file
-            if (self.df_ent.exists()):
+            if self.df_ent.exists():
                 self.df_ent.open_r()
                 try:
-                    while (self.addentity()):
+                    while self.addentity():
                         pass
                 except FirstItemLoadException as e:
                     pass
@@ -1053,7 +1053,7 @@ class B2Map(Map):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata) > 0):
+            if len(self.extradata) > 0:
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -1109,7 +1109,7 @@ class B2Map(Map):
             tilecontent.write(self.df)
 
         # Any extra data we might have
-        if (len(self.extradata) > 0):
+        if len(self.extradata) > 0:
             self.df.writestr(self.extradata)
 
         # Clean up
@@ -1125,7 +1125,7 @@ class B2Map(Map):
         self.df_ent.close()
 
     def is_global(self):
-        return (self.last_turn == 0)
+        return self.last_turn == 0
 
     def is_savegame(self):
         return not self.is_global()
@@ -1233,17 +1233,17 @@ class B3Map(B2Map):
 
             # Tilecontents...  Just keep going until EOF
             try:
-                while (self.addtilecontent()):
+                while self.addtilecontent():
                     pass
             except FirstItemLoadException as e:
                 pass
 
             # Entities...  Just keep going until EOF (note that this is in a separate file)
             # Also note that we have to support situations where there is no entity file
-            if (self.df_ent.exists()):
+            if self.df_ent.exists():
                 self.df_ent.open_r()
                 try:
-                    while (self.addentity()):
+                    while self.addentity():
                         pass
                 except FirstItemLoadException as e:
                     pass
@@ -1252,7 +1252,7 @@ class B3Map(B2Map):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.extradata = self.df.read()
-            if (len(self.extradata) > 0):
+            if len(self.extradata) > 0:
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -1320,7 +1320,7 @@ class B3Map(B2Map):
             tilecontent.write(self.df)
 
         # Any extra data we might have
-        if (len(self.extradata) > 0):
+        if len(self.extradata) > 0:
             self.df.writestr(self.extradata)
 
         # Clean up

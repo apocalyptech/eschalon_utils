@@ -81,14 +81,14 @@ class Savefile(object):
 
     def close(self):
         """ Closes the filehandle. """
-        if (self.opened_r or self.opened_w):
+        if self.opened_r or self.opened_w:
             self.df.close()
             self.opened_r = False
             self.opened_w = False
 
     def open_r(self):
         """ Opens a file for reading.  Throws IOError if unavailable"""
-        if (self.opened_r or self.opened_w):
+        if self.opened_r or self.opened_w:
             raise IOError('File is already open')
         if self.stringdata is None:
             self.df = open(self.filename, 'rb')
@@ -98,7 +98,7 @@ class Savefile(object):
 
     def open_w(self):
         """ Opens a file for writing.  Throws IOError if unavailable"""
-        if (self.opened_r or self.opened_w):
+        if self.opened_r or self.opened_w:
             raise IOError('File is already open')
         if self.stringdata is None:
             self.df = open(self.filename, 'wb')
@@ -132,85 +132,85 @@ class Savefile(object):
 
     def readuchar(self):
         """ Read an unsigned character (1-byte) "integer" from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('B', self.df.read(1))[0]
 
     def writeuchar(self, charval):
         """ Write an unsigned character (1-byte) "integer" to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('B', charval))
 
     def readshort(self):
         """ Read a short (2-byte) integer from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('<H', self.df.read(2))[0]
 
     def writeshort(self, shortval):
         """ Write a short (2-byte) integer to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('<H', shortval))
 
     def readint(self):
         """ Read an integer from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('<I', self.df.read(4))[0]
 
     def writeint(self, intval):
         """ Write an integer to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('<I', intval))
 
     def readsint(self):
         """ Read a signed integer from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('<i', self.df.read(4))[0]
 
     def writesint(self, intval):
         """ Write a signed integer to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('<i', intval))
 
     def readfloat(self):
         """ Read a float from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('f', self.df.read(4))[0]
 
     def writefloat(self, floatval):
         """ Write a float to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('f', floatval))
 
     def readdouble(self):
         """ Read a double from the savefile. """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         return unpack('d', self.df.read(8))[0]
 
     def writedouble(self, doubleval):
         """ Write a double to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(pack('d', doubleval))
 
     def readstr(self):
         """ Read a string from the savefile, delimited by \r\n """
-        if (not self.opened_r):
+        if not self.opened_r:
             raise IOError('File is not open for reading')
         mystr = ''
         strpart = self.df.read(1)
-        while (len(strpart) == 1):
+        while len(strpart) == 1:
             mystr = mystr + strpart
-            if (mystr[-2:] == "\r\n"):
+            if mystr[-2:] == "\r\n":
                 return mystr[:-2]
             strpart = self.df.read(1)
         # Shouldn't ever get to here
@@ -218,6 +218,6 @@ class Savefile(object):
 
     def writestr(self, strval):
         """ Write a string (delimited by \r\n) to the savefile. """
-        if (not self.opened_w):
+        if not self.opened_w:
             raise IOError('File is not open for writing')
         self.df.write(strval + "\r\n")

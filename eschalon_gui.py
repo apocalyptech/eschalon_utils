@@ -9,42 +9,13 @@ from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
 
 
-class EschalonUtils:
-    options = {
-        'gui': True,
-        'list': False,
-        'listoptions': {
-            'all': False,
-            'tiles': False,
-            'objects': False,
-            'txtmap': False
-        },
-        'unknowns': False,
-        'filename': None
-    }
-
-    def b1char(self, widget, data=None):
-        prog = MainGUI(self.options, Prefs(), 1)
+class EschalonUtils(object):
+    def char(self, widget, book_id, data=None):
+        prog = MainGUI(None, Prefs(), book_id)
         return prog.run()
 
-    def b1map(self, widget, data=None):
-        prog = MapGUI(self.options, Prefs(), 1)
-        return prog.run()
-
-    def b2char(self, widget, data=None):
-        prog = MainGUI(self.options, Prefs(), 2)
-        return prog.run()
-
-    def b2map(self, widget, data=None):
-        prog = MapGUI(self.options, Prefs(), 2)
-        return prog.run()
-
-    def b3char(self, widget, data=None):
-        prog = MainGUI(self.options, Prefs(), 3)
-        return prog.run()
-
-    def b3map(self, widget, data=None):
-        prog = MapGUI(self.options, Prefs(), 3)
+    def map(self, widget, book_id, data=None):
+        prog = MapGUI(None, Prefs(), book_id)
         return prog.run()
 
     def delete_event(self, widget, event, data=None):
@@ -53,14 +24,14 @@ class EschalonUtils:
     def destroy(self, widget, data=None):
         gtk.main_quit()
 
-    def add_launchers(self, book, char_launcher, map_launcher):
+    def add_launchers(self, book, char_launcher, map_launcher, book_id):
         """
         Adds a set of launchers to our table.
         """
 
         # First the label
         label = gtk.Label()
-        label.set_markup('<b>Book %s Utilities:</b>' % (book))
+        label.set_markup('<b>Book %s Utilities:</b>' % book)
         align = gtk.Alignment(0, 0, 0, 1)
         align.set_padding(5, 5, 5, 5)
         align.add(label)
@@ -69,9 +40,9 @@ class EschalonUtils:
         self.cur_row += 1
 
         # Now the character buttons
-        button = gtk.Button('Book %s Character Editor' % (book))
+        button = gtk.Button('Book %s Character Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
-        button.connect("clicked", char_launcher, None)
+        button.connect("clicked", char_launcher, book_id)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 20, 5)
@@ -80,9 +51,9 @@ class EschalonUtils:
                           gtk.EXPAND | gtk.FILL, 0, 5)
 
         # Map button
-        button = gtk.Button('Book %s Map Editor' % (book))
+        button = gtk.Button('Book %s Map Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
-        button.connect("clicked", map_launcher, None)
+        button.connect("clicked", map_launcher, book_id)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 5, 5)
@@ -98,7 +69,7 @@ class EschalonUtils:
         """
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_border_width(10)
-        self.window.set_title('Eschalon Map/Character Editor v%s' % (version))
+        self.window.set_title('Eschalon Map/Character Editor v%s' % version)
         self.window.connect("delete_event", self.delete_event)
         self.window.connect("destroy", self.destroy)
 
@@ -109,7 +80,7 @@ class EschalonUtils:
         # detection, but having an icon makes the dialog look less sparse
         label = gtk.Label()
         label.set_markup(
-            '<big><b>Eschalon Map/Character Editor v%s</b></big>' % (version))
+            '<big><b>Eschalon Map/Character Editor v%s</b></big>' % version)
         hbox = gtk.HBox()
         if getattr(sys, 'frozen', False):
             icon_filename = os.path.join(os.path.dirname(
@@ -127,9 +98,9 @@ class EschalonUtils:
         # Now our table of buttons
         self.table = gtk.Table(6, 2)
         self.cur_row = 0
-        self.add_launchers('I', self.b1char, self.b1map)
-        self.add_launchers('II', self.b2char, self.b2map)
-        self.add_launchers('III', self.b3char, self.b3map)
+        self.add_launchers('I', self.char, self.map, 1)
+        self.add_launchers('II', self.char, self.map, 2)
+        self.add_launchers('III', self.char, self.map, 3)
         col.add(self.table)
 
         # Close button at the bottom
