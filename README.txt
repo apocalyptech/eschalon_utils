@@ -39,19 +39,19 @@ Eschalon Book I, Book II, and Book III by Basilisk Games.
    http://basiliskgames.com/eschalon-book-ii
    http://basiliskgames.com/eschalon-book-iii
 
-There are six separate utilities: a character editor and a map editor for
+There are six main features: a character editor and a map editor for
 each game.  The map editor can edit maps stored as part of your savegame,
 and the global maps included in the game distribution, though for Books II
 and III there is no direct way to get at the global map files.
 
 Right now the utilities support just about everything you'd want to edit,
 though there's still plenty of values in the file of whose purpose I'm
-unaware.  See the TODO file for information on what needs to be done with
+unaware.  See the github issues for information on what needs to be done with
 the app still, which is quite a bit.
 
 The app seems stable enough for me, but use your head and keep a backup of
-any file that you use this on.  Do let me know if it ends up eating your
-character or map, because I'd like to fix the bug.  Just don't get upset if
+any file that you use this on.  Do let us know if it ends up eating your
+character or map, because we'd like to fix the bug.  Just don't get upset if
 it does.  :) The Character Editor's been around rather longer than the map
 editor, so be especially careful when editing maps.  Note that the map files
 (which end in .map) also have an associated file with a ".ent" extension. 
@@ -106,17 +106,10 @@ make a symlink to each app somewhere in your $PATH (~/bin is probably the
 best location).  For example:
 
    $ cd ~/bin
-   $ ln -s /path/to/eschalon_b1_char.py .
-   $ ln -s /path/to/eschalon_b2_char.py .
-   $ ln -s /path/to/eschalon_map.py .
-   $ ln -s /path/to/eschalon_b3_char.py .
+   $ ln -s /path/to/eschalon_main.py .
+   $ ln -s /path/to/eschalon_gui.py .
 
-Starting with v1.0.0, we also have a launcher window which will let you click
-a button to launch the editor of your choice:
-
-   $ ln -s /path/to/eschalon_utils.py .
-
-At that point you should be able to just run "eschalon_utils.py" from the
+At that point you should be able to just run "eschalon_gui.py" from the
 command prompt, for instance.  Setting up shortcuts through your window
 manager of choice should work fine, as well.  Failing that, just run them
 from the directory you untarred them into.
@@ -138,17 +131,14 @@ long time.  Trust me, you will want to have it installed.  Note once again
 that this only affects Book II/III map editing.  The character editors, and
 the Book I map editor are not affected.
 
-As of 0.5.0, the minimum gtk+ required MIGHT be 2.18.0, though you may have
-success with earlier versions.  If there are problems with older versions,
-please let me know so I can take a look and possibly get a workaround
-in place.  The app will show a warning if your gtk+ doesn't meet this
-requirement, but allow you to continue regardless.
+The minimum gtk+ required is 2.18.0.  The app will show a warning if your
+gtk+ doesn't meet this requirement, but allow you to continue regardless.
 
 INSTALLATION, WINDOWS
 ---------------------
 
 The recommended way to install these utilities on Windows is through the
-install EXE which is provided as of version 0.5.0.  Theoretically, you
+install EXE.  Theoretically, you
 should be able to just double-click on the installer, go through the usual
 installer screens, and you'll have both the map editor and the charater
 editor in a folder in your start menu.  Please be sure to let me know if
@@ -165,33 +155,21 @@ be found on the website.
 INSTALLATION, OS X
 ------------------
 
-First, you need the X11 app. Up to 10.7, recent versions of OS X come with
-it pre-installed, but 10.8 users need to download and install the version
-from http://xquartz.macosforge.org/
-
 Any method that gets you pygtk, pycrypto, and czipfile ought to work, but
-the following worked for me.  Be careful with making parallel full python
-installs, which MacPorts will do and Homebrew can do.
+the following worked for me.
 
-Install Homebrew - http://mxcl.github.io/homebrew/
+Install Macports - https://www.macports.org/install.php
 
 From the Terminal, run:
 
-brew install pygtk
-pip install --user czipfile
-pip install --user pycrypto
-
-You also need to tell the system Python to look for libraries in Homebrew's
-install path, so add this line to the .bash_profile file in your home
-directory. If the file doesn't exist, create it.
-
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages/gtk-2.0:/usr/local/lib/python2.7/site-packages
+sudo port install py27-pygtk
+pip install --user czipfile pycrypto
 
 I recommend running the apps from the Terminal so that you can see any error
 output:
 
 cd /path/to/eschalon_utils
-./eschalon_b1_char.py
+/opt/local/bin/python ./eschalon_gui.py
 
 If you want to build self-contained OS X application bundles, also get
 py2app:
@@ -208,9 +186,9 @@ USAGE
 -----
 
 The applications are mostly designed to be run via their GUIs, which you can
-launch simply by double-clicking or running eschalon_bX_char.py, or
-eschalon_bX_map.py.  There are commandline options for both, though, and you
-can get help for those options by running "eschalon_b1_char.py -h", for
+launch simply by double-clicking or running eschalon_gui.py.
+There are commandline options for both, though, and you
+can get help for those options by running "eschalon_main.py -h", for
 instance, to get help with the character editor.  A few of the character
 editor commandline options may be useful.  The options available on the map
 editor are far less useful.
