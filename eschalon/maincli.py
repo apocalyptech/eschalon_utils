@@ -41,8 +41,8 @@ class MainCLI(object):
             char.read()
             self.char = char
         except LoadException as e:
-            print('"' + self.filename + '" could not be opened: {}'.format(str(e)))
-            return False
+            print('"' + self.filename + '" could not be opened: {}'.format(e))
+            raise
 
         # The --list options will return automatically.  Everything
         # else will trigger a write once everything's done

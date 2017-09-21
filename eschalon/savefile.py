@@ -132,7 +132,8 @@ class Savefile(object):
         """ Read an unsigned character (1-byte) "integer" from the savefile. """
         if not self.opened_r:
             raise IOError('File is not open for reading')
-        return unpack('B', self.df.read(1))[0]
+        r = self.df.read(1)
+        return unpack('B', r)[0]
 
     def writeuchar(self, charval):
         """ Write an unsigned character (1-byte) "integer" to the savefile. """

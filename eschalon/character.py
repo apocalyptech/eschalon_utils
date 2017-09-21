@@ -509,7 +509,7 @@ class B1Character(Character):
             self.df.close()
 
         except (IOError, struct.error) as e:
-            raise LoadException(str(e))
+            raise
 
     def write(self):
         """ Writes out the save file to the file descriptor. """
@@ -1291,7 +1291,7 @@ class B3Character(Character):
             self.df.close()
 
         except (IOError, struct.error) as e:
-            raise LoadException(str(e))
+            raise
 
     def write(self):
         """ Writes out the save file. """
