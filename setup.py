@@ -12,6 +12,7 @@ setup(
     author_email='',
     description='',
     requires=[
+        'Crypto',
     ],
     extras_require={
         'gui': [

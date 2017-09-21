@@ -757,7 +757,7 @@ class BaseGUI(object):
                 self.warningdialog('Could not save preferences',
                                    '%s %s <tt>%s</tt>' % ('We were unable to save your preferences.  Please report this',
                                                           "on the forums so that it can be fixed.\n\nThe error: ", e),
-                                   self.window);
+                                   self.window)
 
         return (changed, alert_changed)
 

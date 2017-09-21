@@ -1276,7 +1276,7 @@ class MapGUI(BaseGUI):
             if not self.on_load():
                 return
         else:
-            self.last_map_source = MapLoaderDialog.SOURCE_OTHER;
+            self.last_map_source = MapLoaderDialog.SOURCE_OTHER
             if (not self.load_from_file(self.filename)):
                 if (not self.on_load()):
                     return
