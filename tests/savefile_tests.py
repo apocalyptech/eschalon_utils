@@ -52,7 +52,9 @@ class TestSavefile(unittest.TestCase):
         s.df.write(orig_content)
         s = eschalon.savefile.Savefile(stringdata=orig_content)
         s.open_r()
+        self.assertFalse(s.eof())
         self.assertEquals(fn_to_read(s), value_to_expect_on_read)
+        self.assertTrue(s.eof())
 
     def _test_packed_write_and_read(self,
                                     value,
