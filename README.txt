@@ -107,11 +107,9 @@ best location).  For example:
 
    $ cd ~/bin
    $ ln -s /path/to/eschalon_b1_char.py .
-   $ ln -s /path/to/eschalon_b1_map.py .
    $ ln -s /path/to/eschalon_b2_char.py .
-   $ ln -s /path/to/eschalon_b2_map.py .
+   $ ln -s /path/to/eschalon_map.py .
    $ ln -s /path/to/eschalon_b3_char.py .
-   $ ln -s /path/to/eschalon_b3_map.py .
 
 Starting with v1.0.0, we also have a launcher window which will let you click
 a button to launch the editor of your choice:
