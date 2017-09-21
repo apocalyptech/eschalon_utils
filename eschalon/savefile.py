@@ -204,11 +204,11 @@ class Savefile(object):
         """ Read a string from the savefile, delimited by \r\n """
         if not self.opened_r:
             raise IOError('File is not open for reading')
-        mystr = ''
+        mystr = b''
         strpart = self.df.read(1)
         while len(strpart) == 1:
             mystr = mystr + strpart
-            if mystr[-2:] == "\r\n":
+            if mystr[-2:] == b"\r\n":
                 return mystr[:-2]
             strpart = self.df.read(1)
         # Shouldn't ever get to here
@@ -218,4 +218,4 @@ class Savefile(object):
         """ Write a string (delimited by \r\n) to the savefile. """
         if not self.opened_w:
             raise IOError('File is not open for writing')
-        self.df.write(strval + "\r\n")
+        self.df.write(strval + b"\r\n")

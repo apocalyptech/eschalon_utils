@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import unittest
 
@@ -17,20 +17,31 @@ class TestSavefile(unittest.TestCase):
                 s.open_w()
 
     def test_ensure_only_one_datatype(self):
-        eschalon.savefile.Savefile(stringdata="")
+        eschalon.savefile.Savefile(stringdata=b"")
         eschalon.savefile.Savefile(filename="")
         with self.assertRaises(eschalon.savefile.LoadException):
-            eschalon.savefile.Savefile(filename="", stringdata="")
+            eschalon.savefile.Savefile(filename="", stringdata=b"")
 
     def test_stringdata_invariants(self):
-        s = eschalon.savefile.Savefile(stringdata="")
+        s = eschalon.savefile.Savefile(stringdata=b"")
         self.assertTrue(s.is_stringdata())
         self.assertTrue(s.exists())
 
     def test_set_filename_clears_stringdata(self):
-        s = eschalon.savefile.Savefile(stringdata="")
+        s = eschalon.savefile.Savefile(stringdata=b"")
         s.set_filename("-")
         self.assertFalse(s.is_stringdata())
+
+    def test_write_str(self):
+        s = eschalon.savefile.Savefile(stringdata=b"")
+        s.open_w()
+        s.writestr("yellow".encode("UTF-8"))
+        s.df.seek(0)
+        orig_content = s.df.read()
+        s = eschalon.savefile.Savefile(stringdata=orig_content)
+        s.open_r()
+        new_string = s.readstr()
+        self.assertEquals(new_string, b"yellow")
 
 
 
