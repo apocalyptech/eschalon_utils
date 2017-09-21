@@ -77,9 +77,17 @@ class TestSavefile(unittest.TestCase):
             fn_to_read=eschalon.savefile.Savefile.readstr,
         )
 
+    def test_write_float(self):
+        self._test_packed_write_and_read(
+            value=1.5,
+            pack_string='f',
+            fn_to_write=eschalon.savefile.Savefile.writefloat,
+            fn_to_read=eschalon.savefile.Savefile.readfloat,
+        )
+
     def test_write_double(self):
         self._test_packed_write_and_read(
-            value=1.4,
+            value=2.5,
             pack_string='d',
             fn_to_write=eschalon.savefile.Savefile.writedouble,
             fn_to_read=eschalon.savefile.Savefile.readdouble,
