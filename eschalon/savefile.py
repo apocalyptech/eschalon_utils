@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-import io
+from io import BytesIO
 from struct import pack, unpack
 
 
@@ -43,14 +43,14 @@ class Savefile(object):
         """
         Empty object.  If only "filename" is passed, we will read
         from the filesystem.  If "stringdata" is also passed, we
-        will use a cStringIO object instead.  Writing to cStringIO
-        objects is not currently supported.
+        will use a BytesIO object instead.
         """
+
         self.filename = filename
         self.stringdata = stringdata
 
-        if self.filename is None and self.stringdata is None:
-            raise LoadException('Must pass in at least a filename')
+        if bool(self.filename is None) == bool(self.stringdata is None):
+            raise LoadException('Must include filename xor stringdata')
 
         self.df = None
         self.opened_r = False
@@ -93,17 +93,17 @@ class Savefile(object):
         if self.stringdata is None:
             self.df = open(self.filename, 'rb')
         else:
-            self.df = io.StringIO(self.stringdata)
+            self.df = BytesIO(self.stringdata)
         self.opened_r = True
 
     def open_w(self):
         """ Opens a file for writing.  Throws IOError if unavailable"""
         if (self.opened_r or self.opened_w):
             raise IOError('File is already open')
-        if self.stringdata is not None:
-            raise IOError(
-                'Writing is not supported when using a string backend')
-        self.df = open(self.filename, 'wb')
+        if self.stringdata is None:
+            self.df = open(self.filename, 'wb')
+        else:
+            self.df = BytesIO(self.stringdata)
         self.df.seek(0)
         self.opened_w = True
 
@@ -112,7 +112,7 @@ class Savefile(object):
         # Note that theoretically there's some cases where a file error masquerades as
         # an EOF because of this code.  I can cope with that.
         a = self.df.read(1)
-        if (len(a) == 0):
+        if len(a) == 0:
             return True
         else:
             self.df.seek(-1, 1)
