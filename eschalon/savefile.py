@@ -102,7 +102,7 @@ class Savefile(object):
 
     def open_w(self):
         """ Opens a file for writing.  Throws IOError if unavailable"""
-        self._open_mode('wb')
+        self._open_mode('wb+')
         self.opened_w = True
 
     def eof(self):
