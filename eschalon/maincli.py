@@ -35,7 +35,6 @@ class MainCLI(object):
         self.req_book = req_book
 
     def run(self):
-
         # Load in our file
         try:
             char = Character.load(self.filename, self.req_book)
@@ -47,7 +46,7 @@ class MainCLI(object):
 
         # The --list options will return automatically.  Everything
         # else will trigger a write once everything's done
-        if (self.args.list):
+        if self.args.list:
             return self.display(self.args.list, self.args.unknowns)
 
         if (self.args.set_gold > 0):
@@ -75,7 +74,7 @@ class MainCLI(object):
             char.setCurMana(self.args.set_mana_cur)
             print('New Current Mana: %d' % (char.curmana))
 
-        if (self.args.rm_disease > 0):
+        if self.args.rm_disease:
             if char.book == 1:
                 print('Old Disease Flags: %04X' % (char.disease))
                 char.clearDiseases()
@@ -85,7 +84,7 @@ class MainCLI(object):
                 char.clearDiseases()
                 print('New Permanent Status Flags: %08X' % (char.permstatuses))
 
-        if (self.args.reset_hunger > 0):
+        if self.args.reset_hunger:
             if char.book == 1:
                 print('Resetting hunger/thirst is only available for Book 2/3 characters')
             else:
