@@ -701,7 +701,7 @@ class SmartDraw(object):
                 return tileset
         return (floorimg,)
 
-    def draw_floor(self, tile, straight_path=True, recurse=True, known={}):
+    def draw_floor(self, tile, straight_path=True, recurse=True, known=None):
         """
         Given a tile, figure out what kind of grass decals it should have,
         if any.  Will actually set the decal image, as well.  If 'recurse'
@@ -721,6 +721,8 @@ class SmartDraw(object):
         """
 
         # Get our edge preference type
+        if known is None:
+            known = {}
         idxtype = None
         for (element, index) in list(self.gui.decal_edge_pref_map.items()):
             if element.get_active():
@@ -953,7 +955,7 @@ class SmartDraw(object):
                     break
         return None
 
-    def draw_beach(self, tile, recurse=True, known={}, parent_water=False):
+    def draw_beach(self, tile, recurse=True, known=None, parent_water=False):
         """
         Drawing beach tiles is handled differently from the usual decal
         stuff.  The overall flow is similar, but we're touching different
@@ -965,6 +967,8 @@ class SmartDraw(object):
 
         # TODO: Gets touchy around the edge of the map
 
+        if known is None:
+            known = {}
         connflags = 0
         connflags_not = 0
         flagcount = 0
