@@ -117,7 +117,6 @@ class TestSavefile(unittest.TestCase):
             fn_to_read=eschalon.savefile.Savefile.readshort,
         )
 
-
     def test_write_uchar(self):
         self._test_packed_write_and_read(
             value=1,
