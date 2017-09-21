@@ -42,17 +42,26 @@ def main():
     char_manip_group.add_argument("--rm-disease", action="store_true")
     char_manip_group.add_argument("--reset-hunger", action="store_true")
 
-    # TODO: more advanced CLI validation checks
     parser.add_argument("filename", type=str, nargs='?')
-    parser.add_argument("--gui", action="store_true")
-    parser.add_argument("--map", action="store_true")
+    which_gui = parser.add_mutually_exclusive_group()
+    which_gui.add_argument("--char", action="store_true")
+    which_gui.add_argument("--map", action="store_true")
+
     parser.add_argument("--book", type=int, choices=[1, 2, 3], required=True)
 
     args = parser.parse_args()
 
+    # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
+    if args.book == 1 and args.reset_hunger:
+        parser.error("Resetting hunger/thirst only applies to book II and III")
+    if any([args.char, args.map]) and any(
+            [args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
+             args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger]):
+        parser.error("GUI can't be combined with listing/manipulation options")
+
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
-    if args.gui:
+    if args.char:
         from eschalon.maingui import MainGUI
         prog = MainGUI(args.filename, Prefs(), args.book)
     elif args.map:
@@ -60,7 +69,7 @@ def main():
         prog = MapGUI(args.filename, Prefs(), args.book)
     else:
         from eschalon.maincli import MainCLI
-        prog = MainCLI(args.filename, Prefs(), args.book , args)
+        prog = MainCLI(args.filename, Prefs(), args.book, args)
 
     return prog.run()
 
