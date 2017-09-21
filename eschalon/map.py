@@ -377,10 +377,10 @@ class Map(object):
         """ Add a new tile, assuming that the tiles are stored in a
             left-to-right, top-to-bottom format in the map. """
         self.tiles[self.cursqrow][self.cursqcol].read(self.df)
-        self.cursqcol = self.cursqcol + 1
+        self.cursqcol += 1
         if self.cursqcol == 100:
             self.cursqcol = 0
-            self.cursqrow = self.cursqrow + 1
+            self.cursqrow += 1
 
     def addtilecontent(self):
         """ Add a tilecontent. """
@@ -394,7 +394,7 @@ class Map(object):
             # ... does that object then get put into a garbage collector or something?  Do we have to
             # set that to None at some point, manually?
             self.tilecontents.append(tilecontent)
-            if tilecontent.x >= 0 and tilecontent.x < 100 and tilecontent.y >= 0 and tilecontent.y < 200:
+            if 0 <= tilecontent.x < 100 and 0 <= tilecontent.y < 200:
                 self.tiles[tilecontent.y][tilecontent.x].addtilecontent(
                     tilecontent)
             return True
@@ -419,7 +419,7 @@ class Map(object):
                 print('WARNING: Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
-                if entity.x >= 0 and entity.x < 100 and entity.y >= 0 and entity.y < 200:
+                if 0 <= entity.x < 100 and 0 <= entity.y < 200:
                     self.tiles[entity.y][entity.x].addentity(entity)
             return True
         except FirstItemLoadException as e:
@@ -740,14 +740,14 @@ class Map(object):
     def follow_directions_from_coord(x, y, directions):
         for direction in directions:
             if direction in Map.DIRECTIONS_TO_DELTA:
-                x = x + Map.DIRECTIONS_TO_DELTA[direction][0]
-                y = y + Map.DIRECTIONS_TO_DELTA[direction][1]
+                x += Map.DIRECTIONS_TO_DELTA[direction][0]
+                y += Map.DIRECTIONS_TO_DELTA[direction][1]
             elif y % 2 == 0 and direction in Map.DIRECTIONS_TO_DELTA_EVEN:
-                x = x + Map.DIRECTIONS_TO_DELTA_EVEN[direction][0]
-                y = y + Map.DIRECTIONS_TO_DELTA_EVEN[direction][1]
+                x += Map.DIRECTIONS_TO_DELTA_EVEN[direction][0]
+                y += Map.DIRECTIONS_TO_DELTA_EVEN[direction][1]
             elif y % 2 == 1 and direction in Map.DIRECTIONS_TO_DELTA_ODD:
-                x = x + Map.DIRECTIONS_TO_DELTA_ODD[direction][0]
-                y = y + Map.DIRECTIONS_TO_DELTA_ODD[direction][1]
+                x += Map.DIRECTIONS_TO_DELTA_ODD[direction][0]
+                y += Map.DIRECTIONS_TO_DELTA_ODD[direction][1]
             else:
                 raise Exception("Unknown direction " + hex(direction))
         return x, y

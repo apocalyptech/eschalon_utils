@@ -346,8 +346,8 @@ class ZipInfo (object):
             # File is larger than what fits into a 4 byte integer,
             # fall back to the ZIP64 extension
             fmt = '<HHQQ'
-            extra = extra + struct.pack(fmt,
-                                        1, struct.calcsize(fmt) - 4, file_size, compress_size)
+            extra += struct.pack(fmt,
+                                 1, struct.calcsize(fmt) - 4, file_size, compress_size)
             file_size = 0xffffffff
             compress_size = 0xffffffff
             self.extract_version = max(45, self.extract_version)
@@ -426,7 +426,7 @@ class _ZipDecrypter:
         plain_text = map(zd, cypher_text)
     """
 
-    def _GenerateCRCTable():
+    def _GenerateCRCTable(self):
         """Generate a CRC-32 table.
 
         ZIP encryption uses the CRC32 one-byte primitive for scrambling some
@@ -467,7 +467,7 @@ class _ZipDecrypter:
         """Decrypt a single character."""
         c = ord(c)
         k = self.key2 | 2
-        c = c ^ (((k * (k ^ 1)) >> 8) & 255)
+        c ^= ((k * (k ^ 1)) >> 8) & 255
         c = chr(c)
         self._UpdateKeys(c)
         return c
@@ -558,7 +558,7 @@ class ZipExtFile:
         else:
             # no line break in buffer - try to read more
             size -= len(self.linebuffer)
-            while nl < 0 and size > 0:
+            while nl < 0 < size:
                 buf = self.read(min(size, 100))
                 if not buf:
                     break
@@ -1104,16 +1104,16 @@ class ZipFile:
             buf = fp.read(1024 * 8)
             if not buf:
                 break
-            file_size = file_size + len(buf)
+            file_size += len(buf)
             CRC = crc32(buf, CRC) & 0xffffffff
             if cmpr:
                 buf = cmpr.compress(buf)
-                compress_size = compress_size + len(buf)
+                compress_size += len(buf)
             self.fp.write(buf)
         fp.close()
         if cmpr:
             buf = cmpr.flush()
-            compress_size = compress_size + len(buf)
+            compress_size += len(buf)
             self.fp.write(buf)
             zinfo.compress_size = compress_size
         else:
@@ -1182,7 +1182,7 @@ class ZipFile:
             count = 0
             pos1 = self.fp.tell()
             for zinfo in self.filelist:         # write central directory
-                count = count + 1
+                count += 1
                 dt = zinfo.date_time
                 dosdate = (dt[0] - 1980) << 9 | dt[1] << 5 | dt[2]
                 dostime = dt[3] << 11 | dt[4] << 5 | (dt[5] // 2)

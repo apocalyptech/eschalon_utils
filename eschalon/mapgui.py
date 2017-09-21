@@ -1295,13 +1295,13 @@ class MapGUI(BaseGUI):
             # that happens, silently ignore it
             modpath = None
 
-        if modpath == None:
+        if modpath is None:
             modpath = os.path.dirname(self.mapobj.df.filename)
             if not os.path.exists(os.path.join(modpath, 'entities.csv')):
                 modpath = None
 
         # Re-load eschalondata, now with a mod path
-        if modpath != None:
+        if modpath is not None:
             try:
                 self.eschalondata = EschalonData.new(
                     c.book, self.get_current_gamedir(), modpath)
@@ -2161,7 +2161,7 @@ class MapGUI(BaseGUI):
             '<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
         infolabel.set_line_wrap(True)
         dialog.set_extra_widget(infolabel)
-        if (self.mapobj != None):
+        if (self.mapobj is not None):
             path = os.path.dirname(os.path.realpath(self.mapobj.df.filename))
             if (path != ''):
                 dialog.set_current_folder(path)
@@ -2294,7 +2294,7 @@ class MapGUI(BaseGUI):
         # Also we'll need to grab our Entity data
         if filename[-4:] != '.map':
             raise LoadException(
-                'Datapak map filenames must end with ".map", passed in "%s"', filename)
+                'Datapak map filenames must end with ".map", passed in "%s"' % filename)
         ent_filename = '%s.ent' % (filename[:-4])
         try:
             ent_data = self.eschalondata.readfile(ent_filename, 'maps')
@@ -2322,7 +2322,7 @@ class MapGUI(BaseGUI):
 
         # Figure out what our initial path should be
         path = ''
-        if self.mapobj == None:
+        if self.mapobj is None:
             path = self.get_current_savegame_dir()
         elif self.mapobj.df.filename == '':
             if self.mapobj.is_savegame():
@@ -2481,7 +2481,7 @@ class MapGUI(BaseGUI):
         about = self.get_widget('aboutwindow')
 
         # If the object doesn't exist in our cache, create it
-        if (about == None):
+        if (about is None):
             about = gtk.AboutDialog()
             about.set_transient_for(self.window)
             about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -3050,7 +3050,7 @@ class MapGUI(BaseGUI):
             tier_1_x = list(range(x - 2, x + 2))
         else:
             tier_1_x = list(range(x - 1, x + 3))
-            global_x = global_x + self.z_halfwidth
+            global_x += self.z_halfwidth
 
         # Set up a surface to use
         over_surf = cairo.ImageSurface(
@@ -3068,10 +3068,10 @@ class MapGUI(BaseGUI):
         # Loop through and composite the new image area
         for i in range(10):
             # Draw tier 1 tiles first, then tier 2
-            if (tier_1_y > -1 and tier_1_y < 200):
+            if (-1 < tier_1_y < 200):
                 for (tier_i, tier_x) in enumerate(tier_1_x):
                     yval = self.z_halfheight + ((i - 5) * self.z_height)
-                    if (tier_x > -1 and tier_x < 100):
+                    if (-1 < tier_x < 100):
                         (op_buf, offset) = self.draw_tile(
                             tier_x, tier_1_y, False, False)
                         over_ctx.set_source_surface(
@@ -3083,9 +3083,9 @@ class MapGUI(BaseGUI):
                         self.draw_huge_gfx(
                             tiles[tier_1_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
             if (i < 9):
-                if (tier_2_y > -1 and tier_2_y < 200):
+                if (-1 < tier_2_y < 200):
                     for (tier_i, tier_x) in enumerate(tier_2_x):
-                        if (tier_x > -1 and tier_x < 100):
+                        if (-1 < tier_x < 100):
                             (op_buf, offset) = self.draw_tile(
                                 tier_x, tier_2_y, False, False)
                             over_ctx.set_source_surface(
@@ -3097,8 +3097,8 @@ class MapGUI(BaseGUI):
                         for gfx_x in huge_gfx_rows[tier_2_y]:
                             self.draw_huge_gfx(
                                 tiles[tier_2_y][gfx_x], over_ctx, global_offset_x, global_offset_y)
-            tier_1_y = tier_1_y + 2
-            tier_2_y = tier_2_y + 2
+            tier_1_y += 2
+            tier_2_y += 2
 
         # This is a bit overkill, but easier than trying to figure out how far up any
         # big graphics go.
@@ -3257,7 +3257,7 @@ class MapGUI(BaseGUI):
         test_y = int(event.y - (start_y * self.z_height))
 
         # We need to modify the y value before we actually process, though
-        start_y = start_y * 2
+        start_y *= 2
 
         # ... and now figure out our coordinates based on the map
         # I tried out using a dict lookup instead of the series of if/then, but
@@ -3379,10 +3379,10 @@ class MapGUI(BaseGUI):
         tiles_sorted = sorted(list(local_cleantiles.keys()),
                               key=lambda c: c[1] * 100 + c[0])
         for coord in tiles_sorted:
-            if local_cleantiles[coord] == False:
+            if not local_cleantiles[coord]:
                 self.cleantiles.append(coord)
         for coord in tiles_sorted:
-            if local_cleantiles[coord] == True:
+            if local_cleantiles[coord]:
                 self.cleantiles.append(coord)
 
         # Now queue up a draw
@@ -3558,9 +3558,9 @@ class MapGUI(BaseGUI):
         flagval = int(flagval_str, 16)
         if (object is not None):
             if (widget.get_active()):
-                object.__dict__[name] = object.__dict__[name] | flagval
+                object.__dict__[name] |= flagval
             else:
-                object.__dict__[name] = object.__dict__[name] & ~flagval
+                object.__dict__[name] &= ~flagval
 
     def on_map_flag_changed(self, widget):
         """
@@ -3641,7 +3641,7 @@ class MapGUI(BaseGUI):
         elif (action == 'copy'):
             self.itemclipboard = items[num]
         elif (action == 'paste'):
-            if (self.itemclipboard != None):
+            if (self.itemclipboard is not None):
                 items[num] = self.itemclipboard.replicate()
                 self.register_mapitem_change(num, page)
         elif (action == 'delete'):
@@ -4135,7 +4135,7 @@ class MapGUI(BaseGUI):
             note.set_markup('<b>Warning:</b> There are three instances in the master map files where more than one object is defined for a tile, but doing so is discouraged.  Only one of the objects will actually be used by the game engine.')
             note.show()
         elif c.book == 1:
-            if (tile.tilecontentid > 0 and tile.tilecontentid < 25):
+            if (0 < tile.tilecontentid < 25):
                 if (len(tile.tilecontents) > 0):
                     note.hide()
                 else:
@@ -4925,7 +4925,7 @@ class MapGUI(BaseGUI):
             self.undo.store(x, y)
             self.undo.set_text('Copy')
 
-            if oldx != None and oldy != None:
+            if oldx is not None and oldy is not None:
                 directions = self.mapobj.directions_between_coords(
                     oldx, oldy, x, y)
                 sourcex, sourcey = self.mapobj.follow_directions_from_coord(
@@ -5126,7 +5126,7 @@ class MapGUI(BaseGUI):
             if (tile.tilecontentid == 0 and len(tile.tilecontents) > 0):
                 # afaik, this doesn't happen.  should use something other than red here, though
                 tilecontent = (1, 0, 0, 0.5)
-            elif (tile.tilecontentid >= 25 and tile.tilecontentid < 50):
+            elif (25 <= tile.tilecontentid < 50):
                 tilecontent = (0, .784, .784, 0.5)
             elif (tile.tilecontentid > 0 and len(tile.tilecontents) == 0):
                 # This shouldn't happen either
@@ -5551,7 +5551,6 @@ class MapGUI(BaseGUI):
             self.guicache.write_to_png(pngfile)
         import sys
         sys.exit(0)
-        return False
 
     def store_hugegfx_state(self, tile):
         """

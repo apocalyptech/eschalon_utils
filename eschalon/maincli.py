@@ -255,7 +255,7 @@ class MainCLI(object):
                 print("\t%d - %s / Level %d" % (i % 10, spell[0], spell[1]))
             else:
                 print("\t%d - (none)" % (i % 10))
-            i = i + 1
+            i += 1
         print()
 
         if char.book > 1:
@@ -375,7 +375,7 @@ class MainCLI(object):
         print()
         i = 0
         for item in char.readyitems:
-            i = i + 1
+            i += 1
             print("Ready Item %d:" % (i))
             print(item.display())
 

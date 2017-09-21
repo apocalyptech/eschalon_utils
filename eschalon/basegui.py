@@ -73,7 +73,7 @@ class WrapLabel(gtk.Label):
         self.layout = self.get_layout()
         self.layout.set_wrap(pango.WRAP_WORD)
 
-        if str != None:
+        if str is not None:
             self.set_markup(str)
 
         self.set_alignment(0.0, 0.0)
@@ -924,9 +924,9 @@ class BaseGUI(object):
         mask = int(mask, 16)
         (obj, origobj) = self.get_comp_objects()
         if (ischecked):
-            obj.__dict__[shortname] = obj.__dict__[shortname] | mask
+            obj.__dict__[shortname] |= mask
         else:
-            obj.__dict__[shortname] = obj.__dict__[shortname] & ~mask
+            obj.__dict__[shortname] &= ~mask
         if (self.curitemcategory != self.ITEM_MAP):
             (labelwidget, label) = self.get_label_cache(wname)
             self.set_changed_widget((origobj.__dict__[shortname] & mask == obj.__dict__[
@@ -1006,7 +1006,7 @@ class BaseGUI(object):
             if (len(item.item_name) > 0):
                 str = str + item.item_name
             else:
-                str = str + '<i>(No name)</i>'
+                str += '<i>(No name)</i>'
             if (item.hasborder()):
                 str = '<span color="blue">' + str + '</span>'
         widget.set_markup(str)

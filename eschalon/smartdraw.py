@@ -404,7 +404,7 @@ class SmartDraw(object):
         if (wallgroup is not None and tile.wallimg == self.special):
             return wallgroup
         for start in self.wallstarts:
-            if (tile.wallimg >= start and tile.wallimg < start + 10):
+            if (start <= tile.wallimg < start + 10):
                 return start
         if (tile.wallimg in self.fenceids):
             return self.fenceids[0]

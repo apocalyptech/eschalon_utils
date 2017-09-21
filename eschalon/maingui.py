@@ -489,7 +489,7 @@ class MainGUI(BaseGUI):
 
         # Figure out what our initial path should be
         path = ''
-        if self.char == None:
+        if self.char is None:
             # This will only happen during the initial load
             path = self.get_current_savegame_dir()
         else:
@@ -509,7 +509,7 @@ class MainGUI(BaseGUI):
                     rundialog = True
             else:
                 # Check to see if this was the initial load, started without a filename
-                if self.char == None:
+                if self.char is None:
                     return False
 
         # If we got here, we've successfully chosen and loaded a character
@@ -536,7 +536,7 @@ class MainGUI(BaseGUI):
         dialog.set_transient_for(self.window)
         dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
-        if self.char != None:
+        if self.char is not None:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
             if path != '':
                 dialog.set_current_folder(path)
@@ -573,7 +573,7 @@ class MainGUI(BaseGUI):
         about = self.get_widget('aboutwindow')
 
         # If the object doesn't exist in our cache, create it
-        if about == None:
+        if about is None:
             about = gtk.AboutDialog()
             about.set_transient_for(self.window)
             about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
@@ -944,7 +944,7 @@ class MainGUI(BaseGUI):
         elif action == 'copy':
             self.itemclipboard = self.char.__dict__[equipname]
         elif action == 'paste':
-            if self.itemclipboard != None:
+            if self.itemclipboard is not None:
                 self.char.__dict__[equipname] = self.itemclipboard.replicate()
                 self.register_equip_change(equipname)
             pass
@@ -968,7 +968,7 @@ class MainGUI(BaseGUI):
         elif action == 'copy':
             self.itemclipboard = self.char.inventory[row][col]
         elif action == 'paste':
-            if self.itemclipboard != None:
+            if self.itemclipboard is not None:
                 self.char.inventory[row][col] = self.itemclipboard.replicate()
                 self.register_inv_change(row, col)
         elif action == 'delete':
@@ -990,7 +990,7 @@ class MainGUI(BaseGUI):
         elif action == 'copy':
             self.itemclipboard = self.char.readyitems[num]
         elif action == 'paste':
-            if self.itemclipboard != None:
+            if self.itemclipboard is not None:
                 self.char.readyitems[num] = self.itemclipboard.replicate()
                 self.register_ready_change(num)
             pass
@@ -1533,7 +1533,7 @@ class MainGUI(BaseGUI):
                 '%s:' % item[1], '%s_label' % item[0]), 1, 2, i, i + 1, gtk.FILL, gtk.FILL, 4)
             table.attach(self.gui_item(item[0], self.on_equip_clicked, self.on_equip_action_clicked),
                          2, 3, i, i + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
-            i = i + 1
+            i += 1
 
     def gui_add_inv_page(self, container, rownum):
         """ Create an inventory page, given the row number. """

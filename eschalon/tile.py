@@ -394,7 +394,7 @@ class B3Tile(B2Tile):
         """
         Do we have data in our B3-specific elements?
         """
-        return (self.cartography != 0 or super(B3Tile)._sub_hasdata(self))
+        return (self.cartography != 0 or super(B3Tile)._sub_hasdata())
 
     def _convert_savegame(self, savegame):
         """

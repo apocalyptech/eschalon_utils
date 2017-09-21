@@ -238,7 +238,7 @@ class Character(object):
         if self.book == 1:
             self.disease = 0x0000
         else:
-            self.permstatuses = self.permstatuses & 0xFFFF0000
+            self.permstatuses &= 0xFFFF0000
 
     def resetHunger(self):
         """
@@ -260,10 +260,10 @@ class Character(object):
         """ Add a new item, assuming that the items are stored in a
             left-to-right, top-to-bottom format on the inventory screen. """
         self.inventory[self.curinvrow][self.curinvcol].read(self.df)
-        self.curinvcol = self.curinvcol + 1
+        self.curinvcol += 1
         if (self.curinvcol == self.inv_cols):
             self.curinvcol = 0
-            self.curinvrow = self.curinvrow + 1
+            self.curinvrow += 1
 
     @staticmethod
     def load(filename, book=None, req_book=None):

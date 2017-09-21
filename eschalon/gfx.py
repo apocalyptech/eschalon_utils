@@ -77,7 +77,7 @@ class GfxCache(object):
         """ Grab an image from the cache, as a Cairo surface. """
         if (gdk):
             return self.getimg_gdk(number, sizex)
-        number = number - 1
+        number -= 1
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.cache):
@@ -120,7 +120,7 @@ class GfxCache(object):
         """ Grab an image from the cache, as a GDK pixbuf """
         if (self.gdkcache is None):
             return None
-        number = number - 1
+        number -= 1
         row = math.floor(number / self.cols)
         col = number % self.cols
         if (number not in self.gdkcache):

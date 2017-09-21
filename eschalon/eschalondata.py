@@ -109,7 +109,7 @@ class GoldRanges(object):
                         return item_name
 
                     for (label, (begin, end)) in zip(self.labels, self.ranges):
-                        if num_gold >= begin and num_gold <= end:
+                        if begin <= num_gold <= end:
                             # We found ourselves in a range we know about
                             if c.book == 3:
                                 return '%s Gold (%d-%d)' % (label, begin, end)
