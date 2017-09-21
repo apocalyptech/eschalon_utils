@@ -22,7 +22,6 @@ import sys
 
 import argparse
 
-from eschalon.mapgui import MapGUI
 from eschalon.maincli import MainCLI
 from eschalon.preferences import Prefs
 
