@@ -21,7 +21,7 @@
 __all__ = ['B1Constants']
 
 
-class B1Constants:
+class B1Constants(object):
 
     book = 1
 
