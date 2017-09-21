@@ -885,9 +885,9 @@ class B2Gfx(Gfx):
         return cache.getimg(direction, int(size * cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
-        if (avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12)):
-            if (avatarnum not in self.avatarcache):
-                if (avatarnum == 0xFFFFFFFF):
+        if avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12):
+            if avatarnum not in self.avatarcache:
+                if avatarnum == 0xFFFFFFFF:
                     if (os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png'))):
                         self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
                             os.path.join(self.eschalondata.gamedir, 'mypic.png'))

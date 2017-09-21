@@ -16,11 +16,12 @@ setup(
     extras_require={
         'gui': [
             'pygtk>=2.18.0',
+            'gobject',
+            'numpy',
         ],
         'map': [
             'czipfile',
             'pycrypto',
-
         ]
 
     },

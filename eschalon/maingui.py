@@ -141,7 +141,7 @@ class CharLoaderDialog(gtk.Dialog):
                 # If there's an error, just don't show the slot
                 pass
         self.slots.sort()
-        if len(self.slots) > 0:
+        if self.slots:
 
             # Savegame combobox/liststore
             self.save_dir_store = gtk.ListStore(
