@@ -39,7 +39,8 @@ def main():
     char_manip_group.add_argument("--set-mana-cur", type=int)
     char_manip_group.add_argument("--set-hp-max", type=int)
     char_manip_group.add_argument("--set-hp-cur", type=int)
-    char_manip_group.add_argument("--rm-desease", action="store_true")
+    char_manip_group.add_argument("--rm-disease", action="store_true")
+    char_manip_group.add_argument("--reset-hunger", action="store_true")
 
     # TODO: more advanced CLI validation checks
     parser.add_argument("filename", type=str, nargs='?')

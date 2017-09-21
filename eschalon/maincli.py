@@ -22,15 +22,16 @@ from __future__ import print_function
 from eschalon import constants as c
 from eschalon.character import Character
 from eschalon.savefile import LoadException
-
+from eschalon.preferences import Prefs
 
 class MainCLI(object):
 
-    def __init__(self, filename, req_book, prefs, args):
+    def __init__(self, filename, prefs, req_book, args):
         """ A fresh object, with no data. """
         self.args = args
         self.filename = filename
         self.prefs = prefs
+        assert isinstance(self.prefs, Prefs)
         self.req_book = req_book
 
     def run(self):

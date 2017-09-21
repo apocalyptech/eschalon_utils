@@ -24,7 +24,6 @@ from struct import pack, unpack
 
 
 class LoadException(Exception):
-
     def __init__(self, text):
         self.text = text
 
