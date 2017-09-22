@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Requirements:
 # 
@@ -6,25 +6,25 @@
 # - py2app, czipfile, and pycrypto installed with easy_install
 # - OS X developer tools
 #
-# Developed on Mac OS 10.8.3 64 bit and tested on latest 10.9
+# Developed on Mac OS 10.13
 
 # Build these apps
-APPS="eschalon_utils"
+APPS="eschalon_main"
 # Include these python modules
 INCLUDE="gtk,gio,atk,pangocairo"
 # Add these files to each app bundle
-RESOURCES="data,/usr/local/lib/pango,/usr/local/lib/gdk-pixbuf-2.0,/usr/local/lib/gtk-2.0"
+RESOURCES="data,/opt/local/lib/pango,/opt/local/lib/gdk-pixbuf-2.0,/usr/local/lib/gtk-2.0"
 # The version numbers for these libraries as they appear in the file names
 PANGO=1.0.0
 GDKPIXBUF=2.0.0
-# Make sure python knows how to find libraries installed by Homebrew
-export PYTHONPATH=/usr/local/lib/python2.7/site-packages:/usr/local/lib/python2.7/site-packages/gtk-2.0
+# Make sure python knows how to find libraries installed by Macports
+export PYTHONPATH=/opt/local/lib/gtk-2.0
 # Dynamically figure out the version number and include that in the name
-VERSION=$(grep 'version =' eschalon/__init__.py|perl -i -ne '/([0-9.]+)/ && print "$1\n"')
+VERSION=$(grep 'version =' eschalon/__init__.py|perl -ne '/([0-9.]+)/ && print "$1\n"')
 DMG="Eschalon Utils $VERSION"
 
 # Exit if any step exits uncleanly. Helpful for a hack job like this
-set -e
+set -eux
 
 mkdir -p "$DMG"
 rm -rf "$DMG/*"
@@ -41,8 +41,7 @@ for APP in $APPS; do
   # We have to skip the macholib header rewrite because it's broken for us -
   # it complains of "New Mach-O header is too large to relocate".  We'll fix
   # this manually with install_name_tool later
-  python setup.py py2app \
-   --debug-skip-macholib \
+  python2 setup.py py2app \
    --iconfile "data/eschalon1.icns" \
    -i "$INCLUDE" \
    -r "$RESOURCES" \
@@ -103,8 +102,8 @@ for APP in $APPS; do
   cd Resources
   # Create pango config files
   mkdir -p etc/pango
-  pango-querymodules |perl -i -pe 's/^[^#].*\///' > etc/pango/pango.modules
-  gdk-pixbuf-query-loaders |perl -i -pe 's/^[^#].*\/(lib\/.*")$/"..\/Resources\/$1/' > lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
+  pango-querymodules |perl -pe 's/^[^#].*\///' > etc/pango/pango.modules
+  gdk-pixbuf-query-loaders |perl -pe 's/^[^#].*\/(lib\/.*")$/"..\/Resources\/$1/' > lib/gdk-pixbuf-2.0/2.10.0/loaders.cache
   echo "[Pango]\nModuleFiles=./etc/pango/pango.modules\n" > etc/pango/pangorc
 
   # Modify the pango libraries to look for config files and modules in the
@@ -114,7 +113,7 @@ for APP in $APPS; do
   # If they're not, this won't work.
   cd ../Frameworks
   for i in libpango-$PANGO libgdk_pixbuf-$GDKPIXBUF; do
-    if ! readlink /usr/local/lib/$i.dylib |egrep -q "/Cellar/.*?/.{6}/lib/lib"; then
+    if ! readlink /opt/local/lib/$i.dylib |egrep -q "/Cellar/.*?/.{6}/lib/lib"; then
       echo "Fatal: $i version is not 6 characters long"
       exit
     fi
@@ -122,9 +121,9 @@ for APP in $APPS; do
 
   # Do the modifications. Our new paths are shorter than the old ones,
   # so null-terminate the string and pad up with dots.
-  perl -i -pe 's?/usr/local/Cellar/pango/.{6}/etc/pango?../Resources/etc/pango\x00.................?' libpango-$PANGO.dylib
-  perl -i -pe 's?/usr/local/Cellar/pango/.{6}/lib/pango?../Resources/lib/pango\x00.................?' libpango-$PANGO.dylib
-  perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/.{6}/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-$GDKPIXBUF.dylib
+  #perl -i -pe 's?/usr/local/Cellar/pango/.{6}/etc/pango?../Resources/etc/pango\x00.................?' libpango-$PANGO.dylib
+  #perl -i -pe 's?/usr/local/Cellar/pango/.{6}/lib/pango?../Resources/lib/pango\x00.................?' libpango-$PANGO.dylib
+  #perl -i -pe 's?/usr/local/Cellar/gdk-pixbuf/.{6}/lib?../Resources/lib/\x00.....................?' libgdk_pixbuf-$GDKPIXBUF.dylib
 
   # Go back to the root to start the next loop iteration
   cd ../../../..
