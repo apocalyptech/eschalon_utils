@@ -39,11 +39,11 @@ include_files = [
 
 GUI2Exe_Target_1 = Executable(
     # what to build
-    script="eschalon_b1_char.py",
+    script="eschalon_gui.py",
     initScript=None,
     base=None,
     targetDir=r"dist",
-    targetName="eschalon_b1_char.exe",
+    targetName="eschalon_gui.exe",
     compress=True,
     copyDependentFiles=False,
     appendScriptToExe=False,
@@ -53,82 +53,11 @@ GUI2Exe_Target_1 = Executable(
 
 GUI2Exe_Target_2 = Executable(
     # what to build
-    script="eschalon_b1_map.py",
+    script="eschalon_main.py",
     initScript=None,
     base=None,
     targetDir=r"dist",
-    targetName="eschalon_b1_map.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
-
-GUI2Exe_Target_3 = Executable(
-    # what to build
-    script="eschalon_b2_char.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_b2_char.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
-GUI2Exe_Target_4 = Executable(
-    # what to build
-    script="eschalon_b2_map.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_b2_map.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
-GUI2Exe_Target_5 = Executable(
-    # what to build
-    script="eschalon_b3_char.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_b3_char.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
-GUI2Exe_Target_6 = Executable(
-    # what to build
-    script="eschalon_b3_map.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_b3_map.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
-GUI2Exe_Target_7 = Executable(
-    # what to build
-    script="eschalon_utils.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_utils.exe",
+    targetName="eschalon_main.exe",
     compress=True,
     copyDependentFiles=False,
     appendScriptToExe=False,
@@ -159,11 +88,6 @@ setup(
     executables=[
         GUI2Exe_Target_1,
         GUI2Exe_Target_2,
-        GUI2Exe_Target_3,
-        GUI2Exe_Target_4,
-        GUI2Exe_Target_5,
-        GUI2Exe_Target_6,
-        GUI2Exe_Target_7,
     ]
 )
 
