@@ -1,5 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # vim: set expandtab tabstop=4 shiftwidth=4:
+
+from __future__ import unicode_literals, print_function, division, absolute_import
 
 import re
 import sys
