@@ -35,16 +35,6 @@ class Item(object):
 
         # Known fields
         self._set_all_values(-1)
-        self.category = -1
-        self.subcategory = -1
-        self.weight = -1
-        self.pictureid = -1
-        self.value = -1
-        self.canstack = -1
-        self.quantity = -1
-        self.basedamage = -1
-        self.basearmor = -1
-        self.rarity = -1
 
         # Now, after doing all that, zero things out if we were told to do so
         if (zero):
