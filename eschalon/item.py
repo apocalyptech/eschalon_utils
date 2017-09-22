@@ -30,10 +30,13 @@ class Item(object):
     def __init__(self, zero=False):
         """ Create a new Item object with no information. """
 
+        self.item_name = ''
+        self.script = ''
+
         # Known fields
+        self._set_all_values(-1)
         self.category = -1
         self.subcategory = -1
-        self.item_name = ''
         self.weight = -1
         self.pictureid = -1
         self.value = -1
@@ -41,28 +44,30 @@ class Item(object):
         self.quantity = -1
         self.basedamage = -1
         self.basearmor = -1
-        self.script = ''
         self.rarity = -1
 
         # Now, after doing all that, zero things out if we were told to do so
         if (zero):
             self.tozero()
 
+    def _set_all_values(self, value):
+        self.category = value
+        self.subcategory = value
+        self.weight = value
+        self.pictureid = value
+        self.value = value
+        self.canstack = value
+        self.quantity = value
+        self.basedamage = value
+        self.basearmor = value
+        self.rarity = value
+
     def tozero(self):
         """
         Resets all attributes to zero (or empty strings) - why exactly
         am I doing this here instead of just in the constructor?
         """
-        self.category = 0
-        self.subcategory = 0
-        self.weight = 0
-        self.pictureid = 0
-        self.value = 0
-        self.canstack = 0
-        self.quantity = 0
-        self.basedamage = 0
-        self.basearmor = 0
-        self.rarity = 0
+        self._set_all_values(0)
         self.item_name = ''
         self.script = ''
 
