@@ -45,4 +45,5 @@ setup(
         'Topic :: Games/Entertainment :: Role-Playing',
         'Topic :: Utilities',
     ],
+    app=['eschalon/main.py'],
 )
