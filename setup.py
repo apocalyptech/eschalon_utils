@@ -27,7 +27,7 @@ setup(
 
     },
     scripts=[
-        'main.py',
+        'eschalon/main.py',
     ],
     entry_points = {
         'console_scripts': ['eschalon=main:main'],
