@@ -4,12 +4,12 @@ from setuptools import setup
 setup(
     name='eschalon_utils',
     version=eschalon.version,
-    packages=['eschalon_utils'],
-    package_dir={'': 'tests'},
-    url='',
+    packages=['eschalon'],
+    package_dir={'': ''},
+    url='http://apocalyptech.com/eschalon/',
     license='GPLv2+',
-    author='',
-    author_email='',
+    author='CJ Kucera',
+    author_email='cj@apocalyptech.com',
     description='',
     requires=[
         'Crypto',
