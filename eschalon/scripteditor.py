@@ -22,6 +22,7 @@ import gtk
 
 from eschalon.constants import constants as c
 
+
 def format_completion_text(layout, cell, model, iter, column):
     """
     Formats our completion text for our script commands
@@ -685,8 +686,8 @@ class ScriptEditor(object):
         we wouldn't know where to put the coordinate.
         """
         if (self.mapgui and self.cur_focus and
-                len(self.rows) > self.cur_focus.rownum and
-                self.cur_focus == self.rows[self.cur_focus.rownum]):
+                    len(self.rows) > self.cur_focus.rownum and
+                    self.cur_focus == self.rows[self.cur_focus.rownum]):
             selector = MapSelector(self.mapgui, self.window)
             resp = selector.run()
             new_x = selector.mapgui.tile_x

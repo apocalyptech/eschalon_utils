@@ -24,7 +24,6 @@ import argparse
 
 
 from eschalon.preferences import Prefs
-import eschalon.bookchooser
 
 
 def main():
@@ -34,7 +33,8 @@ def main():
                         )
     parser.add_argument("-u", "--unknowns", action="store_true")
 
-    char_manip_group = parser.add_argument_group(title="automated changes", description="sgkljfld")
+    char_manip_group = parser.add_argument_group(title="automated changes",
+                                                 description="Sets specific charater attributes")
     char_manip_group.add_argument("--set-gold", type=int)
     char_manip_group.add_argument("--set-mana-max", type=int)
     char_manip_group.add_argument("--set-mana-cur", type=int)
@@ -52,7 +52,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.book is None:
+    if args.book is None and args.filename is None:
+        import eschalon.bookchooser
         eschalon.bookchooser.BookChooser().main()
 
     # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
