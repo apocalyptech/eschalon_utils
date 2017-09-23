@@ -9,7 +9,7 @@ from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
 
 
-class EschalonUtils(object):
+class BookChooser(object):
     def char(self, widget, book_id, data=None):
         prog = MainGUI(None, Prefs(), book_id)
         return prog.run()
@@ -119,8 +119,3 @@ class EschalonUtils(object):
 
     def main(self):
         gtk.main()
-
-
-if __name__ == '__main__':
-    eutils = EschalonUtils()
-    eutils.main()

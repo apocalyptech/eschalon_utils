@@ -24,6 +24,7 @@ import argparse
 
 
 from eschalon.preferences import Prefs
+import eschalon.bookchooser
 
 
 def main():
@@ -47,9 +48,12 @@ def main():
     which_gui.add_argument("--char", action="store_true")
     which_gui.add_argument("--map", action="store_true")
 
-    parser.add_argument("--book", type=int, choices=[1, 2, 3], required=True)
+    parser.add_argument("--book", type=int, choices=[1, 2, 3])
 
     args = parser.parse_args()
+
+    if args.book is None:
+        eschalon.bookchooser.BookChooser    ().main()
 
     # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
     if args.book == 1 and args.reset_hunger:

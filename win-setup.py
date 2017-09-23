@@ -39,7 +39,7 @@ include_files = [
 
 GUI2Exe_Target_1 = Executable(
     # what to build
-    script="eschalon_gui.py",
+    script="eschalon_main.py",
     initScript=None,
     base=None,
     targetDir=r"dist",
@@ -50,21 +50,6 @@ GUI2Exe_Target_1 = Executable(
     appendScriptToLibrary=False,
     icon=None
 )
-
-GUI2Exe_Target_2 = Executable(
-    # what to build
-    script="eschalon_main.py",
-    initScript=None,
-    base=None,
-    targetDir=r"dist",
-    targetName="eschalon_main.exe",
-    compress=True,
-    copyDependentFiles=False,
-    appendScriptToExe=False,
-    appendScriptToLibrary=False,
-    icon=None
-)
-
 
 # That's serious now: we have all (or almost all) the options cx_Freeze
 # supports. I put them all even if some of them are usually defaulted
@@ -87,7 +72,6 @@ setup(
 
     executables=[
         GUI2Exe_Target_1,
-        GUI2Exe_Target_2,
     ]
 )
 
