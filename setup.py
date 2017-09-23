@@ -1,6 +1,12 @@
 import eschalon
 from setuptools import setup
 
+
+py2app_options = dict(
+    argv_emulation=True,
+    iconfile='data/eschalon1.icns',
+)
+
 setup(
     name='eschalon_utils',
     version=eschalon.version,
@@ -46,4 +52,8 @@ setup(
         'Topic :: Utilities',
     ],
     app=['eschalon/main.py'],
+    options=dict(
+        py2app=py2app_options,
+    ),
+    setup_requires=['py2app'],
 )
