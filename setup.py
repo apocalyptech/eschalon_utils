@@ -18,16 +18,17 @@ setup(
     description='Eschalon Books I, II, and III Character and Map Editors ',
     requires=[
         'Crypto',
+        'pygtk',
+        'gobject',
+        'numpy',
+        'czipfile',
+        'pycrypto',
     ],
     extras_require={
         'gui': [
-            'pygtk>=2.18.0',
-            'gobject',
-            'numpy',
+
         ],
         'map': [
-            'czipfile',
-            'pycrypto',
         ]
 
     },
