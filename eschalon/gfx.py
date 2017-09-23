@@ -28,7 +28,7 @@ import cairo
 import gobject
 import io
 from struct import unpack
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.savefile import Savefile, LoadException
 
 

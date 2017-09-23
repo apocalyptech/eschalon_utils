@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.character import Character
 from eschalon.savefile import LoadException
 from eschalon.preferences import Prefs

@@ -20,7 +20,7 @@
 
 import os
 import struct
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalon.tile import Tile
 from eschalon.tilecontent import Tilecontent

@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import random
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.map import Map
 from eschalon.tile import Tile
 from eschalon.entity import Entity

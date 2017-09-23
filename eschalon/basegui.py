@@ -32,7 +32,7 @@ except:
     sys.stdin.readline()
     sys.exit(1)
 
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.scripteditor import ScriptEditor
 
 

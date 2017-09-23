@@ -58,7 +58,7 @@ from eschalon.item import Item, B1Item, B2Item, B3Item
 from eschalon.savefile import LoadException
 from eschalon.saveslot import Saveslot
 from eschalon.eschalondata import EschalonData
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon import app_name, version, url, authors
 
 

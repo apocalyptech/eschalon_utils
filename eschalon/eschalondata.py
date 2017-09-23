@@ -36,7 +36,7 @@ import csv
 import glob
 import base64
 import io
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.savefile import LoadException
 
 

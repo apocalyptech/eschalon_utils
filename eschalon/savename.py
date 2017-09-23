@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import struct
-from eschalon import constants as c
+from eschalon.constants import constants as c
 from eschalon.savefile import Savefile, LoadException
 from eschalon.constantsb1 import B1Constants
 

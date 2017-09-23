@@ -20,8 +20,7 @@
 
 import gtk
 
-from eschalon import constants as c
-
+from eschalon.constants import constants as c
 
 def format_completion_text(layout, cell, model, iter, column):
     """
