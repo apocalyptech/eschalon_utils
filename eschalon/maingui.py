@@ -18,6 +18,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import division, print_function, absolute_import
+
 import os
 import sys
 import glob
@@ -1307,7 +1309,7 @@ class MainGUI(BaseGUI):
         ###
         vbox = self.get_widget('charinfo_vbox')
 
-        numrows = len(c.skilltable) / 2
+        numrows = int(len(c.skilltable) / 2)
         if len(c.skilltable) % 2 == 1:
             numrows += 1
 
@@ -1352,7 +1354,7 @@ class MainGUI(BaseGUI):
         ###
         cont = self.get_widget('status_alignment')
 
-        numrows = len(c.statustable) / 2
+        numrows = int(len(c.statustable) / 2)
         if len(c.statustable) % 2 == 1:
             numrows += 1
 
@@ -1458,7 +1460,7 @@ class MainGUI(BaseGUI):
             for box in [box1, box2]:
                 for widget in box.get_children():
                     box.remove(widget)
-            numrows = len(c.alchemytable) / 2
+            numrows = int(len(c.alchemytable) / 2)
             if len(c.alchemytable) % 2 == 1:
                 numrows += 1
             for (idx, recipe) in list(c.alchemytable.items()):
