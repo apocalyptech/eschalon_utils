@@ -53,7 +53,7 @@ def main():
     args = parser.parse_args()
 
     if args.book is None:
-        eschalon.bookchooser.BookChooser    ().main()
+        eschalon.bookchooser.BookChooser().main()
 
     # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
     if args.book == 1 and args.reset_hunger:
