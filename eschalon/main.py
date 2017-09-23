@@ -63,6 +63,8 @@ def main():
             [args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
              args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger]):
         parser.error("GUI can't be combined with listing/manipulation options")
+    if args.book is None and args.filename is not None:
+        parser.error("Book version must be selected with filename")
 
     if not args.map and args.filename is None:
         args.char = True
