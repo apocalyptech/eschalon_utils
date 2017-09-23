@@ -5,12 +5,11 @@ setup(
     name='eschalon_utils',
     version=eschalon.version,
     packages=['eschalon'],
-    package_dir={'': ''},
     url='http://apocalyptech.com/eschalon/',
     license='GPLv2+',
     author='CJ Kucera',
     author_email='cj@apocalyptech.com',
-    description='',
+    description='Eschalon Books I, II, and III Character and Map Editors ',
     requires=[
         'Crypto',
     ],
