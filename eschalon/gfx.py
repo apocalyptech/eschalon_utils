@@ -42,11 +42,11 @@ class GfxCache(object):
     def __init__(self, pngdata, width, height, cols, overlay_func=None):
         # First load the data as a Cairo surface
         self.surface = cairo.ImageSurface.create_from_png(
-            io.StringIO(pngdata))
+            io.BytesIO(pngdata))
 
         if overlay_func:
             self.surface = overlay_func(self.surface, width, height, cols)
-            df = io.StringIO()
+            df = io.BytesIO()
             self.surface.write_to_png(df)
             pngdata = df.getvalue()
             df.close()
@@ -324,7 +324,7 @@ class Gfx(object):
         found would require you to loop through and fix each pixel in the
         pixbuf afterwards.
         """
-        df = io.StringIO()
+        df = io.BytesIO()
         surface.write_to_png(df)
         loader = gtk.gdk.PixbufLoader()
         loader.write(df.getvalue())
@@ -721,9 +721,9 @@ class B2Gfx(Gfx):
         background = self.eschalondata.readfile(
             '%s_icon_blank.png' % (category))
         framesurf = cairo.ImageSurface.create_from_png(
-            io.StringIO(frame))
+            io.BytesIO(frame))
         backsurf = cairo.ImageSurface.create_from_png(
-            io.StringIO(background))
+            io.BytesIO(background))
 
         # Now create a new surface and tile the background over the whole thing
         newsurf = cairo.ImageSurface(
