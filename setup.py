@@ -27,10 +27,16 @@ setup(
 
     },
     scripts=[
-        'eschalon_main.py',
+        'main.py',
     ],
+    entry_points = {
+        'console_scripts': ['eschalon=main:main'],
+    },
+    test_suite='nose.collector',
     tests_require= [
+        'nose',
         'coverage'
-    ]
+    ],
+    include_package_data=True,
 
 )
