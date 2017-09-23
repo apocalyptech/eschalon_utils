@@ -574,9 +574,8 @@ class B1Gfx(Gfx):
         doesn't have transparency information, and I don't feel like doing a conversion.
         """
         if (self.flamecache is None):
-            df = open(os.path.join(self.datadir, 'torch_single.png'), 'rb')
-            flamedata = df.read()
-            df.close()
+            with open(os.path.join(self.datadir, 'torch_single.png'), 'rb') as df:
+                flamedata = df.read()
             self.flamecache = B1GfxEntCache(flamedata, 1, 1)
         if (size is None):
             size = self.tile_width
