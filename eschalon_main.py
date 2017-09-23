@@ -59,6 +59,9 @@ def main():
              args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger]):
         parser.error("GUI can't be combined with listing/manipulation options")
 
+    if not args.map and args.filename is None:
+        args.char = True
+
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
     if args.char:
