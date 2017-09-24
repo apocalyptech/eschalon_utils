@@ -65,6 +65,8 @@ def main():
         parser.error("GUI can't be combined with listing/manipulation options")
     if args.book is None and args.filename is not None:
         parser.error("Book version must be selected with filename")
+    if not any([args.char, args.map]) and args.filename is not None:
+        parser.error("Select a mode operation (--char or --map)")
 
     if not args.map and args.filename is None:
         args.char = True
