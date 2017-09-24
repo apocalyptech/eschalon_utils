@@ -22,15 +22,9 @@ import os
 import sys
 from struct import unpack
 
-try:
-    import gtk
-    import gobject
-    import pango
-except:
-    print('Python GTK Modules not found: %s' % (str(e)))
-    print('Hit enter to exit...')
-    sys.stdin.readline()
-    sys.exit(1)
+import gtk
+import gobject
+import pango
 
 from eschalon.constants import constants as c
 from eschalon.scripteditor import ScriptEditor

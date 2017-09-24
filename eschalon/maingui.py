@@ -24,14 +24,7 @@ import os
 import sys
 import glob
 
-# Load GTK Deps
-try:
-    import gtk
-except Exception as e:
-    print('Python GTK Modules not found: %s' % (str(e)))
-    print('Hit enter to exit...')
-    sys.stdin.readline()
-    sys.exit(1)
+import gtk
 
 from eschalon.basegui import BaseGUI
 
