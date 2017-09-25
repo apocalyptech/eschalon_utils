@@ -6,6 +6,7 @@ from parameterized import parameterized
 
 class MainTest(unittest.TestCase):
     @parameterized.expand([
+        [],
         ["--book", "2", "--char"],
         ["--book", "2", "--reset-hunger", "--", "filename"],
     ])
