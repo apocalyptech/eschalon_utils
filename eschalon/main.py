@@ -60,23 +60,24 @@ def parse_args(args):
     manip_options_set = any([args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
          args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])
 
-    if args.book is None and args.filename is None:
-        import eschalon.bookchooser
-        eschalon.bookchooser.BookChooser().main()
+    if not args.map and args.filename is None:
+        args.char = True
+
     # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
     if args.book == 1 and args.reset_hunger:
         parser.error("Resetting hunger/thirst only applies to book II and III")
     if manip_options_set and args.filename is None:
         parser.error("Can only manipulate values on a file")
-    if any([args.char, args.map]) and manip_options_set:
-        parser.error("GUI can't be combined with listing/manipulation options")
+    if any([args.char, args.map]):
+        if manip_options_set:
+            parser.error("GUI can't be combined with listing/manipulation options")
+    else:
+        if args.filename is not None and not manip_options_set:
+            parser.error("Select a mode operation (--char or --map)")
+
     if args.book is None and args.filename is not None:
         parser.error("Book version must be selected with filename")
-    if not any([args.char, args.map]) and args.filename is not None and not manip_options_set:
-        parser.error("Select a mode operation (--char or --map)")
 
-    if not args.map and args.filename is None:
-        args.char = True
 
     return args
 
@@ -86,6 +87,9 @@ def main():
 
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
+    if args.book is None and args.filename is None:
+        import eschalon.bookchooser
+        eschalon.bookchooser.BookChooser().main()
     if args.char:
         from eschalon.maingui import MainGUI
         prog = MainGUI(args.filename, Prefs(), args.book)

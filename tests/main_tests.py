@@ -9,19 +9,22 @@ class MainTest(unittest.TestCase):
         ["--book", "2", "--char"],
         ["--book", "2", "--reset-hunger", "--", "filename"],
     ])
-    def test_valid_args(self, *tuple_args):
-        largs = list(tuple_args)
-        parse_args(largs)
+    def test_valid_args(self, *args):
+        parse_args(list(args))
 
     @parameterized.expand([
         ["--book", "4"],
         ["--book", "2", "--reset-hunger"],
         ["--book 2"],
+        ["--book", "2", "filename"],
     ])
-    def test_invalid_args(self, *tuple_args):
-        largs = list(tuple_args)
+    def test_invalid_args(self, *args):
         with self.assertRaises(SystemExit):
-            parse_args(largs)
+            parse_args(list(args))
+
+    def test_default_to_char(self):
+        args = parse_args(["--book", "2"])
+        self.assertTrue(args.char)
 
 
 if __name__ == '__main__':
