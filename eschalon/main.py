@@ -18,15 +18,20 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import sys
-
 import argparse
+import sys
 
 
 from eschalon.preferences import Prefs
 
 
-def main():
+def parse_args(args):
+    """
+    Pull out argument parsing into a seperate function.
+    It turns out this is a sufficiently complicated task that it should be tested.
+    :param args:
+    :return:
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--list", action="append", type=str,
                         choices=['all', 'stats', 'avatar', 'magic', 'equip', 'inv']
@@ -50,26 +55,34 @@ def main():
 
     parser.add_argument("--book", type=int, choices=[1, 2, 3])
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
+
+    manip_options_set = any([args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
+         args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])
 
     if args.book is None and args.filename is None:
         import eschalon.bookchooser
         eschalon.bookchooser.BookChooser().main()
-
     # Validation some odd combinations. Annoyingly argparse doesn't make this easier.
     if args.book == 1 and args.reset_hunger:
         parser.error("Resetting hunger/thirst only applies to book II and III")
-    if any([args.char, args.map]) and any(
-            [args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
-             args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger]):
+    if manip_options_set and args.filename is None:
+        parser.error("Can only manipulate values on a file")
+    if any([args.char, args.map]) and manip_options_set:
         parser.error("GUI can't be combined with listing/manipulation options")
     if args.book is None and args.filename is not None:
         parser.error("Book version must be selected with filename")
-    if not any([args.char, args.map]) and args.filename is not None:
+    if not any([args.char, args.map]) and args.filename is not None and not manip_options_set:
         parser.error("Select a mode operation (--char or --map)")
 
     if not args.map and args.filename is None:
         args.char = True
+
+    return args
+
+
+def main():
+    args = parse_args(sys.argv)
 
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.

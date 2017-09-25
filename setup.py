@@ -41,7 +41,9 @@ setup(
     test_suite='nose.collector',
     tests_require=[
         'nose',
-        'coverage'
+        'coverage',
+        'parameterized',
+        'nose-capturestderr',
     ],
     include_package_data=True,
     classifiers=[
