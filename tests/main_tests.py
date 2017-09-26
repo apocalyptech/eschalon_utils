@@ -7,6 +7,7 @@ from parameterized import parameterized
 class MainTest(unittest.TestCase):
     @parameterized.expand([
         [],
+        ["--book", "2"],
         ["--book", "2", "--char"],
         ["--book", "2", "--reset-hunger", "--", "filename"],
     ])
@@ -14,9 +15,8 @@ class MainTest(unittest.TestCase):
         parse_args(list(args))
 
     @parameterized.expand([
-        ["--book", "4"],
+        ["--book", "4", "--char"],
         ["--book", "2", "--reset-hunger"],
-        ["--book 2"],
         ["--book", "2", "filename"],
     ])
     def test_invalid_args(self, *args):

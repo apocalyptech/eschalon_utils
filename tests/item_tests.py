@@ -2,7 +2,7 @@ import unittest
 
 import eschalon.item
 
-class CharacterTests(unittest.TestCase):
+class ItemTests(unittest.TestCase):
 
     def test_item_init_default(self):
         i = eschalon.item.Item()
