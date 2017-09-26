@@ -23,6 +23,7 @@ setup(
         'numpy',
         'czipfile',
         'pycrypto',
+        'six',
     ],
     extras_require={
         'gui': [

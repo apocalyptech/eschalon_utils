@@ -23,7 +23,7 @@ from __future__ import unicode_literals
 import sys
 import os
 import os.path
-import configparser
+from six.moves import configparser
 from eschalon import app_name
 
 # Load windows registry, if we can
