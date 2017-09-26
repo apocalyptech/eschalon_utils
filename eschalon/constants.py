@@ -3,7 +3,7 @@ from eschalon.constantsb2 import B2Constants
 from eschalon.constantsb3 import B3Constants
 
 
-class Constants:
+class Constants(object):
     """
     A class to hold our constants, depending on what book we're
     currently working in.  I suppose really this should just modify
@@ -36,7 +36,7 @@ class Constants:
             if self.book:
                 for (key, val) in list(self.groups[self.book].__dict__.items()):
                     if key[0] != '_':
-                        del(self.__dict__[key])
+                        del (self.__dict__[key])
             # ... and now load in the new ones
             for (key, val) in list(self.groups[book].__dict__.items()):
                 if key[0] != '_':
