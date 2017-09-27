@@ -83,7 +83,7 @@ def parse_args(args):
 
 
 def main():
-    args = parse_args(sys.argv)
+    args = parse_args(sys.argv[1:])
 
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.

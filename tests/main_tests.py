@@ -18,6 +18,8 @@ class MainTest(unittest.TestCase):
         ["--book", "4", "--char"],
         ["--book", "2", "--reset-hunger"],
         ["--book", "2", "filename"],
+        ["filename"],
+        ["filename", "--char", "--reset-hunger"],
     ])
     def test_invalid_args(self, *args):
         with self.assertRaises(SystemExit):
