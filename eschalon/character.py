@@ -502,7 +502,7 @@ class B1Character(Character):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.unknown.extradata = self.df.read()
-            if (len(self.unknown.extradata) > 0):
+            if self.unknown.extradata:
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -640,7 +640,7 @@ class B1Character(Character):
             self.df.writeint(spell)
 
         # Any extra data we might have
-        if (len(self.unknown.extradata) > 0):
+        if self.unknown.extradata:
             self.df.writestr(self.unknown.extradata)
 
         # Clean up
@@ -873,7 +873,7 @@ class B2Character(Character):
             # If there's extra data at the end, we likely don't have
             # a valid char file
             self.unknown.extradata = self.df.read()
-            if (len(self.unknown.extradata) > 0):
+            if self.unknown.extradata:
                 raise LoadException('Extra data at end of file')
 
             # Close the file
@@ -1024,7 +1024,7 @@ class B2Character(Character):
             self.df.writestr(slot2)
 
         # Any extra data we might have
-        if (len(self.unknown.extradata) > 0):
+        if self.unknown.extradata:
             self.df.writestr(self.unknown.extradata)
 
         # Clean up
@@ -1435,7 +1435,7 @@ class B3Character(Character):
             self.df.writestr(slot2)
 
         # Any extra data we might have
-        if (len(self.unknown.extradata) > 0):
+        if self.unknown.extradata:
             self.df.writestr(self.unknown.extradata)
 
         # Clean up
