@@ -18,6 +18,8 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from bidict import bidict
+
 __all__ = ['B2Constants']
 
 
@@ -25,7 +27,7 @@ class B2Constants(object):
 
     book = 2
 
-    attrtable = {
+    attrtable = bidict({
         0x01: 'Strength',
         0x02: 'Dexterity',
         0x03: 'Endurance',
@@ -34,9 +36,9 @@ class B2Constants(object):
         0x06: 'Wisdom',
         0x07: 'Perception',
         0x08: 'Concentration'
-    }
+    })
 
-    dirtable = {
+    dirtable = bidict({
         1: 'N',
         2: 'NE',
         3: 'E',
@@ -45,9 +47,9 @@ class B2Constants(object):
         6: 'SW',
         7: 'W',
         8: 'NW'
-    }
+    })
 
-    skilltable = {
+    skilltable = bidict({
         0x01: 'Alchemy',
         0x02: 'Divination',
         0x03: 'Elemental',
@@ -74,9 +76,9 @@ class B2Constants(object):
         0x18: 'Piercing Weapons',
         0x19: 'Swords',
         0x1A: 'Thrown Weapons'
-    }
+    })
 
-    categorytable = {
+    categorytable = bidict({
         0x00: '(none)',
         0x01: 'Weapon',
         0x02: 'Arrow',
@@ -108,9 +110,9 @@ class B2Constants(object):
         0x1C: 'Key',
         0x1D: 'Explosive'
         # Not sure if there's anything beyond here...
-    }
+    })
 
-    spelltable = {
+    spelltable = bidict({
         0: 'Draw Water',
         1: 'Element Armor',
         2: 'Fire Dart',
@@ -156,7 +158,7 @@ class B2Constants(object):
         42: 'Mystic Hammer',
         43: 'Mass Boil',
         44: 'Summon Beast'
-    }
+    })
 
     # Should maybe just have a Spell class for this instead
     spelltype = {}
@@ -166,7 +168,7 @@ class B2Constants(object):
         else:
             spelltype[spell] = 'DI'
 
-    statustable = {
+    statustable = bidict({
         0: 'Chameleon',
         1: 'Protection from Curses',
         2: 'Entangled',
@@ -193,13 +195,13 @@ class B2Constants(object):
         23: 'Predator Sight',
         24: 'Mana Fortified',
         25: 'Greater Protection',
-    }
+    })
 
     # Rather a lot of duplicated information in here, but it turns
     # out there's a "Polearm Weapons" in the middle of the table which isn't
     # present elsewhere, so it'd be harder to just populate from the existing
     # tables.  So whatever.
-    itemeffecttable = {
+    itemeffecttable = bidict({
         0x01: 'Strength',
         0x02: 'Dexterity',
         0x03: 'Endurance',
@@ -255,7 +257,7 @@ class B2Constants(object):
         0x35: 'Small Effect Area (thrown potions)',
         0x36: 'Medium Effect Area (thrown potions)',
         0x37: 'Large Effect Area (thrown potions)'
-    }
+    })
 
     materials_wood = ['Pine',
                       'Birch',
@@ -294,7 +296,7 @@ class B2Constants(object):
                         ]
 
     # This table is a bitfield lookup
-    permstatustable = {
+    permstatustable = bidict({
         0x00000001: '(unknown 1)',
         0x00000002: 'Broken Left Arm',
         0x00000004: 'Broken Right Arm',
@@ -327,9 +329,9 @@ class B2Constants(object):
         0x20000000: '(unknown 10)',
         0x40000000: '(unknown 11)',
         0x80000000: '(unknown 12)'
-    }
+    })
 
-    alchemytable = {
+    alchemytable = bidict({
         0: 'Cat\'s Eyes Brew',
         1: 'Detox Serum',
         2: 'Demon Oil',
@@ -355,38 +357,38 @@ class B2Constants(object):
         22: 'Imbue with Fire',
         23: 'Imbue with Cold',
         24: 'Imbue with Poison'
-    }
+    })
 
-    gendertable = {
+    gendertable = bidict({
         1: 'Male',
         2: 'Female'
-    }
+    })
 
-    origintable = {
+    origintable = bidict({
         1: 'Nor\'lander',
         2: 'Barrean',
         3: 'Emayu',
         4: 'Therish',
         5: 'Kessian'
-    }
+    })
 
-    axiomtable = {
+    axiomtable = bidict({
         1: 'Atheistic',
         2: 'Druidic',
         3: 'Virtuous',
         4: 'Nefarious',
         5: 'Agnostic'
-    }
+    })
 
-    classtable = {
+    classtable = bidict({
         1: 'Fighter',
         2: 'Rogue',
         3: 'Magick User',
         4: 'Healer',
         5: 'Ranger'
-    }
+    })
 
-    picidtable = {
+    picidtable = bidict({
         1: 'Male #1',
         2: 'Male #2',
         3: 'Male #3',
@@ -400,14 +402,14 @@ class B2Constants(object):
         11: 'Female #5',
         12: 'Female #6',
         4294967295: 'Custom'
-    }
+    })
 
     # Right now this is the only one that appears to exist
-    tilecontentflags = {
+    tilecontentflags = bidict({
         0x40: 'destructible'
-    }
+    })
 
-    traptable = {
+    traptable = bidict({
         0: 'none',
         1: 'Steam Bath',
         2: 'The Hobbler',
@@ -419,18 +421,18 @@ class B2Constants(object):
         8: 'Yara\'s Vengeance',
         9: 'Dragonbite',
         10: 'Sublime Armageddon'
-    }
+    })
 
-    containertable = {
+    containertable = bidict({
         0: 'none',
         1: 'closed',
         2: 'open',
         3: 'broken',
         4: 'toggle 1',
         5: 'toggle 2'
-    }
+    })
 
-    tilecontenttypetable = {
+    tilecontenttypetable = bidict({
         0: '(none)',
         1: 'Container (no open/close change - barrels, etc)',
         2: 'Container (chests, dressers, etc)',
@@ -474,7 +476,7 @@ class B2Constants(object):
         44: 'Sound Generator (Electric Field)',
         45: 'Sound Generator (Electric Throbbing)',
         50: 'Breakable Wall',
-    }
+    })
 
     # EschalonData object
     eschalondata = None

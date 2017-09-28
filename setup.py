@@ -24,15 +24,8 @@ setup(
         'czipfile',
         'pycrypto',
         'six',
+        'bidict',
     ],
-    extras_require={
-        'gui': [
-
-        ],
-        'map': [
-        ]
-
-    },
     scripts=[
         'eschalon/main.py',
     ],
