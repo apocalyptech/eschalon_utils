@@ -1,9 +1,8 @@
 import unittest
 
 import hashlib
-from eschalon.constants import constants
 import eschalon.character
-import eschalon.constantsb2
+from eschalon.constantsb2 import B2Constants
 import eschalon.savefile
 
 
@@ -19,18 +18,18 @@ class B2CharacterTests(unittest.TestCase):
     def test_character_information(self):
         c = B2CharacterTests.b2c
         self.assertEqual(c.name, b"Veera")
-        self.assertEqual(c.origin, constants.origintable.inv["Therish"])
-        self.assertEqual(c.axiom, constants.axiomtable.inv["Atheistic"])
-        self.assertEqual(c.gender, constants.gendertable.inv["Female"])
+        self.assertEqual(c.origin, B2Constants.origintable.inv["Therish"])
+        self.assertEqual(c.axiom, B2Constants.axiomtable.inv["Atheistic"])
+        self.assertEqual(c.gender, B2Constants.gendertable.inv["Female"])
 
     @unittest.skip("test fails though output of --list is correct")
     def test_class(self):
         c = B2CharacterTests.b2c
-        self.assertEqual(c.axiom, constants.classtable.inv["Magick User"])
+        self.assertEqual(c.axiom, B2Constants.classtable.inv["Magick User"])
 
     def test_skill_levels(self):
         c = B2CharacterTests.b2c
-        st = constants.skilltable
+        st = B2Constants.skilltable
         self.assertEqual(c.skills[st.inv["Mercantile"]], 4)
         self.assertEqual(c.skills[st.inv["Cleaving Weapons"]], 10)
 
@@ -78,6 +77,29 @@ class B2CharacterTests(unittest.TestCase):
             new_hash = hashlib.sha256(df.read())
         self.assertEqual(original_hash.hexdigest(), new_hash.hexdigest())
 
+    def test_character_perm_status(self):
+        c = B2CharacterTests.b2c
+        t = B2Constants.permstatustable.inv
+        self.assertEqual(c.permstatuses,
+                         t["Intense Focus"] |
+                         t["Masterful Riposte"] |
+                         t["Silent"] |
+                         t["Devastating Blow"] |
+                         t["Great Cleave"] |
+                         t["Encumbered"],
+                         )
+
+    def test_spell_list(self):
+        c = B2CharacterTests.b2c
+        st = B2Constants.spelltable
+        self.assertListEqual(c.spells,
+                             [1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1])
+
+    def test_spell_names_in_list(self):
+        c = B2CharacterTests.b2c
+        st = B2Constants.spelltable
+        self.assertEqual(c.spells[st.inv["Draw Water"]], 1)
+        self.assertEqual(c.spells[st.inv["Enkindled Weapon"]], 1)
 
 
 if __name__ == '__main__':
