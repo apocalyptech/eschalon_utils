@@ -100,6 +100,15 @@ class B2CharacterTests(unittest.TestCase):
         st = B2Constants.spelltable
         self.assertEqual(c.spells[st.inv["Draw Water"]], 1)
         self.assertEqual(c.spells[st.inv["Enkindled Weapon"]], 1)
+        self.assertEqual(c.spells[st.inv["Dense Nimbus"]], 0)
+
+    def test_keyring(self):
+        c = B2CharacterTests.b2c
+        self.assertListEqual(c.keyring[0:3], [b'Simple Key', b'Bluish Key', b'Rusted Key'])
+
+    def test_alchemy_recipe(self):
+        c = B2CharacterTests.b2c
+        self.assertListEqual(c.alchemy_book, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
 
 if __name__ == '__main__':
