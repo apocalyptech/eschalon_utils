@@ -64,9 +64,9 @@ class GfxCache(object):
             loader.write(pngdata)
             loader.close()
             self.pixbuf = loader.get_pixbuf()
-            loader = None
             self.gdkcache = {}
         except gobject.GError as e:
+            print("Failed to load pixbufloader: {}".format(e))
             self.gdkcache = None
 
         # Now assign the rest of our attributes
@@ -601,18 +601,18 @@ class B1Gfx(Gfx):
         return cache.getimg(direction, int(size * cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
-        if (avatarnum < 0 or avatarnum > 7):
+        if avatarnum < 0 or avatarnum > 7:
             return None
-        if (avatarnum not in self.avatarcache):
-            if (avatarnum == 7):
-                if (os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png'))):
+        if avatarnum not in self.avatarcache:
+            if avatarnum == 7:
+                if os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png')):
                     self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
                         os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                 else:
                     return None
             else:
                 self.avatarcache[avatarnum] = GfxCache(
-                    self.readfile('%d.png' % (avatarnum)), 60, 60, 1).pixbuf
+                    self.readfile('{}.png'.format(avatarnum)), 60, 60, 1).pixbuf
         return self.avatarcache[avatarnum]
 
 
@@ -889,14 +889,14 @@ class B2Gfx(Gfx):
         if avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12):
             if avatarnum not in self.avatarcache:
                 if avatarnum == 0xFFFFFFFF:
-                    if (os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png'))):
+                    if os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png')):
                         self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
                             os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                     else:
                         return None
                 else:
                     self.avatarcache[avatarnum] = GfxCache(self.eschalondata.readfile(
-                        'port%d.png' % (avatarnum)), 64, 64, 1).pixbuf
+                        'port{}.png'.format(avatarnum)), 64, 64, 1).pixbuf
             return self.avatarcache[avatarnum]
         else:
             return None

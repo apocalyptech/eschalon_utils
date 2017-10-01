@@ -110,6 +110,5 @@ class B2CharacterTests(unittest.TestCase):
         c = B2CharacterTests.b2c
         self.assertListEqual(c.alchemy_book, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
 
-
 if __name__ == '__main__':
     unittest.main()
