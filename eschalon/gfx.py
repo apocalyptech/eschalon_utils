@@ -55,19 +55,11 @@ class GfxCache(object):
 
         # For ease-of-use, we're also going to import it to a GDK Pixbuf
         # This shouldn't hurt performance really since there's only a few files
-        try:
-            # On Windows, the Hive Queen graphic can't be loaded this way for
-            # some reason.  See http://bugzilla.gnome.org/show_bug.cgi?id=575583
-            # We try/except here to work around it; otherwise we can't load
-            # 34_cave.map
-            loader = gtk.gdk.PixbufLoader()
-            loader.write(pngdata)
-            loader.close()
-            self.pixbuf = loader.get_pixbuf()
-            self.gdkcache = {}
-        except gobject.GError as e:
-            print("Failed to load pixbufloader: {}".format(e))
-            self.gdkcache = None
+        loader = gtk.gdk.PixbufLoader()
+        loader.write(pngdata)
+        loader.close()
+        self.pixbuf = loader.get_pixbuf()
+        self.gdkcache = {}
 
         # Now assign the rest of our attributes
         self.width = width
@@ -120,8 +112,6 @@ class GfxCache(object):
 
     def getimg_gdk(self, number, sizex=None):
         """ Grab an image from the cache, as a GDK pixbuf """
-        if (self.gdkcache is None):
-            return None
         number -= 1
         row = math.floor(number // self.cols)
         col = number % self.cols
@@ -184,11 +174,10 @@ class B1GfxEntCache(GfxCache):
         self.surface = newsurf
 
         # (and on our pixbuf copy as well)
-        if (self.gdkcache is not None):
-            newbuf = gtk.gdk.Pixbuf(
-                gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
-            self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
-            self.pixbuf = newbuf
+        newbuf = gtk.gdk.Pixbuf(
+            gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
+        self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
+        self.pixbuf = newbuf
 
 
 class B23GfxEntCache(GfxCache):
@@ -232,8 +221,7 @@ class B23GfxEntCache(GfxCache):
         #newsurf.write_to_png('computed_%s' % (ent.gfxfile))
 
         # (and on our pixbuf copy as well)
-        if (self.gdkcache is not None):
-            self.pixbuf = Gfx.surface_to_pixbuf(newsurf)
+        self.pixbuf = Gfx.surface_to_pixbuf(newsurf)
 
 
 class SingleImageGfxCache(GfxCache):
@@ -886,7 +874,7 @@ class B2Gfx(Gfx):
         return cache.getimg(direction, int(size * cache.size_scale), gdk)
 
     def get_avatar(self, avatarnum):
-        if avatarnum == 0xFFFFFFFF or (avatarnum >= 0 and avatarnum <= 12):
+        if avatarnum == 0xFFFFFFFF or (0 <= avatarnum <= 12):
             if avatarnum not in self.avatarcache:
                 if avatarnum == 0xFFFFFFFF:
                     if os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png')):
