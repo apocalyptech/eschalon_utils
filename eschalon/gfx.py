@@ -23,7 +23,6 @@ from __future__ import division, absolute_import, print_function
 import os
 import gtk
 import math
-import traceback
 import zlib
 import cairo
 import gobject
@@ -67,8 +66,7 @@ class GfxCache(object):
             self.pixbuf = loader.get_pixbuf()
             self.gdkcache = {}
         except gobject.GError as e:
-            traceback.print_stack()
-            print(traceback.print_exc(e))
+            print("Failed to load pixbufloader: {}".format(e))
             self.gdkcache = None
 
         # Now assign the rest of our attributes
