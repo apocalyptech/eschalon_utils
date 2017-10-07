@@ -125,7 +125,7 @@ class GfxCache(object):
         if (self.gdkcache is None):
             return None
         number -= 1
-        row = math.floor(number / self.cols)
+        row = math.floor(number // self.cols)
         col = number % self.cols
         if (number not in self.gdkcache):
             copy_x_from = int(col * self.width)
@@ -148,8 +148,8 @@ class GfxCache(object):
         if (sizex is None):
             return self.gdkcache[number]['orig']
         else:
-            if (sizex not in self.gdkcache[number]):
-                sizey = (sizex * self.height) / self.width
+            if sizex not in self.gdkcache[number]:
+                sizey = (sizex * self.height) // self.width
                 self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(
                     sizex, sizey, gtk.gdk.INTERP_BILINEAR)
             return self.gdkcache[number][sizex]
@@ -733,7 +733,7 @@ class B2Gfx(Gfx):
         newsurf = cairo.ImageSurface(
             cairo.FORMAT_ARGB32, surface.get_width(), surface.get_height())
         newctx = cairo.Context(newsurf)
-        rows = int(surface.get_height() / height)
+        rows = int(surface.get_height() // height)
         for row in range(rows):
             for col in range(cols):
                 newctx.set_source_surface(backsurf, col * width, row * height)
