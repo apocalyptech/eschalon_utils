@@ -2,70 +2,87 @@ import unittest
 
 import hashlib
 import eschalon.character
+from eschalon.constantsb1 import B1Constants
 from eschalon.constantsb2 import B2Constants
+from eschalon.constantsb3 import B3Constants
 import eschalon.savefile
 
 
-class B2CharacterTests(unittest.TestCase):
+class BaseCharacterTests(object):
 
+    def createMyself(self, book, book_filename):
+        self._book_filename = book_filename
+        self.char = eschalon.character.Character.load(self._book_filename, book=book)
+        self.char.read()
+
+
+class B1CharacterTests(BaseCharacterTests, unittest.TestCase):
+
+    def setUp(self):
+        self.createMyself(1, "test_data/book1_atend.char")
+
+    def test_does_load(self):
+        pass
+
+
+class B3CharacterTests(BaseCharacterTests, unittest.TestCase):
+
+    def setUp(self):
+        self.createMyself(3, "test_data/book3_f4_example.char")
+
+    def test_does_load(self):
+        pass
+
+
+class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
     _book2_char_file = "test_data/book2_atend.char"
 
-    @classmethod
-    def setUpClass(cls):
-        cls.b2c = eschalon.character.Character.load(B2CharacterTests._book2_char_file, book=2)
-        cls.b2c.read()
+    def setUp(self):
+        self.createMyself(2, self._book2_char_file)
 
     def test_character_information(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.name, b"Veera")
-        self.assertEqual(c.origin, B2Constants.origintable.inv["Therish"])
-        self.assertEqual(c.axiom, B2Constants.axiomtable.inv["Atheistic"])
-        self.assertEqual(c.gender, B2Constants.gendertable.inv["Female"])
+        self.assertEqual(self.char.name, b"Veera")
+        self.assertEqual(self.char.origin, B2Constants.origintable.inv["Therish"])
+        self.assertEqual(self.char.axiom, B2Constants.axiomtable.inv["Atheistic"])
+        self.assertEqual(self.char.gender, B2Constants.gendertable.inv["Female"])
 
     @unittest.skip("test fails though output of --list is correct")
     def test_class(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.axiom, B2Constants.classtable.inv["Magick User"])
+        self.assertEqual(self.char.axiom, B2Constants.classtable.inv["Magick User"])
 
     def test_skill_levels(self):
-        c = B2CharacterTests.b2c
         st = B2Constants.skilltable
-        self.assertEqual(c.skills[st.inv["Mercantile"]], 4)
-        self.assertEqual(c.skills[st.inv["Cleaving Weapons"]], 10)
+        self.assertEqual(self.char.skills[st.inv["Mercantile"]], 4)
+        self.assertEqual(self.char.skills[st.inv["Cleaving Weapons"]], 10)
 
     def test_core_attributes(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.strength, 30)
-        self.assertEqual(c.dexterity, 20)
-        self.assertEqual(c.endurance, 19)
-        self.assertEqual(c.speed, 13)
-        self.assertEqual(c.intelligence, 22)
-        self.assertEqual(c.wisdom, 20)
-        self.assertEqual(c.perception, 20)
-        self.assertEqual(c.concentration, 27)
+        self.assertEqual(self.char.strength, 30)
+        self.assertEqual(self.char.dexterity, 20)
+        self.assertEqual(self.char.endurance, 19)
+        self.assertEqual(self.char.speed, 13)
+        self.assertEqual(self.char.intelligence, 22)
+        self.assertEqual(self.char.wisdom, 20)
+        self.assertEqual(self.char.perception, 20)
+        self.assertEqual(self.char.concentration, 27)
 
     def test_hp_mp_stats(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.maxhp, 112)
-        self.assertEqual(c.curhp, 107)
-        self.assertEqual(c.maxmana, 176)
-        self.assertEqual(c.curmana, 120)
+        self.assertEqual(self.char.maxhp, 112)
+        self.assertEqual(self.char.curhp, 107)
+        self.assertEqual(self.char.maxmana, 176)
+        self.assertEqual(self.char.curmana, 120)
 
     def test_extra_points(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.extra_att_points, 0)
-        self.assertEqual(c.extra_skill_points, 0)
+        self.assertEqual(self.char.extra_att_points, 0)
+        self.assertEqual(self.char.extra_skill_points, 0)
 
     def test_leveling_information(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.experience, 169985)
-        self.assertEqual(c.level, 20)
+        self.assertEqual(self.char.experience, 169985)
+        self.assertEqual(self.char.level, 20)
 
     def test_equip(self):
-        c = B2CharacterTests.b2c
-        self.assertEqual(c.gold, 1654)
-        self.assertEqual(c.torches, 24)
-        self.assertEqual(c.torchused, 0)
+        self.assertEqual(self.char.gold, 1654)
+        self.assertEqual(self.char.torches, 24)
+        self.assertEqual(self.char.torchused, 0)
 
     def test_read_write_read_unmodified(self):
         with open(B2CharacterTests._book2_char_file, 'rb') as df:
@@ -78,9 +95,8 @@ class B2CharacterTests(unittest.TestCase):
         self.assertEqual(original_hash.hexdigest(), new_hash.hexdigest())
 
     def test_character_perm_status(self):
-        c = B2CharacterTests.b2c
         t = B2Constants.permstatustable.inv
-        self.assertEqual(c.permstatuses,
+        self.assertEqual(self.char.permstatuses,
                          t["Intense Focus"] |
                          t["Masterful Riposte"] |
                          t["Silent"] |
@@ -90,25 +106,23 @@ class B2CharacterTests(unittest.TestCase):
                          )
 
     def test_spell_list(self):
-        c = B2CharacterTests.b2c
-        st = B2Constants.spelltable
-        self.assertListEqual(c.spells,
-                             [1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1])
+        self.assertListEqual(self.char.spells,
+                             [1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+                              1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1])
 
     def test_spell_names_in_list(self):
-        c = B2CharacterTests.b2c
         st = B2Constants.spelltable
-        self.assertEqual(c.spells[st.inv["Draw Water"]], 1)
-        self.assertEqual(c.spells[st.inv["Enkindled Weapon"]], 1)
-        self.assertEqual(c.spells[st.inv["Dense Nimbus"]], 0)
+        self.assertEqual(self.char.spells[st.inv["Draw Water"]], 1)
+        self.assertEqual(self.char.spells[st.inv["Enkindled Weapon"]], 1)
+        self.assertEqual(self.char.spells[st.inv["Dense Nimbus"]], 0)
 
     def test_keyring(self):
-        c = B2CharacterTests.b2c
-        self.assertListEqual(c.keyring[0:3], [b'Simple Key', b'Bluish Key', b'Rusted Key'])
+        self.assertListEqual(self.char.keyring[0:3], [b'Simple Key', b'Bluish Key', b'Rusted Key'])
 
     def test_alchemy_recipe(self):
-        c = B2CharacterTests.b2c
-        self.assertListEqual(c.alchemy_book, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+        self.assertListEqual(self.char.alchemy_book,
+                             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
 
 if __name__ == '__main__':
     unittest.main()
