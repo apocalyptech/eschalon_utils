@@ -296,6 +296,7 @@ class CharLoaderDialog(gtk.Dialog):
 class MainGUI(BaseGUI):
 
     def __init__(self, filename, prefs, req_book):
+        assert req_book is not None
         self.filename = filename
         self.prefs = prefs
         self.path_init()

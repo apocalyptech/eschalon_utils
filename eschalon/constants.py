@@ -12,6 +12,7 @@ class Constants(object):
     """
 
     def __init__(self, book=1):
+        assert book is not None
         self.groups = {
             1: B1Constants,
             2: B2Constants,
@@ -30,6 +31,7 @@ class Constants(object):
         self.eschalondata = eschalondata
 
     def switch_to_book(self, book):
+        assert book is not None
         if book != self.book:
             # print "Switching to Book %d Constants" % (book)
             # First clear out the old constants
