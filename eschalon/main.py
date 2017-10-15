@@ -89,8 +89,8 @@ def main():
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
     if args.book is None and args.filename is None:
         import eschalon.bookchooser
-        eschalon.bookchooser.BookChooser().main()
-    if args.char:
+        prog = eschalon.bookchooser.BookChooser()
+    elif args.char:
         from eschalon.maingui import MainGUI
         prog = MainGUI(args.filename, Prefs(), args.book)
     elif args.map:
