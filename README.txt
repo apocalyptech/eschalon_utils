@@ -58,10 +58,9 @@ editor, so be especially careful when editing maps.  Note that the map files
 As you make backups of the maps you're editing, be sure to back up that file
 as well.
 
-This was developed on Linux, and it uses Python 2, GTK+, and PyGTK to do
-its stuff.  The application also runs perfectly fine on Windows (see the
-Windows section, below).  With the required Python/GTK+ packages
-installed, it runs correctly on OS X as well.
+This was developed on *nix and macOS. It uses Python, GTK+, and PyGTK to do
+its stuff.  The application also runs perfectly fine on Windows (though this has
+not been tested recently).
 
 DISTRIBUTING CONTENT
 --------------------
@@ -100,19 +99,16 @@ default to.  The setting doesn't currently control anything else.
 INSTALLATION, LINUX
 -------------------
 
-There's no official installation scripts for the app.  What I'd recommend on
-a Linux system is just leaving it untarred wherever you untarred it, and
-make a symlink to each app somewhere in your $PATH (~/bin is probably the
-best location).  For example:
+There's no official installation scripts for the application.  On a *nix
+system writing a simple shell wrapper is likely easiest.
 
    $ cd ~/bin
-   $ ln -s /path/to/eschalon_main.py .
-   $ ln -s /path/to/eschalon_gui.py .
+   $ printf '#!/bin/sh\n(cd /path/to/eschalon && python2 -m eschalon.main -- "$@")' > eschalon
+   $ chmod +x eschalon
 
-At that point you should be able to just run "eschalon_gui.py" from the
-command prompt, for instance.  Setting up shortcuts through your window
-manager of choice should work fine, as well.  Failing that, just run them
-from the directory you untarred them into.
+At this point it  should be possible to run "eschalon" from the
+command prompt.  Setting up shortcuts through your window
+manager of choice should work fine, as well.
 
 NOTE ABOUT BOOK II/III MAP EDITING: To edit Book II or III map files, you'll
 need two other packages installed which may not be present on your system. 
@@ -131,8 +127,7 @@ long time.  Trust me, you will want to have it installed.  Note once again
 that this only affects Book II/III map editing.  The character editors, and
 the Book I map editor are not affected.
 
-The minimum gtk+ required is 2.18.0.  The app will show a warning if your
-gtk+ doesn't meet this requirement, but allow you to continue regardless.
+The minimum GTK+ required is 2.18.0.
 
 INSTALLATION, WINDOWS
 ---------------------
@@ -147,7 +142,7 @@ and the Windows side is far less tested than the Linux side.
 
 You're welcome to run the Python scripts directly (as the Linux folks do),
 if you want, in which case you will need a gtk+ runtime (I recommend a
-recent one directly from gtk.org), Python (2.7), and all three PyGTK
+recent one directly from gtk.org), Python , and all three PyGTK
 components installed (PyCairo, PyGObject, and PyGTK).  Additionally, to edit
 Book II/III maps, you'll want PyCrypto and czipfile.  Some direct links can
 be found on the website.
@@ -178,17 +173,17 @@ pip install --user py2app
 
 Then run the make-osx-apps.sh script. The resulting apps should be portable
 to other Macs without having to install any libraries.
-TODO: when you first run these apps and identify the location of
+When you first run these apps and identify the location of
 the save files and data files, they crash afterward.  Just re-launch them
 and you shouldn't have any further problems.
 
 USAGE
 -----
 
-The applications are mostly designed to be run via their GUIs, which you can
-launch simply by double-clicking or running eschalon_gui.py.
+The applications are mostly designed to be run via the GUI, which can be
+launched by double-clicking or running eschalon.py.
 There are commandline options for both, though, and you
-can get help for those options by running "eschalon_main.py -h", for
+can get help for those options by running "eschalon.py -h", for
 instance, to get help with the character editor.  A few of the character
 editor commandline options may be useful.  The options available on the map
 editor are far less useful.
