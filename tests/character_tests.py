@@ -35,10 +35,8 @@ class B3CharacterTests(BaseCharacterTests, unittest.TestCase):
 
 
 class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
-    _book2_char_file = "test_data/book2_atend.char"
-
     def setUp(self):
-        self.createMyself(2, self._book2_char_file)
+        self.createMyself(2, "test_data/book2_atend.char")
 
     def test_character_information(self):
         self.assertEqual(self.char.name, b"Veera")
@@ -85,12 +83,12 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
         self.assertEqual(self.char.torchused, 0)
 
     def test_read_write_read_unmodified(self):
-        with open(B2CharacterTests._book2_char_file, 'rb') as df:
+        with open(self._book_filename, 'rb') as df:
             original_hash = hashlib.sha256(df.read())
-        c = eschalon.character.Character.load(filename=B2CharacterTests._book2_char_file, book=2)
+        c = eschalon.character.Character.load(filename=self._book_filename, book=2)
         c.read()
         c.write()
-        with open(B2CharacterTests._book2_char_file, 'rb') as df:
+        with open(self._book_filename, 'rb') as df:
             new_hash = hashlib.sha256(df.read())
         self.assertEqual(original_hash.hexdigest(), new_hash.hexdigest())
 
