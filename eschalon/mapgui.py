@@ -39,13 +39,6 @@ import gtk
 import gobject
 import cairo
 
-# Check for minimum GTK+ version
-if (gtk.check_version(2, 18, 0) is not None):
-    BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
-                          'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
-                          'older versions.  You\'re welcome to continue, but know that you may encounter '
-                          'weird behavior.')
-
 from eschalon.map import Map
 from eschalon.item import Item
 from eschalon.tile import Tile

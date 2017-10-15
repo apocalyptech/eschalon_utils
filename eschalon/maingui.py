@@ -24,24 +24,10 @@ import os
 import sys
 import glob
 
+import cairo
 import gtk
 
 from eschalon.basegui import BaseGUI
-
-# Load in our Cairo dep
-try:
-    import cairo
-except Exception as e:
-    BaseGUI.errordialog('Error loading PyCairo',
-                        'PyCairo could not be loaded: %s' % (str(e)))
-    sys.exit(1)
-
-# Check for minimum GTK+ version
-if gtk.check_version(2, 18, 0) is not None:
-    BaseGUI.warningdialog('gtk+ Version Warning', '<b>Note:</b> The minimum required version '
-                          'of gtk+ is <i>probably</i> 2.18.0, though it\'s possible it will work on some '
-                          'older versions.  You\'re welcome to continue, but know that you may encounter '
-                          'weird behavior.')
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx
