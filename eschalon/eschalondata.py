@@ -18,18 +18,9 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-try:
-    import czipfile as zipfile
-    fast_zipfile = True
-except ImportError:
-    import eschalon.fzipfile as zipfile
-    fast_zipfile = False
-
-try:
-    from Crypto.Cipher import AES
-    have_aes = True
-except ImportError:
-    have_aes = False
+import zipfile
+fast_zipfile = True
+from Crypto.Cipher import AES
 
 import os
 import csv
@@ -221,10 +212,6 @@ class EschalonData(object):
         it contains a datapak or a filesystem structure.
         """
 
-        # First read a couple of variables from our global environment
-        self.fast_zipfile = fast_zipfile
-        self.have_aes = have_aes
-
         # Cache of our known item list, so that we only read it once.
         self.itemlist = None
         self.itemdict = None
@@ -279,16 +266,7 @@ class EschalonData(object):
             # We'll try loading the datapak
             datapak_file = os.path.join(self.gamedir, 'datapak')
             if os.path.isfile(datapak_file):
-                if self.have_aes:
-                    # If we get here, set up a datapak object.  This could, itself,
-                    # raise an Exception under some circumstances
-                    self.datapak = Datapak(datapak_file)
-                else:
-                    raise LoadException('Book 2/3 Graphics requires pycrypto, please install it:'
-                                        "\n\n\t"
-                                        'http://www.dlitz.net/software/pycrypto/'
-                                        "\n\n"
-                                        'For most Linux distributions, the package name is "python-crypto"')
+                self.datapak = Datapak(datapak_file)
             else:
                 raise LoadException('Could not find datapak or gfx directory!')
 
