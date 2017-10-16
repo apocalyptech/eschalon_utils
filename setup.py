@@ -37,6 +37,7 @@ setup(
         'nose',
         'coverage',
         'parameterized',
+        'xmlunittest',
         'nose-capturestderr',
     ],
     include_package_data=True,
