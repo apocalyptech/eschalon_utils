@@ -24,7 +24,8 @@ import glob
 import time
 import random
 import traceback
-from eschalon import version, constants as c
+from eschalon import version
+from eschalon.constants import constants as c
 from eschalon.gfx import Gfx
 from eschalon.undo import Undo
 from eschalon.item import B1Item, B2Item, B3Item
@@ -1305,22 +1306,6 @@ class MapGUI(BaseGUI):
                 self.errordialog('Error Reloading Game Data',
                                  'Game data could not be reloaded: %s' % (str(e)))
                 sys.exit(1)
-
-        # Show a slow-loading zip warning if necessary
-        if c.book > 1 and not self.eschalondata.fast_zipfile:
-            self.get_widget('render_slowzip_warning').show()
-            self.drawstatuswindow.set_size_request(350, 200)
-            warn = self.prefs.get_bool('mapgui', 'warn_slow_zip')
-            if warn:
-                dialog = self.get_widget('slowzipwarndialog')
-                resp = dialog.run()
-                if(self.get_widget('slowzipwarn_check').get_active() != warn):
-                    self.prefs.set_bool('mapgui', 'warn_slow_zip', self.get_widget(
-                        'slowzipwarn_check').get_active())
-                    self.prefs.save()
-                dialog.hide()
-                if resp != gtk.RESPONSE_OK:
-                    sys.exit(1)
 
         # Pull in the entitytable dict from EschalonData - we reference
         # this often enough that it's awkward to have to call
