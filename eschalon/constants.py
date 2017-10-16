@@ -43,3 +43,6 @@ class Constants(object):
                 if key[0] != '_':
                     self.__dict__[key] = val
             self.book = book
+
+
+constants = Constants()

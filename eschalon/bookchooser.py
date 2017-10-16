@@ -10,13 +10,17 @@ from eschalon.preferences import Prefs
 
 
 class BookChooser(object):
-    def char(self, widget, book_id, data=None):
-        prog = MainGUI(None, Prefs(), book_id)
-        return prog.run()
+    def char(self, book_id):
+        def launcher(widget):
+            prog = MainGUI(None, Prefs(), book_id)
+            return prog.run()
+        return launcher
 
-    def map(self, widget, book_id, data=None):
-        prog = MapGUI(None, Prefs(), book_id)
-        return prog.run()
+    def map(self, book_id):
+        def launcher(widget):
+            prog = MapGUI(None, Prefs(), book_id)
+            return prog.run()
+        return launcher
 
     def delete_event(self, widget, event, data=None):
         return False
@@ -24,7 +28,7 @@ class BookChooser(object):
     def destroy(self, widget, data=None):
         gtk.main_quit()
 
-    def add_launchers(self, book, char_launcher, map_launcher, book_id):
+    def add_launchers(self, book, char_launcher, map_launcher):
         """
         Adds a set of launchers to our table.
         """
@@ -42,7 +46,7 @@ class BookChooser(object):
         # Now the character buttons
         button = gtk.Button('Book %s Character Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
-        button.connect("clicked", char_launcher, book_id)
+        button.connect("clicked", char_launcher)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 20, 5)
@@ -53,7 +57,7 @@ class BookChooser(object):
         # Map button
         button = gtk.Button('Book %s Map Editor' % book)
         button.connect_object("clicked", gtk.Widget.hide, self.window)
-        button.connect("clicked", map_launcher, book_id)
+        button.connect("clicked", map_launcher)
         button.connect_object("clicked", gtk.Widget.destroy, self.window)
         align = gtk.Alignment(0, 0, 1, 1)
         align.set_padding(0, 10, 5, 5)
@@ -98,9 +102,8 @@ class BookChooser(object):
         # Now our table of buttons
         self.table = gtk.Table(6, 2)
         self.cur_row = 0
-        self.add_launchers('I', self.char, self.map, 1)
-        self.add_launchers('II', self.char, self.map, 2)
-        self.add_launchers('III', self.char, self.map, 3)
+        for i in range(1, 4):
+            self.add_launchers('I'*i, self.char(i), self.map(i))
         col.add(self.table)
 
         # Close button at the bottom
