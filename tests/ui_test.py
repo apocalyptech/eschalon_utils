@@ -1,6 +1,5 @@
-import unittest
-import xmlunittest
 
+import xmlunittest
 
 class MainUITestCase(xmlunittest.XmlTestCase):
 
@@ -8,6 +7,14 @@ class MainUITestCase(xmlunittest.XmlTestCase):
         with open("data/maingui.ui") as df:
             self.doc = df.read()
 
-    def test_(self):
+    def test_valid_doc(self):
         self.assertXmlDocument(self.doc)
-        # self.assertXpathsOnlyOne()
+
+
+class MapUITestCase(xmlunittest.XmlTestCase):
+    def setUp(self):
+        with open("data/mapgui.ui") as df:
+            self.doc = df.read()
+
+    def test_valid_doc(self):
+        self.assertXmlDocument(self.doc)

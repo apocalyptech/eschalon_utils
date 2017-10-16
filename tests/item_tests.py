@@ -2,6 +2,7 @@ import unittest
 
 import eschalon.item
 
+
 class ItemTests(unittest.TestCase):
 
     def test_item_init_default(self):
@@ -9,7 +10,6 @@ class ItemTests(unittest.TestCase):
         self.assertEquals(i.category, -1)
         i = eschalon.item.Item(zero=False)
         self.assertEquals(i.category, -1)
-
 
     def test_item_init_zero(self):
         i = eschalon.item.Item(zero=True)
