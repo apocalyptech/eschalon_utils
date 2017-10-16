@@ -2,7 +2,7 @@
 # vim: set expandtab tabstop=4 shiftwidth=4:
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
+# Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -570,14 +570,6 @@ class Map(object):
                     itemname not in itemdict):
                 invalid_items.append(itemtuple)
         return invalid_items
-
-    @staticmethod
-    def is_ascii(s):
-        for c in s:
-            ascii = ord(c)
-            if ascii < 32 or ascii > 126:
-                return False
-        return True
 
     @staticmethod
     def new(filename, book, map_df=None, ent_df=None):

@@ -16,7 +16,7 @@ class Constants(object):
         self.groups = {
             1: B1Constants,
             2: B2Constants,
-            3: B3Constants
+            3: B3Constants,
         }
         self.book = None
         self.eschalondata = None
@@ -33,7 +33,6 @@ class Constants(object):
     def switch_to_book(self, book):
         assert book is not None
         if book != self.book:
-            # print "Switching to Book %d Constants" % (book)
             # First clear out the old constants
             if self.book:
                 for (key, val) in list(self.groups[self.book].__dict__.items()):
@@ -44,6 +43,3 @@ class Constants(object):
                 if key[0] != '_':
                     self.__dict__[key] = val
             self.book = book
-
-
-constants = Constants()
