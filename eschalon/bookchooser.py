@@ -117,5 +117,5 @@ class BookChooser(object):
         # Show everything
         self.window.show_all()
 
-    def prog(self):
+    def run(self):
         gtk.main()
