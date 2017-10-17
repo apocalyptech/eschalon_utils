@@ -94,6 +94,8 @@ def parse_args(args):
     if args.book is None and args.filename is not None:
         parser.error("Book version must be selected with filename")
 
+    return args
+
 
 def main():
     coloredlogs.install(milliseconds=True, level=logging.SPAM)

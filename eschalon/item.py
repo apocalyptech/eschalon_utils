@@ -313,12 +313,14 @@ class B1Item(Item):
         self.category = df.readint()
         self.item_name = df.readstr()
         self.weight = df.readdouble()
+        assert self.weight >= 0
         self.subcategory = df.readint()
         self.rarity = df.readint()
         self.pictureid = df.readint()
         self.value = df.readint()
         self.canstack = df.readint()
         self.quantity = df.readint()
+        assert self.quantity >= 0
         self.basedamage = df.readint()
         self.basearmor = df.readint()
         self.attr_modified = df.readint()
