@@ -24,7 +24,7 @@ import glob
 import time
 import random
 import traceback
-from eschalon import version
+from eschalon import app_name, url, authors, version
 from eschalon.constants import constants as c
 from eschalon.gfx import Gfx
 from eschalon.undo import Undo
@@ -35,20 +35,19 @@ from eschalon.saveslot import Saveslot
 from eschalon.eschalondata import EschalonData
 from eschalon.savefile import Savefile
 from eschalon.savename import Savename
-
-import gtk
-import gobject
-import cairo
-
 from eschalon.map import Map
 from eschalon.item import Item
 from eschalon.tile import Tile
-from eschalon.basegui import BaseGUI
 from eschalon.smartdraw import SmartDraw
 from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
-from eschalon import app_name, version, url, authors
+import gtk
+import gobject
+import cairo
+
+
+
 
 
 class MapNewDialog(gtk.Dialog):
