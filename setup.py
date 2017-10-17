@@ -25,6 +25,8 @@ setup(
         'pycrypto',
         'six',
         'bidict',
+        'coloredlogs',
+        'verboselogs',
     ],
     scripts=[
         'eschalon/main.py',

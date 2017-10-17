@@ -19,10 +19,17 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import argparse
+import logging
 import sys
 
 
+import coloredlogs
+import verboselogs
+
 from eschalon.preferences import Prefs
+
+logging.setLoggerClass(verboselogs.VerboseLogger)
+LOG = logging.getLogger(__name__)
 
 
 def parse_args(args):
@@ -55,7 +62,16 @@ def parse_args(args):
 
     parser.add_argument("--book", type=int, choices=[1, 2, 3])
 
+    parser.add_argument('--log',
+                        dest='logLevel',
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL', 'VERBOSE', 'SPAM'],
+                        help='Set the logging level',
+                        default='INFO',
+                        )
+
     args = parser.parse_args(args)
+
+    logging.getLogger('').setLevel(getattr(logging, args.logLevel))
 
     manip_options_set = any([args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
          args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])
@@ -79,11 +95,11 @@ def parse_args(args):
         parser.error("Book version must be selected with filename")
 
 
-    return args
-
-
 def main():
+    coloredlogs.install(milliseconds=True, level=logging.SPAM)
+    LOG.verbose("Parsing Arguments")
     args = parse_args(sys.argv[1:])
+
 
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
