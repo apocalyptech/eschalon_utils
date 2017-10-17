@@ -850,19 +850,18 @@
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-					  <object class="GtkComboBox" id="classname_box">
-					    <property name="has_entry">True</property>
+                                          <object class="GtkComboBox" id="classname_box">
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">b1_classname_store</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext15"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -883,18 +882,17 @@
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="axiom_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">b1_axiom_store</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext14"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -915,18 +913,17 @@
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="origin_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">b1_origin_store</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext13"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4542,18 +4539,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_0_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_0_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext10"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4574,18 +4570,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_1_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_1_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext9"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4606,18 +4601,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_2_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_2_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext8"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4638,18 +4632,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_3_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_3_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext7"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4670,18 +4663,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_4_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_4_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext6"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4702,18 +4694,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_5_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_5_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext5"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4734,18 +4725,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_6_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_6_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4766,18 +4756,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_7_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_7_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext3"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4798,18 +4787,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_8_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_8_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4830,18 +4818,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readyslots_spell_9_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_slot_9_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -5223,18 +5210,17 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xscale">0</property>
                                         <child>
                                           <object class="GtkComboBox" id="readied_spell_box">
-                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="tooltip_text" translatable="yes">This is a freeform text field, but it would be best to stick with the predetermined values.</property>
                                             <property name="model">spell_readied_list</property>
-                                            <property name="text_column">0</property>
+                                            <property name="has_entry">True</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext21"/>
                                             </child>
-</object>
+                                          </object>
                                         </child>
                                       </object>
                                       <packing>
@@ -5880,6 +5866,9 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="top_attach">6</property>
                                         <property name="bottom_attach">7</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
