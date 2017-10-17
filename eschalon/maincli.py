@@ -17,11 +17,9 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+from __future__ import print_function
 import logging
 LOG = logging.getLogger(__name__)
-
-
-from __future__ import print_function
 from eschalon.constants import constants as c
 from eschalon.character import Character
 from eschalon.savefile import LoadException

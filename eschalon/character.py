@@ -734,6 +734,7 @@ class B2Character(Character):
 
             # Start processing
             self.unknown.initzero = self.df.readuchar()
+            LOG.spam("read unknown value (expect 0): {}".format(self.unknown.initzero))
 
             # Character info
             self.name = self.df.readstr()
@@ -743,6 +744,7 @@ class B2Character(Character):
             self.classname = self.df.readuchar()
             self.unknown.version = self.df.readuchar()
             if self.unknown.version == 1:
+                LOG.verbose("read unknown value (expect !=1): {}".format(self.unknown.version))
                 raise LoadException(
                     'This savegame was probably saved in v1.02 of Book 2, only 1.03 and higher is supported')
             self.strength = self.df.readuchar()
@@ -789,6 +791,7 @@ class B2Character(Character):
 
             # Unknown
             self.unknown.zero1 = self.df.readuchar()
+            LOG.spam("read unknown value (expect 0): {}".format(self.unknown.zero1))
 
             # Spells
             for i in range(len(c.spelltable)):
@@ -808,7 +811,9 @@ class B2Character(Character):
 
             # Some unknown values (zeroes so far)
             for i in range(14):
-                self.unknown.zeros.append(self.df.readint())
+                new_val = self.df.readint()
+                self.unknown.zeros.append(new_val)
+                LOG.spam("read unknown value (expect 0): {}".format(new_val))
 
             # Position/orientation
             self.orientation = self.df.readuchar()
@@ -817,11 +822,17 @@ class B2Character(Character):
 
             # Some unknowns
             for i in range(5):
-                self.unknown.strangeblock.append(self.df.readuchar())
+                new_val = self.df.readuchar()
+                self.unknown.strangeblock.append(new_val)
+                LOG.spam("read unknown value (expect ?): {}".format(new_val))
             self.unknown.unknowni1 = self.df.readint()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowni1))
             self.unknown.unknowni2 = self.df.readint()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowni2))
             self.unknown.unknowni3 = self.df.readint()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowni3))
             self.unknown.usually_one = self.df.readuchar()
+            LOG.spam("read unknown value (expect 1): {}".format(self.unknown.usually_one))
 
             # Permanent Statuses (bitfield)
             self.permstatuses = self.df.readint()
@@ -838,12 +849,19 @@ class B2Character(Character):
 
             # More unknowns
             self.unknown.unknowns1 = self.df.readshort()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowns1))
             self.unknown.unknownstr1 = self.df.readstr()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowns2))
             for i in range(29):
-                self.unknown.twentyninezeros.append(self.df.readuchar())
+                new_val = self.df.readuchar()
+                self.unknown.twentyninezeros.append(new_val)
+                LOG.spam("read unknown value (expect ?): {}".format(new_val))
             self.unknown.unknownstr2 = self.df.readstr()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknownstr2))
             self.unknown.unknownstr3 = self.df.readstr()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknownstr3))
             self.unknown.unknowns2 = self.df.readshort()
+            LOG.spam("read unknown value (expect ?): {}".format(self.unknown.unknowns2))
 
             # Inventory
             for i in range(self.inv_rows * self.inv_cols):
@@ -877,6 +895,7 @@ class B2Character(Character):
             # a valid char file
             self.unknown.extradata = self.df.read()
             if self.unknown.extradata:
+                LOG.error("Read extra data: '{}'".format(self.unknown.extradata))
                 raise LoadException('Extra data at end of file')
 
             # Close the file
