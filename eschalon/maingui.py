@@ -21,13 +21,9 @@
 from __future__ import division, print_function, absolute_import
 
 import os
-import sys
 import glob
 
-import cairo
 import gtk
-
-from eschalon.basegui import BaseGUI
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx

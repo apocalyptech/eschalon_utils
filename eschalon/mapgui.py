@@ -43,7 +43,6 @@ from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
 import gtk
-import gobject
 import cairo
 
 
