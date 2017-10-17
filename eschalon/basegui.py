@@ -769,7 +769,7 @@ class BaseGUI(object):
 
     def useful_comboboxentry(self, box):
         box.set_model(gtk.ListStore(gobject.TYPE_STRING))
-        box.set_text_column(0)
+        box.set_entry_text_column(0)
 
     def get_comp_objects(self):
         """ Get the objects to compare against while checking for form changes. """

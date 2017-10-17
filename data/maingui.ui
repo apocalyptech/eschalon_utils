@@ -850,7 +850,8 @@
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="classname_box">
+					  <object class="GtkComboBox" id="classname_box">
+					    <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -861,16 +862,7 @@
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext15"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry2">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -890,7 +882,8 @@
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="axiom_box">
+                                          <object class="GtkComboBox" id="axiom_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -901,16 +894,7 @@
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext14"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry4">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -930,7 +914,8 @@
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="origin_box">
+                                          <object class="GtkComboBox" id="origin_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -941,16 +926,7 @@
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext13"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry6">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4565,7 +4541,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_0_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_0_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4576,16 +4553,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext10"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry8">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4605,7 +4573,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_1_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_1_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4616,16 +4585,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext9"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry10">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4645,7 +4605,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_2_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_2_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4656,16 +4617,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext8"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry12">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4685,7 +4637,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_3_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_3_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4696,16 +4649,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext7"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry14">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4725,7 +4669,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_4_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_4_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4736,16 +4681,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext6"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry16">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4765,7 +4701,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_5_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_5_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4776,16 +4713,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext5"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry18">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4805,7 +4733,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_6_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_6_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4816,16 +4745,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext4"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry20">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4845,7 +4765,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_7_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_7_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4856,16 +4777,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext3"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry22">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4885,7 +4797,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_8_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_8_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4896,16 +4809,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext2"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry24">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -4925,7 +4829,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readyslots_spell_9_box">
+                                          <object class="GtkComboBox" id="readyslots_spell_9_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -4936,16 +4841,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry26">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
@@ -5326,7 +5222,8 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                         <property name="xalign">0</property>
                                         <property name="xscale">0</property>
                                         <child>
-                                          <object class="GtkComboBoxEntry" id="readied_spell_box">
+                                          <object class="GtkComboBox" id="readied_spell_box">
+                                            <property name="has_entry">True</property>
                                             <property name="width_request">180</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
@@ -5337,16 +5234,7 @@ here doesn't actually have an effect.)&lt;/i&gt;</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cellrenderertext21"/>
                                             </child>
-                                            <child internal-child="entry">
-                                              <object class="GtkEntry" id="comboboxentry-entry28">
-                                                <property name="can_focus">False</property>
-                                                <property name="primary_icon_activatable">False</property>
-                                                <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
-                                              </object>
-                                            </child>
-                                          </object>
+</object>
                                         </child>
                                       </object>
                                       <packing>
