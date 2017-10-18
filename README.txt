@@ -17,27 +17,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 Some icons in this program are Copyright Axialis Team, and released
 under a Creative Commons Attribution 2.5 Generic license.  See
-http://www.axialis.com/free/icons/ for details.
-
-The code in fzipfile.py comes mostly from Python itself, which is under
-the Python License at http://www.python.org/psf/license/
+<https://www.axialis.com/free/icons/> for details.
 
 The class WrapLabel, in basegui.py is Copyright(c) 2005 VMware, Inc.
 See basegui.py for the exact licensing terms.
 
 The gtk+ "ClearLooks" theme in win32support, used for the Windows bundle,
 is Copyright(c) the Free Software Foundation, Inc., and is licensed under
-the GPLv2.  The version here was obtained via http://gtk-win.sourceforge.net/
+the GPLv2.  The version here was obtained via <http://gtk-win.sourceforge.net/>
 
 ABOUT
------
+=====
 
 This package contains applications for editing savegames in the games
 Eschalon Book I, Book II, and Book III by Basilisk Games.
 
-   http://basiliskgames.com/eschalon-book-i
-   http://basiliskgames.com/eschalon-book-ii
-   http://basiliskgames.com/eschalon-book-iii
+   <http://basiliskgames.com/eschalon-book-i>
+   <http://basiliskgames.com/eschalon-book-ii>
+   <http://basiliskgames.com/eschalon-book-iii>
 
 There are six main features: a character editor and a map editor for
 each game.  The map editor can edit maps stored as part of your savegame,
@@ -54,7 +51,7 @@ any file that you use this on.  Do let us know if it ends up eating your
 character or map, because we'd like to fix the bug.  Just don't get upset if
 it does.  :) The Character Editor's been around rather longer than the map
 editor, so be especially careful when editing maps.  Note that the map files
-(which end in .map) also have an associated file with a ".ent" extension. 
+(which end in .map) also have an associated file with a `.ent` extension.
 As you make backups of the maps you're editing, be sure to back up that file
 as well.
 
@@ -73,7 +70,7 @@ and respect Basilisk Games' wishes in regards to custom content:
     2. If you put your content up for download anywhere other
        than the official Basilisk Games forums, you need to have a
        link that jumps back to the Book I page at
-           http://basiliskgames.com/eschalon-book-i
+           <http://basiliskgames.com/eschalon-book-i>
 
 Presumably, a link to the Book II/III page would be appropriate if you're
 distributing a Book II/III map.
@@ -102,23 +99,23 @@ INSTALLATION, LINUX
 There's no official installation scripts for the application.  On a *nix
 system writing a simple shell wrapper is likely easiest.
 
-   $ cd ~/bin
-   $ printf '#!/bin/sh\n(cd /path/to/eschalon && python2 -m eschalon.main -- "$@")' > eschalon
-   $ chmod +x eschalon
+    cd ~/bin
+    printf '#!/bin/sh\n(cd /path/to/eschalon && python2 -m eschalon.main -- "$@")' > eschalon
+    chmod +x eschalon
 
 At this point it  should be possible to run "eschalon" from the
 command prompt.  Setting up shortcuts through your window
 manager of choice should work fine, as well.
 
 NOTE ABOUT BOOK II/III MAP EDITING: To edit Book II or III map files, you'll
-need two other packages installed which may not be present on your system. 
-The first is PyCrypto: http://www.dlitz.net/software/pycrypto/ This tends to
+need two other packages installed which may not be present on your system.
+The first is PyCrypto: <https://www.dlitz.net/software/pycrypto/> This tends to
 be packaged as "python-crypto" by most distributions.  Gentoo uses
 "pycrypto." The second package is czipfile, available here:
-http://pypi.python.org/pypi/czipfile This is probably not packaged by your
+<https://pypi.python.org/pypi/czipfile> This is probably not packaged by your
 distribution yet.  The easiest way to install it would be via pip:
 
-  # pip install czipfile pycrypto
+    # pip install czipfile pycrypto
 
 If those methods don't work for you, you should be able to just download it
 from the above link.  Note that czipfile isn't ACTUALLY required to edit
@@ -153,7 +150,7 @@ INSTALLATION, OS X
 Any method that gets you pygtk, pycrypto, and czipfile ought to work, but
 the following worked for me.
 
-Install Macports - https://www.macports.org/install.php
+Install Macports - <https://www.macports.org/install.php>
 
 From the Terminal, run:
 
@@ -192,11 +189,11 @@ The drawing features on the map editor are fairly new still, and I expect
 that bugs will eventually be found.  Let me know!
 
 Some more documentation on various aspects of the Eschalon map that I've
-discovered, see http://apocalyptech.com/eschalon/
+discovered, see <http://apocalyptech.com/eschalon/>
 
 CONTACT
 -------
 
-Feel free to email me at pez@apocalyptech.com if you've got questions /
-concerns.  I'm also logged in to irc.freenode.net as the user "sekhmet" if
+Feel free to email me at `pez@apocalyptech.com` if you've got questions /
+concerns.  I'm also logged in to `irc.freenode.net` as the user "sekhmet" if
 you'd prefer that.
