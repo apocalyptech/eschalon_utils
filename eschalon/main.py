@@ -27,9 +27,7 @@ import verboselogs
 
 from eschalon.preferences import Prefs
 
-verboselogs.install()
 LOG = logging.getLogger(__name__)
-
 
 def parse_args(args):
     """
