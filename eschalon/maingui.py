@@ -119,7 +119,7 @@ class CharLoaderDialog(Gtk.Dialog):
             except:
                 # If there's an error, just don't show the slot
                 pass
-        self.slots.sort()
+        # self.slots.sort()
         if self.slots:
 
             # Savegame combobox/liststore
@@ -694,12 +694,13 @@ class MainGUI(BaseGUI):
                 self.get_widget('picid_image').set_from_stock(
                     Gtk.STOCK_EDIT, 4)
             else:
-                pixbuf = self.gfx.get_avatar(int(widget.get_value()) / 256)
-                if pixbuf is None:
-                    self.get_widget('picid_image').set_from_stock(
-                        Gtk.STOCK_EDIT, 4)
-                else:
-                    self.get_widget('picid_image').set_from_pixbuf(pixbuf)
+                pass
+                # pixbuf = self.gfx.get_avatar(int(widget.get_value()) / 256)
+                # if pixbuf is None:
+                #     self.get_widget('picid_image').set_from_stock(
+                #         Gtk.STOCK_EDIT, 4)
+                # else:
+                #     self.get_widget('picid_image').set_from_pixbuf(pixbuf)
         else:
             self.get_widget('picid_image').set_from_stock(Gtk.STOCK_EDIT, 4)
 
