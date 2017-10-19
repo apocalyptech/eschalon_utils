@@ -18,16 +18,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-LOG = logging.getLogger(__name__)
-
-
 import os
 import struct
+
 from eschalon.constants import constants as c
 from eschalon.savefile import Savefile, LoadException, FirstItemLoadException
 from eschalon.tile import Tile
 from eschalon.tilecontent import Tilecontent
 from eschalon.entity import Entity
+
+LOG = logging.getLogger(__name__)
 
 
 class BigGraphicMapping(object):
@@ -419,8 +419,8 @@ class Map(object):
             entity.read(self.df_ent)
             if self.tiles[entity.y][entity.x].entity is not None:
                 # TODO: Support this better, perhaps?
-                print(
-                    'WARNING: Two entities on a single tile, discarding all but the original')
+                LOG.warn(
+                    'Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
                 if 0 <= entity.x < 100 and 0 <= entity.y < 200:
