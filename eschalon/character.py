@@ -867,10 +867,10 @@ class B2Character(Character):
                 LOG.spam("read unknown value (expect ?): {}".format(new_val))
             self.unknown.unknownstr2 = self.df.readstr()
             LOG.spam("read unknown value (expect ?): {}".format(
-                self.unknown.unknownstr2.decode('UTF-8')))
+                self.unknown.unknownstr2))
             self.unknown.unknownstr3 = self.df.readstr()
             LOG.spam("read unknown value (expect ?): {}".format(
-                self.unknown.unknownstr3.decode('UTF-8')))
+                self.unknown.unknownstr3))
             self.unknown.unknowns2 = self.df.readshort()
             LOG.spam("read unknown value (expect ?): {}".format(
                 self.unknown.unknowns2))
