@@ -45,6 +45,8 @@ from eschalon.smartdraw import SmartDraw
 from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import Gtk
 import cairo
 
@@ -272,8 +274,8 @@ class MapLoaderDialog(Gtk.Dialog):
             except LoadException as e:
                 # If there's an error, just don't show the slot
                 pass
-        self.slots.sort()
-        if len(self.slots) > 0:
+        # self.slots.sort()
+        if self.slots:
 
             # Slot-choosing combobox/liststore
             self.slot_store = Gtk.ListStore(int, str, str, str, int, object)
