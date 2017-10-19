@@ -25,6 +25,7 @@ import os
 from struct import unpack
 
 from gi.repository import Gdk
+from gi.repository import GdkPixbuf
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Pango
@@ -187,7 +188,7 @@ class ImageSelWindow(Gtk.Window):
         if on_motion is not None:
             da.connect('motion-notify-event', on_motion)
         if on_expose is not None:
-            da.connect('expose-event', on_expose)
+            da.connect('draw', on_expose)
         vp.add(da)
 
         return (sw, da)
