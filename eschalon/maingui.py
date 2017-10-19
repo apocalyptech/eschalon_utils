@@ -1319,7 +1319,8 @@ class MainGUI(BaseGUI):
             # Note: limit is actually >255 on B1, but I don't think it's unreasonable
             # to clamp it down to 255 in practice, here.
             adjust = Gtk.Adjustment(0, 0, 255, 1, 10, 0)
-            spin = Gtk.SpinButton(adjust)
+            spin = Gtk.SpinButton()
+            spin.set_adjustment(adjust)
             self.register_widget('skills_%d' % (idx + 1), spin)
             align.add(spin)
             spin.connect('value-changed', self.on_multarray_changed)
@@ -1362,7 +1363,8 @@ class MainGUI(BaseGUI):
             table.attach(align, col + 1, col + 2, row, row +
                          1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
             adjust = Gtk.Adjustment(0, 0, 999, 1, 10, 0)
-            spin = Gtk.SpinButton(adjust)
+            spin = Gtk.SpinButton()
+            spin.set_adjustment(adjust)
             self.register_widget('statuses_%d' % idx, spin)
             spin.connect('value-changed', self.on_effect_changed)
             if c.book == 1:
@@ -1371,7 +1373,8 @@ class MainGUI(BaseGUI):
                 hbox = Gtk.HBox()
                 hbox.add(spin)
                 adjust = Gtk.Adjustment(0, 0, 999, 1, 10, 0)
-                spin = Gtk.SpinButton(adjust)
+                spin = Gtk.SpinButton()
+                spin.set_adjustment(adjust)
                 self.register_widget('statuses_extra_%d' % idx, spin)
                 spin.connect('value-changed', self.on_effect_changed)
                 hbox.add(spin)
