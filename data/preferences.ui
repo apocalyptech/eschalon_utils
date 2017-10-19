@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkDialog" id="gfx_opt_window">
     <property name="width_request">500</property>
     <property name="height_request">220</property>
@@ -13,12 +12,12 @@
     <property name="type_hint">dialog</property>
     <property name="deletable">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox4">
+      <object class="GtkBox" id="dialog-vbox4">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area4">
+          <object class="GtkButtonBox" id="dialog-action_area4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -67,7 +66,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stock">gtk-dialog-warning</property>
-                <property name="icon-size">6</property>
+                <property name="icon_size">6</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -115,12 +114,12 @@
     <property name="type_hint">dialog</property>
     <property name="deletable">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
+      <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
+          <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -169,7 +168,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="stock">gtk-dialog-warning</property>
-                <property name="icon-size">6</property>
+                <property name="icon_size">6</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -224,12 +223,12 @@
     <property name="type_hint">dialog</property>
     <property name="deletable">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox2">
+      <object class="GtkBox" id="dialog-vbox2">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area2">
+          <object class="GtkButtonBox" id="dialog-action_area2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -294,6 +293,9 @@
                     <property name="enable_search">False</property>
                     <property name="fixed_height_mode">True</property>
                     <property name="show_expanders">False</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection"/>
+                    </child>
                   </object>
                 </child>
               </object>
@@ -324,11 +326,11 @@
                           <object class="GtkLabel" id="b1_savegame_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
                             <property name="ypad">4</property>
                             <property name="label" translatable="yes">&lt;b&gt;Book 1 Savegame Directory&lt;/b&gt;
 &lt;i&gt;Will contain directories such as "slot1" and "slot2"&lt;/i&gt;</property>
                             <property name="use_markup">True</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -361,11 +363,11 @@
                               <object class="GtkLabel" id="b1_gamedir_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="ypad">4</property>
                                 <property name="label" translatable="yes">&lt;b&gt;Book 1 Game Data Directory&lt;/b&gt;
 &lt;i&gt;Will contain files such as "gfx.pak" or "packedgraphics"&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                           </object>
@@ -399,96 +401,6 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkVBox" id="b3_dir_tab">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                        <child>
-                          <object class="GtkAlignment" id="alignment5">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="top_padding">5</property>
-                            <property name="bottom_padding">5</property>
-                            <child>
-                              <object class="GtkLabel" id="b3_savegame_label">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Book 3 Savegame Directory&lt;/b&gt;
-&lt;i&gt;Will contain directories such as "slot1" and "slot2"&lt;/i&gt;</property>
-                                <property name="use_markup">True</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkFileChooserButton" id="savegame_b3_chooser">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="action">select-folder</property>
-                            <property name="preview_widget_active">False</property>
-                            <property name="show_hidden">True</property>
-                            <property name="use_preview_label">False</property>
-                            <property name="title" translatable="yes">Choose A Directory</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkAlignment" id="alignment6">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="top_padding">15</property>
-                            <child>
-                              <object class="GtkLabel" id="b3_gamedir_label">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
-                                <property name="ypad">4</property>
-                                <property name="label" translatable="yes">&lt;b&gt;Book 3 Game Data Directory&lt;/b&gt;
-&lt;i&gt;Will contain "datapak" file or "gfx" directory&lt;/i&gt;</property>
-                                <property name="use_markup">True</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkFileChooserButton" id="gamedata_b3_chooser">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="action">select-folder</property>
-                            <property name="preview_widget_active">False</property>
-                            <property name="show_hidden">True</property>
-                            <property name="use_preview_label">False</property>
-                            <property name="title" translatable="yes">Choose A Directory</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">3</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkVBox" id="b2_dir_tab">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -503,10 +415,10 @@
                               <object class="GtkLabel" id="b2_savegame_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">&lt;b&gt;Book 2 Savegame Directory&lt;/b&gt;
 &lt;i&gt;Will contain directories such as "slot1" and "slot2"&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                           </object>
@@ -541,11 +453,11 @@
                               <object class="GtkLabel" id="b2_gamedir_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="ypad">4</property>
                                 <property name="label" translatable="yes">&lt;b&gt;Book 2 Game Data Directory&lt;/b&gt;
 &lt;i&gt;Will contain files such as "datapak" or "data"&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
                               </object>
                             </child>
                           </object>
@@ -557,6 +469,96 @@
                         </child>
                         <child>
                           <object class="GtkFileChooserButton" id="gamedata_b2_chooser">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="action">select-folder</property>
+                            <property name="preview_widget_active">False</property>
+                            <property name="show_hidden">True</property>
+                            <property name="use_preview_label">False</property>
+                            <property name="title" translatable="yes">Choose A Directory</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">3</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkVBox" id="b3_dir_tab">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                        <child>
+                          <object class="GtkAlignment" id="alignment5">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="top_padding">5</property>
+                            <property name="bottom_padding">5</property>
+                            <child>
+                              <object class="GtkLabel" id="b3_savegame_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Book 3 Savegame Directory&lt;/b&gt;
+&lt;i&gt;Will contain directories such as "slot1" and "slot2"&lt;/i&gt;</property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFileChooserButton" id="savegame_b3_chooser">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="action">select-folder</property>
+                            <property name="preview_widget_active">False</property>
+                            <property name="show_hidden">True</property>
+                            <property name="use_preview_label">False</property>
+                            <property name="title" translatable="yes">Choose A Directory</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkAlignment" id="alignment6">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="top_padding">15</property>
+                            <child>
+                              <object class="GtkLabel" id="b3_gamedir_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="ypad">4</property>
+                                <property name="label" translatable="yes">&lt;b&gt;Book 3 Game Data Directory&lt;/b&gt;
+&lt;i&gt;Will contain "datapak" file or "gfx" directory&lt;/i&gt;</property>
+                                <property name="use_markup">True</property>
+                                <property name="xalign">0</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFileChooserButton" id="gamedata_b3_chooser">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="action">select-folder</property>
@@ -599,11 +601,11 @@
                       <object class="GtkLabel" id="map_defaultzoom_label">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
-                        <property name="yalign">0</property>
                         <property name="ypad">3</property>
                         <property name="label" translatable="yes">&lt;b&gt;Default Zoom Level&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -622,8 +624,6 @@
                             <property name="tooltip_markup">Note that Book 1 maps only zoom up to 6.</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">prefs_default_zoom_adj</property>
                           </object>
                           <packing>
@@ -637,10 +637,10 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="tooltip_markup">Note that Book 1 maps only zoom up to 6.</property>
-                            <property name="xalign">0</property>
                             <property name="xpad">7</property>
                             <property name="label" translatable="yes">&lt;i&gt;(1 is fully zoomed-out, 7 is fully zoomed-in)&lt;/i&gt;</property>
                             <property name="use_markup">True</property>
+                            <property name="xalign">0</property>
                           </object>
                           <packing>
                             <property name="expand">True</property>
@@ -664,11 +664,11 @@
                           <object class="GtkLabel" id="map_warnings_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
                             <property name="ypad">3</property>
                             <property name="label" translatable="yes">&lt;b&gt;Warnings&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
                           </object>
                         </child>
                       </object>
