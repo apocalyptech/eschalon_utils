@@ -45,11 +45,11 @@ from eschalon.smartdraw import SmartDraw
 from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
-import gtk
+from gi.repository import Gtk
 import cairo
 
 
-class MapNewDialog(gtk.Dialog):
+class MapNewDialog(Gtk.Dialog):
     """
     A simple dialog to ask a user whether to create a new Global
     or Savegame map.
@@ -64,41 +64,41 @@ class MapNewDialog(gtk.Dialog):
         Constructor to set up everything
         """
         super(MapNewDialog, self).__init__(
-            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
 
         # Various defaults for the dialog
         self.set_size_request(500, 150)
         self.set_title('New Eschalon Book %d Map' % (c.book))
         if transient:
             self.set_transient_for(transient)
-            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.button_hit = None
 
         # Main Title
-        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align = Gtk.Alignment.new(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup('<big><b>Choose the type of map to create:</b></big>')
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
         # Buttons
-        self.new_global_button = gtk.Button('New Global Map')
+        self.new_global_button = Gtk.Button('New Global Map')
         self.new_global_button.set_image(
-            gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            Gtk.Image.new_from_stock(Gtk.STOCK_NEW, Gtk.IconSize.BUTTON))
         self.new_global_button.connect('clicked', self.new_global_clicked)
 
-        self.new_savegame_button = gtk.Button('New Savegame Map')
+        self.new_savegame_button = Gtk.Button('New Savegame Map')
         self.new_savegame_button.set_image(
-            gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+            Gtk.Image.new_from_stock(Gtk.STOCK_NEW, Gtk.IconSize.BUTTON))
         self.new_savegame_button.connect('clicked', self.new_savegame_clicked)
 
-        self.bbox = gtk.HButtonBox()
+        self.bbox = Gtk.HButtonBox()
         self.bbox.add(self.new_global_button)
         self.bbox.add(self.new_savegame_button)
 
-        self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+        self.bbalign = Gtk.Alignment.new(.5, 0, 0, 0)
         self.bbalign.set_padding(0, 5, 5, 5)
         self.bbalign.add(self.bbox)
         self.vbox.pack_start(self.bbalign, False, False)
@@ -111,14 +111,14 @@ class MapNewDialog(gtk.Dialog):
         What to do when our New Global Map button is clicked.
         """
         self.button_hit = self.NEW_GLOBAL
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def new_savegame_clicked(self, widget):
         """
         What to do when our New Savegame Map button is clicked.
         """
         self.button_hit = self.NEW_SAVEGAME
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def get_savegame_flag(self):
         """
@@ -131,7 +131,7 @@ class MapNewDialog(gtk.Dialog):
             return True
 
 
-class MapLoaderDialog(gtk.Dialog):
+class MapLoaderDialog(Gtk.Dialog):
     """
     A dialog to load a map.  Embeds FileChooserWidget in one tab of
     a notebook, but will also try to be "smart" about things in other
@@ -202,19 +202,19 @@ class MapLoaderDialog(gtk.Dialog):
             in b23maplist, if necessary
         """
         super(MapLoaderDialog, self).__init__(
-            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                     gtk.STOCK_OK, gtk.RESPONSE_OK))
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                     Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         # Various defaults for the dialog
         self.set_size_request(950, 680)
-        if gtk.gdk.screen_width() > 1200:
+        if Gdk.Screen.width() > 1200:
             self.set_default_size(1200, 680)
         self.set_title('Open Eschalon Book %d Map File' % (c.book))
-        self.set_default_response(gtk.RESPONSE_OK)
+        self.set_default_response(Gtk.ResponseType.OK)
         if transient:
             self.set_transient_for(transient)
-            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         active_slot = None
 
         # Page-to-source mapping
@@ -224,9 +224,9 @@ class MapLoaderDialog(gtk.Dialog):
         self.source_index = {}
 
         # Main Title
-        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align = Gtk.Alignment.new(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup(
             '<big><b>Eschalon Book %d Map Editor v%s</b></big>' % (c.book, version))
         self.title_align.add(label)
@@ -235,31 +235,31 @@ class MapLoaderDialog(gtk.Dialog):
         # New Map buttons
         self.button_hit = None
         if show_new:
-            self.new_global_button = gtk.Button('New Global Map')
+            self.new_global_button = Gtk.Button('New Global Map')
             self.new_global_button.set_image(
-                gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+                Gtk.Image.new_from_stock(Gtk.STOCK_NEW, Gtk.IconSize.BUTTON))
             self.new_global_button.connect('clicked', self.new_global_clicked)
 
-            self.new_savegame_button = gtk.Button('New Savegame Map')
+            self.new_savegame_button = Gtk.Button('New Savegame Map')
             self.new_savegame_button.set_image(
-                gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_BUTTON))
+                Gtk.Image.new_from_stock(Gtk.STOCK_NEW, Gtk.IconSize.BUTTON))
             self.new_savegame_button.connect(
                 'clicked', self.new_savegame_clicked)
 
-            self.bbox = gtk.HButtonBox()
+            self.bbox = Gtk.HButtonBox()
             self.bbox.add(self.new_global_button)
             self.bbox.add(self.new_savegame_button)
 
-            self.bbalign = gtk.Alignment(.5, 0, 0, 0)
+            self.bbalign = Gtk.Alignment.new(.5, 0, 0, 0)
             self.bbalign.set_padding(0, 5, 5, 5)
             self.bbalign.add(self.bbox)
             self.vbox.pack_start(self.bbalign, False, False)
 
         # Main Notebook
-        notebook_align = gtk.Alignment(0, 0, 1, 1)
+        notebook_align = Gtk.Alignment.new(0, 0, 1, 1)
         notebook_align.set_padding(5, 5, 10, 10)
-        self.open_notebook = gtk.Notebook()
-        self.open_notebook.set_tab_pos(gtk.POS_LEFT)
+        self.open_notebook = Gtk.Notebook()
+        self.open_notebook.set_tab_pos(Gtk.PositionType.LEFT)
         notebook_align.add(self.open_notebook)
         self.vbox.pack_start(notebook_align, True, True)
 
@@ -276,21 +276,21 @@ class MapLoaderDialog(gtk.Dialog):
         if len(self.slots) > 0:
 
             # Slot-choosing combobox/liststore
-            self.slot_store = gtk.ListStore(int, str, str, str, int, object)
-            self.slot_tv = gtk.TreeView(self.slot_store)
+            self.slot_store = Gtk.ListStore(int, str, str, str, int, object)
+            self.slot_tv = Gtk.TreeView(self.slot_store)
             self.slot_tv.connect('cursor-changed', self.slot_changed)
-            col = gtk.TreeViewColumn(
-                'Slot', gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
+            col = Gtk.TreeViewColumn(
+                'Slot', Gtk.CellRendererText(), markup=self.SLOT_COL_SLOTNAME)
             col.set_sort_column_id(self.SLOT_COL_IDX)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Save Name', gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
+            col = Gtk.TreeViewColumn(
+                'Save Name', Gtk.CellRendererText(), text=self.SLOT_COL_SAVENAME)
             col.set_sort_column_id(self.SLOT_COL_SAVENAME)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Date', gtk.CellRendererText(), text=self.SLOT_COL_DATE)
+            col = Gtk.TreeViewColumn(
+                'Date', Gtk.CellRendererText(), text=self.SLOT_COL_DATE)
             col.set_sort_column_id(self.SLOT_COL_DATE_EPOCH)
             col.set_resizable(True)
             self.slot_tv.append_column(col)
@@ -307,46 +307,46 @@ class MapLoaderDialog(gtk.Dialog):
                     active_slot = idx
 
             # Map-choosing combobox/liststore
-            self.map_store = gtk.ListStore(int, str, str, str)
-            self.map_tv = gtk.TreeView(self.map_store)
+            self.map_store = Gtk.ListStore(int, str, str, str)
+            self.map_tv = Gtk.TreeView(self.map_store)
             self.map_tv.connect('row-activated', self.map_activated)
-            col = gtk.TreeViewColumn(
-                'Filename', gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
+            col = Gtk.TreeViewColumn(
+                'Filename', Gtk.CellRendererText(), markup=self.MAP_COL_FILENAME)
             col.set_sort_column_id(self.MAP_COL_FILENAME)
             col.set_resizable(True)
             self.map_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Map Name', gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
+            col = Gtk.TreeViewColumn(
+                'Map Name', Gtk.CellRendererText(), text=self.MAP_COL_MAPNAME)
             col.set_sort_column_id(self.MAP_COL_MAPNAME)
             col.set_resizable(True)
             self.map_tv.append_column(col)
-            save_dir_align = gtk.Alignment(0, 0, 1, 1)
+            save_dir_align = Gtk.Alignment.new(0, 0, 1, 1)
             save_dir_align.set_padding(5, 5, 5, 5)
-            save_vbox = gtk.VBox()
-            vp = gtk.Viewport()
-            vp.set_shadow_type(gtk.SHADOW_OUT)
-            save_hpaned = gtk.HPaned()
+            save_vbox = Gtk.VBox()
+            vp = Gtk.Viewport()
+            vp.set_shadow_type(Gtk.ShadowType.OUT)
+            save_hpaned = Gtk.HPaned()
             vp.add(save_hpaned)
             save_vbox.pack_start(vp, True, True)
-            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align = Gtk.Alignment.new(0, 0, 0, 0)
             note_align.set_padding(5, 2, 2, 2)
-            note_label = gtk.Label()
+            note_label = Gtk.Label()
             note_label.set_markup('<i>Reading from %s</i>' % (savegame_dir))
             note_align.add(note_label)
             save_vbox.pack_start(note_align, False, False)
             save_dir_align.add(save_vbox)
             self.register_page(self.SOURCE_SAVES)
             self.open_notebook.append_page(
-                save_dir_align, gtk.Label('Load from Savegames...'))
+                save_dir_align, Gtk.Label(label='Load from Savegames...'))
 
             # Save-dir HPaned contents
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
             sw.add(self.slot_tv)
             save_hpaned.pack1(sw)
 
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sw.add(self.map_tv)
             save_hpaned.pack2(sw)
 
@@ -390,27 +390,27 @@ class MapLoaderDialog(gtk.Dialog):
                                                  )
 
         # Loading from an arbitrary location
-        arbitrary_align = gtk.Alignment(0, 0, 1, 1)
+        arbitrary_align = Gtk.Alignment.new(0, 0, 1, 1)
         arbitrary_align.set_padding(5, 5, 5, 5)
-        self.chooser = gtk.FileChooserWidget()
+        self.chooser = Gtk.FileChooserWidget()
         self.chooser.connect('file-activated', self.chooser_file_activated)
         self.chooser.set_show_hidden(True)
         arbitrary_align.add(self.chooser)
         self.register_page(self.SOURCE_OTHER)
         self.open_notebook.append_page(
-            arbitrary_align, gtk.Label('Load from Other...'))
+            arbitrary_align, Gtk.Label(label='Load from Other...'))
 
         # Starting path for chooser
         if starting_path and starting_path != '' and os.path.isdir(starting_path):
             self.chooser.set_current_folder(starting_path)
 
         # Filename filters for chooser
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("Map Files")
         filter.add_pattern("*.map")
         self.chooser.add_filter(filter)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("All files")
         filter.add_pattern("*")
         self.chooser.add_filter(filter)
@@ -477,16 +477,16 @@ class MapLoaderDialog(gtk.Dialog):
                     pass
 
         if len(map_list) > 0:
-            map_store = gtk.ListStore(int, str, str, str)
-            map_tv = gtk.TreeView(map_store)
+            map_store = Gtk.ListStore(int, str, str, str)
+            map_tv = Gtk.TreeView(map_store)
             map_tv.connect('row-activated', callback)
-            col = gtk.TreeViewColumn(
-                'Filename', gtk.CellRendererText(), markup=filename_col)
+            col = Gtk.TreeViewColumn(
+                'Filename', Gtk.CellRendererText(), markup=filename_col)
             col.set_sort_column_id(filename_col)
             col.set_resizable(True)
             map_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Map Name', gtk.CellRendererText(), markup=mapname_col)
+            col = Gtk.TreeViewColumn(
+                'Map Name', Gtk.CellRendererText(), markup=mapname_col)
             col.set_sort_column_id(mapname_col)
             col.set_resizable(True)
             map_tv.append_column(col)
@@ -496,33 +496,33 @@ class MapLoaderDialog(gtk.Dialog):
                                   map_df.filename,
                                   map_mapname))
 
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sw.add(map_tv)
 
-            vp = gtk.Viewport()
-            vp.set_shadow_type(gtk.SHADOW_OUT)
+            vp = Gtk.Viewport()
+            vp.set_shadow_type(Gtk.ShadowType.OUT)
             vp.add(sw)
 
-            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align = Gtk.Alignment.new(0, 0, 0, 0)
             note_align.set_padding(5, 2, 2, 2)
-            note_label = gtk.Label()
+            note_label = Gtk.Label()
             if directory is None:
                 note_label.set_markup('<i>Reading from datapak</i>')
             else:
                 note_label.set_markup('<i>Reading from %s</i>' % (directory))
             note_align.add(note_label)
 
-            map_vbox = gtk.VBox()
+            map_vbox = Gtk.VBox()
             map_vbox.pack_start(vp, True, True)
             map_vbox.pack_start(note_align, False, False)
 
-            map_align = gtk.Alignment(0, 0, 1, 1)
+            map_align = Gtk.Alignment.new(0, 0, 1, 1)
             map_align.set_padding(5, 5, 5, 5)
             map_align.add(map_vbox)
 
             self.register_page(source)
-            self.open_notebook.append_page(map_align, gtk.Label(label))
+            self.open_notebook.append_page(map_align, Gtk.Label(label=label))
 
         return (map_list, map_store, map_tv)
 
@@ -590,7 +590,7 @@ class MapLoaderDialog(gtk.Dialog):
         Called when the user double-clicks or hits enter on a selected file
         in our internal FileChooserWidget
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def slot_changed(self, widget):
         """
@@ -610,41 +610,41 @@ class MapLoaderDialog(gtk.Dialog):
         """
         Called when the user double-clicks or hits enter on a particular map.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def mod_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on a particular mod map.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def data_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on a particular datadir map.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def datapak_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on a particular datapak map.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def new_global_clicked(self, widget):
         """
         What to do when our New Global Map button is clicked.  Note that we're
-        sort of abusing gtk.RESPONSE_APPLY for this.
+        sort of abusing Gtk.ResponseType.APPLY for this.
         """
         self.button_hit = self.NEW_GLOBAL
-        self.response(gtk.RESPONSE_APPLY)
+        self.response(Gtk.ResponseType.APPLY)
 
     def new_savegame_clicked(self, widget):
         """
         What to do when our New Savegame Map button is clicked.  Note that we're
-        sort of abusing gtk.RESPONSE_APPLY for this.
+        sort of abusing Gtk.ResponseType.APPLY for this.
         """
         self.button_hit = self.NEW_SAVEGAME
-        self.response(gtk.RESPONSE_APPLY)
+        self.response(Gtk.ResponseType.APPLY)
 
     def get_savegame_flag(self):
         """
@@ -657,7 +657,7 @@ class MapLoaderDialog(gtk.Dialog):
             return True
 
 
-class BigGraphicDialog(gtk.Dialog):
+class BigGraphicDialog(Gtk.Dialog):
     """
     A dialog to present the user with some information about the Big Graphic
     objects stored on the map, with the option to possibly fix some of
@@ -673,20 +673,20 @@ class BigGraphicDialog(gtk.Dialog):
         we will scan the map ourselves.
         """
         super(BigGraphicDialog, self).__init__(
-            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT)
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
 
         # Various options for the dialog
         self.set_title(
             'Eschalon Book %d Map Editor - Big Graphic Status' % (c.book))
-        self.set_default_response(gtk.RESPONSE_CLOSE)
+        self.set_default_response(Gtk.ResponseType.CLOSE)
         if transient:
             self.set_transient_for(transient)
-            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
 
         # Title
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup('<b>Big Graphic Status</b>')
-        align = gtk.Alignment(.5, 0, 1, 0)
+        align = Gtk.Alignment.new(.5, 0, 1, 0)
         align.set_padding(10, 10, 10, 10)
         align.add(label)
         self.vbox.pack_start(align, False, False)
@@ -699,11 +699,11 @@ class BigGraphicDialog(gtk.Dialog):
         mappings = mappingobj.get_gfx_mappings()
         mapping_treeview = None
         if len(mappings) == 0:
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup(
                 'There are currently no Big Graphics on this map.')
             label.set_line_wrap(True)
-            align = gtk.Alignment(0, 0, 1, 1)
+            align = Gtk.Alignment.new(0, 0, 1, 1)
             align.set_padding(5, 5, 5, 5)
             align.add(label)
             self.vbox.pack_start(align, True, True)
@@ -713,26 +713,26 @@ class BigGraphicDialog(gtk.Dialog):
             height = 200
 
             # Display the current graphic mappings
-            label = gtk.Label('Current Big Graphic ID associations:')
-            align = gtk.Alignment(0, .5, 1, 0)
+            label = Gtk.Label(label='Current Big Graphic ID associations:')
+            align = Gtk.Alignment.new(0, .5, 1, 0)
             align.set_padding(5, 5, 15, 15)
             align.add(label)
             self.vbox.pack_start(align, False, True)
 
-            store = gtk.ListStore(str, str)
-            mapping_treeview = gtk.TreeView(store)
+            store = Gtk.ListStore(str, str)
+            mapping_treeview = Gtk.TreeView(store)
             self.thing = mapping_treeview
-            col = gtk.TreeViewColumn('Graphic', gtk.CellRendererText(), text=0)
+            col = Gtk.TreeViewColumn('Graphic', Gtk.CellRendererText(), text=0)
             col.set_sort_column_id(0)
             col.set_resizable(True)
             mapping_treeview.append_column(col)
-            col = gtk.TreeViewColumn('Wall ID', gtk.CellRendererText(), text=1)
+            col = Gtk.TreeViewColumn('Wall ID', Gtk.CellRendererText(), text=1)
             col.set_sort_column_id(1)
             col.set_resizable(True)
             mapping_treeview.append_column(col)
             for gfx in sorted(mappings.keys()):
                 store.append((gfx, mappings[gfx].wallid))
-            align = gtk.Alignment(.5, .5, 0, 0)
+            align = Gtk.Alignment.new(.5, .5, 0, 0)
             align.set_padding(5, 5, 5, 5)
             align.add(mapping_treeview)
             self.vbox.pack_start(align, False, False)
@@ -742,12 +742,12 @@ class BigGraphicDialog(gtk.Dialog):
             # Now report on what we've got
             if len(messages) == 0:
                 self.set_size_request(550, height)
-                label = gtk.Label()
+                label = Gtk.Label()
                 label.set_markup(
                     'All the Big Graphics in this map are fine.  You can have the editor renumber them if you like, but there is probably no reason to do so.')
                 label.set_line_wrap(True)
                 label.set_size_request(500, 30)
-                align = gtk.Alignment(0, 0, 1, 1)
+                align = Gtk.Alignment.new(0, 0, 1, 1)
                 align.set_padding(5, 5, 5, 5)
                 align.add(label)
                 self.vbox.pack_start(align, True, True)
@@ -755,26 +755,26 @@ class BigGraphicDialog(gtk.Dialog):
                 if elderoak:
                     height += 30
                 self.set_size_request(650, height + 100)
-                label = gtk.Label()
+                label = Gtk.Label()
                 label.set_markup('There were some problems detected with the Big Graphics on this map.  We might be able to fix some of these automatically.  Use the "Renumber" button below to make an attempt.  Note that doing so will renumber the IDs of the Big Graphics on the map:')
                 label.set_line_wrap(True)
                 label.set_size_request(600, 50)
-                align = gtk.Alignment(0, 0, 1, 0)
+                align = Gtk.Alignment.new(0, 0, 1, 0)
                 align.set_padding(5, 10, 15, 15)
                 align.add(label)
                 self.vbox.pack_start(align, False, True)
 
-                tb = gtk.TextBuffer()
-                tv = gtk.TextView(tb)
-                tv.set_wrap_mode(gtk.WRAP_WORD)
+                tb = Gtk.TextBuffer()
+                tv = Gtk.TextView(tb)
+                tv.set_wrap_mode(Gtk.WrapMode.WORD)
                 tv.set_editable(False)
-                vp = gtk.Viewport()
-                vp.set_shadow_type(gtk.SHADOW_IN)
+                vp = Gtk.Viewport()
+                vp.set_shadow_type(Gtk.ShadowType.IN)
                 vp.add(tv)
-                sw = gtk.ScrolledWindow()
-                sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+                sw = Gtk.ScrolledWindow()
+                sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
                 sw.add(vp)
-                align = gtk.Alignment(0, 0, 1, 1)
+                align = Gtk.Alignment.new(0, 0, 1, 1)
                 align.set_padding(5, 5, 15, 15)
                 align.add(sw)
                 self.vbox.pack_start(align, True, True)
@@ -785,29 +785,29 @@ class BigGraphicDialog(gtk.Dialog):
                 tb.set_text("\n".join(display_messages))
 
                 if elderoak:
-                    label = gtk.Label()
+                    label = Gtk.Label()
                     label.set_markup('<b>Note:</b> Elderoak Forest (4949.map) has an intentional mismatch once Ulgolek has been healed.  If the only problem detected is between <tt>sgfx_father_tree_2.png</tt> and <tt>sgfx_father_tree_1.png</tt>, renumbering is not advised.')
                     label.set_size_request(600, 50)
                     label.set_line_wrap(True)
-                    align = gtk.Alignment(0, 0, 1, 0)
+                    align = Gtk.Alignment.new(0, 0, 1, 0)
                     align.set_padding(5, 5, 15, 15)
                     align.add(label)
                     self.vbox.pack_start(align, True, False)
 
         # Buttons at the bottom
-        close = gtk.Button(stock=gtk.STOCK_CLOSE)
+        close = Gtk.Button(stock=Gtk.STOCK_CLOSE)
         close.connect('clicked', self.close_clicked)
-        hbox = gtk.HButtonBox()
+        hbox = Gtk.HButtonBox()
 
         if len(mappings) > 0:
-            renumber = gtk.Button('Renumber')
-            renumber.set_image(gtk.image_new_from_stock(
-                gtk.STOCK_REFRESH, gtk.ICON_SIZE_BUTTON))
+            renumber = Gtk.Button('Renumber')
+            renumber.set_image(Gtk.Image.new_from_stock(
+                Gtk.STOCK_REFRESH, Gtk.IconSize.BUTTON))
             renumber.connect('clicked', self.renumber_clicked)
             hbox.add(renumber)
 
         hbox.add(close)
-        align = gtk.Alignment(1, 1, 0, 0)
+        align = Gtk.Alignment.new(1, 1, 0, 0)
         align.set_padding(5, 5, 5, 5)
         align.add(hbox)
         self.vbox.pack_start(align, False, False)
@@ -825,16 +825,16 @@ class BigGraphicDialog(gtk.Dialog):
         What to do when our renumber button is clicked.. We're abusing
         the RESPONSE_APPLY constant here.
         """
-        self.response(gtk.RESPONSE_APPLY)
+        self.response(Gtk.ResponseType.APPLY)
 
     def close_clicked(self, widget):
         """
         What to do when our close button is clicked
         """
-        self.response(gtk.RESPONSE_CLOSE)
+        self.response(Gtk.ResponseType.CLOSE)
 
 
-class GlobalNameDialog(gtk.Dialog):
+class GlobalNameDialog(Gtk.Dialog):
     """
     Class to report on Global item name problems on a map
     """
@@ -875,11 +875,11 @@ class GlobalNameDialog(gtk.Dialog):
         be calculating the needed height, but for now it's being hardcoded.
         """
         if confirm:
-            buttons = (gtk.STOCK_NO, gtk.RESPONSE_NO,
-                       gtk.STOCK_YES, gtk.RESPONSE_YES)
+            buttons = (Gtk.STOCK_NO, Gtk.ResponseType.NO,
+                       Gtk.STOCK_YES, Gtk.ResponseType.YES)
         else:
-            buttons = (gtk.STOCK_OK, gtk.RESPONSE_OK)
-        super(GlobalNameDialog, self).__init__(flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+            buttons = (Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        super(GlobalNameDialog, self).__init__(flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                                buttons=buttons)
 
         # Various options for the dialog
@@ -892,24 +892,24 @@ class GlobalNameDialog(gtk.Dialog):
             self.set_size_request(500, 500)
         else:
             self.set_size_request(500, 400)
-        self.set_default_response(gtk.RESPONSE_CLOSE)
+        self.set_default_response(Gtk.ResponseType.CLOSE)
         if transient:
             self.set_transient_for(transient)
-            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
 
         # Title
-        label = gtk.Label()
+        label = Gtk.Label()
         if title:
             label.set_markup('<b>%s</b>' % (title))
         else:
             label.set_markup('<b>Global Item Name Status</b>')
-        align = gtk.Alignment(.5, 0, 1, 0)
+        align = Gtk.Alignment.new(.5, 0, 1, 0)
         align.set_padding(10, 10, 10, 10)
         align.add(label)
         self.vbox.pack_start(align, False, False)
 
         # Message to the user
-        label = gtk.Label()
+        label = Gtk.Label()
         if message:
             label.set_markup(message)
             label.set_size_request(460, 230)
@@ -927,24 +927,24 @@ class GlobalNameDialog(gtk.Dialog):
                 label.set_markup(usual_text)
                 label.set_size_request(460, 70)
         label.set_line_wrap(True)
-        align = gtk.Alignment(0, 0, 1, 0)
+        align = Gtk.Alignment.new(0, 0, 1, 0)
         align.set_padding(5, 5, 5, 5)
         align.add(label)
         self.vbox.pack_start(align, False, False)
 
         # Show the information
-        store = gtk.ListStore(str, str, str)
-        tv = gtk.TreeView(store)
-        col = gtk.TreeViewColumn('Coord', gtk.CellRendererText(), text=0)
+        store = Gtk.ListStore(str, str, str)
+        tv = Gtk.TreeView(store)
+        col = Gtk.TreeViewColumn('Coord', Gtk.CellRendererText(), text=0)
         col.set_sort_column_id(0)
         col.set_resizable(True)
         tv.append_column(col)
-        col = gtk.TreeViewColumn('Name', gtk.CellRendererText(), text=1)
+        col = Gtk.TreeViewColumn('Name', Gtk.CellRendererText(), text=1)
         col.set_sort_column_id(1)
         col.set_resizable(True)
         tv.append_column(col)
-        col = gtk.TreeViewColumn(
-            'Conversion', gtk.CellRendererText(), markup=2)
+        col = Gtk.TreeViewColumn(
+            'Conversion', Gtk.CellRendererText(), markup=2)
         col.set_sort_column_id(2)
         col.set_resizable(True)
         tv.append_column(col)
@@ -954,23 +954,23 @@ class GlobalNameDialog(gtk.Dialog):
                 new_name = '<i>(none)</i>'
             store.append(('(%d, %d)' % (x, y), item_name, new_name))
 
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sw.add(tv)
 
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_IN)
+        vp = Gtk.Viewport()
+        vp.set_shadow_type(Gtk.ShadowType.IN)
         vp.add(sw)
 
-        align = gtk.Alignment(0, 0, 1, 1)
+        align = Gtk.Alignment.new(0, 0, 1, 1)
         align.set_padding(5, 5, 50, 50)
         align.add(vp)
         self.vbox.pack_start(align, True, True)
 
         if confirm:
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup('Proceed?')
-            align = gtk.Alignment(0, 0, 0, 1)
+            align = Gtk.Alignment.new(0, 0, 0, 1)
             align.set_padding(5, 5, 5, 5)
             align.add(label)
             self.vbox.pack_start(align, False, False)
@@ -982,31 +982,31 @@ class GlobalNameDialog(gtk.Dialog):
 class ObjectSelWindow(ImageSelWindow):
 
     def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
-        self.book = gtk.Notebook()
+        self.book = Gtk.Notebook()
         vbox.pack_start(self.book, True, True)
 
         (sw, self.drawingarea_a) = self.create_drawing_area(
             on_clicked, on_motion, on_expose)
         self.drawingarea_a.set_name('objsel_a_area')
-        self.label_a = gtk.Label('Set A (misc)')
+        self.label_a = Gtk.Label(label='Set A (misc)')
         self.book.append_page(sw, self.label_a)
 
         (self.scrolltoggle, self.drawingarea_b) = self.create_drawing_area(
             on_clicked, on_motion, on_expose)
         self.drawingarea_b.set_name('objsel_b_area')
-        self.label_b = gtk.Label('Set B (misc)')
+        self.label_b = Gtk.Label(label='Set B (misc)')
         self.book.append_page(self.scrolltoggle, self.label_b)
 
         (sw, self.drawingarea_c) = self.create_drawing_area(
             on_clicked, on_motion, on_expose)
         self.drawingarea_c.set_name('objsel_c_area')
-        self.label_c = gtk.Label('Set C (walls)')
+        self.label_c = Gtk.Label(label='Set C (walls)')
         self.book.append_page(sw, self.label_c)
 
         (sw, self.drawingarea_d) = self.create_drawing_area(
             on_clicked, on_motion, on_expose)
         self.drawingarea_d.set_name('objsel_d_area')
-        self.label_d = gtk.Label('Set D (trees)')
+        self.label_d = Gtk.Label(label='Set D (trees)')
         self.book.append_page(sw, self.label_d)
 
 
@@ -1114,7 +1114,7 @@ class MapGUI(BaseGUI):
         self.decal_edge_pref_map = {}
 
         # Start up our GUI
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(self.datafile('mapgui.ui'))
         self.builder.add_from_file(self.datafile('itemgui.ui'))
         self.window = self.get_widget('mainwindow')
@@ -1187,13 +1187,13 @@ class MapGUI(BaseGUI):
         self.draw_frame = self.get_widget('draw_frame')
         self.globalwarn_check = self.get_widget('globalwarn_check')
         if (self.window):
-            self.window.connect('destroy', gtk.main_quit)
+            self.window.connect('destroy', Gtk.main_quit)
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
         for object in self.builder.get_objects():
             try:
-                builder_name = gtk.Buildable.get_name(object)
+                builder_name = Gtk.Buildable.get_name(object)
                 if builder_name:
                     object.set_name(builder_name)
             except TypeError:
@@ -1201,15 +1201,15 @@ class MapGUI(BaseGUI):
 
         # Cursors for our editing modes
         self.edit_mode = self.MODE_EDIT
-        self.cursor_move_drag = gtk.gdk.Cursor(gtk.gdk.DOT)
+        self.cursor_move_drag = Gdk.Cursor.new(Gdk.DOT)
         self.cursor_map = {
             self.MODE_EDIT: None,
-            self.MODE_MOVE: gtk.gdk.Cursor(gtk.gdk.FLEUR),
-            self.MODE_DRAW: gtk.gdk.Cursor(gtk.gdk.PENCIL),
-            self.MODE_ERASE: gtk.gdk.Cursor(gtk.gdk.CIRCLE),
-            self.MODE_OBJECT: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_DOWN),
+            self.MODE_MOVE: Gdk.Cursor.new(Gdk.FLEUR),
+            self.MODE_DRAW: Gdk.Cursor.new(Gdk.PENCIL),
+            self.MODE_ERASE: Gdk.Cursor.new(Gdk.CIRCLE),
+            self.MODE_OBJECT: Gdk.Cursor.new(Gdk.BASED_ARROW_DOWN),
             self.MODE_SCRIPT_ED: None,
-            self.MODE_COPY: gtk.gdk.Cursor(gtk.gdk.BASED_ARROW_UP),
+            self.MODE_COPY: Gdk.Cursor.new(Gdk.BASED_ARROW_UP),
         }
 
         # Initialize item stuff
@@ -1229,8 +1229,8 @@ class MapGUI(BaseGUI):
 
         # Event mask for processing hotkeys
         # (MOD2 is numlock; we don't care about that.  Dunno what 3-5 are, probably not used.)
-        self.keymask = gtk.gdk.CONTROL_MASK | gtk.gdk.MOD1_MASK | gtk.gdk.MOD3_MASK
-        self.keymask |= gtk.gdk.MOD4_MASK | gtk.gdk.MOD5_MASK
+        self.keymask = Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.MOD1_MASK | Gdk.ModifierType.MOD3_MASK
+        self.keymask |= Gdk.ModifierType.MOD4_MASK | Gdk.ModifierType.MOD5_MASK
 
         # Manually connect a couple more signals that Glade can't handle for us automatically
         self.mainscroll.get_hadjustment().connect('changed', self.scroll_h_changed)
@@ -1342,14 +1342,14 @@ class MapGUI(BaseGUI):
         self.populating_entity_tab = False
 
         # Blank pixbuf to use in the tile editing window
-        self.comp_pixbuf = gtk.gdk.Pixbuf(
-            gtk.gdk.COLORSPACE_RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height * 5)
+        self.comp_pixbuf = GdkPixbuf.Pixbuf(
+            GdkPixbuf.Colorspace.RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height * 5)
 
         # Load in our mouse map (to determine which tile we're pointing at)
         self.mousemap = {}
         for zoom in self.zoom_levels:
             mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
-            mapbuf = gtk.gdk.pixbuf_new_from_file(mapfile)
+            mapbuf = GdkPixbuf.Pixbuf.new_from_file(mapfile)
             if self.have_numpy:
                 try:
                     self.mousemap[zoom] = mapbuf.get_pixels_array()
@@ -1378,7 +1378,7 @@ class MapGUI(BaseGUI):
         # self.export_map_pngs()
 
         # ... and get into the main gtk loop
-        gtk.main()
+        Gtk.main()
 
     def strip_tree_headers(self, layout, cell, model, iter, data):
         """
@@ -1396,7 +1396,7 @@ class MapGUI(BaseGUI):
         """ Handles keypresses, which we'll use to simplify selecting drawing stuff. """
         # Cancel any dragging action currently active
         self.on_released()
-        if (event.keyval < 256 and (event.state & self.keymask) == 0):
+        if (event.keyval < 256 and (event.get_state() & self.keymask) == 0):
             key = chr(event.keyval).lower()
             if (key == 'm'):
                 self.ctl_move_toggle.set_active(True)
@@ -1463,13 +1463,13 @@ class MapGUI(BaseGUI):
         """ Show the save-as dialog. """
 
         # Create the dialog
-        dialog = gtk.FileChooserDialog('Save Map File...', None,
-                                       gtk.FILE_CHOOSER_ACTION_SAVE,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog = Gtk.FileChooserDialog('Save Map File...', None,
+                                       Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_SAVE_AS, Gtk.ResponseType.OK))
+        dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
 
         # Figure out the initial path
@@ -1489,12 +1489,12 @@ class MapGUI(BaseGUI):
         if (path != ''):
             dialog.set_current_folder(path)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("Map Files")
         filter.add_pattern("*.map")
         dialog.add_filter(filter)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("All files")
         filter.add_pattern("*")
         dialog.add_filter(filter)
@@ -1503,7 +1503,7 @@ class MapGUI(BaseGUI):
         loop = True
         while loop:
             response = dialog.run()
-            if response == gtk.RESPONSE_OK:
+            if response == Gtk.ResponseType.OK:
 
                 if dialog.get_filename()[-4:].lower() != '.map':
                     new_filename = '%s.map' % (dialog.get_filename())
@@ -1512,7 +1512,7 @@ class MapGUI(BaseGUI):
                                                       '"%s" already exists.  Do you want to replace it?' % (
                                                           new_filename),
                                                       dialog)
-                        if new_resp != gtk.RESPONSE_YES:
+                        if new_resp != Gtk.ResponseType.YES:
                             continue
                 else:
                     new_filename = dialog.get_filename()
@@ -1531,7 +1531,7 @@ class MapGUI(BaseGUI):
                                                   'ID to match the filename?' % (
                                                       base_map_name, self.mapobj.mapid),
                                                   dialog)
-                        if resp == gtk.RESPONSE_YES:
+                        if resp == Gtk.ResponseType.YES:
                             self.mapobj.mapid = base_map_name
 
                 # And now do the actual save
@@ -1600,7 +1600,7 @@ class MapGUI(BaseGUI):
                                               'Proceed?' % (global_warning),
                                               self.window)
 
-        if response == gtk.RESPONSE_YES:
+        if response == Gtk.ResponseType.YES:
 
             self.undo = Undo(self.mapobj)
             self.update_undo_gui()
@@ -1692,7 +1692,7 @@ class MapGUI(BaseGUI):
                            'random_sound1', 'random_sound2', 'skybox']
         for var in comboboxentries:
             self.register_widget(
-                var, self.get_widget('%s_combo' % (var)).child)
+                var, self.get_widget('%s_combo' % (var)).get_child())
             self.get_widget(var).connect(
                 'changed', self.on_singleval_map_changed_str)
 
@@ -1716,8 +1716,8 @@ class MapGUI(BaseGUI):
 
         # Draw our control box
         ctlbox = self.get_widget('control_alignment')
-        vbox = gtk.VBox()
-        hbox = gtk.HBox()
+        vbox = Gtk.VBox()
+        hbox = Gtk.HBox()
         first = None
         for (name, text, key, image) in [
             ('edit', 'Edit', 'e', 'icon-pointer.png'),
@@ -1729,16 +1729,16 @@ class MapGUI(BaseGUI):
                 ('object', 'Object', 'o', 'icon-object.png')]:
             if name is None:
                 vbox.add(hbox)
-                hbox = gtk.HBox()
+                hbox = Gtk.HBox()
                 continue
-            radio = gtk.RadioButton(first)
+            radio = Gtk.RadioButton(first)
             radio.set_property('draw-indicator', False)
-            radio.set_relief(gtk.RELIEF_NONE)
+            radio.set_relief(Gtk.ReliefStyle.NONE)
             if first is None:
                 radio.set_active(True)
                 first = radio
             self.register_widget('ctl_%s_toggle' % (name), radio)
-            radio.add(gtk.image_new_from_file(self.datafile(image)))
+            radio.add(Gtk.image_new_from_file(self.datafile(image)))
             radio.set_tooltip_markup('%s <i>(%s)</i>' % (text, key))
             radio.connect('toggled', self.on_control_toggle)
             hbox.add(radio)
@@ -1748,8 +1748,8 @@ class MapGUI(BaseGUI):
 
         # Populate our brush box
         brushbox = self.get_widget('brush_alignment')
-        vbox = gtk.VBox()
-        hbox = gtk.HBox()
+        vbox = Gtk.VBox()
+        hbox = Gtk.HBox()
         first = None
         for (name, text, key, image) in [
                 ('tile_1', '1x1 Square', '1', 'icon-brush-tile-1.png'),
@@ -1760,16 +1760,16 @@ class MapGUI(BaseGUI):
                 ('tile_4', '4-Radius Circle', '4', 'icon-brush-circle-4.png')]:
             if name is None:
                 vbox.add(hbox)
-                hbox = gtk.HBox()
+                hbox = Gtk.HBox()
                 continue
-            radio = gtk.RadioButton(first)
+            radio = Gtk.RadioButton(first)
             radio.set_property('draw-indicator', False)
-            radio.set_relief(gtk.RELIEF_NONE)
+            radio.set_relief(Gtk.ReliefStyle.NONE)
             if first is None:
                 radio.set_active(True)
                 first = radio
             self.register_widget('brush_%s_toggle' % (name), radio)
-            radio.add(gtk.image_new_from_file(self.datafile(image)))
+            radio.add(Gtk.image_new_from_file(self.datafile(image)))
             radio.set_tooltip_markup('%s <i>(%s)</i>' % (text, key))
             radio.connect('toggled', self.on_brush_toggle)
             hbox.add(radio)
@@ -1898,11 +1898,11 @@ class MapGUI(BaseGUI):
         if c.book > 1:
             decal_list.append(('Snow', self.smartdraw.IDX_SNOW))
             decal_list.append(('Lava', self.smartdraw.IDX_LAVA))
-        menu = gtk.Menu()
+        menu = Gtk.Menu()
         group = None
         self.decal_edge_pref_map = {}
         for (label, index) in decal_list:
-            menuitem = gtk.RadioMenuItem(group, label)
+            menuitem = Gtk.RadioMenuItem(group, label)
             menuitem.show()
             self.decal_edge_pref_map[menuitem] = index
             if not group:
@@ -1971,31 +1971,31 @@ class MapGUI(BaseGUI):
         if c.book > 1:
             container = self.get_widget('entity_data_main_vbox')
 
-            vbox = gtk.VBox()
+            vbox = Gtk.VBox()
             self.register_widget('entity_status_box', vbox)
             container.pack_start(vbox, False, False)
 
-            label = gtk.Label()
+            label = Gtk.Label()
             label.set_markup('<b>Effects</b>')
             label.set_alignment(0, .5)
             label.set_padding(10, 7)
             vbox.add(label)
 
-            align = gtk.Alignment()
+            align = Gtk.Alignment.new()
             align.set_padding(0, 0, 40, 0)
             vbox.add(align)
 
-            statvbox = gtk.VBox()
+            statvbox = Gtk.VBox()
             align.add(statvbox)
 
-            notelabel = gtk.Label()
+            notelabel = Gtk.Label()
             notelabel.set_alignment(0, .5)
             notelabel.set_markup('<b>Note:</b> Many of these don\'t actually affect the entity, '
                                  'but they\'re all present in the datafile.')
             notelabel.set_line_wrap(True)
             statvbox.add(notelabel)
 
-            table = gtk.Table(len(c.statustable), 2)
+            table = Gtk.Table(len(c.statustable), 2)
             statvbox.add(table)
 
             # Now add the statuses to table
@@ -2020,12 +2020,12 @@ class MapGUI(BaseGUI):
                           'will erase your Undo stack, so save your map first if you\'re '
                           'not sure.')
         # set_alignment doesn't seem to work with our WrapLabel
-        # label.set_alignment(gtk.JUSTIFY_CENTER)
+        # label.set_alignment(Gtk.Justification.CENTER)
         adjust.add(label)
         adjust.show_all()
 
         # Increase the height of our tilewindow, if gtk thinks we have room.
-        if gtk.gdk.screen_height() > 900:
+        if Gdk.Screen.height() > 900:
             (cur_width, cur_height) = self.tilewindow.get_size_request()
             self.tilewindow.set_size_request(cur_width, 800)
             (cur_width, cur_height) = self.propswindow.get_size_request()
@@ -2124,15 +2124,15 @@ class MapGUI(BaseGUI):
         """ Used to export a PNG of the current map image to disk. """
 
         # Create the dialog
-        dialog = gtk.FileChooserDialog('Export Image...', None,
-                                       gtk.FILE_CHOOSER_ACTION_SAVE,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog = Gtk.FileChooserDialog('Export Image...', None,
+                                       Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_SAVE_AS, Gtk.ResponseType.OK))
+        dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
-        infolabel = gtk.Label()
+        infolabel = Gtk.Label()
         infolabel.set_markup(
             '<b>Note:</b> Only PNG images are supported.  If you name your export something other than .png, it will still be a PNG image.  Also note that an export at the fully-zoomed-in level will take about 25MB.')
         infolabel.set_line_wrap(True)
@@ -2142,14 +2142,14 @@ class MapGUI(BaseGUI):
             if (path != ''):
                 dialog.set_current_folder(path)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("PNG Files")
         filter.add_pattern("*.png")
         dialog.add_filter(filter)
 
         # Run the dialog and process its return values
         response = dialog.run()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             filename = dialog.get_filename()
             self.guicache.write_to_png(filename)
             self.putstatus('Image exported to %s' % (filename))
@@ -2216,7 +2216,7 @@ class MapGUI(BaseGUI):
         if self.mapobj is not None:
             resp = self.confirmdialog(
                 'Create new Map?', 'Unsaved changes will be lost!  Continue?', self.window)
-            if resp != gtk.RESPONSE_YES:
+            if resp != Gtk.ResponseType.YES:
                 return False
 
         # Figure out what type of map to create
@@ -2226,7 +2226,7 @@ class MapGUI(BaseGUI):
         dialog.destroy()
 
         # Process as-appropriate
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             self.setup_new_map(savegame)
             return True
         else:
@@ -2327,7 +2327,7 @@ class MapGUI(BaseGUI):
         rundialog = True
         while (rundialog):
             response = dialog.run()
-            if response == gtk.RESPONSE_OK:
+            if response == Gtk.ResponseType.OK:
                 filename = dialog.get_filename()
                 if filename and filename != '':
                     if dialog.get_file_source() == dialog.SOURCE_DATAPAK:
@@ -2339,7 +2339,7 @@ class MapGUI(BaseGUI):
                         rundialog = False
                         retval = True
                         self.last_map_source = dialog.get_file_source()
-            elif response == gtk.RESPONSE_APPLY:
+            elif response == Gtk.ResponseType.APPLY:
                 self.setup_new_map(dialog.get_savegame_flag())
                 self.last_map_source = None
                 retval = True
@@ -2404,8 +2404,8 @@ class MapGUI(BaseGUI):
         """ Main quit function. """
         response = self.confirmdialog(
             'Continue with Quit?', 'Unsaved changes will be lost!  Really quit?', self.window)
-        if (response == gtk.RESPONSE_YES):
-            gtk.main_quit()
+        if (response == Gtk.ResponseType.YES):
+            Gtk.main_quit()
         else:
             return True
 
@@ -2424,23 +2424,23 @@ class MapGUI(BaseGUI):
         dialog = BigGraphicDialog(
             self.mapobj.big_gfx_mappings, messages, transient=self.window, elderoak=elderoak)
         response = dialog.run()
-        if response == gtk.RESPONSE_APPLY:
+        if response == Gtk.ResponseType.APPLY:
             request_redraw = True
             self.mapobj.big_gfx_mappings.fix()
             messages = self.mapobj.big_gfx_mappings.load()
             if len(messages) > 0:
-                md = gtk.MessageDialog(
-                    flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                    buttons=gtk.BUTTONS_OK)
+                md = Gtk.MessageDialog(
+                    flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                    buttons=Gtk.ButtonsType.OK)
                 md.set_transient_for(dialog)
                 md.set_markup(
                     'Note: there are still some unresolved Big Graphic issues.  You can see the list of problems again by selecting "Big Graphic Info" from the "Edit" menu.')
                 md.run()
                 md.destroy()
             else:
-                md = gtk.MessageDialog(
-                    flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                    buttons=gtk.BUTTONS_OK)
+                md = Gtk.MessageDialog(
+                    flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                    buttons=Gtk.ButtonsType.OK)
                 md.set_transient_for(dialog)
                 md.set_markup(
                     'All Big Graphic issues were successfully resolved.')
@@ -2458,9 +2458,9 @@ class MapGUI(BaseGUI):
 
         # If the object doesn't exist in our cache, create it
         if (about is None):
-            about = gtk.AboutDialog()
+            about = Gtk.AboutDialog()
             about.set_transient_for(self.window)
-            about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            about.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
             about.set_name(app_name)
             about.set_version(version)
             about.set_website(url)
@@ -2477,7 +2477,7 @@ class MapGUI(BaseGUI):
             iconpath = self.datafile('eb1_icon_64.png')
             if (os.path.isfile(iconpath)):
                 try:
-                    about.set_logo(gtk.gdk.pixbuf_new_from_file(iconpath))
+                    about.set_logo(GdkPixbuf.Pixbuf.new_from_file(iconpath))
                 except:
                     pass
             self.register_widget('aboutwindow', about, False)
@@ -2566,7 +2566,7 @@ class MapGUI(BaseGUI):
         dialog = self.get_widget('fill_map_dialog')
         resp = dialog.run()
         dialog.hide()
-        if resp == gtk.RESPONSE_OK:
+        if resp == Gtk.ResponseType.OK:
             val = int(self.get_widget('fill_map_spin').get_value())
             pool = []
             if self.smartdraw_check.get_active() and self.smart_randomize.get_active():
@@ -2616,7 +2616,7 @@ class MapGUI(BaseGUI):
 
     def populate_color_selection(self):
         img = self.get_widget('color_img')
-        pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, 30, 30)
+        pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, 30, 30)
         pixbuf.fill(self.mapobj.rgb_color())
         img.set_from_pixbuf(pixbuf)
         self.get_widget('color_rgb_label').set_markup('<i>(RGB: %d, %d, %d)</i>' %
@@ -2711,14 +2711,14 @@ class MapGUI(BaseGUI):
             self.on_wall_changed(self.get_widget('wallimg'), False)
 
     def on_colorsel_clicked(self, widget):
-        dialog = gtk.ColorSelectionDialog('Select Overlay Color')
+        dialog = Gtk.ColorSelectionDialog('Select Overlay Color')
         dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
-        dialog.colorsel.set_current_color(gtk.gdk.Color(self.mapobj.color_r * 257,
+        dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
+        dialog.colorsel.set_current_color(Gdk.Color(self.mapobj.color_r * 257,
                                                         self.mapobj.color_g * 257,
                                                         self.mapobj.color_b * 257))
         response = dialog.run()
-        if (response == gtk.RESPONSE_OK):
+        if (response == Gtk.ResponseType.OK):
             color = dialog.colorsel.get_current_color()
             self.mapobj.color_r = int(color.red / 257)
             self.mapobj.color_g = int(color.green / 257)
@@ -2777,7 +2777,7 @@ class MapGUI(BaseGUI):
             entity.entid, entity.direction, None, True)
         if (entbuf is None):
             self.get_widget('ent_tile_img').set_from_stock(
-                gtk.STOCK_MISSING_IMAGE, 2)
+                Gtk.STOCK_MISSING_IMAGE, 2)
         else:
             self.get_widget('ent_tile_img').set_from_pixbuf(entbuf)
 
@@ -2875,7 +2875,7 @@ class MapGUI(BaseGUI):
         self.on_singleval_tile_changed_int(widget)
         pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('floorimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('floorimg_image').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('floorimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
@@ -2884,7 +2884,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('draw_floor_img').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('draw_floor_img').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_floor_img').set_from_pixbuf(pixbuf)
 
@@ -2892,7 +2892,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_floor(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('fill_map_img').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('fill_map_img').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('fill_map_img').set_from_pixbuf(pixbuf)
 
@@ -2901,7 +2901,7 @@ class MapGUI(BaseGUI):
         self.on_singleval_tile_changed_int(widget)
         pixbuf = self.gfx.get_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('decalimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('decalimg_image').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('decalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
@@ -2910,7 +2910,7 @@ class MapGUI(BaseGUI):
         """ Update the appropriate image when necessary. """
         pixbuf = self.gfx.get_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
-            self.get_widget('draw_decal_img').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('draw_decal_img').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_decal_img').set_from_pixbuf(pixbuf)
 
@@ -2921,7 +2921,7 @@ class MapGUI(BaseGUI):
         (pixbuf, height, offset) = self.gfx.get_object(
             int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
-            self.get_widget('wallimg_image').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('wallimg_image').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('wallimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
@@ -2931,7 +2931,7 @@ class MapGUI(BaseGUI):
         (pixbuf, height, offset) = self.gfx.get_object(
             int(widget.get_value()), None, True, self.mapobj.tree_set)
         if (pixbuf is None):
-            self.get_widget('draw_wall_img').set_from_stock(gtk.STOCK_EDIT, 2)
+            self.get_widget('draw_wall_img').set_from_stock(Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_wall_img').set_from_pixbuf(pixbuf)
 
@@ -2941,7 +2941,7 @@ class MapGUI(BaseGUI):
         pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('walldecalimg_image').set_from_stock(
-                gtk.STOCK_EDIT, 2)
+                Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('walldecalimg_image').set_from_pixbuf(pixbuf)
         self.update_composite()
@@ -2951,7 +2951,7 @@ class MapGUI(BaseGUI):
         pixbuf = self.gfx.get_object_decal(int(widget.get_value()), None, True)
         if (pixbuf is None):
             self.get_widget('draw_walldecal_img').set_from_stock(
-                gtk.STOCK_EDIT, 2)
+                Gtk.STOCK_EDIT, 2)
         else:
             self.get_widget('draw_walldecal_img').set_from_pixbuf(pixbuf)
 
@@ -3194,7 +3194,7 @@ class MapGUI(BaseGUI):
             return
 
         if (self.dragging):
-            if sys.platform != 'win32' and gtk.events_pending():
+            if sys.platform != 'win32' and Gtk.events_pending():
                 # A default Fedora 13 install on my old development
                 # machine performs horribly slowly on click-and-drag
                 # for some reason.  This is a pretty simple way to
@@ -3368,11 +3368,11 @@ class MapGUI(BaseGUI):
 
     def set_entity_toggle_button(self, show_add):
         if (show_add):
-            image = gtk.STOCK_ADD
+            image = Gtk.STOCK_ADD
             text = 'Add Entity'
             self.get_widget('entity_scroll').hide()
         else:
-            image = gtk.STOCK_REMOVE
+            image = Gtk.STOCK_REMOVE
             text = 'Remove Entity'
             self.get_widget('entity_scroll').show()
             if (self.mapobj.is_savegame()):
@@ -3387,14 +3387,14 @@ class MapGUI(BaseGUI):
         self.get_widget('entity_toggle_text').set_text(text)
 
     def input_label(self, table, row, name, text):
-        label = gtk.Label()
+        label = Gtk.Label()
         label.show()
         label.set_markup('%s:' % text)
         label.set_alignment(1, 0.5)
-        label.set_justify(gtk.JUSTIFY_RIGHT)
+        label.set_justify(Gtk.Justification.RIGHT)
         label.set_padding(5, 4)
         self.register_widget('%s_label' % (name), label)
-        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+        table.attach(label, 0, 1, row, row + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         return label
 
     def tilecontent_input_label(self, page, table, row, name, text):
@@ -3402,10 +3402,10 @@ class MapGUI(BaseGUI):
 
     def input_text(self, table, row, name, text, tooltip=None, signal=None, width=None, hbox=False):
         self.input_label(table, row, name, text)
-        align = gtk.Alignment(0, 0.5, 1, 1)
+        align = Gtk.Alignment.new(0, 0.5, 1, 1)
         align.set_padding(0, 0, 0, 8)
         align.show()
-        entry = gtk.Entry()
+        entry = Gtk.Entry()
         entry.show()
         self.register_widget(name, entry)
         if width is not None:
@@ -3415,7 +3415,7 @@ class MapGUI(BaseGUI):
         if (tooltip is not None):
             entry.set_tooltip_text(tooltip)
         if hbox:
-            hbox = gtk.HBox()
+            hbox = Gtk.HBox()
             hbox.pack_start(entry, True, True)
             hbox.show()
             align.add(hbox)
@@ -3445,13 +3445,13 @@ class MapGUI(BaseGUI):
 
     def input_spin(self, table, row, name, text, max, tooltip=None, signal=None):
         self.input_label(table, row, name, text)
-        align = gtk.Alignment(0, 0.5, 0, 1)
+        align = Gtk.Alignment.new(0, 0.5, 0, 1)
         align.show()
-        entry = gtk.SpinButton()
+        entry = Gtk.SpinButton()
         entry.show()
         self.register_widget(name, entry)
         entry.set_range(0, max)
-        entry.set_adjustment(gtk.Adjustment(0, 0, max, 1, 10, 0))
+        entry.set_adjustment(Gtk.Adjustment(0, 0, max, 1, 10, 0))
         if (signal is not None):
             entry.connect('value-changed', signal)
         if (tooltip is not None):
@@ -3493,9 +3493,9 @@ class MapGUI(BaseGUI):
 
     def tilecontent_input_dropdown(self, page, table, row, name, text, values, tooltip=None, signal=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
-        align = gtk.Alignment(0, 0.5, 0, 1)
+        align = Gtk.Alignment.new(0, 0.5, 0, 1)
         align.show()
-        entry = gtk.combo_box_new_text()
+        entry = Gtk.ComboBoxText()
         entry.show()
         entry.set_name('%s_%d' % (name, page))
         for value in values:
@@ -3514,9 +3514,9 @@ class MapGUI(BaseGUI):
 
     def tilecontent_input_flag(self, page, table, row, name, flagval, text, tooltip=None):
         self.input_label(table, row, '%s_%d' % (name, page), text)
-        align = gtk.Alignment(0, 0.5, 0, 1)
+        align = Gtk.Alignment.new(0, 0.5, 0, 1)
         align.show()
-        entry = gtk.CheckButton()
+        entry = Gtk.CheckButton()
         entry.show()
         entry.set_name('%s_%X_%d' % (name, flagval, page))
         tilecontentval = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[page].__dict__[
@@ -3630,9 +3630,9 @@ class MapGUI(BaseGUI):
             raise Exception('invalid action')
 
     def tilecontent_group_box(self, markup):
-        box = gtk.VBox()
+        box = Gtk.VBox()
         box.show()
-        header = gtk.Label()
+        header = Gtk.Label()
         header.show()
         header.set_markup(markup)
         header.set_alignment(0, 0.5)
@@ -3642,23 +3642,23 @@ class MapGUI(BaseGUI):
 
     def setup_global_item_completion(self, entry):
         """
-        Given a gtk.Entry(), sets up a global-item-name autocompletion on
-        the entry.  Note: we *do* need a separate gtk.EntryCompletion()
-        for each gtk.Entry(), so we don't save anything by trying to re-use
+        Given a Gtk.Entry(), sets up a global-item-name autocompletion on
+        the entry.  Note: we *do* need a separate Gtk.EntryCompletion()
+        for each Gtk.Entry(), so we don't save anything by trying to re-use
         them on multiple widgets.
         """
         if not self.global_item_name_store:
-            self.global_item_name_store = gtk.ListStore(str)
+            self.global_item_name_store = Gtk.ListStore(str)
             for item_name in self.eschalondata.get_itemlist():
                 iteration = self.global_item_name_store.append()
                 self.global_item_name_store.set(iteration, 0, item_name)
 
         if len(self.global_item_name_store) > 0:
-            completion = gtk.EntryCompletion()
+            completion = Gtk.EntryCompletion()
             completion.set_model(self.global_item_name_store)
             completion.set_popup_set_width(False)
-            renderer = gtk.CellRendererText()
-            completion.pack_start(renderer)
+            renderer = Gtk.CellRendererText()
+            completion.pack_start(renderer, True, True, 0)
             completion.set_property('text-column', 0)
             # These two callbacks can be done with lambdas fairly easily, but
             # they look ugly that way.
@@ -3676,23 +3676,23 @@ class MapGUI(BaseGUI):
         curpages = self.tilecontent_notebook.get_n_pages()
 
         # Label for the notebook
-        label = gtk.Label('Object #%d' % (curpages + 1))
+        label = Gtk.Label(label='Object #%d' % (curpages + 1))
         label.show()
 
         # Remove Button
-        remove_align = gtk.Alignment(0, 0.5, 0, 1)
+        remove_align = Gtk.Alignment.new(0, 0.5, 0, 1)
         remove_align.show()
         remove_align.set_border_width(8)
-        remove_button = gtk.Button()
+        remove_button = Gtk.Button()
         remove_button.show()
         remove_button.set_name('tilecontent_remove_button_%d' % (curpages))
         remove_button.connect('clicked', self.on_tilecontent_del)
-        remove_button_box = gtk.HBox()
+        remove_button_box = Gtk.HBox()
         remove_button_box.show()
-        rm_img = gtk.image_new_from_stock(gtk.STOCK_REMOVE, 4)
+        rm_img = Gtk.Image.new_from_stock(Gtk.STOCK_REMOVE, 4)
         rm_img.show()
         remove_button_box.add(rm_img)
-        rm_txt = gtk.Label('Remove Object')
+        rm_txt = Gtk.Label(label='Remove Object')
         rm_txt.show()
         rm_txt.set_padding(6, 0)
         remove_button_box.add(rm_txt)
@@ -3701,10 +3701,10 @@ class MapGUI(BaseGUI):
 
         # Basic Information
         basic_box = self.tilecontent_group_box('<b>Basic Information</b>')
-        binput = gtk.Table(10, 2)
+        binput = Gtk.Table(10, 2)
         binput.show()
 
-        align = gtk.Alignment(.5, .5, 1, 1)
+        align = Gtk.Alignment.new(.5, .5, 1, 1)
         align.set_padding(0, 0, 11, 0)
         align.add(binput)
         align.show()
@@ -3766,18 +3766,18 @@ class MapGUI(BaseGUI):
             scr = self.mapobj.tiles[self.tile_y][self.tile_x].tilecontents[curpages]
             self.tilecontent_input_label(
                 curpages, binput, 9, 'cur_condition', 'Condition')
-            hbox = gtk.HBox()
-            curentry = gtk.SpinButton()
+            hbox = Gtk.HBox()
+            curentry = Gtk.SpinButton()
             self.register_widget('cur_condition_%d' % (curpages), curentry)
             curentry.set_range(0, 0xFFFFFFFF)
-            curentry.set_adjustment(gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
-            maxlabel = gtk.Label('out of:')
+            curentry.set_adjustment(Gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
+            maxlabel = Gtk.Label(label='out of:')
             self.register_widget('max_condition_%d_label' %
                                  (curpages), maxlabel)
-            maxentry = gtk.SpinButton()
+            maxentry = Gtk.SpinButton()
             self.register_widget('max_condition_%d' % (curpages), maxentry)
             maxentry.set_range(0, 0xFFFFFFFF)
-            maxentry.set_adjustment(gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
+            maxentry.set_adjustment(Gtk.Adjustment(0, 0, 0xFFFFFFFF, 1, 10, 0))
             hbox.add(curentry)
             hbox.add(maxlabel)
             hbox.add(maxentry)
@@ -3786,7 +3786,7 @@ class MapGUI(BaseGUI):
                 maxentry.set_value(scr.max_condition)
             curentry.connect('value-changed', self.on_tilecontent_int_changed)
             maxentry.connect('value-changed', self.on_tilecontent_int_changed)
-            align = gtk.Alignment(0, 0.5, 0, 1)
+            align = Gtk.Alignment.new(0, 0.5, 0, 1)
             align.add(hbox)
             align.show_all()
             binput.attach(align, 1, 2, 9, 10)
@@ -3803,13 +3803,13 @@ class MapGUI(BaseGUI):
         # Contents
         contents_box = self.tilecontent_group_box(
             '<b>Contents</b> <i>(If Container)</i>')
-        cinput = gtk.Table(8, 3)
+        cinput = Gtk.Table(8, 3)
         self.register_widget('itemtable_%d' % (curpages), cinput, True)
         cinput.show()
-        cspacer = gtk.Label('')
+        cspacer = Gtk.Label(label='')
         cspacer.show()
         cspacer.set_padding(11, 0)
-        cinput.attach(cspacer, 0, 1, 0, 8, gtk.FILL, gtk.FILL | gtk.EXPAND)
+        cinput.attach(cspacer, 0, 1, 0, 8, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
         contents_box.pack_start(cinput, False, False)
 
         # Contents Inputs (varies based on savefile status)
@@ -3818,7 +3818,7 @@ class MapGUI(BaseGUI):
                 self.tilecontent_input_label(
                     curpages, cinput, num, 'item_%d' % (num), 'Item %d' % (num + 1))
                 cinput.attach(self.gui_item('item_%d_%d' % (num, curpages), self.on_mapitem_clicked, self.on_mapitem_action_clicked),
-                              2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND)
+                              2, 3, num, num + 1, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
                 self.populate_mapitem_button(num, curpages)
         else:
             for num in range(8):
@@ -3831,12 +3831,12 @@ class MapGUI(BaseGUI):
 
         # Unknowns
         unknown_box = self.tilecontent_group_box('<b>Unknowns</b>')
-        uinput = gtk.Table(5, 3)
+        uinput = Gtk.Table(5, 3)
         uinput.show()
-        spacer = gtk.Label('')
+        spacer = Gtk.Label(label='')
         spacer.show()
         spacer.set_padding(11, 0)
-        uinput.attach(spacer, 0, 1, 0, 5, gtk.FILL, gtk.FILL | gtk.EXPAND)
+        uinput.attach(spacer, 0, 1, 0, 5, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block
@@ -3853,7 +3853,7 @@ class MapGUI(BaseGUI):
                 self.input_int, curpages, uinput, 4, 'zeroi3', '<i>Usually Zero 4</i>')
 
         # Tab Content
-        content = gtk.VBox()
+        content = Gtk.VBox()
         content.show()
         content.pack_start(remove_align, False, False)
         content.pack_start(basic_box, False, False)
@@ -3861,12 +3861,12 @@ class MapGUI(BaseGUI):
         content.pack_start(unknown_box, False, False)
 
         # ... aand we should slap this all into a scrolledwindow
-        sw = gtk.ScrolledWindow()
+        sw = Gtk.ScrolledWindow()
         sw.show()
-        sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        vp = gtk.Viewport()
+        sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        vp = Gtk.Viewport()
         vp.show()
-        vp.set_shadow_type(gtk.SHADOW_NONE)
+        vp.set_shadow_type(Gtk.ShadowType.NONE)
         vp.add(content)
         sw.add(vp)
 
@@ -5451,7 +5451,7 @@ class MapGUI(BaseGUI):
                                  0, height_x4,
                                  width, height,
                                  0, height_x4,
-                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 1, 1, GdkPixbuf.InterpType.NEAREST, 255)
         if (tile.decalimg > 0):
             pixbuf = self.gfx.get_decal(tile.decalimg, width, True)
             if (pixbuf is not None):
@@ -5459,7 +5459,7 @@ class MapGUI(BaseGUI):
                                  0, height_x4,
                                  width, height,
                                  0, height_x4,
-                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 1, 1, GdkPixbuf.InterpType.NEAREST, 255)
             if ((self.req_book == 1 and tile.decalimg == 52) or
                 (self.req_book == 2 and tile.decalimg == 101) or
                     (self.req_book == 3 and tile.decalimg == 101)):
@@ -5468,7 +5468,7 @@ class MapGUI(BaseGUI):
                                        torchwidth - 1, torchdecalyoff,
                                        torchwidth, torchheight,
                                        torchwidth - 1, torchdecalyoff,
-                                       1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                       1, 1, GdkPixbuf.InterpType.NEAREST, 255)
         if (tile.wallimg > 0):
             (pixbuf, pixheight, offset) = self.gfx.get_object(
                 tile.wallimg, width, True, self.mapobj.tree_set)
@@ -5477,14 +5477,14 @@ class MapGUI(BaseGUI):
                                  0, height * (4 - pixheight),
                                  width, height * (pixheight + 1),
                                  offset, height * (4 - pixheight),
-                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 1, 1, GdkPixbuf.InterpType.NEAREST, 255)
             if (self.req_book == 2 and (tile.wallimg == 349 or tile.wallimg == 350)):
                 if (torchbuf is not None):
                     torchbuf.composite(comp_pixbuf,
                                        torchwidth - 1, torchwallyoff,
                                        torchwidth, torchwallyoff2,
                                        torchwidth - 1, torchwallyoff,
-                                       1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                       1, 1, GdkPixbuf.InterpType.NEAREST, 255)
         if (tile.walldecalimg > 0):
             pixbuf = self.gfx.get_object_decal(tile.walldecalimg, width, True)
             if (pixbuf is not None):
@@ -5492,7 +5492,7 @@ class MapGUI(BaseGUI):
                                  0, height_x2,
                                  width, height_x3,
                                  0, height_x2,
-                                 1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                 1, 1, GdkPixbuf.InterpType.NEAREST, 255)
             if ((self.req_book == 1 and (tile.walldecalimg == 17 or tile.walldecalimg == 18)) or
                     (self.req_book == 2 and (tile.walldecalimg == 2 or tile.walldecalimg == 4))):
                 if (torchbuf is not None):
@@ -5501,13 +5501,13 @@ class MapGUI(BaseGUI):
                                            torchsconcexoff, torchsconceyoff,
                                            torchwidth, torchsconceyoff2,
                                            torchsconcexoff, torchsconceyoff,
-                                           1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                           1, 1, GdkPixbuf.InterpType.NEAREST, 255)
                     elif (tile.walldecalimg == 18 or tile.walldecalimg == 4):
                         torchbuf.composite(comp_pixbuf,
                                            torchsconcexoff2, torchsconceyoff,
                                            torchwidth, torchsconceyoff2,
                                            torchsconcexoff2, torchsconceyoff,
-                                           1, 1, gtk.gdk.INTERP_NEAREST, 255)
+                                           1, 1, GdkPixbuf.InterpType.NEAREST, 255)
 
         # ... and update the main image
         self.get_widget('composite_area').set_from_pixbuf(comp_pixbuf)
@@ -5588,7 +5588,7 @@ class MapGUI(BaseGUI):
         self.drawstatuswindow.show()
 
         self.maparea.set_size_request(self.z_mapsize_x, self.z_mapsize_y)
-        self.pixmap = gtk.gdk.Pixmap(
+        self.pixmap = Gdk.Pixmap(
             self.maparea.window, self.z_mapsize_x, self.z_mapsize_y)
 
         self.ctx = self.pixmap.cairo_create()
@@ -5677,8 +5677,8 @@ class MapGUI(BaseGUI):
             if (y % 10 == 0):
                 self.drawstatusbar.set_fraction(
                     y / float(len(self.mapobj.tiles)))
-                while gtk.events_pending():
-                    gtk.main_iteration()
+                while Gtk.events_pending():
+                    Gtk.main_iteration()
         #time_d = time.time()
         # print 'Inner loop: %0.2f' % (time_d-time_c)
 
@@ -5687,7 +5687,7 @@ class MapGUI(BaseGUI):
         self.ctx.paint()
 
         # ... and draw onto our main area (this is duplicated below, in expose_map)
-        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
+        self.maparea.window.draw_drawable(self.maparea.get_style().fg_gc[Gtk.StateType.NORMAL],
                                           self.pixmap,
                                           0, 0,
                                           0, 0,
@@ -5717,7 +5717,7 @@ class MapGUI(BaseGUI):
 
             # Render to the window (this is duplicated above, in draw_map)
             self.maparea.window.draw_drawable(
-                self.maparea.get_style().fg_gc[gtk.STATE_NORMAL],
+                self.maparea.get_style().fg_gc[Gtk.StateType.NORMAL],
                 self.pixmap,
                 0, 0,
                 0, 0,

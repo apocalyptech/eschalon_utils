@@ -23,7 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 import os
-import gtk
+from gi.repository import Gtk
 import math
 import zlib
 import cairo
@@ -55,7 +55,7 @@ class GfxCache(object):
 
         # For ease-of-use, we're also going to import it to a GDK Pixbuf
         # This shouldn't hurt performance really since there's only a few files
-        loader = gtk.gdk.PixbufLoader()
+        loader = GdkPixbuf.PixbufLoader()
         loader.write(pngdata)
         loader.close()
         self.pixbuf = loader.get_pixbuf()
@@ -122,7 +122,7 @@ class GfxCache(object):
                     copy_y_from + self.height > self.pixbuf.get_property('height')):
                 return None
             self.gdkcache[number] = {}
-            self.gdkcache[number]['orig'] = gtk.gdk.Pixbuf(self.pixbuf.get_colorspace(),
+            self.gdkcache[number]['orig'] = GdkPixbuf.Pixbuf(self.pixbuf.get_colorspace(),
                                                            self.pixbuf.get_has_alpha(),
                                                            self.pixbuf.get_bits_per_sample(),
                                                            self.width, self.height)
@@ -139,7 +139,7 @@ class GfxCache(object):
             if sizex not in self.gdkcache[number]:
                 sizey = (sizex * self.height) // self.width
                 self.gdkcache[number][sizex] = self.gdkcache[number]['orig'].scale_simple(
-                    sizex, sizey, gtk.gdk.INTERP_BILINEAR)
+                    sizex, sizey, GdkPixbuf.InterpType.BILINEAR)
             return self.gdkcache[number][sizex]
 
 
@@ -174,8 +174,8 @@ class B1GfxEntCache(GfxCache):
         self.surface = newsurf
 
         # (and on our pixbuf copy as well)
-        newbuf = gtk.gdk.Pixbuf(
-            gtk.gdk.COLORSPACE_RGB, True, 8, self.width, imgheight)
+        newbuf = GdkPixbuf.Pixbuf(
+            GdkPixbuf.Colorspace.RGB, True, 8, self.width, imgheight)
         self.pixbuf.copy_area(0, 0, self.width, imgheight, newbuf, 0, 0)
         self.pixbuf = newbuf
 
@@ -316,7 +316,7 @@ class Gfx(object):
         """
         df = io.BytesIO()
         surface.write_to_png(df)
-        loader = gtk.gdk.PixbufLoader()
+        loader = GdkPixbuf.PixbufLoader()
         loader.write(df.getvalue())
         loader.close()
         df.close()
@@ -594,7 +594,7 @@ class B1Gfx(Gfx):
         if avatarnum not in self.avatarcache:
             if avatarnum == 7:
                 if os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png')):
-                    self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
+                    self.avatarcache[avatarnum] = GdkPixbuf.Pixbuf.new_from_file(
                         os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                 else:
                     return None
@@ -878,7 +878,7 @@ class B2Gfx(Gfx):
             if avatarnum not in self.avatarcache:
                 if avatarnum == 0xFFFFFFFF:
                     if os.path.exists(os.path.join(self.eschalondata.gamedir, 'mypic.png')):
-                        self.avatarcache[avatarnum] = gtk.gdk.pixbuf_new_from_file(
+                        self.avatarcache[avatarnum] = GdkPixbuf.Pixbuf.new_from_file(
                             os.path.join(self.eschalondata.gamedir, 'mypic.png'))
                     else:
                         return None

@@ -21,7 +21,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-import gtk
+from gi.repository import Gtk
 
 from eschalon.constants import constants as c
 
@@ -44,7 +44,7 @@ def match_completion(completion, key, iter, column):
     return False
 
 
-class MapSelector(gtk.Dialog):
+class MapSelector(Gtk.Dialog):
     """
     This is a dialog used to allow the user to click on a tile on the map
     and have it populate the coordinates automatically in the script editor.
@@ -56,10 +56,10 @@ class MapSelector(gtk.Dialog):
     """
 
     def __init__(self, mapgui, parent=None):
-        gtk.Dialog.__init__(self, 'Choose a Tile',
+        GObject.GObject.__init__(self, 'Choose a Tile',
                             parent,
-                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                            (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
+                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.mapgui = mapgui
         allocation = self.mapgui.mainscroll.get_allocation()
         self.set_size_request(allocation.width - 50, allocation.height - 50)
@@ -67,14 +67,14 @@ class MapSelector(gtk.Dialog):
         self.saved_mapgui = False
 
         # Info labels
-        hbox = gtk.HBox()
-        label = gtk.Label(
+        hbox = Gtk.HBox()
+        label = Gtk.Label(label=
             'Left-Click to select a tile.  Middle-click or right-click to drag.')
         label.set_padding(10, 10)
         label.set_alignment(0, .5)
         hbox.pack_start(label, False)
 
-        self.coordlabel = gtk.Label()
+        self.coordlabel = Gtk.Label()
         label.set_padding(10, 10)
         label.set_alignment(1, .5)
         hbox.pack_end(self.coordlabel, False, True, 10)
@@ -82,20 +82,20 @@ class MapSelector(gtk.Dialog):
         self.vbox.pack_start(hbox, False)
 
         # Main area
-        self.sw = gtk.ScrolledWindow()
-        self.sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        vp = gtk.Viewport()
+        self.sw = Gtk.ScrolledWindow()
+        self.sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        vp = Gtk.Viewport()
         self.sw.add(vp)
-        self.da = gtk.DrawingArea()
+        self.da = Gtk.DrawingArea()
         vp.add(self.da)
         self.da.connect('realize', self.on_realize)
         self.da.connect('expose-event', self.on_expose)
         self.da.connect('motion-notify-event', self.mapgui.on_mouse_changed)
         self.da.connect('button-press-event', self.mapgui.on_clicked)
         self.da.connect('button-release-event', self.mapgui.on_released)
-        self.da.add_events(gtk.gdk.POINTER_MOTION_MASK |
-                           gtk.gdk.BUTTON_PRESS_MASK |
-                           gtk.gdk.BUTTON_RELEASE_MASK)
+        self.da.add_events(Gdk.EventMask.POINTER_MOTION_MASK |
+                           Gdk.EventMask.BUTTON_PRESS_MASK |
+                           Gdk.EventMask.BUTTON_RELEASE_MASK)
 
         self.vbox.add(self.sw)
 
@@ -112,13 +112,13 @@ class MapSelector(gtk.Dialog):
         self.canvas_y = self.mapgui.z_mapsize_y
 
         widget.set_size_request(self.canvas_x, self.canvas_y)
-        self.pixmap = gtk.gdk.Pixmap(
+        self.pixmap = Gdk.Pixmap(
             widget.window, self.canvas_x, self.canvas_y)
         self.ctx = self.pixmap.cairo_create()
         self.ctx.set_source_surface(self.mapgui.guicache)
         self.ctx.paint()
 
-        widget.window.draw_drawable(widget.get_style().fg_gc[gtk.STATE_NORMAL],
+        widget.window.draw_drawable(widget.get_style().fg_gc[Gtk.StateType.NORMAL],
                                     self.pixmap,
                                     0, 0,
                                     0, 0,
@@ -206,7 +206,7 @@ class MapSelector(gtk.Dialog):
                 self.mapgui.draw_tile(x, y, True)
 
             widget.window.draw_drawable(
-                widget.get_style().fg_gc[gtk.STATE_NORMAL],
+                widget.get_style().fg_gc[Gtk.StateType.NORMAL],
                 self.pixmap,
                 0, 0,
                 0, 0,
@@ -221,7 +221,7 @@ class MapSelector(gtk.Dialog):
         we can now get out of here and return our new coordinates.
         self.tile_x and self.tile_y will have the coordinates for us to process.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
 
 class ScriptEditorRow(object):
@@ -239,35 +239,35 @@ class ScriptEditorRow(object):
         self.rownum = rownum
 
         # Our widgets
-        self.numlabel = gtk.Label()
+        self.numlabel = Gtk.Label()
         self.numlabel.set_alignment(1, .5)
         self.update_rownum()
-        self.commandentry = gtk.Entry()
+        self.commandentry = Gtk.Entry()
         self.commandentry.set_text(text)
         self.commandentry.set_size_request(250, -1)
-        self.tokenlabel = gtk.Label()
-        self.delbutton = gtk.Button()
-        self.delbutton.add(gtk.image_new_from_stock(
-            gtk.STOCK_REMOVE, gtk.ICON_SIZE_BUTTON))
+        self.tokenlabel = Gtk.Label()
+        self.delbutton = Gtk.Button()
+        self.delbutton.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_REMOVE, Gtk.IconSize.BUTTON))
         self.delbutton.set_tooltip_text('Delete this command')
-        self.upbutton = gtk.Button()
-        self.upbutton.add(gtk.image_new_from_stock(
-            gtk.STOCK_GO_UP, gtk.ICON_SIZE_BUTTON))
+        self.upbutton = Gtk.Button()
+        self.upbutton.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_GO_UP, Gtk.IconSize.BUTTON))
         self.upbutton.set_tooltip_text('Move this command up a line')
-        self.downbutton = gtk.Button()
-        self.downbutton.add(gtk.image_new_from_stock(
-            gtk.STOCK_GO_DOWN, gtk.ICON_SIZE_BUTTON))
+        self.downbutton = Gtk.Button()
+        self.downbutton.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_GO_DOWN, Gtk.IconSize.BUTTON))
         self.downbutton.set_tooltip_text('Move this command down a line')
 
         self.widgets = (self.numlabel, self.commandentry, self.tokenlabel,
                         self.delbutton, self.upbutton, self.downbutton)
 
         # Attach a completion to our text Entry
-        completion = gtk.EntryCompletion()
+        completion = Gtk.EntryCompletion()
         completion.set_model(completion_model)
         completion.set_popup_set_width(False)
-        renderer = gtk.CellRendererText()
-        completion.pack_start(renderer)
+        renderer = Gtk.CellRendererText()
+        completion.pack_start(renderer, True, True, 0)
         completion.set_property('text-column', 0)
         completion.set_match_func(match_completion, 0)
         completion.set_cell_data_func(renderer, format_completion_text, 1)
@@ -275,17 +275,17 @@ class ScriptEditorRow(object):
 
         # Attach our widgets to the table
         table.attach(self.numlabel, 0, 1, rownum,
-                     rownum + 1, gtk.FILL, gtk.FILL)
+                     rownum + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         table.attach(self.commandentry, 1, 2, rownum, rownum +
-                     1, gtk.FILL | gtk.EXPAND, gtk.FILL, 5)
+                     1, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL, 5)
         table.attach(self.delbutton, 2, 3, rownum,
-                     rownum + 1, gtk.FILL, gtk.FILL)
+                     rownum + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         table.attach(self.upbutton, 3, 4, rownum,
-                     rownum + 1, gtk.FILL, gtk.FILL)
+                     rownum + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         table.attach(self.downbutton, 4, 5, rownum,
-                     rownum + 1, gtk.FILL, gtk.FILL)
+                     rownum + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         table.attach(self.tokenlabel, 5, 6, rownum,
-                     rownum + 1, gtk.FILL, gtk.FILL, 5)
+                     rownum + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL, 5)
 
         # Now connect some signal handlers
         self.commandentry.connect('changed', entry_callback, self)
@@ -366,7 +366,7 @@ class ScriptEditorRow(object):
 class ScriptEditor(object):
     """
     Master class for doing more high-level script editing.  Probably this
-    should just inherit from gtk.Dialog and do its thing that way, but instead
+    should just inherit from Gtk.Dialog and do its thing that way, but instead
     it doesn't.  Alas.
     """
 
@@ -378,67 +378,67 @@ class ScriptEditor(object):
         self.allow_autoscroll = True
         self.cur_focus = None
         self.mapgui = None
-        self.window = gtk.Dialog('Script Editor',
+        self.window = Gtk.Dialog('Script Editor',
                                  None,
-                                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                 (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                  gtk.STOCK_OK, gtk.RESPONSE_OK))
+                                 Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                  Gtk.STOCK_OK, Gtk.ResponseType.OK))
         self.window.set_size_request(500, 400)
 
         # Header
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup('<b>Script Editor</b>')
         label.set_padding(0, 7)
         self.window.vbox.pack_start(label, False)
 
         # ScrolledWindow; this holds the main table
-        self.sw = gtk.ScrolledWindow()
-        self.sw.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self.sw.set_shadow_type(gtk.SHADOW_NONE)
+        self.sw = Gtk.ScrolledWindow()
+        self.sw.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self.sw.set_shadow_type(Gtk.ShadowType.NONE)
         self.window.vbox.add(self.sw)
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_ETCHED_OUT)
+        vp = Gtk.Viewport()
+        vp.set_shadow_type(Gtk.ShadowType.ETCHED_OUT)
         self.sw.add(vp)
 
-        align = gtk.Alignment(.5, .5, 1, 1)
+        align = Gtk.Alignment.new(.5, .5, 1, 1)
         align.set_padding(5, 5, 5, 5)
         vp.add(align)
-        self.table = gtk.Table()
+        self.table = Gtk.Table()
         align.add(self.table)
 
         # Bottom HBox, shows some buttons and our token count
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         self.window.vbox.pack_start(hbox, False)
 
-        align = gtk.Alignment(0, .5, 0, 1)
+        align = Gtk.Alignment.new(0, .5, 0, 1)
         align.set_padding(7, 7, 9, 9)
         hbox.pack_start(align, False)
-        normbutton = gtk.Button()
+        normbutton = Gtk.Button()
         align.add(normbutton)
-        normhbox = gtk.HBox()
-        normhbox.add(gtk.image_new_from_stock(
-            gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
-        normhbox.add(gtk.Label('Normalize'))
+        normhbox = Gtk.HBox()
+        normhbox.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_REDO, Gtk.IconSize.BUTTON))
+        normhbox.add(Gtk.Label(label='Normalize'))
         normbutton.add(normhbox)
         normbutton.connect('clicked', self.normalize_page)
         normbutton.set_tooltip_text('Process any compound statements, get rid of empty '
                                     'statements, and close any unclosed parentheses.')
 
-        align = gtk.Alignment(0, .5, 0, 1)
+        align = Gtk.Alignment.new(0, .5, 0, 1)
         align.set_padding(7, 7, 9, 9)
         hbox.pack_start(align, False)
-        self.coordbutton = gtk.Button()
+        self.coordbutton = Gtk.Button()
         align.add(self.coordbutton)
-        coordhbox = gtk.HBox()
-        coordhbox.add(gtk.image_new_from_stock(
-            gtk.STOCK_ZOOM_IN, gtk.ICON_SIZE_BUTTON))
-        coordhbox.add(gtk.Label('Add Coordinate'))
+        coordhbox = Gtk.HBox()
+        coordhbox.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_ZOOM_IN, Gtk.IconSize.BUTTON))
+        coordhbox.add(Gtk.Label(label='Add Coordinate'))
         self.coordbutton.add(coordhbox)
         self.coordbutton.connect('clicked', self.add_coordinate)
         self.coordbutton.set_tooltip_text('Select a tile from the map and insert the '
                                           'coordinates at the current cursor location.')
 
-        self.token_total_label = gtk.Label()
+        self.token_total_label = Gtk.Label()
         self.token_total_label.set_alignment(1, .5)
         self.token_total_label.set_padding(9, 0)
         self.token_total_label.set_markup('<b>Total Tokens:</b> 0')
@@ -446,7 +446,7 @@ class ScriptEditor(object):
         hbox.add(self.token_total_label)
 
         # Set up the completion model, for our Entry completions to use
-        self.completion_model = gtk.ListStore(str, str)
+        self.completion_model = Gtk.ListStore(str, str)
         for command in sorted(c.commands):
             iter = self.completion_model.append()
             markup = ['<b>%s</b>' % (command)]
@@ -538,7 +538,7 @@ class ScriptEditor(object):
         """
         Launches our script editor
         """
-        self.window.set_transient_for(parent)
+        self.set_transient_for(parent)
         self.coordbutton.set_sensitive(False)
         self.normalize_script(initial_script)
         if has_coords:
@@ -697,7 +697,7 @@ class ScriptEditor(object):
             new_y = selector.mapgui.tile_y
             selector.restore_mapgui()
             selector.hide()
-            if resp == gtk.RESPONSE_OK:
+            if resp == Gtk.ResponseType.OK:
                 entry = self.cur_focus.commandentry
                 cursor = entry.get_position()
                 curtext = entry.get_text()

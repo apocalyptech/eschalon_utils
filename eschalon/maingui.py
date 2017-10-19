@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 import os
 import glob
 
-import gtk
+from gi.repository import Gtk
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx
@@ -39,7 +39,7 @@ from eschalon.constants import constants as c
 from eschalon import app_name, version, url, authors
 
 
-class CharLoaderDialog(gtk.Dialog):
+class CharLoaderDialog(Gtk.Dialog):
     """
     A dialog to load a character.  Embeds FileChooserWidget in one tab of
     a notebook, but also tries to be "smart" about things.
@@ -72,18 +72,18 @@ class CharLoaderDialog(gtk.Dialog):
 
         # Call back to the stock gtk Dialog stuff
         super(CharLoaderDialog, self).__init__(
-            flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                     gtk.STOCK_OK, gtk.RESPONSE_OK))
+            flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+            buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                     Gtk.STOCK_OK, Gtk.ResponseType.OK))
 
         # Various defaults for the dialog
         self.set_size_request(950, 680)
         self.set_default_size(950, 680)
         self.set_title('Open Eschalon Book %d Character File' % c.book)
-        self.set_default_response(gtk.RESPONSE_OK)
+        self.set_default_response(Gtk.ResponseType.OK)
         if transient:
             self.set_transient_for(transient)
-            self.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
 
         # Page-to-source mapping
         self.page_index = {}
@@ -92,19 +92,19 @@ class CharLoaderDialog(gtk.Dialog):
         self.source_index = {}
 
         # Main Title
-        self.title_align = gtk.Alignment(.5, 0, 0, 0)
+        self.title_align = Gtk.Alignment.new(.5, 0, 0, 0)
         self.title_align.set_padding(20, 20, 15, 15)
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup(
             '<big><b>Eschalon Book %d Character Editor v%s</b></big>' % (c.book, version))
         self.title_align.add(label)
         self.vbox.pack_start(self.title_align, False, False)
 
         # Main Notebook
-        notebook_align = gtk.Alignment(0, 0, 1, 1)
+        notebook_align = Gtk.Alignment.new(0, 0, 1, 1)
         notebook_align.set_padding(5, 5, 10, 10)
-        self.open_notebook = gtk.Notebook()
-        self.open_notebook.set_tab_pos(gtk.POS_LEFT)
+        self.open_notebook = Gtk.Notebook()
+        self.open_notebook.set_tab_pos(Gtk.PositionType.LEFT)
         notebook_align.add(self.open_notebook)
         self.vbox.pack_start(notebook_align, True, True)
 
@@ -123,27 +123,27 @@ class CharLoaderDialog(gtk.Dialog):
         if self.slots:
 
             # Savegame combobox/liststore
-            self.save_dir_store = gtk.ListStore(
+            self.save_dir_store = Gtk.ListStore(
                 int, str, str, str, str, int, str)
-            self.save_dir_tv = gtk.TreeView(self.save_dir_store)
+            self.save_dir_tv = Gtk.TreeView(self.save_dir_store)
             self.save_dir_tv.connect('row-activated', self.save_dir_activated)
-            col = gtk.TreeViewColumn(
-                'Slot', gtk.CellRendererText(), markup=self.COL_SLOTNAME)
+            col = Gtk.TreeViewColumn(
+                'Slot', Gtk.CellRendererText(), markup=self.COL_SLOTNAME)
             col.set_sort_column_id(self.COL_IDX)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Save Name', gtk.CellRendererText(), text=self.COL_SAVENAME)
+            col = Gtk.TreeViewColumn(
+                'Save Name', Gtk.CellRendererText(), text=self.COL_SAVENAME)
             col.set_sort_column_id(self.COL_SAVENAME)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Character Name', gtk.CellRendererText(), text=self.COL_CHARNAME)
+            col = Gtk.TreeViewColumn(
+                'Character Name', Gtk.CellRendererText(), text=self.COL_CHARNAME)
             col.set_sort_column_id(self.COL_CHARNAME)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
-            col = gtk.TreeViewColumn(
-                'Date', gtk.CellRendererText(), text=self.COL_DATE)
+            col = Gtk.TreeViewColumn(
+                'Date', Gtk.CellRendererText(), text=self.COL_DATE)
             col.set_sort_column_id(self.COL_DATE_EPOCH)
             col.set_resizable(True)
             self.save_dir_tv.append_column(col)
@@ -156,50 +156,50 @@ class CharLoaderDialog(gtk.Dialog):
                                             slot.timestamp_epoch,
                                             slot.char_loc))
 
-            save_dir_align = gtk.Alignment(0, 0, 1, 1)
+            save_dir_align = Gtk.Alignment.new(0, 0, 1, 1)
             save_dir_align.set_padding(5, 5, 5, 5)
-            save_vbox = gtk.VBox()
-            vp = gtk.Viewport()
-            vp.set_shadow_type(gtk.SHADOW_OUT)
-            sw = gtk.ScrolledWindow()
-            sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            save_vbox = Gtk.VBox()
+            vp = Gtk.Viewport()
+            vp.set_shadow_type(Gtk.ShadowType.OUT)
+            sw = Gtk.ScrolledWindow()
+            sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sw.add(self.save_dir_tv)
             vp.add(sw)
             save_vbox.pack_start(vp, True, True)
-            note_align = gtk.Alignment(0, 0, 0, 0)
+            note_align = Gtk.Alignment.new(0, 0, 0, 0)
             note_align.set_padding(5, 2, 2, 2)
-            note_label = gtk.Label()
+            note_label = Gtk.Label()
             note_label.set_markup('<i>Reading from %s</i>' % savegame_dir)
             note_align.add(note_label)
             save_vbox.pack_start(note_align, False, False)
             save_dir_align.add(save_vbox)
             self.register_page(self.SOURCE_SAVES)
             self.open_notebook.append_page(
-                save_dir_align, gtk.Label('Load from Savegames...'))
+                save_dir_align, Gtk.Label(label='Load from Savegames...'))
 
         # Loading from an arbitrary location
-        arbitrary_align = gtk.Alignment(0, 0, 1, 1)
+        arbitrary_align = Gtk.Alignment.new(0, 0, 1, 1)
         arbitrary_align.set_padding(5, 5, 5, 5)
-        self.chooser = gtk.FileChooserWidget()
+        self.chooser = Gtk.FileChooserWidget()
         self.chooser.connect('file-activated', self.chooser_file_activated)
         self.chooser.set_show_hidden(True)
         arbitrary_align.add(self.chooser)
         self.register_page(self.SOURCE_OTHER)
         self.open_notebook.append_page(
-            arbitrary_align, gtk.Label('Load from Other...'))
+            arbitrary_align, Gtk.Label(label='Load from Other...'))
 
         # Starting path for chooser
         if starting_path and starting_path != '' and os.path.isdir(starting_path):
             self.chooser.set_current_folder(starting_path)
 
         # Filename filters for chooser
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("Character Files")
         filter.add_pattern("char")
         filter.add_pattern("char.*")
         self.chooser.add_filter(filter)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("All files")
         filter.add_pattern("*")
         self.chooser.add_filter(filter)
@@ -267,14 +267,14 @@ class CharLoaderDialog(gtk.Dialog):
         Called when the user double-clicks or hits enter on a selected file
         on our internal FileChooserWidget
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
     def save_dir_activated(self, widget, path, column):
         """
         Called when the user double-clicks or hits enter on an item in our
         savegame TreeView.
         """
-        self.response(gtk.RESPONSE_OK)
+        self.response(Gtk.ResponseType.OK)
 
 
 class MainGUI(BaseGUI):
@@ -296,7 +296,7 @@ class MainGUI(BaseGUI):
         self.char = None
 
         # Start up our GUI
-        self.builder = gtk.Builder()
+        self.builder = Gtk.Builder()
         self.builder.add_from_file(self.datafile('maingui.ui'))
         self.builder.add_from_file(self.datafile('itemgui.ui'))
         self.window = self.get_widget('mainwindow')
@@ -308,13 +308,13 @@ class MainGUI(BaseGUI):
         self.itemsel = self.get_widget('itemselwindow')
         self.avatarsel = self.get_widget('avatarselwindow')
         if self.window:
-            self.window.connect('destroy', gtk.main_quit)
+            self.window.connect('destroy', Gtk.main_quit)
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
         for object in self.builder.get_objects():
             try:
-                builder_name = gtk.Buildable.get_name(object)
+                builder_name = Gtk.Buildable.get_name(object)
                 if builder_name:
                     object.set_name(builder_name)
             except TypeError:
@@ -327,7 +327,7 @@ class MainGUI(BaseGUI):
         for i in range(10):
             spellboxentries.append('readyslots_spell_%d' % i)
         for var in comboboxentries + spellboxentries + readyentries:
-            self.register_widget(var, self.get_widget('%s_box' % var).child)
+            self.register_widget(var, self.get_widget('%s_box' % var).get_child())
         for var in comboboxentries:
             self.get_widget(var).connect(
                 'changed', self.on_singleval_changed_str)
@@ -436,7 +436,7 @@ class MainGUI(BaseGUI):
 
         # Start the main gtk loop
         self.window.show()
-        gtk.main()
+        Gtk.main()
 
     def assert_gfx_buttons(self):
         """
@@ -484,7 +484,7 @@ class MainGUI(BaseGUI):
         while rundialog:
             rundialog = False
             response = dialog.run()
-            if response == gtk.RESPONSE_OK:
+            if response == Gtk.ResponseType.OK:
                 if not dialog.get_filename() or not self.load_from_file(dialog.get_filename()):
                     rundialog = True
             else:
@@ -508,33 +508,33 @@ class MainGUI(BaseGUI):
         self.mainbook.set_sensitive(False)
 
         # Create the dialog
-        dialog = gtk.FileChooserDialog('Save Character File...', None,
-                                       gtk.FILE_CHOOSER_ACTION_SAVE,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_SAVE_AS, gtk.RESPONSE_OK))
-        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog = Gtk.FileChooserDialog('Save Character File...', None,
+                                       Gtk.FileChooserAction.SAVE,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_SAVE_AS, Gtk.ResponseType.OK))
+        dialog.set_default_response(Gtk.ResponseType.OK)
         dialog.set_transient_for(self.window)
-        dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+        dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         dialog.set_do_overwrite_confirmation(True)
         if self.char is not None:
             path = os.path.dirname(os.path.realpath(self.char.df.filename))
             if path != '':
                 dialog.set_current_folder(path)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("Character Files")
         filter.add_pattern("char")
         filter.add_pattern("char.*")
         dialog.add_filter(filter)
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.set_name("All files")
         filter.add_pattern("*")
         dialog.add_filter(filter)
 
         # Run the dialog and process its return values
         response = dialog.run()
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             self.char.df.filename = dialog.get_filename()
             self.save_char()
             self.putstatus('Saved as %s' % self.char.df.filename)
@@ -554,9 +554,9 @@ class MainGUI(BaseGUI):
 
         # If the object doesn't exist in our cache, create it
         if about is None:
-            about = gtk.AboutDialog()
+            about = Gtk.AboutDialog()
             about.set_transient_for(self.window)
-            about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            about.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
             about.set_name(app_name)
             about.set_version(version)
             about.set_website(url)
@@ -573,7 +573,7 @@ class MainGUI(BaseGUI):
             iconpath = self.datafile('eb1_icon_64.png')
             if os.path.isfile(iconpath):
                 try:
-                    about.set_logo(gtk.gdk.pixbuf_new_from_file(iconpath))
+                    about.set_logo(GdkPixbuf.Pixbuf.new_from_file(iconpath))
                 except:
                     pass
             self.register_widget('aboutwindow', about, False)
@@ -692,16 +692,16 @@ class MainGUI(BaseGUI):
         if int(self.get_widget('picid').get_value()) % 256 == 0:
             if self.gfx is None:
                 self.get_widget('picid_image').set_from_stock(
-                    gtk.STOCK_EDIT, 4)
+                    Gtk.STOCK_EDIT, 4)
             else:
                 pixbuf = self.gfx.get_avatar(int(widget.get_value()) / 256)
                 if pixbuf is None:
                     self.get_widget('picid_image').set_from_stock(
-                        gtk.STOCK_EDIT, 4)
+                        Gtk.STOCK_EDIT, 4)
                 else:
                     self.get_widget('picid_image').set_from_pixbuf(pixbuf)
         else:
-            self.get_widget('picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+            self.get_widget('picid_image').set_from_stock(Gtk.STOCK_EDIT, 4)
 
     def on_dropdownplusone_changed(self, widget):
         """ What to do when a dropdown is changed, when our index starts at 1.  """
@@ -741,12 +741,12 @@ class MainGUI(BaseGUI):
         self.set_changed_widget((origobj.__dict__[objwname] == obj.__dict__[
                                 objwname]), wname, labelwidget, label)
         if self.gfx is None:
-            self.get_widget('b2_picid_image').set_from_stock(gtk.STOCK_EDIT, 4)
+            self.get_widget('b2_picid_image').set_from_stock(Gtk.STOCK_EDIT, 4)
         else:
             pixbuf = self.gfx.get_avatar(val)
             if pixbuf is None:
                 self.get_widget('b2_picid_image').set_from_stock(
-                    gtk.STOCK_EDIT, 4)
+                    Gtk.STOCK_EDIT, 4)
             else:
                 self.get_widget('b2_picid_image').set_from_pixbuf(pixbuf)
 
@@ -1047,12 +1047,12 @@ class MainGUI(BaseGUI):
         if self.has_unsaved_changes():
             response = self.confirmdialog('Confirm Quit', 'You have made unsaved changes '
                                           'to this character.  Really quit?', self.window)
-            if response == gtk.RESPONSE_YES:
-                gtk.main_quit()
+            if response == Gtk.ResponseType.YES:
+                Gtk.main_quit()
             else:
                 return True
         else:
-            gtk.main_quit()
+            Gtk.main_quit()
 
     def save_char(self, widget=None):
         """ Save character to disk. """
@@ -1249,17 +1249,17 @@ class MainGUI(BaseGUI):
 
         # First our inventory
         inv_viewport = self.get_widget('inv_viewport')
-        inv_book = gtk.Notebook()
+        inv_book = Gtk.Notebook()
         inv_book.show()
         inv_viewport.add(inv_book)
         self.register_widget('invnotebook', inv_book)
         for num in range(10):
-            wind = gtk.ScrolledWindow()
-            wind.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            wind = Gtk.ScrolledWindow()
+            wind.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             wind.show()
-            inv_book.append_page(wind, gtk.Label('Row %d' % (num + 1)))
-            vport = gtk.Viewport()
-            vport.set_shadow_type(gtk.SHADOW_OUT)
+            inv_book.append_page(wind, Gtk.Label(label='Row %d' % (num + 1)))
+            vport = Gtk.Viewport()
+            vport.set_shadow_type(Gtk.ShadowType.OUT)
             vport.show()
             wind.add(vport)
             self.gui_add_inv_page(vport, num)
@@ -1292,11 +1292,11 @@ class MainGUI(BaseGUI):
             numrows += 1
 
         # Container Table
-        table = gtk.Table(numrows, 5)
+        table = Gtk.Table(numrows, 5)
         self.register_widget('skill_table', table)
-        spacelabel = gtk.Label('')
+        spacelabel = Gtk.Label(label='')
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+        table.attach(spacelabel, 0, 1, 0, numrows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         # Contents
         for (idx, skill) in enumerate(c.skilltable.values()):
@@ -1306,21 +1306,20 @@ class MainGUI(BaseGUI):
             else:
                 row = idx - numrows
                 col = 3
-            label = gtk.Label('%s:' % skill)
+            label = Gtk.Label(label='%s:' % skill)
             label.set_alignment(1, .5)
             label.set_padding(4, 0)
             self.register_widget('skills_%d_label' % (idx + 1), label)
             table.attach(label, col, col + 1, row, row + 1,
-                         gtk.FILL, gtk.FILL | gtk.EXPAND)
+                         Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
 
-            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            align = Gtk.Alignment.new(0.0, 0.5, 0.0, 1.0)
             table.attach(align, col + 1, col + 2, row, row +
-                         1, gtk.FILL, gtk.FILL | gtk.EXPAND)
+                         1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
             # Note: limit is actually >255 on B1, but I don't think it's unreasonable
             # to clamp it down to 255 in practice, here.
-            adjust = gtk.Adjustment(0, 0, 255, 1, 10, 0)
-            spin = gtk.SpinButton()
-            spin.set_adjustment(adjust)
+            adjust = Gtk.Adjustment(0, 0, 255, 1, 10, 0)
+            spin = Gtk.SpinButton(adjust)
             self.register_widget('skills_%d' % (idx + 1), spin)
             align.add(spin)
             spin.connect('value-changed', self.on_multarray_changed)
@@ -1338,11 +1337,11 @@ class MainGUI(BaseGUI):
             numrows += 1
 
         # Container Table
-        table = gtk.Table(numrows, 5)
+        table = Gtk.Table(numrows, 5)
         self.register_widget('status_table', table)
-        spacelabel = gtk.Label('')
+        spacelabel = Gtk.Label(label='')
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, gtk.FILL, gtk.FILL)
+        table.attach(spacelabel, 0, 1, 0, numrows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         # Contents
         for (idx, skill) in enumerate(c.statustable.values()):
@@ -1352,29 +1351,27 @@ class MainGUI(BaseGUI):
             else:
                 row = idx - numrows
                 col = 3
-            label = gtk.Label('%s:' % skill)
+            label = Gtk.Label(label='%s:' % skill)
             label.set_alignment(1, .5)
             label.set_padding(4, 0)
             self.register_widget('statuses_%d_label' % idx, label)
             table.attach(label, col, col + 1, row, row + 1,
-                         gtk.FILL, gtk.FILL | gtk.EXPAND)
+                         Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
 
-            align = gtk.Alignment(0.0, 0.5, 0.0, 1.0)
+            align = Gtk.Alignment.new(0.0, 0.5, 0.0, 1.0)
             table.attach(align, col + 1, col + 2, row, row +
-                         1, gtk.FILL, gtk.FILL | gtk.EXPAND)
-            adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
-            spin = gtk.SpinButton()
-            spin.set_adjustment(adjust)
+                         1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
+            adjust = Gtk.Adjustment(0, 0, 999, 1, 10, 0)
+            spin = Gtk.SpinButton(adjust)
             self.register_widget('statuses_%d' % idx, spin)
             spin.connect('value-changed', self.on_effect_changed)
             if c.book == 1:
                 align.add(spin)
             else:
-                hbox = gtk.HBox()
+                hbox = Gtk.HBox()
                 hbox.add(spin)
-                adjust = gtk.Adjustment(0, 0, 999, 1, 10, 0)
-                spin = gtk.SpinButton()
-                spin.set_adjustment(adjust)
+                adjust = Gtk.Adjustment(0, 0, 999, 1, 10, 0)
+                spin = Gtk.SpinButton(adjust)
                 self.register_widget('statuses_extra_%d' % idx, spin)
                 spin.connect('value-changed', self.on_effect_changed)
                 hbox.add(spin)
@@ -1407,13 +1404,13 @@ class MainGUI(BaseGUI):
                 box = elembox
             else:
                 box = divbox
-            cb = gtk.CheckButton()
+            cb = Gtk.CheckButton()
             self.register_widget('spells_%d' % idx, cb)
-            label = gtk.Label(spell)
+            label = Gtk.Label(label=spell)
             self.register_widget('spells_%d_label' % idx, label)
             cb.connect('toggled', self.on_checkbox_arr_changed)
             cb.add(label)
-            box.pack_start(cb)
+            box.pack_start(cb, True, True, 0)
         elembox.show_all()
         divbox.show_all()
 
@@ -1449,13 +1446,13 @@ class MainGUI(BaseGUI):
                     box = box1
                 else:
                     box = box2
-                cb = gtk.CheckButton()
+                cb = Gtk.CheckButton()
                 self.register_widget('alchemy_book_%d' % idx, cb)
-                label = gtk.Label(recipe)
+                label = Gtk.Label(label=recipe)
                 self.register_widget('alchemy_book_%d_label' % idx, label)
                 cb.connect('toggled', self.on_checkbox_arr_changed)
                 cb.add(label)
-                box.pack_start(cb)
+                box.pack_start(cb, True, True, 0)
             box1.show_all()
             box2.show_all()
 
@@ -1471,10 +1468,10 @@ class MainGUI(BaseGUI):
 
     def gui_item_page(self, container, pagetitle, rows, tablename):
         """ Sets up a page to store item information. """
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         vbox.set_border_width(12)
         container.add(vbox)
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup(pagetitle)
         label.set_alignment(0, 0.5)
         label.set_padding(0, 5)
@@ -1483,14 +1480,14 @@ class MainGUI(BaseGUI):
         vbox.show()
         label.show()
 
-        table = gtk.Table(rows, 3)
+        table = Gtk.Table(rows, 3)
         table.show()
         self.register_widget(tablename, table)
         vbox.pack_start(table, False, True)
-        spacelabel = gtk.Label('')
+        spacelabel = Gtk.Label(label='')
         spacelabel.show()
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, rows, gtk.FILL, gtk.FILL)
+        table.attach(spacelabel, 0, 1, 0, rows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         return table
 
     def gui_add_equip_page(self, container):
@@ -1513,9 +1510,9 @@ class MainGUI(BaseGUI):
                      ('weap_alt', 'Alternate Weapon'),
                      ('shield', 'Shield')]:
             table.attach(self.gui_item_label(
-                '%s:' % item[1], '%s_label' % item[0]), 1, 2, i, i + 1, gtk.FILL, gtk.FILL, 4)
+                '%s:' % item[1], '%s_label' % item[0]), 1, 2, i, i + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL, 4)
             table.attach(self.gui_item(item[0], self.on_equip_clicked, self.on_equip_action_clicked),
-                         2, 3, i, i + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
+                         2, 3, i, i + 1, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, 0, 2)
             i += 1
 
     def gui_add_inv_page(self, container, rownum):
@@ -1528,28 +1525,28 @@ class MainGUI(BaseGUI):
                                    (rownum + 1), lines_to_alloc, 'invtable%d' % rownum)
         for num in range(8):
             table.attach(self.gui_item_label('Column %d:' % (
-                num + 1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num + 1, gtk.FILL, gtk.FILL, 4)
+                num + 1), 'inv_%d_%d_label' % (rownum, num)), 1, 2, num, num + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL, 4)
             table.attach(self.gui_item('inv_%d_%d' % (rownum, num), self.on_inv_clicked, self.on_inv_action_clicked),
-                         2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
+                         2, 3, num, num + 1, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, 0, 2)
         if rownum == 9:
-            goldnote = gtk.Label()
+            goldnote = Gtk.Label()
             goldnote.set_alignment(0, 0.5)
             goldnote.set_markup(
                 '<i><b>Note:</b> Column seven is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote.set_line_wrap(True)
             goldnote.show()
             self.register_widget('b1_gold_note', goldnote)
-            table.attach(goldnote, 2, 3, 8, 9, gtk.FILL |
-                         gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
-            goldnote2 = gtk.Label()
+            table.attach(goldnote, 2, 3, 8, 9, Gtk.AttachOptions.FILL |
+                         Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, 0, 2)
+            goldnote2 = Gtk.Label()
             goldnote2.set_alignment(0, 0.5)
             goldnote2.set_markup(
                 '<i><b>Note:</b> Column eight is reserved in the GUI for displaying your gold count.  You should probably leave that slot empty.</i>')
             goldnote2.set_line_wrap(True)
             goldnote2.show()
             self.register_widget('b2_gold_note', goldnote2)
-            table.attach(goldnote2, 2, 3, 9, 10, gtk.FILL |
-                         gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
+            table.attach(goldnote2, 2, 3, 9, 10, Gtk.AttachOptions.FILL |
+                         Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, 0, 2)
 
     def gui_add_ready_page(self, container):
         """ Create a page for our readied items. """
@@ -1557,9 +1554,9 @@ class MainGUI(BaseGUI):
             container, '<b>Readied Items</b>', 10, 'readytable')
         for num in range(10):
             table.attach(self.gui_item_label('Item %d:' % (
-                num + 1), 'ready_%d_label' % num), 1, 2, num, num + 1, gtk.FILL, gtk.FILL, 4)
+                num + 1), 'ready_%d_label' % num), 1, 2, num, num + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL, 4)
             table.attach(self.gui_item('ready_%d' % num, self.on_ready_clicked, self.on_ready_action_clicked),
-                         2, 3, num, num + 1, gtk.FILL | gtk.EXPAND, gtk.FILL | gtk.EXPAND, 0, 2)
+                         2, 3, num, num + 1, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND, 0, 2)
 
     def open_avatarsel(self, widget):
         self.avatarsel.show()
@@ -1626,21 +1623,21 @@ class MainGUI(BaseGUI):
                 self.avatarsel_curx = self.get_widget('b2picid').get_active()
             self.avatarsel_area.set_size_request(
                 self.avatarsel_x, self.avatarsel_y)
-            self.avatarsel_pixmap = gtk.gdk.Pixmap(
+            self.avatarsel_pixmap = Gdk.Pixmap(
                 self.avatarsel_area.window, self.avatarsel_x, self.avatarsel_y)
-            self.gc_white = gtk.gdk.GC(self.avatarsel_area.window)
-            self.gc_white.set_rgb_fg_color(gtk.gdk.Color(65535, 65535, 65535))
-            self.gc_black = gtk.gdk.GC(self.avatarsel_area.window)
-            self.gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.gc_green = gtk.gdk.GC(self.avatarsel_area.window)
-            self.gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.gc_white = Gdk.GC(self.avatarsel_area.window)
+            self.gc_white.set_rgb_fg_color(Gdk.Color(65535, 65535, 65535))
+            self.gc_black = Gdk.GC(self.avatarsel_area.window)
+            self.gc_black.set_rgb_fg_color(Gdk.Color(0, 0, 0))
+            self.gc_green = Gdk.GC(self.avatarsel_area.window)
+            self.gc_green.set_rgb_fg_color(Gdk.Color(0, 65535, 0))
             self.avatarsel_pixmap.draw_rectangle(
                 self.gc_black, True, 0, 0, self.avatarsel_x, self.avatarsel_y)
             for x in range(self.avatarsel_cols):
                 self.avatarsel_draw(x)
             self.avatarsel_init = True
         self.avatarsel_clean = []
-        self.avatarsel_area.window.draw_drawable(self.avatarsel_area.get_style().fg_gc[gtk.STATE_NORMAL],
+        self.avatarsel_area.window.draw_drawable(self.avatarsel_area.get_style().fg_gc[Gtk.StateType.NORMAL],
                                                  self.avatarsel_pixmap, 0, 0, 0, 0, self.avatarsel_x, self.avatarsel_y)
 
     def avatarsel_on_clicked(self, widget, event):

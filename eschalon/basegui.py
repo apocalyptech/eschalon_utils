@@ -24,18 +24,18 @@ LOG = logging.getLogger(__name__)
 import os
 from struct import unpack
 
-import gtk
-import gobject
-import pango
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Pango
 
 from eschalon.constants import constants as c
 from eschalon.scripteditor import ScriptEditor
 
 
-class WrapLabel(gtk.Label):
+class WrapLabel(Gtk.Label):
 
     # Taken from http://git.gnome.org/browse/meld/tree/meld/ui/wraplabel.py
-    # Re-used here because, as it turns out, regular gtk.Label objects will
+    # Re-used here because, as it turns out, regular Gtk.Label objects will
     # *not* resize automatically when the parent changes, which in some
     # circumstances looks really ugly.  This will fix it right up.
 
@@ -63,11 +63,11 @@ class WrapLabel(gtk.Label):
     __gtype_name__ = 'WrapLabel'
 
     def __init__(self, str=None):
-        gtk.Label.__init__(self)
+        GObject.GObject.__init__(self)
 
         self.__wrap_width = 0
         self.layout = self.get_layout()
-        self.layout.set_wrap(pango.WRAP_WORD)
+        self.layout.set_wrap(Pango.WrapMode.WORD)
 
         if str is not None:
             self.set_markup(str)
@@ -81,38 +81,38 @@ class WrapLabel(gtk.Label):
         requisition.height = height
 
     def do_size_allocate(self, allocation):
-        gtk.Label.do_size_allocate(self, allocation)
+        Gtk.Label.do_size_allocate(self, allocation)
         self.__set_wrap_width(allocation.width)
 
     def set_text(self, str):
-        gtk.Label.set_text(self, str)
+        Gtk.Label.set_text(self, str)
         self.__set_wrap_width(self.__wrap_width)
 
     def set_markup(self, str):
-        gtk.Label.set_markup(self, str)
+        Gtk.Label.set_markup(self, str)
         self.__set_wrap_width(self.__wrap_width)
 
     def __set_wrap_width(self, width):
         if width == 0:
             return
         layout = self.get_layout()
-        layout.set_width(width * pango.SCALE)
+        layout.set_width(width * Pango.SCALE)
         if self.__wrap_width != width:
             self.__wrap_width = width
             self.queue_resize()
 
 
-class ImageSelWindow(gtk.Window):
+class ImageSelWindow(Gtk.Window):
 
     def __init__(self, object_tabs=False, on_clicked=None, on_motion=None, on_expose=None):
         super(ImageSelWindow, self).__init__()
         self.set_title("Select an Icon")
         self.set_modal(True)
 
-        vbox = gtk.VBox()
+        vbox = Gtk.VBox()
         self.add(vbox)
 
-        label = gtk.Label(
+        label = Gtk.Label(label=
             "Selecting an icon or hitting Escape will close this dialog.")
         label.set_alignment(.5, .5)
         label.set_padding(0, 6)
@@ -120,26 +120,26 @@ class ImageSelWindow(gtk.Window):
 
         self.setup_drawing_area(vbox, on_clicked, on_motion, on_expose)
 
-        self.bgcolor_box = gtk.VBox()
+        self.bgcolor_box = Gtk.VBox()
         vbox.pack_start(self.bgcolor_box, False, True)
 
-        label = gtk.Label()
+        label = Gtk.Label()
         label.set_markup('<i>(Click to change background color)</i>')
         label.set_alignment(.5, .5)
         label.set_padding(0, 2)
         self.bgcolor_box.pack_start(label, True, True)
 
-        align = gtk.Alignment(.5, .5, 0, 1)
+        align = Gtk.Alignment.new(.5, .5, 0, 1)
         self.bgcolor_box.pack_start(align, False, True)
 
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_IN)
+        vp = Gtk.Viewport()
+        vp.set_shadow_type(Gtk.ShadowType.IN)
         align.add(vp)
 
-        self.eventbox = gtk.EventBox()
+        self.eventbox = Gtk.EventBox()
         vp.add(self.eventbox)
 
-        self.image = gtk.Image()
+        self.image = Gtk.Image()
         self.image.set_alignment(.5, .5)
         self.image.set_padding(0, 0)
         self.image.set_size_request(170, 29)
@@ -155,7 +155,7 @@ class ImageSelWindow(gtk.Window):
         What to do when the user presses a key.  We're mostly
         looking for 'esc' so we can exit.
         """
-        if gtk.gdk.keyval_name(event.keyval) == 'Escape':
+        if Gdk.keyval_name(event.keyval) == 'Escape':
             self.delete_event(None, None)
 
     def delete_event(self, widget, event):
@@ -173,14 +173,14 @@ class ImageSelWindow(gtk.Window):
         Returns a tuple of the ScrolledWindow and the DrawingArea.
         """
 
-        sw = gtk.ScrolledWindow()
+        sw = Gtk.ScrolledWindow()
 
-        vp = gtk.Viewport()
-        vp.set_shadow_type(gtk.SHADOW_IN)
+        vp = Gtk.Viewport()
+        vp.set_shadow_type(Gtk.ShadowType.IN)
         sw.add(vp)
 
-        da = gtk.DrawingArea()
-        da.set_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK)
+        da = Gtk.DrawingArea()
+        da.set_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
         if on_clicked is not None:
             da.connect('button-press-event', on_clicked)
         if on_motion is not None:
@@ -224,7 +224,7 @@ class BaseGUI(object):
 
         # Find out if we have NumPy installed.  There's a bug in pygtk (or,
         # at least, a bug SOMEWHERE) where if numpy isn't installed, a call
-        # to gtk.gdk.Pixbuf.get_pixels_array() will segfault Python, which
+        # to GdkPixbuf.Pixbuf.get_pixels_array() will segfault Python, which
         # isn't catchable.  So instead of letting that happen, we'll just find
         # out here.  The bug: https://bugzilla.gnome.org/show_bug.cgi?id=626683
         try:
@@ -254,7 +254,7 @@ class BaseGUI(object):
         self.prefsobj = prefs
 
         # Preferences window
-        self.prefsbuilder = gtk.Builder()
+        self.prefsbuilder = Gtk.Builder()
         self.prefsbuilder.add_from_file(self.datafile('preferences.ui'))
         self.prefswindow = self.prefsbuilder.get_object('prefswindow')
         self.gfx_req_window = self.prefsbuilder.get_object('gfx_req_window')
@@ -285,7 +285,7 @@ class BaseGUI(object):
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
         for object in self.prefsbuilder.get_objects():
             try:
-                builder_name = gtk.Buildable.get_name(object)
+                builder_name = Gtk.Buildable.get_name(object)
                 if builder_name:
                     object.set_name(builder_name)
             except TypeError:
@@ -295,24 +295,24 @@ class BaseGUI(object):
         self.prefssel.connect('changed', self.on_prefs_changed)
 
         # Set up prefs colums
-        store = gtk.ListStore(
-            gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_INT)
+        store = Gtk.ListStore(
+            GdkPixbuf.Pixbuf, GObject.TYPE_STRING, GObject.TYPE_INT)
         self.prefsview.set_model(store)
-        col = gtk.TreeViewColumn('Icon', gtk.CellRendererPixbuf(), pixbuf=0)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Icon', Gtk.CellRendererPixbuf(), pixbuf=0)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(50)
         self.prefsview.append_column(col)
-        col = gtk.TreeViewColumn('Text', gtk.CellRendererText(), text=1)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Text', Gtk.CellRendererText(), text=1)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(110)
         self.prefsview.append_column(col)
 
         # Set up prefs rows
         pixbuf = self.prefswindow.render_icon(
-            gtk.STOCK_OPEN, gtk.ICON_SIZE_DIALOG)
+            Gtk.STOCK_OPEN, Gtk.IconSize.DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'File Locations', 2, 0)
         pixbuf = self.prefswindow.render_icon(
-            gtk.STOCK_CLEAR, gtk.ICON_SIZE_DIALOG)
+            Gtk.STOCK_CLEAR, Gtk.IconSize.DIALOG)
         store.set(store.append(), 0, pixbuf, 1, 'Map Editor', 2, 1)
 
         # Update the text on our graphics popups
@@ -392,11 +392,11 @@ class BaseGUI(object):
         """
         Shows a dialog for the user, with the given attributes.
         """
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                    type, buttons)
         if parent:
             dialog.set_transient_for(parent)
-            dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
+            dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         dialog.set_title(title)
         dialog.set_property('skip-taskbar-hint', False)
         dialog.set_markup(markup)
@@ -406,19 +406,19 @@ class BaseGUI(object):
 
     @staticmethod
     def infodialog(title, markup, parent=None):
-        return BaseGUI.userdialog(gtk.MESSAGE_INFO, gtk.BUTTONS_OK, title, markup, parent)
+        return BaseGUI.userdialog(Gtk.MessageType.INFO, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def warningdialog(title, markup, parent=None):
-        return BaseGUI.userdialog(gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, title, markup, parent)
+        return BaseGUI.userdialog(Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def errordialog(title, markup, parent=None):
-        return BaseGUI.userdialog(gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, title, markup, parent)
+        return BaseGUI.userdialog(Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def confirmdialog(title, markup, parent=None):
-        return BaseGUI.userdialog(gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, title, markup, parent)
+        return BaseGUI.userdialog(Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, title, markup, parent)
 
     def set_book_elem_visibility(self, classname, show):
         """
@@ -519,27 +519,27 @@ class BaseGUI(object):
         # Glade is seriously problematic; handle this TreeView connecting
         # stuff by hand.
         ###
-        col = gtk.TreeViewColumn('Potion', gtk.CellRendererText(), text=0)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Potion', Gtk.CellRendererText(), text=0)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(0)
         self.get_widget('b2_potion_magic_treeview').append_column(col)
-        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text=1)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Value', Gtk.CellRendererText(), text=1)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(1)
         self.get_widget('b2_potion_magic_treeview').append_column(col)
 
-        col = gtk.TreeViewColumn('Reagent', gtk.CellRendererText(), text=0)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Reagent', Gtk.CellRendererText(), text=0)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(0)
         self.get_widget('b2_reagent_magic_treeview').append_column(col)
-        col = gtk.TreeViewColumn('Value', gtk.CellRendererText(), text=1)
-        col.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)
+        col = Gtk.TreeViewColumn('Value', Gtk.CellRendererText(), text=1)
+        col.set_sizing(Gtk.TreeViewColumnSizing.FIXED)
         col.set_fixed_width(150)
         col.set_clickable(True)
         col.set_sort_column_id(1)
@@ -558,7 +558,7 @@ class BaseGUI(object):
         """
         res = self.script_editor.launch(
             script_entry.get_text(), parent, has_coords)
-        if res == gtk.RESPONSE_OK:
+        if res == Gtk.ResponseType.OK:
             script_entry.set_text(self.script_editor.get_command_aggregate())
 
     def setup_script_editor_launcher(self, container, widget, parent, has_coords=False):
@@ -566,11 +566,11 @@ class BaseGUI(object):
         Adds a button to launch the script editor, given the container to put
         it in, and a widget whose .get_text() will provide the script text.
         """
-        align = gtk.Alignment(0, .5, 1, 1)
+        align = Gtk.Alignment.new(0, .5, 1, 1)
         align.set_padding(0, 0, 6, 0)
-        button = gtk.Button()
-        button.add(gtk.image_new_from_stock(
-            gtk.STOCK_REDO, gtk.ICON_SIZE_BUTTON))
+        button = Gtk.Button()
+        button.add(Gtk.Image.new_from_stock(
+            Gtk.STOCK_REDO, Gtk.IconSize.BUTTON))
         button.set_tooltip_text('Launch Script Editor')
         button.connect('clicked', self.launch_script_editor,
                        widget, parent, has_coords)
@@ -643,14 +643,14 @@ class BaseGUI(object):
         if (not self.gamedir_set()):
             response = self.gfx_opt_window.run()
             self.gfx_opt_window.hide()
-            if (response == gtk.RESPONSE_OK):
+            if (response == Gtk.ResponseType.OK):
                 self.on_prefs(None)
 
     def require_gfx(self):
         while (not self.gamedir_set()):
             response = self.gfx_req_window.run()
             self.gfx_req_window.hide()
-            if (response == gtk.RESPONSE_CANCEL):
+            if (response == Gtk.ResponseType.CANCEL):
                 return False
             else:
                 self.on_prefs(None)
@@ -708,7 +708,7 @@ class BaseGUI(object):
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
         self.prefswindow.hide()
-        if (response == gtk.RESPONSE_OK):
+        if (response == Gtk.ResponseType.OK):
             self.prefsobj.set_int('mapgui', 'default_zoom', int(
                 self.prefs_default_zoom.get_value()))
             self.prefsobj.set_bool(
@@ -763,14 +763,14 @@ class BaseGUI(object):
             self.prefsnotebook.set_current_page(model.get(iter, 2)[0])
 
     def useful_combobox(self, box):
-        ls = gtk.ListStore(gobject.TYPE_STRING)
+        ls = Gtk.ListStore(GObject.TYPE_STRING)
         box.set_model(ls)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         box.pack_start(cell, True)
         box.add_attribute(cell, 'text', 0)
 
     def useful_comboboxentry(self, box):
-        box.set_model(gtk.ListStore(gobject.TYPE_STRING))
+        box.set_model(Gtk.ListStore(GObject.TYPE_STRING))
         box.set_entry_text_column(0)
 
     def get_comp_objects(self):
@@ -1007,7 +1007,7 @@ class BaseGUI(object):
                 str = '<span color="blue">' + str + '</span>'
         widget.set_markup(str)
         if (item.item_name == '' or self.gfx is None):
-            imgwidget.set_from_stock(gtk.STOCK_EDIT, 4)
+            imgwidget.set_from_stock(Gtk.STOCK_EDIT, 4)
         else:
             imgwidget.set_from_pixbuf(self.gfx.get_item(item, 26))
         # to resize buttons, we have to do this:
@@ -1134,7 +1134,7 @@ class BaseGUI(object):
 
     def gui_item_label(self, label, name):
         """ Generate a Label for an inventory item. """
-        itemlabel = gtk.Label(label)
+        itemlabel = Gtk.Label(label=label)
         itemlabel.set_alignment(1, 0.5)
         self.register_widget(name, itemlabel)
         itemlabel.show()
@@ -1142,69 +1142,69 @@ class BaseGUI(object):
 
     def gui_item(self, name, itemcallback, itemactioncallback):
         """ Generates the whole block for an item button, including cut/paste/etc... """
-        hbox = gtk.HBox()
+        hbox = Gtk.HBox()
         hbox.show()
         self.register_widget('%s_container' % (name), hbox)
 
-        align = gtk.Alignment(0, 0.5, 0, 1)
+        align = Gtk.Alignment.new(0, 0.5, 0, 1)
         align.set_size_request(-1, 35)
         align.show()
         hbox.pack_start(align, False)
 
-        itembutton = gtk.Button()
+        itembutton = Gtk.Button()
         itembutton.show()
         self.register_widget('%s_button' % name, itembutton)
         itembutton.connect('clicked', itemcallback)
         align.add(itembutton)
 
-        itembutton_hbox = gtk.HBox()
+        itembutton_hbox = Gtk.HBox()
         itembutton_hbox.show()
         itembutton.add(itembutton_hbox)
 
-        buttonimg = gtk.Image()
+        buttonimg = Gtk.Image()
         buttonimg.show()
         self.register_widget('%s_image' % name, buttonimg)
         itembutton_hbox.pack_start(buttonimg, False)
 
-        buttonlabel = gtk.Label('')
+        buttonlabel = Gtk.Label(label='')
         buttonlabel.show()
         buttonlabel.set_padding(7, 0)
         self.register_widget('%s_text' % name, buttonlabel)
         itembutton_hbox.pack_start(buttonlabel, True)
 
-        expander = gtk.Expander()
+        expander = Gtk.Expander()
         expander.show()
         hbox.pack_start(expander, True, True)
 
-        exphbox = gtk.HBox()
+        exphbox = Gtk.HBox()
         exphbox.show()
         expander.add(exphbox)
 
-        divlabel = gtk.Label('')
+        divlabel = Gtk.Label(label='')
         divlabel.show()
         divlabel.set_size_request(20, -1)
         exphbox.pack_start(divlabel, False)
 
         exphbox.pack_start(self.gui_itemedit_button(
-            name, 'Cut', 'cut', gtk.STOCK_CUT, itemactioncallback), False)
+            name, 'Cut', 'cut', Gtk.STOCK_CUT, itemactioncallback), False)
         exphbox.pack_start(self.gui_itemedit_button(
-            name, 'Copy', 'copy', gtk.STOCK_COPY, itemactioncallback), False)
+            name, 'Copy', 'copy', Gtk.STOCK_COPY, itemactioncallback), False)
         exphbox.pack_start(self.gui_itemedit_button(
-            name, 'Paste', 'paste', gtk.STOCK_PASTE, itemactioncallback), False)
+            name, 'Paste', 'paste', Gtk.STOCK_PASTE, itemactioncallback), False)
         exphbox.pack_start(self.gui_itemedit_button(
-            name, 'Delete', 'delete', gtk.STOCK_DELETE, itemactioncallback), False)
+            name, 'Delete', 'delete', Gtk.STOCK_DELETE, itemactioncallback), False)
 
         return hbox
 
     def gui_itemedit_button(self, itemname, name, action, stockimage, callback):
         """ Generates a single 'action' button for an item (cut/paste/etc) """
-        button = gtk.Button()
+        button = Gtk.Button()
         button.show()
         self.register_widget('%s_%s' % (itemname, action), button)
         button.connect('clicked', callback)
         button.set_tooltip_text(name)
 
-        image = gtk.Image()
+        image = Gtk.Image()
         image.show()
         image.set_from_stock(stockimage, 1)
         button.add(image)
@@ -1230,7 +1230,7 @@ class BaseGUI(object):
 
     def imgsel_init_bgcolor(self):
         (x, y) = self.imgsel_window.image.get_size_request()
-        pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, x, y)
+        pixbuf = GdkPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, True, 8, x, y)
         steps = 4
         max = 255
         stepval = int(max / steps)
@@ -1239,8 +1239,8 @@ class BaseGUI(object):
             stepvals.insert(0, max - (stepval * i))
         stepvals.insert(0, 0)
         stepwidth = int(x / (steps + 1))
-        temppixbuf = gtk.gdk.Pixbuf(
-            gtk.gdk.COLORSPACE_RGB, True, 8, stepwidth, y)
+        temppixbuf = GdkPixbuf.Pixbuf(
+            GdkPixbuf.Colorspace.RGB, True, 8, stepwidth, y)
         for (i, val) in enumerate(stepvals):
             color = (val << 24) + (val << 16) + (val << 8) + 255
             temppixbuf.fill(color)
@@ -1377,21 +1377,21 @@ class BaseGUI(object):
                     (int(self.imgsel_widget.get_value()) - self.imgsel_offset) / self.imgsel_cols)
             self.imgsel_window.drawingarea.set_size_request(
                 self.imgsel_x, self.imgsel_y)
-            self.imgsel_pixmap = gtk.gdk.Pixmap(
+            self.imgsel_pixmap = Gdk.Pixmap(
                 self.imgsel_window.drawingarea.window, self.imgsel_x, self.imgsel_y)
-            self.imgsel_blank = gtk.gdk.Pixbuf(
-                gtk.gdk.COLORSPACE_RGB, True, 8, self.imgsel_width, self.imgsel_height)
+            self.imgsel_blank = GdkPixbuf.Pixbuf(
+                GdkPixbuf.Colorspace.RGB, True, 8, self.imgsel_width, self.imgsel_height)
             self.imgsel_blank.fill(self.imgsel_blank_color)
-            self.imgsel_gc_white = gtk.gdk.GC(
+            self.imgsel_gc_white = Gdk.GC(
                 self.imgsel_window.drawingarea.window)
             self.imgsel_gc_white.set_rgb_fg_color(
-                gtk.gdk.Color(65535, 65535, 65535))
-            self.imgsel_gc_black = gtk.gdk.GC(
+                Gdk.Color(65535, 65535, 65535))
+            self.imgsel_gc_black = Gdk.GC(
                 self.imgsel_window.drawingarea.window)
-            self.imgsel_gc_black.set_rgb_fg_color(gtk.gdk.Color(0, 0, 0))
-            self.imgsel_gc_green = gtk.gdk.GC(
+            self.imgsel_gc_black.set_rgb_fg_color(Gdk.Color(0, 0, 0))
+            self.imgsel_gc_green = Gdk.GC(
                 self.imgsel_window.drawingarea.window)
-            self.imgsel_gc_green.set_rgb_fg_color(gtk.gdk.Color(0, 65535, 0))
+            self.imgsel_gc_green.set_rgb_fg_color(Gdk.Color(0, 65535, 0))
             self.imgsel_pixmap.draw_rectangle(
                 self.imgsel_gc_black, True, 0, 0, self.imgsel_x, self.imgsel_y)
             for y in range(self.imgsel_rows):
@@ -1399,7 +1399,7 @@ class BaseGUI(object):
                     self.imgsel_draw(x, y)
             self.imgsel_init = True
         self.imgsel_clean = []
-        self.imgsel_window.drawingarea.window.draw_drawable(self.imgsel_window.drawingarea.get_style().fg_gc[gtk.STATE_NORMAL],
+        self.imgsel_window.drawingarea.window.draw_drawable(self.imgsel_window.drawingarea.get_style().fg_gc[Gtk.StateType.NORMAL],
                                                             self.imgsel_pixmap, 0, 0, 0, 0, self.imgsel_x, self.imgsel_y)
 
     def imgsel_on_clicked(self, widget, event):
@@ -1463,7 +1463,7 @@ class BaseGUI(object):
 
     def stupid_pixels_array(self, buf):
         """
-        An inefficient, stupid implementation of gtk.gdk.Pixbuf.get_pixels_array(),
+        An inefficient, stupid implementation of GdkPixbuf.Pixbuf.get_pixels_array(),
         for systems whose PyGTK wasn't compiled with Numeric Array support.  Which
         includes the Windows PyGTK builds, otherwise I might not bother.
 
@@ -1498,14 +1498,14 @@ class BaseGUI(object):
         for potions and reagents.  Double-clicking on an item will populate
         the value in the GUI; this handler takes care of that.
         """
-        if event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.type == Gdk._2BUTTON_PRESS:
             (model, iter) = widget.get_selection().get_selected()
             self.get_widget('bonus_value_3').set_value(
                 model.get_value(iter, 1))
 
     def completion_show_text(self, layout, cell, model, iteration, column):
         """
-        Intended for use with gtk.EntryCompletion.set_cell_data_func(), this will
+        Intended for use with Gtk.EntryCompletion.set_cell_data_func(), this will
         let you specify which column should contain the text to be shown in the
         autocomplete list.
         """
@@ -1513,7 +1513,7 @@ class BaseGUI(object):
 
     def completion_match_anywhere(self, completion, key, iteration, column):
         """
-        Intended for use with gtk.EntryCompletion.set_match_func(), this will
+        Intended for use with Gtk.EntryCompletion.set_match_func(), this will
         match anywhere in the string.
         """
         model = completion.get_model()
