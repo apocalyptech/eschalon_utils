@@ -2,6 +2,9 @@
 
 import os
 import sys
+from gi import pygtkcompat
+pygtkcompat.enable()
+pygtkcompat.enable_gtk(version='3.0')
 from gi.repository import Gtk
 from eschalon import version
 from eschalon.maingui import MainGUI
@@ -92,7 +95,7 @@ class BookChooser(object):
         else:
             icon_filename = os.path.join(os.path.dirname(
                 __file__), 'data', 'eb1_icon_64.png')
-        hbox.pack_start(Gtk.image_new_from_file(icon_filename, True, True, 0), False, False)
+        hbox.pack_start(Gtk.image_new_from_file(icon_filename), False, False)
         hbox.pack_start(label, False, False)
         align = Gtk.Alignment.new(0, 0, 1, 1)
         align.set_padding(5, 5, 40, 40)
