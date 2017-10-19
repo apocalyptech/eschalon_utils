@@ -212,7 +212,7 @@ class Savefile(object):
         while len(strpart) == 1:
             mystr = mystr + strpart
             if mystr[-2:] == b"\r\n":
-                return mystr[:-2]
+                return mystr[:-2].decode("ascii")
             strpart = self.df.read(1)
         raise LoadException('Error reading string value |' + strpart + '|')
 
