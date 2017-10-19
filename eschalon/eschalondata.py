@@ -375,7 +375,8 @@ class EschalonData(object):
                 self.itemdict[self.random_name] = True
 
         # Populate a sorted itemlist object as well.
-        self.itemlist = sorted(list(self.itemdict.keys()), key=lambda s: s.lower())
+        self.itemlist = sorted(list(self.itemdict.keys()),
+                               key=lambda s: s.lower())
 
         # Now try to load in all available entity information
         try:

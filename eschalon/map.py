@@ -419,7 +419,8 @@ class Map(object):
             entity.read(self.df_ent)
             if self.tiles[entity.y][entity.x].entity is not None:
                 # TODO: Support this better, perhaps?
-                print('WARNING: Two entities on a single tile, discarding all but the original')
+                print(
+                    'WARNING: Two entities on a single tile, discarding all but the original')
             else:
                 self.entities.append(entity)
                 if 0 <= entity.x < 100 and 0 <= entity.y < 200:

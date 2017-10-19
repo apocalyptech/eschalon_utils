@@ -166,7 +166,8 @@ class Saveslot(object):
         if self.maps_loaded:
             print('Maps:')
             for esch_map in self.maps:
-                print(' * %s - %s' % (esch_map.filename_short(), esch_map.mapname))
+                print(' * %s - %s' %
+                      (esch_map.filename_short(), esch_map.mapname))
         else:
             print('(Maps have not been loaded yet)')
         print()
@@ -185,10 +186,10 @@ class Saveslot(object):
         b_short = b.slotname_short()
         try:
             if (a_short[:4] == 'slot' and
-                        str(int(a_short[4:])) == a_short[4:] and
-                        b_short[:4] == 'slot' and
-                        str(int(b_short[4:])) == b_short[4:]
-                    ):
+                str(int(a_short[4:])) == a_short[4:] and
+                b_short[:4] == 'slot' and
+                str(int(b_short[4:])) == b_short[4:]
+                ):
                 return cmp(int(a_short[4:]), int(b_short[4:]))
         except ValueError:
             pass

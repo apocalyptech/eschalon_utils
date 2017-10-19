@@ -21,7 +21,6 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-
 class Additional(object):
     """
     When keeping track of one tile for an undo action, it's possible that
@@ -369,7 +368,8 @@ class Undo(object):
                 matched = 'matched'
             else:
                 matched = 'DOES NOT MATCH'
-            print(' * (%d, %d), tilecontent %d, %s' % (tilecontent.x, tilecontent.y, tilecontentcounters[tileval] + 1, matched))
+            print(' * (%d, %d), tilecontent %d, %s' % (tilecontent.x,
+                                                       tilecontent.y, tilecontentcounters[tileval] + 1, matched))
         print()
         print('%d total entities in map' % (len(self.mapobj.entities)))
         for entity in self.mapobj.entities:

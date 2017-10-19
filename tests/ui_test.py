@@ -6,12 +6,16 @@ import fnmatch
 import os
 import sys
 
+import lxml
+
+
 
 @unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
 class MainUITestCase(xmlunittest.XmlTestCase):
     def setUp(self):
         with open("data/maingui.ui") as df:
             self.doc = df.read()
+
 
 @unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
 class MapUITestCase(xmlunittest.XmlTestCase):

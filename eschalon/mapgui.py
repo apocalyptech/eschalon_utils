@@ -49,9 +49,6 @@ import gtk
 import cairo
 
 
-
-
-
 class MapNewDialog(gtk.Dialog):
     """
     A simple dialog to ask a user whether to create a new Global
@@ -2764,8 +2761,10 @@ class MapGUI(BaseGUI):
             else:
                 otherlabel.set_markup('<i>Other Value (0-3):</i>')
         else:
-            sliderloot_label = self.get_widget('slider_loot_%d_label' % (int(page)))
-            sliderloot_selector = self.get_widget('slider_loot_%d' % (int(page)))
+            sliderloot_label = self.get_widget(
+                'slider_loot_%d_label' % (int(page)))
+            sliderloot_selector = self.get_widget(
+                'slider_loot_%d' % (int(page)))
             if (int(widget.get_value()) == 12):
                 sliderloot_label.set_text('Slider Combination:')
             else:

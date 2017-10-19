@@ -214,7 +214,7 @@ class Savefile(object):
             if mystr[-2:] == b"\r\n":
                 return mystr[:-2]
             strpart = self.df.read(1)
-        raise LoadException('Error reading string value |'+ strpart + '|')
+        raise LoadException('Error reading string value |' + strpart + '|')
 
     def writestr(self, strval):
         """ Write a string (delimited by \r\n) to the savefile. """

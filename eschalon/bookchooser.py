@@ -103,7 +103,7 @@ class BookChooser(object):
         self.table = gtk.Table(6, 2)
         self.cur_row = 0
         for i in range(1, 4):
-            self.add_launchers('I'*i, self.char(i), self.map(i))
+            self.add_launchers('I' * i, self.char(i), self.map(i))
         col.add(self.table)
 
         # Close button at the bottom

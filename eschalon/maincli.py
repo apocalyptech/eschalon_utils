@@ -25,6 +25,7 @@ from eschalon.character import Character
 from eschalon.savefile import LoadException
 from eschalon.preferences import Prefs
 
+
 class MainCLI(object):
 
     def __init__(self, filename, prefs, req_book, args):
@@ -87,11 +88,14 @@ class MainCLI(object):
 
         if self.args.reset_hunger:
             if char.book == 1:
-                print('Resetting hunger/thirst is only available for Book 2/3 characters')
+                print(
+                    'Resetting hunger/thirst is only available for Book 2/3 characters')
             else:
-                print('Old Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger / 10.0, char.thirst / 10.0))
+                print('Old Hunger/Thirst Levels: %d%% / %d%%' %
+                      (char.hunger / 10.0, char.thirst / 10.0))
                 char.resetHunger()
-                print('New Hunger/Thirst Levels: %d%% / %d%%' % (char.hunger / 10.0, char.thirst / 10.0))
+                print('New Hunger/Thirst Levels: %d%% / %d%%' %
+                      (char.hunger / 10.0, char.thirst / 10.0))
 
         # If we've gotten here, write the file
         char.write()
@@ -102,7 +106,8 @@ class MainCLI(object):
 
         char = self.char
         if char.book == 1:
-            print("%s - Lvl %d %s %s %s" % (char.name, char.level, char.origin, char.axiom, char.classname))
+            print("%s - Lvl %d %s %s %s" % (char.name, char.level,
+                                            char.origin, char.axiom, char.classname))
         else:
             str = ['%s - Lvl %d' % (char.name, char.level)]
             if char.gender in c.gendertable:
@@ -140,12 +145,17 @@ class MainCLI(object):
             else:
                 print("Profile Picture ID: %d" % char.picid)
         print()
-        print("STR: %2d    INT: %2d     HP: %d/%d" % (char.strength, char.intelligence, char.curhp, char.maxhp))
-        print("DEX: %2d    WIS: %2d     MP: %d/%d" % (char.dexterity, char.wisdom, char.curmana, char.maxmana))
-        print("END: %2d    PCP: %2d    EXP: %d" % (char.endurance, char.perception, char.experience))
-        print("SPD: %2d    CCN: %2d   GOLD: %d" % (char.speed, char.concentration, char.gold))
+        print("STR: %2d    INT: %2d     HP: %d/%d" %
+              (char.strength, char.intelligence, char.curhp, char.maxhp))
+        print("DEX: %2d    WIS: %2d     MP: %d/%d" %
+              (char.dexterity, char.wisdom, char.curmana, char.maxmana))
+        print("END: %2d    PCP: %2d    EXP: %d" %
+              (char.endurance, char.perception, char.experience))
+        print("SPD: %2d    CCN: %2d   GOLD: %d" %
+              (char.speed, char.concentration, char.gold))
         if char.book > 1:
-            print("HUNGER: %2d%%    THIRST: %2d%%" % (char.hunger / 10.0, char.thirst / 10.0))
+            print("HUNGER: %2d%%    THIRST: %2d%%" %
+                  (char.hunger / 10.0, char.thirst / 10.0))
         print()
 
         print("CHARACTER STATUS")
@@ -159,9 +169,11 @@ class MainCLI(object):
                         extra = '  - extra (casting level): %d' % (
                             char.statuses_extra[i])
                 if i in c.statustable:
-                    print("\t* %s (Turns left: %d)%s" % (c.statustable[i], char.statuses[i], extra))
+                    print("\t* %s (Turns left: %d)%s" %
+                          (c.statustable[i], char.statuses[i], extra))
                 else:
-                    print("\t* Status %d (unknown) (Turns left: %d)%s" % (i, char.statuses[i], extra))
+                    print("\t* Status %d (unknown) (Turns left: %d)%s" %
+                          (i, char.statuses[i], extra))
         if char.book == 1:
             for key in list(c.diseasetable.keys()):
                 if char.disease & key == key:
@@ -249,7 +261,8 @@ class MainCLI(object):
         print()
         if char.book > 1:
             if char.readied_spell != '':
-                print("\t(current) - %s / Level %d" % (char.readied_spell, char.readied_spell_lvl))
+                print("\t(current) - %s / Level %d" %
+                      (char.readied_spell, char.readied_spell_lvl))
         i = 1
         for spell in char.readyslots:
             if spell[0] != '':

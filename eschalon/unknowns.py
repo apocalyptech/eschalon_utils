@@ -21,7 +21,6 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-
 class B1Unknowns(object):
     """ A class to hold some unknown data, so as not to muddy up the
         main Character class. """

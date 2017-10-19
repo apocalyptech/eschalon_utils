@@ -29,6 +29,7 @@ from eschalon.preferences import Prefs
 
 LOG = logging.getLogger(__name__)
 
+
 def parse_args(args):
     """
     Pull out argument parsing into a seperate function.
@@ -38,7 +39,8 @@ def parse_args(args):
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--list", action="append", type=str,
-                        choices=['all', 'stats', 'avatar', 'magic', 'equip', 'inv']
+                        choices=['all', 'stats', 'avatar',
+                                 'magic', 'equip', 'inv']
                         )
     parser.add_argument("-u", "--unknowns", action="store_true")
 
@@ -69,9 +71,8 @@ def parse_args(args):
 
     args = parser.parse_args(args)
 
-
     manip_options_set = any([args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
-         args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])
+                             args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])
 
     if not args.map and args.filename is None:
         args.char = True
@@ -83,7 +84,8 @@ def parse_args(args):
         parser.error("Can only manipulate values on a file")
     if any([args.char, args.map]):
         if manip_options_set:
-            parser.error("GUI can't be combined with listing/manipulation options")
+            parser.error(
+                "GUI can't be combined with listing/manipulation options")
     else:
         if args.filename is not None and not manip_options_set:
             parser.error("Select a mode operation (--char or --map)")
@@ -99,7 +101,6 @@ def main():
     args = parse_args(sys.argv[1:])
     coloredlogs.install(milliseconds=True, level=args.logLevel)
     LOG.verbose("Logging Started")
-
 
     # We're waiting until now to import, so people just using CLI don't need
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.

@@ -1696,7 +1696,8 @@ class B2SmartDraw(SmartDraw):
                                              [270, 271] + list(range(315, 320)) + [333] + list(range(346, 352)) +
                                              [364, 365, 367, 381] + list(range(396, 400)) +
                                              [407])
-        self.wall_list['walldecal_seethrough'] = (list(range(8, 12)) + [81, 97])
+        self.wall_list['walldecal_seethrough'] = (
+            list(range(8, 12)) + [81, 97])
         self.wall_list['wall_restrict'] = ([107] + list(range(298, 304)) + [332, 378, 379, 380, 382, 383] +
                                            list(range(402, 406)))
 
@@ -2241,7 +2242,8 @@ class B3SmartDraw(B2SmartDraw):
                                              [270, 271] + list(range(315, 320)) + [333] + list(range(346, 352)) +
                                              [364, 365, 367, 381, 394, 395] + list(range(398, 402)) +
                                              list(range(404, 410)) + [412, 413, 415])
-        self.wall_list['walldecal_seethrough'] = (list(range(8, 12)) + [81, 97])
+        self.wall_list['walldecal_seethrough'] = (
+            list(range(8, 12)) + [81, 97])
         self.wall_list['wall_restrict'] = (
             [120] + list(range(298, 304)) + [332, 379, 380, 396, 397, 410])
 
