@@ -24,6 +24,7 @@ LOG = logging.getLogger(__name__)
 import os
 from struct import unpack
 
+from gi.repository import Gdk
 from gi.repository import Gtk
 from gi.repository import GObject
 from gi.repository import Pango
