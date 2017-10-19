@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <requires lib="gtk+" version="2.24"/>
-  <!-- interface-naming-policy project-wide -->
+  <requires lib="gtk+" version="3.20"/>
   <object class="GtkAccelGroup" id="accelgroup1"/>
   <object class="GtkAdjustment" id="adjustment10">
     <property name="upper">10000</property>
@@ -267,8 +266,8 @@
     <accel-groups>
       <group name="accelgroup1"/>
     </accel-groups>
-    <signal name="key-press-event" handler="key_handler" swapped="no"/>
     <signal name="delete-event" handler="gtk_main_quit" swapped="no"/>
+    <signal name="key-press-event" handler="key_handler" swapped="no"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
@@ -317,8 +316,8 @@
                         <property name="image">image5</property>
                         <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="R" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_reload" swapped="no"/>
+                        <accelerator key="R" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -340,8 +339,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="A" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_save_as" swapped="no"/>
+                        <accelerator key="A" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -384,8 +383,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="P" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_prefs" swapped="no"/>
+                        <accelerator key="P" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -396,8 +395,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="E" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_export_clicked" swapped="no"/>
+                        <accelerator key="E" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -439,8 +438,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="Z" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_undo" swapped="no"/>
+                        <accelerator key="Z" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -451,8 +450,8 @@
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="Z" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_redo" swapped="no"/>
+                        <accelerator key="Z" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -487,8 +486,8 @@
                         <property name="image">image12</property>
                         <property name="use_stock">False</property>
                         <property name="accel_group">accelgroup1</property>
-                        <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_prop_button_clicked" swapped="no"/>
+                        <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>
@@ -927,7 +926,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="stock">gtk-zoom-out</property>
-                                    <property name="icon-size">1</property>
+                                    <property name="icon_size">1</property>
                                   </object>
                                 </child>
                               </object>
@@ -941,7 +940,6 @@
                               <object class="GtkHScale" id="zoom_scale">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="update_policy">discontinuous</property>
                                 <property name="adjustment">map_zoom_adj</property>
                                 <property name="restrict_to_fill_level">False</property>
                                 <property name="fill_level">6</property>
@@ -967,7 +965,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="stock">gtk-zoom-in</property>
-                                    <property name="icon-size">1</property>
+                                    <property name="icon_size">1</property>
                                   </object>
                                 </child>
                               </object>
@@ -1087,8 +1085,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment24</property>
                                 <signal name="value-changed" handler="on_draw_floor_changed" swapped="no"/>
                               </object>
@@ -1142,8 +1138,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment23</property>
                                 <signal name="value-changed" handler="on_draw_decal_changed" swapped="no"/>
                               </object>
@@ -1199,8 +1193,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">draw_wall_spin_adj</property>
                                 <signal name="value-changed" handler="on_draw_wall_changed" swapped="no"/>
                               </object>
@@ -1256,8 +1248,6 @@
                                 <property name="can_focus">True</property>
                                 <property name="primary_icon_activatable">False</property>
                                 <property name="secondary_icon_activatable">False</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                                 <property name="adjustment">adjustment21</property>
                                 <signal name="value-changed" handler="on_draw_walldecal_changed" swapped="no"/>
                               </object>
@@ -1504,8 +1494,8 @@
                                   <object class="GtkLabel" id="objectplace_lock_label">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Lock Level:</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1525,8 +1515,6 @@
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">objectplace_lock_adj</property>
                                       </object>
                                     </child>
@@ -1552,8 +1540,8 @@
                                   <object class="GtkLabel" id="objectplace_trap_label">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Trap:</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1601,8 +1589,8 @@
                                   <object class="GtkLabel" id="objectplace_loot_label">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Loot Level:</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -1622,8 +1610,6 @@
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">objectplace_loot_adj</property>
                                       </object>
                                     </child>
@@ -1682,9 +1668,9 @@
                       <object class="GtkLabel" id="mapname_mainscreen">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">8</property>
                         <property name="ypad">2</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1708,8 +1694,8 @@
                         <property name="width_request">60</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">1</property>
                         <property name="xpad">8</property>
+                        <property name="xalign">1</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -1739,10 +1725,9 @@
                             <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
                             <signal name="button-press-event" handler="on_clicked" swapped="no"/>
-                            <signal name="expose-event" handler="expose_map" swapped="no"/>
-                            <signal name="realize" handler="draw_map" swapped="no"/>
-                            <signal name="motion-notify-event" handler="on_mouse_changed" swapped="no"/>
                             <signal name="button-release-event" handler="on_released" swapped="no"/>
+                            <signal name="motion-notify-event" handler="on_mouse_changed" swapped="no"/>
+                            <signal name="realize" handler="draw_map" swapped="no"/>
                           </object>
                         </child>
                       </object>
@@ -1941,12 +1926,12 @@
     <property name="type_hint">normal</property>
     <property name="transient_for">mainwindow</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox7">
+      <object class="GtkBox" id="dialog-vbox7">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area7">
+          <object class="GtkButtonBox" id="dialog-action_area7">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -2042,8 +2027,6 @@
                         <property name="invisible_char">●</property>
                         <property name="primary_icon_activatable">False</property>
                         <property name="secondary_icon_activatable">False</property>
-                        <property name="primary_icon_sensitive">True</property>
-                        <property name="secondary_icon_sensitive">True</property>
                         <property name="adjustment">fill_map_adjust</property>
                         <signal name="value-changed" handler="on_fill_floor_changed" swapped="no"/>
                       </object>
@@ -2128,12 +2111,12 @@
     <property name="deletable">False</property>
     <property name="transient_for">mainwindow</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox3">
+      <object class="GtkBox" id="dialog-vbox3">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area3">
+          <object class="GtkButtonBox" id="dialog-action_area3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -2172,7 +2155,7 @@
                 <property name="can_focus">False</property>
                 <property name="xpad">14</property>
                 <property name="stock">gtk-dialog-error</property>
-                <property name="icon-size">6</property>
+                <property name="icon_size">6</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2222,8 +2205,6 @@
                       <object class="GtkScrolledWindow" id="scrolledwindow1">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="hscrollbar_policy">automatic</property>
-                        <property name="vscrollbar_policy">automatic</property>
                         <child>
                           <object class="GtkTextView" id="map_exception_view">
                             <property name="visible">True</property>
@@ -2276,12 +2257,12 @@
     <property name="deletable">False</property>
     <property name="transient_for">mainwindow</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox8">
+      <object class="GtkBox" id="dialog-vbox8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area8">
+          <object class="GtkButtonBox" id="dialog-action_area8">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
@@ -2322,34 +2303,173 @@
           </packing>
         </child>
         <child>
-          <object class="GtkAlignment" id="alignment12">
+          <object class="GtkHBox" id="hbox26">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="xalign">1</property>
-            <property name="xscale">0</property>
             <child>
-              <object class="GtkCheckButton" id="slowzipwarn_check">
+              <object class="GtkImage" id="image13">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="xalign">1</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-dialog-warning</property>
+                <property name="icon-size">6</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">22</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox16">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="label2">
+                  <object class="GtkAlignment" id="alignment53">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">&lt;i&gt;Show this warning in the future&lt;/i&gt;</property>
-                    <property name="use_markup">True</property>
+                    <property name="right_padding">6</property>
+                    <child>
+                      <object class="GtkLabel" id="slowziplabel">
+                        <property name="width_request">0</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Note:&lt;/b&gt; In order to load Book 2 or 3 graphics files in a reasonable amount of time, the "czipfile" module must be installed.  This is available on the web at http://pypi.python.org/pypi/czipfile (or via easy_install or pip)
+
+Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so this is a Big Deal.  Continue at your peril!</property>
+                        <property name="use_markup">True</property>
+                        <property name="wrap">True</property>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment52">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="top_padding">8</property>
+                    <property name="left_padding">10</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkLinkButton" id="linkbutton1">
+                        <property name="label" translatable="yes">http://pypi.python.org/pypi/czipfile</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="relief">half</property>
+                        <property name="uri">http://pypi.python.org/pypi/czipfile</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">2</property>
+            <property name="fill">True</property>
+            <property name="padding">15</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox26">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkImage" id="image13">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-dialog-warning</property>
+                <property name="icon_size">6</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">22</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="vbox16">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkAlignment" id="alignment53">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="right_padding">6</property>
+                    <child>
+                      <object class="GtkLabel" id="slowziplabel">
+                        <property name="width_request">0</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Note:&lt;/b&gt; In order to load Book 2 or 3 graphics files in a reasonable amount of time, the "czipfile" module must be installed.  This is available on the web at http://pypi.python.org/pypi/czipfile (or via easy_install or pip)
+
+Without czipfile, loading a map can take over a minute on a 3GHz Core 2 Duo, so this is a Big Deal.  Continue at your peril!</property>
+                        <property name="use_markup">True</property>
+                        <property name="wrap">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkAlignment" id="alignment52">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="top_padding">8</property>
+                    <property name="left_padding">10</property>
+                    <property name="right_padding">10</property>
+                    <child>
+                      <object class="GtkLinkButton" id="linkbutton1">
+                        <property name="label" translatable="yes">http://pypi.python.org/pypi/czipfile</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="relief">half</property>
+                        <property name="uri">http://pypi.python.org/pypi/czipfile</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="padding">15</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -2435,9 +2555,9 @@
                           <object class="GtkLabel" id="label7">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">1</property>
                             <property name="xpad">8</property>
                             <property name="label" translatable="yes">Composite Image:</property>
+                            <property name="xalign">1</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -2480,7 +2600,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">never</property>
-                    <property name="vscrollbar_policy">automatic</property>
                     <child>
                       <object class="GtkViewport" id="viewport2">
                         <property name="visible">True</property>
@@ -2519,8 +2638,6 @@
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="primary_icon_activatable">False</property>
                                             <property name="secondary_icon_activatable">False</property>
-                                            <property name="primary_icon_sensitive">True</property>
-                                            <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">adjustment20</property>
                                             <signal name="value-changed" handler="on_walldecal_changed" swapped="no"/>
                                           </object>
@@ -2592,8 +2709,6 @@
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="primary_icon_activatable">False</property>
                                             <property name="secondary_icon_activatable">False</property>
-                                            <property name="primary_icon_sensitive">True</property>
-                                            <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">adjustment19</property>
                                             <signal name="value-changed" handler="on_decal_changed" swapped="no"/>
                                           </object>
@@ -2665,8 +2780,6 @@
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="primary_icon_activatable">False</property>
                                             <property name="secondary_icon_activatable">False</property>
-                                            <property name="primary_icon_sensitive">True</property>
-                                            <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">adjustment18</property>
                                             <signal name="value-changed" handler="on_floor_changed" swapped="no"/>
                                           </object>
@@ -2751,8 +2864,6 @@
                                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                             <property name="primary_icon_activatable">False</property>
                                             <property name="secondary_icon_activatable">False</property>
-                                            <property name="primary_icon_sensitive">True</property>
-                                            <property name="secondary_icon_sensitive">True</property>
                                             <property name="adjustment">adjustment16</property>
                                             <signal name="value-changed" handler="on_wall_changed" swapped="no"/>
                                           </object>
@@ -2822,8 +2933,6 @@
                                         <property name="tooltip_text" translatable="yes">Ordinarily, the barrier flag is supposed to be 0, 1, 5, or (only in Book 2) 2.</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">adjustment15</property>
                                         <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                                       </object>
@@ -2841,10 +2950,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Wall Decal Image:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2859,10 +2968,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Wall Image:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2877,10 +2986,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Decal Image:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2895,10 +3004,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Floor Image:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2913,10 +3022,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Barrier:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2929,10 +3038,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Barrier Type:</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -2980,10 +3089,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Tile Flag</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -3008,8 +3117,6 @@
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">tile_flag_adjust</property>
                                         <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                                       </object>
@@ -3027,10 +3134,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">&lt;i&gt;Unknown:&lt;/i&gt;</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -3055,8 +3162,6 @@
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">adjustment17</property>
                                         <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                                       </object>
@@ -3074,10 +3179,10 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                                    <property name="xalign">1</property>
                                     <property name="xpad">3</property>
                                     <property name="label" translatable="yes">Cartography</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -3101,11 +3206,8 @@
                                         <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                                         <property name="tooltip_text" translatable="yes">The level of cartography skill that this tile has been explored with</property>
                                         <property name="invisible_char">●</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <property name="adjustment">cartography_adjustment</property>
                                         <signal name="value-changed" handler="on_singleval_tile_changed_int" swapped="no"/>
                                       </object>
@@ -3230,7 +3332,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hscrollbar_policy">never</property>
-                    <property name="vscrollbar_policy">automatic</property>
                     <child>
                       <object class="GtkViewport" id="viewport3">
                         <property name="visible">True</property>
@@ -3249,10 +3350,10 @@
                                   <object class="GtkLabel" id="label15">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
                                     <property name="xpad">10</property>
                                     <property name="label" translatable="yes">&lt;b&gt;Basic Information&lt;/b&gt;</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -3284,8 +3385,6 @@
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <signal name="changed" handler="on_singleval_ent_changed_str" swapped="no"/>
                                               </object>
                                               <packing>
@@ -3358,10 +3457,10 @@
                                       <object class="GtkLabel" id="entscript_label">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="xalign">1</property>
                                         <property name="xpad">5</property>
                                         <property name="ypad">4</property>
                                         <property name="label" translatable="yes">Script:</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3376,10 +3475,10 @@
                                       <object class="GtkLabel" id="direction_label">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="xalign">1</property>
                                         <property name="xpad">5</property>
                                         <property name="ypad">4</property>
                                         <property name="label" translatable="yes">Orientation:</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3394,10 +3493,10 @@
                                       <object class="GtkLabel" id="entid_label">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="xalign">1</property>
                                         <property name="xpad">5</property>
                                         <property name="ypad">4</property>
                                         <property name="label" translatable="yes">Entity Type:</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left_attach">1</property>
@@ -3492,11 +3591,11 @@ another direction, Eschalon will crash.</property>
                                   <object class="GtkLabel" id="label18">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="xalign">0</property>
                                     <property name="xpad">10</property>
                                     <property name="ypad">7</property>
                                     <property name="label" translatable="yes">&lt;b&gt;Extended Information&lt;/b&gt;</property>
                                     <property name="use_markup">True</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -3530,8 +3629,6 @@ another direction, Eschalon will crash.</property>
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <property name="adjustment">adjustment11</property>
                                                 <signal name="value-changed" handler="on_singleval_ent_changed_int" swapped="no"/>
                                               </object>
@@ -3564,8 +3661,6 @@ another direction, Eschalon will crash.</property>
                                                     <property name="invisible_char">●</property>
                                                     <property name="primary_icon_activatable">False</property>
                                                     <property name="secondary_icon_activatable">False</property>
-                                                    <property name="primary_icon_sensitive">True</property>
-                                                    <property name="secondary_icon_sensitive">True</property>
                                                     <property name="adjustment">adjustment10</property>
                                                     <signal name="value-changed" handler="on_singleval_ent_changed_int" swapped="no"/>
                                                   </object>
@@ -3623,8 +3718,6 @@ another direction, Eschalon will crash.</property>
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <property name="adjustment">adjustment9</property>
                                                 <signal name="value-changed" handler="on_singleval_ent_changed_int" swapped="no"/>
                                               </object>
@@ -3640,11 +3733,11 @@ another direction, Eschalon will crash.</property>
                                           <object class="GtkLabel" id="frame_label">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="ypad">4</property>
                                             <property name="label" translatable="yes">Frame:</property>
                                             <property name="use_markup">True</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                           <packing>
                                             <property name="top_attach">4</property>
@@ -3657,10 +3750,10 @@ another direction, Eschalon will crash.</property>
                                           <object class="GtkLabel" id="health_label">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="ypad">4</property>
                                             <property name="label" translatable="yes">Health:</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                           <packing>
                                             <property name="top_attach">1</property>
@@ -3673,10 +3766,10 @@ another direction, Eschalon will crash.</property>
                                           <object class="GtkLabel" id="friendly_label">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="ypad">4</property>
                                             <property name="label" translatable="yes">Friendly?</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                           <packing>
                                             <property name="x_options">GTK_FILL</property>
@@ -3687,10 +3780,10 @@ another direction, Eschalon will crash.</property>
                                           <object class="GtkLabel" id="initial_loc_label">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="ypad">4</property>
                                             <property name="label" translatable="yes">Initial Location:</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                           <packing>
                                             <property name="top_attach">2</property>
@@ -3718,8 +3811,6 @@ another direction, Eschalon will crash.</property>
                                                     <property name="invisible_char">●</property>
                                                     <property name="primary_icon_activatable">False</property>
                                                     <property name="secondary_icon_activatable">False</property>
-                                                    <property name="primary_icon_sensitive">True</property>
-                                                    <property name="secondary_icon_sensitive">True</property>
                                                     <property name="adjustment">adjustment8</property>
                                                     <signal name="value-changed" handler="on_singleval_ent_changed_int" swapped="no"/>
                                                   </object>
@@ -3765,10 +3856,10 @@ another direction, Eschalon will crash.</property>
                                           <object class="GtkLabel" id="movement_label">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="xalign">1</property>
                                             <property name="xpad">5</property>
                                             <property name="ypad">4</property>
                                             <property name="label" translatable="yes">Movement Activity:</property>
+                                            <property name="xalign">1</property>
                                           </object>
                                           <packing>
                                             <property name="top_attach">3</property>
@@ -3793,8 +3884,6 @@ another direction, Eschalon will crash.</property>
                                                 <property name="invisible_char">●</property>
                                                 <property name="primary_icon_activatable">False</property>
                                                 <property name="secondary_icon_activatable">False</property>
-                                                <property name="primary_icon_sensitive">True</property>
-                                                <property name="secondary_icon_sensitive">True</property>
                                                 <property name="adjustment">movement_adj</property>
                                                 <signal name="value-changed" handler="on_singleval_ent_changed_int" swapped="no"/>
                                               </object>
@@ -3869,10 +3958,10 @@ another direction, Eschalon will crash.</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                            <property name="xalign">1</property>
                             <property name="xpad">6</property>
                             <property name="label" translatable="yes">Object Type:</property>
                             <property name="use_markup">True</property>
+                            <property name="xalign">1</property>
                           </object>
                         </child>
                       </object>
@@ -3899,8 +3988,6 @@ another direction, Eschalon will crash.</property>
                             <property name="has_tooltip">True</property>
                             <property name="primary_icon_activatable">False</property>
                             <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
                             <property name="adjustment">adjustment7</property>
                             <signal name="value-changed" handler="on_tilecontentid_changed" swapped="no"/>
                           </object>
@@ -4127,7 +4214,6 @@ another direction, Eschalon will crash.</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="hscrollbar_policy">never</property>
-            <property name="vscrollbar_policy">automatic</property>
             <child>
               <object class="GtkViewport" id="viewport4">
                 <property name="visible">True</property>
@@ -4140,11 +4226,11 @@ another direction, Eschalon will crash.</property>
                       <object class="GtkLabel" id="label25">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">9</property>
                         <property name="ypad">3</property>
                         <property name="label" translatable="yes">&lt;b&gt;Basics:&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4174,6 +4260,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -4197,6 +4288,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -4220,6 +4316,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -4243,6 +4344,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -4259,8 +4365,8 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="maptype">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">From Savegame</property>
+                                <property name="xalign">0</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -4280,8 +4386,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                                   </object>
                                 </child>
@@ -4299,9 +4403,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="exit_west_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">West Exit:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">6</property>
@@ -4313,9 +4417,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="exit_south_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">South Exit:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">5</property>
@@ -4327,9 +4431,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="exit_east_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">East Exit:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">4</property>
@@ -4341,9 +4445,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="exit_north_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">North Exit:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">3</property>
@@ -4355,9 +4459,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="mapname_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Map Name:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -4369,9 +4473,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="maptype_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Map Source:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
@@ -4381,9 +4485,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="mapid_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Map ID:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -4395,9 +4499,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="entrancescript_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Entrance Script:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">7</property>
@@ -4423,8 +4527,6 @@ another direction, Eschalon will crash.</property>
                                         <property name="invisible_char">●</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                                       </object>
                                       <packing>
@@ -4448,10 +4550,10 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="map_flags_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
-                                <property name="yalign">0</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Flags:</property>
+                                <property name="xalign">1</property>
+                                <property name="yalign">0</property>
                               </object>
                               <packing>
                                 <property name="top_attach">10</property>
@@ -4653,9 +4755,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="random_entity_1_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Camp Encounter 1:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">12</property>
@@ -4667,9 +4769,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="random_entity_2_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Camp Encounter 2:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">13</property>
@@ -4751,8 +4853,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                                   </object>
                                 </child>
@@ -4770,9 +4870,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="map_b1_outsideflag_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Outside Flag:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">11</property>
@@ -4794,8 +4894,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">map_b1_outsideflag_adjust</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -4814,9 +4912,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="returnscript_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Return Script:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">8</property>
@@ -4840,11 +4938,8 @@ another direction, Eschalon will crash.</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">This script is run each time the character enters the map.</property>
                                         <property name="invisible_char">●</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                                       </object>
                                       <packing>
@@ -4869,9 +4964,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="exitscript_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Exit Script:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">9</property>
@@ -4895,11 +4990,8 @@ another direction, Eschalon will crash.</property>
                                         <property name="can_focus">True</property>
                                         <property name="tooltip_text" translatable="yes">This script is run each time the character leaves the map.</property>
                                         <property name="invisible_char">●</property>
-                                        <property name="invisible_char_set">True</property>
                                         <property name="primary_icon_activatable">False</property>
                                         <property name="secondary_icon_activatable">False</property>
-                                        <property name="primary_icon_sensitive">True</property>
-                                        <property name="secondary_icon_sensitive">True</property>
                                         <signal name="changed" handler="on_singleval_map_changed_str" swapped="no"/>
                                       </object>
                                       <packing>
@@ -4933,11 +5025,11 @@ another direction, Eschalon will crash.</property>
                       <object class="GtkLabel" id="label26">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">9</property>
                         <property name="ypad">3</property>
                         <property name="label" translatable="yes">&lt;b&gt;Media:&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -4970,8 +5062,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">adjustment6</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -4990,10 +5080,10 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="clouds_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Cloud Overlay:</property>
                                 <property name="use_markup">True</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">11</property>
@@ -5015,8 +5105,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">adjustment5</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5044,8 +5132,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">parallax_y_adj</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5073,8 +5159,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">parallax_x_adj</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5103,6 +5187,11 @@ another direction, Eschalon will crash.</property>
                                     <child>
                                       <object class="GtkCellRendererText" id="cellrenderertext1"/>
                                     </child>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5126,6 +5215,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5149,6 +5243,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5173,6 +5272,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_markup">Note that having an empty value here will crash Eschalon</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5245,12 +5349,12 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="color_a_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Color Overlay:
 &lt;i&gt;(alpha channel)&lt;/i&gt;</property>
                                 <property name="use_markup">True</property>
                                 <property name="justify">right</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">13</property>
@@ -5262,9 +5366,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="color_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Color Overlay:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">12</property>
@@ -5276,9 +5380,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="parallax_y_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Parallax Y:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">8</property>
@@ -5290,9 +5394,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="parallax_x_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Parallax X:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">7</property>
@@ -5304,9 +5408,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="skybox_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Skybox Image:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">6</property>
@@ -5318,9 +5422,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="atmos_sound_day_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Atmosphere:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">2</property>
@@ -5332,9 +5436,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="music2_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Music 2:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -5346,9 +5450,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="music1_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Music 1:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
@@ -5358,9 +5462,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="random_sound1_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Random sound 1:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">4</property>
@@ -5379,6 +5483,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5395,9 +5504,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="tree_set_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Tree Set:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">14</property>
@@ -5447,6 +5556,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5463,9 +5577,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="atmos_sound_night_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Atmosphere (night):</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">3</property>
@@ -5477,9 +5591,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="random_sound2_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Random sound 2:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">5</property>
@@ -5498,6 +5612,11 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="has_entry">True</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can_focus">False</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -5514,9 +5633,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="cloud_offset_x_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Cloud Offset X:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">9</property>
@@ -5535,11 +5654,8 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
-                                    <property name="invisible_char_set">True</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cloud_x_adj</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5558,9 +5674,9 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="cloud_offset_y_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">Cloud Offset Y:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="top_attach">10</property>
@@ -5579,11 +5695,8 @@ another direction, Eschalon will crash.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="invisible_char">●</property>
-                                    <property name="invisible_char_set">True</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cloud_y_adj</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5611,11 +5724,11 @@ another direction, Eschalon will crash.</property>
                       <object class="GtkLabel" id="label27">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="xalign">0</property>
                         <property name="xpad">9</property>
                         <property name="ypad">3</property>
                         <property name="label" translatable="yes">&lt;b&gt;Unknowns:&lt;/b&gt;</property>
                         <property name="use_markup">True</property>
+                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -5674,6 +5787,9 @@ another direction, Eschalon will crash.</property>
                               <placeholder/>
                             </child>
                             <child>
+                              <placeholder/>
+                            </child>
+                            <child>
                               <object class="GtkAlignment" id="alignment60">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -5686,8 +5802,6 @@ another direction, Eschalon will crash.</property>
                                     <property name="invisible_char">●</property>
                                     <property name="primary_icon_activatable">False</property>
                                     <property name="secondary_icon_activatable">False</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cartography_adjustment</property>
                                     <signal name="value-changed" handler="on_singleval_map_changed_int" swapped="no"/>
                                   </object>
@@ -5704,10 +5818,10 @@ another direction, Eschalon will crash.</property>
                               <object class="GtkLabel" id="map_unknownh1_label">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">1</property>
                                 <property name="xpad">5</property>
                                 <property name="label" translatable="yes">&lt;i&gt;Unknown Short 1&lt;/i&gt;:</property>
                                 <property name="use_markup">True</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="x_options">GTK_FILL</property>
