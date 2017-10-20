@@ -10,21 +10,18 @@ import lxml
 
 
 
-@unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
 class MainUITestCase(xmlunittest.XmlTestCase):
     def setUp(self):
         with open("data/maingui.ui") as df:
             self.doc = df.read()
 
 
-@unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
 class MapUITestCase(xmlunittest.XmlTestCase):
     def setUp(self):
         with open("data/mapgui.ui") as df:
             self.doc = df.read()
 
 
-@unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
 class ItemTestCase(xmlunittest.XmlTestCase):
     def setUp(self):
         with open("data/itemgui.ui") as df:
@@ -40,7 +37,7 @@ all_ui_files = ['data/maingui.ui',
 
 class CommonUITestCase(xmlunittest.XmlTestCase):
     @parameterized.expand(all_ui_files)
-    @unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
+    # @unittest.skipUnless(sys.version_info[0] == 2, "unicode issues, yay")
     def test_valid_doc(self, *args):
         fname = args[0]
         with open(fname) as df:
