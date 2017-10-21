@@ -124,7 +124,7 @@ long time.  Trust me, you will want to have it installed.  Note once again
 that this only affects Book II/III map editing.  The character editors, and
 the Book I map editor are not affected.
 
-The minimum GTK+ required is 2.18.0.
+The minimum GTK+ required is 2.24.0.
 
 INSTALLATION, WINDOWS
 ---------------------
