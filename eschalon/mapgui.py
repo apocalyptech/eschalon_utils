@@ -272,6 +272,7 @@ class MapLoaderDialog(Gtk.Dialog):
             try:
                 self.slots.append(Saveslot(slotdir, c.book))
             except LoadException as e:
+                LOG.error(e, exc_info=True)
                 # If there's an error, just don't show the slot
                 pass
         # self.slots.sort()
@@ -1259,8 +1260,9 @@ class MapGUI(BaseGUI):
             self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
             c.set_eschalondata(self.eschalondata)
         except Exception as e:
+            LOG.error(e, exc_info=True)
             self.errordialog('Error Loading Graphics',
-                             'Graphics could not be initialized: %s' % (str(e)))
+                             'Graphics could not be initialized: %s' % (e))
             sys.exit(1)
 
         # If we were given a filename, load it.  If not, create a new map,

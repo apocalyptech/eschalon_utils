@@ -592,8 +592,9 @@ class MainGUI(BaseGUI):
             char = Character.load(filename, self.req_book, self.req_book)
             char.read()
         except LoadException as e:
+            LOG.error(e, exc_info=True)
             errordiag = self.get_widget('loaderrorwindow')
-            self.get_widget('loaderror_textview').get_buffer().set_text(e.text)
+            self.get_widget('loaderror_textview').get_buffer().set_text(e)
             errordiag.run()
             errordiag.hide()
             return False
