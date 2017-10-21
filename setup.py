@@ -21,7 +21,6 @@ setup(
         'pygtk',
         'gobject',
         'numpy',
-        'czipfile',
         'pycrypto',
         'six',
         'bidict',
