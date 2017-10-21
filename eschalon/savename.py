@@ -18,13 +18,12 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-LOG = logging.getLogger(__name__)
-
-
 import struct
 from eschalon.constants import constants as c
 from eschalon.savefile import Savefile, LoadException
 from eschalon.constantsb1 import B1Constants
+
+LOG = logging.getLogger(__name__)
 
 
 class Savename(object):
@@ -118,9 +117,10 @@ class Savename(object):
                 map_or_version = df.readstr()
                 df.close()
             except (IOError, struct.error) as e:
-                raise LoadException(str(e))
+                LOG.error("Failed to load book", exc_info=True)
+                raise LoadException(e) from e
 
-            if map_or_version.startswith('book3'):
+            if map_or_version.startswith(b'book3'):
                 book = 3
             elif map_or_version in B1Constants.maps:
                 book = 1
@@ -186,7 +186,8 @@ class B1Savename(Savename):
             self.df.close()
 
         except (IOError, struct.error) as e:
-            raise LoadException(str(e))
+            LOG.error("Failed to load savename", exc_info=True)
+            raise LoadException(e) from e
 
     def _sub_replicate(self, newsn):
         """

@@ -23,7 +23,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 import os
-from gi.repository import Gtk
+from gi.repository import GdkPixbuf
 import math
 import zlib
 import cairo
@@ -250,7 +250,7 @@ class PakIndex(object):
          self.size_real,
          self.unknowni1) = unpack('<IIII', data[:16])
         self.filename = data[16:]
-        self.filename = self.filename[:self.filename.index("\x00")]
+        self.filename = self.filename[:self.filename.index(b"\x00")]
 
 
 class Gfx(object):
@@ -467,7 +467,7 @@ class B1Gfx(Gfx):
 
         df.open_r()
         header = df.read(4)
-        if (header != '!PAK'):
+        if (header != b'!PAK'):
             df.close()
             raise LoadException('Invalid PAK header')
 
@@ -482,7 +482,6 @@ class B1Gfx(Gfx):
         decobj = zlib.decompressobj()
         indexdata = decobj.decompress(df.read())
         self.zeroindex = df.tell() - len(decobj.unused_data)
-        decobj = None
         for i in range(self.numfiles):
             index = PakIndex(indexdata[:272])
             indexdata = indexdata[272:]
