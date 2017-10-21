@@ -119,7 +119,7 @@ class CharLoaderDialog(Gtk.Dialog):
             except:
                 # If there's an error, just don't show the slot
                 pass
-        # self.slots.sort()
+        self.slots.sort()
         if self.slots:
 
             # Savegame combobox/liststore

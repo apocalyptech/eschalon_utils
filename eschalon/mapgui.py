@@ -275,7 +275,7 @@ class MapLoaderDialog(Gtk.Dialog):
                 LOG.error(e, exc_info=True)
                 # If there's an error, just don't show the slot
                 pass
-        # self.slots.sort()
+        self.slots.sort()
         if self.slots:
 
             # Slot-choosing combobox/liststore
