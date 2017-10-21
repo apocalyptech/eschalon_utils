@@ -18,7 +18,6 @@ setup(
     description='Eschalon Books I, II, and III Character and Map Editors ',
     requires=[
         'Crypto',
-        'pygtk',
         'gobject',
         'numpy',
         'pycrypto',
