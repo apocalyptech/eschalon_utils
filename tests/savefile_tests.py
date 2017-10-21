@@ -12,10 +12,10 @@ class TestSavefile(unittest.TestCase):
         s.open_r()
 
         with self.assertRaises(IOError):
-                s.open_r()
+            s.open_r()
 
         with self.assertRaises(IOError):
-                s.open_w()
+            s.open_w()
 
     def test_ensure_only_one_datatype(self):
         eschalon.savefile.Savefile(stringdata=b"")
@@ -32,7 +32,6 @@ class TestSavefile(unittest.TestCase):
         s = eschalon.savefile.Savefile(stringdata=b"")
         s.set_filename("-")
         self.assertFalse(s.is_stringdata())
-
 
     def _test_write_and_read(self,
                              value_to_write,
@@ -126,6 +125,7 @@ class TestSavefile(unittest.TestCase):
             fn_to_write=eschalon.savefile.Savefile.writeuchar,
             fn_to_read=eschalon.savefile.Savefile.readuchar,
         )
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -12,7 +12,8 @@ class BaseCharacterTests(object):
 
     def createMyself(self, book, book_filename):
         self._book_filename = book_filename
-        self.char = eschalon.character.Character.load(self._book_filename, book=book)
+        self.char = eschalon.character.Character.load(
+            self._book_filename, book=book)
         self.char.read()
 
 
@@ -40,13 +41,17 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
 
     def test_character_information(self):
         self.assertEqual(self.char.name, b"Veera")
-        self.assertEqual(self.char.origin, B2Constants.origintable.inv["Therish"])
-        self.assertEqual(self.char.axiom, B2Constants.axiomtable.inv["Atheistic"])
-        self.assertEqual(self.char.gender, B2Constants.gendertable.inv["Female"])
+        self.assertEqual(self.char.origin,
+                         B2Constants.origintable.inv["Therish"])
+        self.assertEqual(
+            self.char.axiom, B2Constants.axiomtable.inv["Atheistic"])
+        self.assertEqual(self.char.gender,
+                         B2Constants.gendertable.inv["Female"])
 
     @unittest.skip("test fails though output of --list is correct")
     def test_class(self):
-        self.assertEqual(self.char.axiom, B2Constants.classtable.inv["Magick User"])
+        self.assertEqual(
+            self.char.axiom, B2Constants.classtable.inv["Magick User"])
 
     def test_skill_levels(self):
         st = B2Constants.skilltable
@@ -85,7 +90,8 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
     def test_read_write_read_unmodified(self):
         with open(self._book_filename, 'rb') as df:
             original_hash = hashlib.sha256(df.read())
-        c = eschalon.character.Character.load(filename=self._book_filename, book=2)
+        c = eschalon.character.Character.load(
+            filename=self._book_filename, book=2)
         c.read()
         c.write()
         with open(self._book_filename, 'rb') as df:
@@ -115,7 +121,8 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
         self.assertEqual(self.char.spells[st.inv["Dense Nimbus"]], 0)
 
     def test_keyring(self):
-        self.assertListEqual(self.char.keyring[0:3], [b'Simple Key', b'Bluish Key', b'Rusted Key'])
+        self.assertListEqual(self.char.keyring[0:3], [
+                             b'Simple Key', b'Bluish Key', b'Rusted Key'])
 
     def test_alchemy_recipe(self):
         self.assertListEqual(self.char.alchemy_book,

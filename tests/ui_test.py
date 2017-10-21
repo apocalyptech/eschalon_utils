@@ -9,7 +9,6 @@ import sys
 import lxml
 
 
-
 class MainUITestCase(xmlunittest.XmlTestCase):
     def setUp(self):
         with open("data/maingui.ui") as df:

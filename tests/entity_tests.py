@@ -2,6 +2,7 @@ import unittest
 
 import eschalon.entity
 
+
 class EntityTests(unittest.TestCase):
 
     def test_entity_init_default(self):
