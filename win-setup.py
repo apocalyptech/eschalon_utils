@@ -6,7 +6,11 @@
 
 # Let's start with some default (for me) imports...
 
-from cx_Freeze import setup, Executable
+try:
+    from cx_Freeze import setup, Executable
+except:
+    def Executable(**kwargs): pass
+    def setup(**kwargs): pass
 
 
 # Process the includes, excludes and packages first
