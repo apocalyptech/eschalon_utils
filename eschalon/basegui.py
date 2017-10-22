@@ -408,34 +408,36 @@ class BaseGUI(object):
 
     @staticmethod
     def infodialog(title, markup, parent=None):
+        LOG.info(title + ": " + markup)
         return BaseGUI.userdialog(Gtk.MessageType.INFO, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def warningdialog(title, markup, parent=None):
+        LOG.warning(title + ": " + markup)
         return BaseGUI.userdialog(Gtk.MessageType.WARNING, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def errordialog(title, markup, parent=None):
+        LOG.error(title + ": " + markup)
         return BaseGUI.userdialog(Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, title, markup, parent)
 
     @staticmethod
     def confirmdialog(title, markup, parent=None):
+        LOG.info(title + ": " + markup)
         return BaseGUI.userdialog(Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO, title, markup, parent)
 
     def set_book_elem_visibility(self, classname, show):
         """
         Show or hide form elements based on the book version
         """
-        if show:
-            for elem in classname.form_elements:
-                widget = self.get_widget(elem)
-                if widget:
-                    widget.show()
-        else:
-            for elem in classname.form_elements:
-                widget = self.get_widget(elem)
-                if widget:
-                    widget.hide()
+        for elem in classname.form_elements:
+            widget = self.get_widget(elem)
+            if not widget:
+                continue
+            if show:
+                widget.show()
+            else:
+                widget.hide()
 
     def item_gui_finish(self, book):
         """
