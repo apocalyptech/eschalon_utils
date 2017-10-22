@@ -60,10 +60,8 @@ class ComplexObj(object):
         self.steps.append(step)
 
     def matches(self, matchtile):
-        for step in self.steps:
-            if step.tile == matchtile:
-                return True
-        return False
+        return any([matchtile == step.tile for step in self.steps])
+
 
     def get_steps(self, tile):
         fwd = []
