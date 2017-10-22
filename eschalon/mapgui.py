@@ -45,6 +45,10 @@ from eschalon.smartdraw import SmartDraw
 from eschalon.tilecontent import Tilecontent
 from eschalon.savefile import LoadException
 from eschalon.entity import Entity
+import pygtkcompat
+pygtkcompat.enable()
+pygtkcompat.enable_gtk(version='3.0')
+
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
 from gi.repository import Gtk

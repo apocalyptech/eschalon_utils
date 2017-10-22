@@ -357,7 +357,7 @@ class B1Character(Character):
             self.unknown.initzero = self.df.readint()
 
             # Character info
-            self.name = self.df.readstr()
+            self.name = self.df.readstr().decode('UTF-8')
             self.unknown.charstring = self.df.readstr()
             self.origin = self.df.readstr()
             self.axiom = self.df.readstr()
@@ -738,7 +738,7 @@ class B2Character(Character):
                 self.unknown.initzero))
 
             # Character info
-            self.name = self.df.readstr()
+            self.name = self.df.readstr().decode('UTF-8')
             self.gender = self.df.readuchar()
             self.origin = self.df.readuchar()
             self.axiom = self.df.readuchar()
@@ -1178,7 +1178,7 @@ class B3Character(Character):
             self.unknown.initzero = self.df.readuchar()
 
             # Character info
-            self.name = self.df.readstr()
+            self.name = self.df.readstr().decode('UTF-8')
             self.gender = self.df.readuchar()
             self.origin = self.df.readuchar()
             self.axiom = self.df.readuchar()
@@ -1225,8 +1225,8 @@ class B3Character(Character):
             for i in range(6):
                 portal_anchor = []
                 portal_anchor.append(self.df.readint())
-                portal_anchor.append(self.df.readstr())
-                portal_anchor.append(self.df.readstr())
+                portal_anchor.append(self.df.readstr().decode('UTF-8'))
+                portal_anchor.append(self.df.readstr().decode('UTF-8'))
                 self.portal_locs.append(portal_anchor)
 
             # Unknown
@@ -1237,12 +1237,12 @@ class B3Character(Character):
                 self.addspell()
 
             # Currently-readied spell
-            self.readied_spell = self.df.readstr()
+            self.readied_spell = self.df.readstr().decode('UTF-8')
             self.readied_spell_lvl = self.df.readuchar()
 
             # Readied Spells
             for i in range(10):
-                self.addreadyslot(self.df.readstr(), self.df.readuchar())
+                self.addreadyslot(self.df.readstr().decode('UTF-8'), self.df.readuchar())
 
             # Alchemy Recipes
             for i in range(27):
@@ -1276,15 +1276,15 @@ class B3Character(Character):
 
             # Keyring
             for i in range(20):
-                self.keyring.append(self.df.readstr())
+                self.keyring.append(self.df.readstr().decode('UTF-8'))
 
             # More unknowns
             self.unknown.unknowns1 = self.df.readshort()
-            self.unknown.unknownstr1 = self.df.readstr()
+            self.unknown.unknownstr1 = self.df.readstr().decode('UTF-8')
             for i in range(29):
                 self.unknown.twentyninezeros.append(self.df.readuchar())
-            self.unknown.unknownstr2 = self.df.readstr()
-            self.unknown.unknownstr3 = self.df.readstr()
+            self.unknown.unknownstr2 = self.df.readstr().decode('UTF-8')
+            self.unknown.unknownstr3 = self.df.readstr().decode('UTF-8')
             self.unknown.unknowns2 = self.df.readshort()
 
             # Inventory
@@ -1312,8 +1312,8 @@ class B3Character(Character):
 
             # Equipment Slots
             for i in range(13):
-                self.equip_slot_1.append(self.df.readstr())
-                self.equip_slot_2.append(self.df.readstr())
+                self.equip_slot_1.append(self.df.readstr().decode('UTF-8'))
+                self.equip_slot_2.append(self.df.readstr().decode('UTF-8'))
 
             # If there's extra data at the end, we likely don't have
             # a valid char file

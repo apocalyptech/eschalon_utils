@@ -23,7 +23,6 @@ import sys
 
 
 import coloredlogs
-import verboselogs
 
 from eschalon.preferences import Prefs
 

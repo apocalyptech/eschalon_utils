@@ -314,7 +314,7 @@ class B1Item(Item):
         """ Given a file descriptor, read in the item. """
 
         self.category = df.readint()
-        self.item_name = df.readstr()
+        self.item_name = df.readstr().decode('UTF-8')
         self.weight = df.readdouble()
         assert self.weight >= 0
         self.subcategory = df.readint()
@@ -337,8 +337,8 @@ class B1Item(Item):
         self.armor = df.readint()
         self.incr = df.readint()
         self.flags = df.readint()
-        self.script = df.readstr()
-        self.emptystr = df.readstr()
+        self.script = df.readstr().decode('UTF-8')
+        self.emptystr = df.readstr().decode('UTF-8')
         self.zero1 = df.readint()
         self.duration = df.readint()
 
@@ -488,7 +488,7 @@ class B2Item(Item):
 
         self.category = df.readuchar()
         self.quest = df.readuchar()
-        self.item_name = df.readstr()
+        self.item_name = df.readstr().decode('UTF-8')
         self.weight = df.readfloat()
         self.subcategory = df.readuchar()
         self.max_hp = df.readshort()
@@ -507,8 +507,8 @@ class B2Item(Item):
         self.bonus_value_2 = df.readuchar()
         self.bonus_3 = df.readuchar()
         self.bonus_value_3 = df.readsint()
-        self.script = df.readstr()
-        self.spell = df.readstr()
+        self.script = df.readstr().decode('UTF-8')
+        self.spell = df.readstr().decode('UTF-8')
         self.spell_power = df.readuchar()
         self.is_projectile = df.readuchar()
 

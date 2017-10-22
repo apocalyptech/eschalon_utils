@@ -24,6 +24,9 @@ LOG = logging.getLogger(__name__)
 
 import os
 import glob
+import pygtkcompat
+pygtkcompat.enable()
+pygtkcompat.enable_gtk(version='3.0')
 
 from gi.repository import Gtk
 
