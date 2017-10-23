@@ -10,6 +10,7 @@ try:
     from cx_Freeze import setup, Executable
 except:
     def Executable(**kwargs): pass
+
     def setup(**kwargs): pass
 
 

@@ -33,7 +33,6 @@ from gi.repository import GdkPixbuf
 LOG = logging.getLogger(__name__)
 
 
-
 class GfxCache(object):
     """
     A class to hold graphic data, with resizing abilities and the like.
@@ -125,9 +124,9 @@ class GfxCache(object):
                 return None
             self.gdkcache[number] = {}
             self.gdkcache[number]['orig'] = GdkPixbuf.Pixbuf(self.pixbuf.get_colorspace(),
-                                                           self.pixbuf.get_has_alpha(),
-                                                           self.pixbuf.get_bits_per_sample(),
-                                                           self.width, self.height)
+                                                             self.pixbuf.get_has_alpha(),
+                                                             self.pixbuf.get_bits_per_sample(),
+                                                             self.width, self.height)
             self.pixbuf.copy_area(copy_x_from,
                                   copy_y_from,
                                   self.width,

@@ -51,7 +51,6 @@ pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
 
 
-
 class MapNewDialog(Gtk.Dialog):
     """
     A simple dialog to ask a user whether to create a new Global
@@ -776,7 +775,8 @@ class BigGraphicDialog(Gtk.Dialog):
                 vp.set_shadow_type(Gtk.ShadowType.IN)
                 vp.add(tv)
                 sw = Gtk.ScrolledWindow()
-                sw.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+                sw.set_policy(Gtk.PolicyType.AUTOMATIC,
+                              Gtk.PolicyType.AUTOMATIC)
                 sw.add(vp)
                 align = Gtk.Alignment.new(0, 0, 1, 1)
                 align.set_padding(5, 5, 15, 15)
@@ -2720,8 +2720,8 @@ class MapGUI(BaseGUI):
         dialog.set_transient_for(self.window)
         dialog.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         dialog.colorsel.set_current_color(Gdk.Color(self.mapobj.color_r * 257,
-                                                        self.mapobj.color_g * 257,
-                                                        self.mapobj.color_b * 257))
+                                                    self.mapobj.color_g * 257,
+                                                    self.mapobj.color_b * 257))
         response = dialog.run()
         if (response == Gtk.ResponseType.OK):
             color = dialog.colorsel.get_current_color()
@@ -3399,7 +3399,8 @@ class MapGUI(BaseGUI):
         label.set_justify(Gtk.Justification.RIGHT)
         label.set_padding(5, 4)
         self.register_widget('%s_label' % (name), label)
-        table.attach(label, 0, 1, row, row + 1, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
+        table.attach(label, 0, 1, row, row + 1,
+                     Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         return label
 
     def tilecontent_input_label(self, page, table, row, name, text):
@@ -3814,7 +3815,8 @@ class MapGUI(BaseGUI):
         cspacer = Gtk.Label(label='')
         cspacer.show()
         cspacer.set_padding(11, 0)
-        cinput.attach(cspacer, 0, 1, 0, 8, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
+        cinput.attach(cspacer, 0, 1, 0, 8, Gtk.AttachOptions.FILL,
+                      Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
         contents_box.pack_start(cinput, False, False)
 
         # Contents Inputs (varies based on savefile status)
@@ -3841,7 +3843,8 @@ class MapGUI(BaseGUI):
         spacer = Gtk.Label(label='')
         spacer.show()
         spacer.set_padding(11, 0)
-        uinput.attach(spacer, 0, 1, 0, 5, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
+        uinput.attach(spacer, 0, 1, 0, 5, Gtk.AttachOptions.FILL,
+                      Gtk.AttachOptions.FILL | Gtk.AttachOptions.EXPAND)
         unknown_box.pack_start(uinput, False, False)
 
         # Data in Unknowns block

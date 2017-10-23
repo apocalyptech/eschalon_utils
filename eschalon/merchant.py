@@ -26,8 +26,6 @@ from eschalon.savefile import LoadException
 LOG = logging.getLogger(__name__)
 
 
-
-
 class Merchant(object):
     """
     Class to hold information about a merchant file (*.mer).

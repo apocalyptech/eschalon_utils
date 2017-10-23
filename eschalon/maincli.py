@@ -19,6 +19,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
 
+from typing import NoReturn
+
 from eschalon.character import Character
 from eschalon.constants import constants as c
 from eschalon.preferences import Prefs
@@ -37,7 +39,7 @@ class MainCLI(object):
         assert isinstance(self.prefs, Prefs)
         self.req_book = req_book
 
-    def run(self) -> object:
+    def run(self) -> NoReturn:
         # Load in our file
         try:
             char = Character.load(self.filename, self.req_book)
@@ -100,7 +102,6 @@ class MainCLI(object):
 
         # If we've gotten here, write the file
         char.write()
-        return True
 
     def display_header(self):
         """ Print out a textual representation of the character's name/level/orientation."""

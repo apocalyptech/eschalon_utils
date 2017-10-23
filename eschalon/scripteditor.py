@@ -25,9 +25,6 @@ from gi.repository import Gdk, GdkPixbuf, Gobject, Gtk
 LOG = logging.getLogger(__name__)
 
 
-
-
-
 def format_completion_text(layout, cell, model, iter, column):
     """
     Formats our completion text for our script commands
@@ -59,9 +56,9 @@ class MapSelector(Gtk.Dialog):
 
     def __init__(self, mapgui, parent=None):
         GObject.GObject.__init__(self, 'Choose a Tile',
-                            parent,
-                            Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
-                            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+                                 parent,
+                                 Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                 (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
         self.mapgui = mapgui
         allocation = self.mapgui.mainscroll.get_allocation()
         self.set_size_request(allocation.width - 50, allocation.height - 50)
@@ -70,8 +67,8 @@ class MapSelector(Gtk.Dialog):
 
         # Info labels
         hbox = Gtk.HBox()
-        label = Gtk.Label(label=
-            'Left-Click to select a tile.  Middle-click or right-click to drag.')
+        label = Gtk.Label(
+            label='Left-Click to select a tile.  Middle-click or right-click to drag.')
         label.set_padding(10, 10)
         label.set_alignment(0, .5)
         hbox.pack_start(label, False)

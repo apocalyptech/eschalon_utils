@@ -29,8 +29,6 @@ from eschalon.tilecontent import Tilecontent
 LOG = logging.getLogger(__name__)
 
 
-
-
 class ComplexObjStep(object):
     """
     A single step in a "complex" object.
@@ -63,7 +61,6 @@ class ComplexObj(object):
 
     def matches(self, matchtile):
         return any([matchtile == step.tile for step in self.steps])
-
 
     def get_steps(self, tile: object):
         fwd = []

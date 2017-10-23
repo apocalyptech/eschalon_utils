@@ -20,7 +20,7 @@
 import argparse
 import logging
 import sys
-from typing import Callable, Iterable, Type
+from typing import Callable, Iterable, Type, NoReturn
 
 import coloredlogs
 
@@ -95,7 +95,7 @@ def parse_args(input: Iterable[str]):
     return args
 
 
-def main() -> object:
+def main() -> NoReturn:
 
     args = parse_args(sys.argv[1:])
     coloredlogs.install(milliseconds=True, level=args.logLevel)
@@ -116,7 +116,7 @@ def main() -> object:
         from eschalon.maincli import MainCLI
         prog = MainCLI(args.filename, Prefs(), args.book, args)
 
-    return prog.run()
+    prog.run()
 
 
 if __name__ == '__main__':

@@ -25,8 +25,6 @@ from struct import pack, unpack
 LOG = logging.getLogger(__name__)
 
 
-
-
 class LoadException(Exception):
     def __init__(self, text):
         self.text = text

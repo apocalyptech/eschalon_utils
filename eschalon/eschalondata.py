@@ -35,7 +35,6 @@ LOG = logging.getLogger(__name__)
 fast_zipfile = True
 
 
-
 class GoldRanges(object):
     """
     Class to hold information about the gold ranges seen in general_items.csv.

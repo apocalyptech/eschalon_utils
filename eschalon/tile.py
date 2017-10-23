@@ -24,8 +24,6 @@ from eschalon.constants import constants as c
 LOG = logging.getLogger(__name__)
 
 
-
-
 class Tile(object):
     """ A class to hold data about a particular tile on a map. """
 
