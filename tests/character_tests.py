@@ -123,7 +123,7 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
 
     def test_keyring(self):
         self.assertListEqual(self.char.keyring[0:3], [
-                             b'Simple Key', b'Bluish Key', b'Rusted Key'])
+                             'Simple Key', 'Bluish Key', 'Rusted Key'])
 
     def test_alchemy_recipe(self):
         self.assertListEqual(self.char.alchemy_book,
