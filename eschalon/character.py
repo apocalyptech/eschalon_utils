@@ -786,7 +786,7 @@ class B2Character(Character):
             # Portal anchor locations
             for i in range(6):
                 portal_anchor = []
-                portal_anchor.append(self.df.readint().decode('UTF-8'))
+                portal_anchor.append(self.df.readint())
                 portal_anchor.append(self.df.readstr().decode('UTF-8'))
                 portal_anchor.append(self.df.readstr().decode('UTF-8'))
                 self.portal_locs.append(portal_anchor)
