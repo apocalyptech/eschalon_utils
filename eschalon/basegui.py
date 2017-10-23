@@ -18,23 +18,20 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+import os
 import typing
+from struct import unpack
+from typing import Callable, Tuple
+
+from eschalon.constants import constants as c
+from eschalon.scripteditor import ScriptEditor
+from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, Pango
 
 LOG = logging.getLogger(__name__)
 
 
-import os
-from struct import unpack
-from typing import Tuple, Callable
 
-from gi.repository import Gdk
-from gi.repository import GdkPixbuf
-from gi.repository import Gtk
-from gi.repository import GObject
-from gi.repository import Pango
 
-from eschalon.constants import constants as c
-from eschalon.scripteditor import ScriptEditor
 
 
 class WrapLabel(Gtk.Label):

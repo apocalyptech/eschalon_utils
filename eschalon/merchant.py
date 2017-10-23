@@ -18,12 +18,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-LOG = logging.getLogger(__name__)
-
 
 from eschalon.constants import constants as c
 from eschalon.item import Item
 from eschalon.savefile import LoadException
+
+LOG = logging.getLogger(__name__)
+
+
 
 
 class Merchant(object):

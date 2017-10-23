@@ -19,9 +19,11 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import logging
-LOG = logging.getLogger(__name__)
 
 from eschalon.constants import constants as c
+
+LOG = logging.getLogger(__name__)
+
 
 
 class Item(object):

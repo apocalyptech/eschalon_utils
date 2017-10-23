@@ -18,15 +18,17 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+import random
+
+from eschalon.constants import constants as c
+from eschalon.entity import Entity
+from eschalon.map import Map
+from eschalon.tile import Tile
+from eschalon.tilecontent import Tilecontent
+
 LOG = logging.getLogger(__name__)
 
 
-import random
-from eschalon.constants import constants as c
-from eschalon.map import Map
-from eschalon.tile import Tile
-from eschalon.entity import Entity
-from eschalon.tilecontent import Tilecontent
 
 
 class ComplexObjStep(object):

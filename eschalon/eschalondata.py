@@ -17,21 +17,23 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+import base64
+import csv
+import glob
+import io
 import logging
+import os
+import zipfile
+
+from Crypto.Cipher import AES
+from eschalon.constants import constants as c
+from eschalon.savefile import LoadException
+
 LOG = logging.getLogger(__name__)
 
 
-import zipfile
 fast_zipfile = True
-from Crypto.Cipher import AES
 
-import os
-import csv
-import glob
-import base64
-import io
-from eschalon.constants import constants as c
-from eschalon.savefile import LoadException
 
 
 class GoldRanges(object):

@@ -17,18 +17,20 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+import glob
 import logging
-LOG = logging.getLogger(__name__)
-
-from typing import Optional
-from gi.repository import Gtk, Gdk, GdkPixbuf
-
 import os
 import time
-import glob
+from typing import Optional
+
 from eschalon.map import Map
-from eschalon.savefile import Savefile, LoadException
+from eschalon.savefile import LoadException, Savefile
 from eschalon.savename import Savename
+from gi.repository import Gdk, GdkPixbuf, Gtk
+
+LOG = logging.getLogger(__name__)
+
+
 
 
 class SaveslotMap(object):

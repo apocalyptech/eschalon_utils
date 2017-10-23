@@ -19,17 +19,19 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+import io
 import logging
+import math
+import os
+import zlib
+from struct import unpack
+
+import cairo
+from eschalon.savefile import LoadException, Savefile
+from gi.repository import GdkPixbuf
+
 LOG = logging.getLogger(__name__)
 
-import os
-from gi.repository import GdkPixbuf
-import math
-import zlib
-import cairo
-import io
-from struct import unpack
-from eschalon.savefile import Savefile, LoadException
 
 
 class GfxCache(object):

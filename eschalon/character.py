@@ -18,14 +18,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+import struct
+
+from eschalon.constants import constants as c
+from eschalon.item import Item
+from eschalon.savefile import LoadException, Savefile
+from eschalon.unknowns import B1Unknowns, B2Unknowns
+
 LOG = logging.getLogger(__name__)
 
 
-import struct
-from eschalon.constants import constants as c
-from eschalon.savefile import Savefile, LoadException
-from eschalon.item import Item
-from eschalon.unknowns import B1Unknowns, B2Unknowns
 
 
 class Character(object):

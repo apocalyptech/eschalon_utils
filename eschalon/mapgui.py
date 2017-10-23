@@ -17,42 +17,39 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+import glob
 import logging
+import os
+import random
+import sys
+import time
+import traceback
+
+import cairo
+import pygtkcompat
+from eschalon import app_name, authors, url, version
+from eschalon.basegui import BaseGUI, ImageSelWindow, WrapLabel
+from eschalon.constants import constants as c
+from eschalon.entity import B1Entity, B2Entity, B3Entity, Entity
+from eschalon.eschalondata import EschalonData
+from eschalon.gfx import Gfx
+from eschalon.item import B1Item, B2Item, B3Item, Item
+from eschalon.map import Map
+from eschalon.savefile import LoadException, Savefile
+from eschalon.savename import Savename
+from eschalon.saveslot import Saveslot
+from eschalon.smartdraw import SmartDraw
+from eschalon.tile import Tile
+from eschalon.tilecontent import Tilecontent
+from eschalon.undo import Undo
+from gi.repository import Gdk, GdkPixbuf, Gtk
+
 LOG = logging.getLogger(__name__)
 
 
-import os
-import sys
-import glob
-import time
-import random
-import traceback
-from eschalon import app_name, url, authors, version
-from eschalon.constants import constants as c
-from eschalon.gfx import Gfx
-from eschalon.undo import Undo
-from eschalon.item import B1Item, B2Item, B3Item
-from eschalon.entity import B1Entity, B2Entity, B3Entity
-from eschalon.basegui import BaseGUI, WrapLabel, ImageSelWindow
-from eschalon.saveslot import Saveslot
-from eschalon.eschalondata import EschalonData
-from eschalon.savefile import Savefile
-from eschalon.savename import Savename
-from eschalon.map import Map
-from eschalon.item import Item
-from eschalon.tile import Tile
-from eschalon.smartdraw import SmartDraw
-from eschalon.tilecontent import Tilecontent
-from eschalon.savefile import LoadException
-from eschalon.entity import Entity
-import pygtkcompat
 pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
 
-from gi.repository import Gdk
-from gi.repository import GdkPixbuf
-from gi.repository import Gtk
-import cairo
 
 
 class MapNewDialog(Gtk.Dialog):

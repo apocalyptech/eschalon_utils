@@ -18,12 +18,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+
+from eschalon.constants import constants as c
+from gi.repository import Gdk, GdkPixbuf, Gobject, Gtk
+
 LOG = logging.getLogger(__name__)
 
 
-from gi.repository import Gtk, Gdk, GdkPixbuf, Gobject
 
-from eschalon.constants import constants as c
 
 
 def format_completion_text(layout, cell, model, iter, column):

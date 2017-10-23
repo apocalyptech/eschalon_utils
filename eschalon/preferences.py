@@ -18,13 +18,15 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-LOG = logging.getLogger(__name__)
-
-import sys
 import os
 import os.path
-from six.moves import configparser
+import sys
+
 from eschalon import app_name
+from six.moves import configparser
+
+LOG = logging.getLogger(__name__)
+
 
 # Load windows registry, if we can
 try:

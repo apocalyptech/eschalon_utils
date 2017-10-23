@@ -19,27 +19,29 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+import glob
 import logging
+import os
+
+import pygtkcompat
+from eschalon import app_name, authors, url, version
+from eschalon.basegui import BaseGUI
+from eschalon.character import B1Character, B2Character, B3Character, Character
+from eschalon.constants import constants as c
+from eschalon.eschalondata import EschalonData
+# Lookup tables we'll need
+from eschalon.gfx import Gfx
+from eschalon.item import B1Item, B2Item, B3Item, Item
+from eschalon.savefile import LoadException
+from eschalon.saveslot import Saveslot
+from gi.repository import Gdk, GdkPixbuf, Gtk
+
 LOG = logging.getLogger(__name__)
 
-import os
-import glob
-import pygtkcompat
 pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
 
-from gi.repository import Gtk, Gdk, GdkPixbuf
 
-# Lookup tables we'll need
-from eschalon.gfx import Gfx
-from eschalon.basegui import BaseGUI
-from eschalon.character import Character, B1Character, B2Character, B3Character
-from eschalon.item import Item, B1Item, B2Item, B3Item
-from eschalon.savefile import LoadException
-from eschalon.saveslot import Saveslot
-from eschalon.eschalondata import EschalonData
-from eschalon.constants import constants as c
-from eschalon import app_name, version, url, authors
 
 
 class CharLoaderDialog(Gtk.Dialog):
