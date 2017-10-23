@@ -33,6 +33,7 @@ class TestSavefile(unittest.TestCase):
         s.set_filename("-")
         self.assertFalse(s.is_stringdata())
 
+    @unittest.skip("this test can cause testfile corruption - rewrite")
     def _test_write_and_read(self,
                              value_to_write,
                              raw_value_to_expect_on_read,

@@ -87,6 +87,7 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
         self.assertEqual(self.char.torches, 24)
         self.assertEqual(self.char.torchused, 0)
 
+    @unittest.skip("This test can cause corruption - rewrite to use tempfiles")
     def test_read_write_read_unmodified(self):
         with open(self._book_filename, 'rb') as df:
             original_hash = hashlib.sha256(df.read())
