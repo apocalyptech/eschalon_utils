@@ -40,7 +40,7 @@ class B2CharacterTests(BaseCharacterTests, unittest.TestCase):
         self.createMyself(2, "test_data/book2_atend.char")
 
     def test_character_information(self):
-        self.assertEqual(self.char.name, b"Veera")
+        self.assertEqual(self.char.name, "Veera")
         self.assertEqual(self.char.origin,
                          B2Constants.origintable.inv["Therish"])
         self.assertEqual(
