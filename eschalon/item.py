@@ -20,6 +20,8 @@
 
 import logging
 
+from typing import List, Any
+
 from eschalon.constants import constants as c
 
 LOG = logging.getLogger(__name__)
@@ -29,7 +31,7 @@ class Item(object):
     """Class to hold a single Item's information."""
 
     book = None
-    form_elements = []
+    form_elements = []  # type: List[Any]
 
     def __init__(self, zero=False):
         """ Create a new Item object with no information. """

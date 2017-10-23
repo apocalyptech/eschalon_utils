@@ -26,8 +26,9 @@ import os
 import zlib
 from struct import unpack
 
-import cairo
 
+from typing import Set, Any, Dict
+import cairo
 from gi.repository import GdkPixbuf
 
 from eschalon.savefile import LoadException, Savefile
@@ -259,8 +260,8 @@ class PakIndex(object):
 class Gfx(object):
     """ A class to hold graphics data. """
 
-    wall_types = {}
-    wall_gfx_group = {}
+    wall_types: Dict[Any, Any] = {}
+    wall_gfx_group: Dict[Any, Any] = {}
     TYPE_NONE = -1
     TYPE_OBJ = 1
     TYPE_WALL = 2

@@ -26,6 +26,8 @@ import os
 import pygtkcompat
 from gi.repository import Gdk, GdkPixbuf, Gtk
 
+from typing import List, Set, Any
+
 from eschalon import app_name, authors, url, version
 from eschalon.basegui import BaseGUI
 from eschalon.character import B1Character, B2Character, B3Character, Character
@@ -294,10 +296,10 @@ class MainGUI(BaseGUI):
         # Call out to the base initialization
         self.base_init()
 
-    def run(self) -> object:
+    def run(self) -> None:
 
         # Let's make sure that the character var exists
-        self.char = None
+        self.char: Character = None
 
         # Start up our GUI
         self.builder = Gtk.Builder()

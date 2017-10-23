@@ -18,6 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+from typing import List, Any
 
 LOG = logging.getLogger(__name__)
 
@@ -255,9 +256,9 @@ class B1Constants(object):
     # I don't think these mean anything for Book 1 - materials seem
     # reasonably hardcoded.  We'll keep the values here for compatibility
     # reasons, though.
-    materials_wood = []
-    materials_metal = []
-    materials_fabric = []
+    materials_wood = []  # type: List[Any]
+    materials_metal = []  # type: List[Any]
+    materials_fabric = []  # type: List[Any]
 
     # Right now this is the only one that appears to exist
     tilecontentflags = {

@@ -20,7 +20,7 @@
 import argparse
 import logging
 import sys
-from typing import Callable, Iterable, NoReturn, Type
+from typing import Callable, NoReturn, Optional, Sequence, Type
 
 import coloredlogs
 
@@ -29,7 +29,7 @@ from eschalon.preferences import Prefs
 LOG = logging.getLogger(__name__)
 
 
-def parse_args(input: Iterable[str]):
+def parse_args(input: Optional[Sequence[str]]):
     """
     Pull out argument parsing into a seperate function.
     It turns out this is a sufficiently complicated task that it should be tested.
@@ -95,7 +95,7 @@ def parse_args(input: Iterable[str]):
     return args
 
 
-def main() -> NoReturn:
+def main() -> None:
 
     args = parse_args(sys.argv[1:])
     coloredlogs.install(milliseconds=True, level=args.logLevel)
@@ -120,4 +120,4 @@ def main() -> NoReturn:
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

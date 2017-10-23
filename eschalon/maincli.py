@@ -18,7 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-from typing import NoReturn
+from typing import NoReturn, Any
 
 from eschalon.character import Character
 from eschalon.constants import constants as c
@@ -30,7 +30,7 @@ LOG = logging.getLogger(__name__)
 
 class MainCLI(object):
 
-    def __init__(self, filename: str, prefs: object, req_book: int, args: object) -> object:
+    def __init__(self, filename: str, prefs: object, req_book: int, args: Any) -> None:
         """ A fresh object, with no data. """
         self.args = args
         self.filename = filename
@@ -38,7 +38,7 @@ class MainCLI(object):
         assert isinstance(self.prefs, Prefs)
         self.req_book = req_book
 
-    def run(self) -> NoReturn:
+    def run(self) -> None:
         # Load in our file
         try:
             char = Character.load(self.filename, self.req_book)

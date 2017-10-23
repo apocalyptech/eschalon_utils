@@ -24,6 +24,7 @@ import io
 import logging
 import os
 import zipfile
+from typing import Optional
 
 from Crypto.Cipher import AES
 
@@ -236,7 +237,7 @@ class EschalonData(object):
 
         self.modpath = modpath
 
-    def set_gamedir(self, gamedir):
+    def set_gamedir(self, gamedir: str):
         """
         Used to update our game directory - this might happen as the
         result of a preferences update, for instance.  This will
@@ -659,7 +660,7 @@ class B1EschalonData(object):
             self.populate_datapak_info()
         return self.entitytable
 
-    def get_entity(self, entid):
+    def get_entity(self, entid: object) -> Optional[object]:
         """
         Returns the requested entity, or None if not found
         """

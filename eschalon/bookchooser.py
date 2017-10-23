@@ -13,25 +13,25 @@ from eschalon.preferences import Prefs
 
 
 class BookChooser(object):
-    def char(self, book_id: object) -> Callable[object]:
+    def char(self, book_id: object) -> Callable[[object], None]:
         def launcher(widget):
             prog = MainGUI(None, Prefs(), book_id)
-            return prog.run()
+            prog.run()
         return launcher
 
-    def map(self, book_id):
+    def map(self, book_id) -> Callable[[object], None]:
         def launcher(widget):
             prog = MapGUI(None, Prefs(), book_id)
-            return prog.run()
+            prog.run()
         return launcher
 
-    def delete_event(self, widget, event, data=None):
+    def delete_event(self, widget, event, data=None) -> bool:
         return False
 
-    def destroy(self, widget, data=None):
+    def destroy(self, widget, data=None) -> None:
         Gtk.main_quit()
 
-    def add_launchers(self, book, char_launcher, map_launcher):
+    def add_launchers(self, book: str, char_launcher, map_launcher) -> None:
         """
         Adds a set of launchers to our table.
         """
@@ -70,7 +70,7 @@ class BookChooser(object):
 
         self.cur_row += 1
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Set up our window
         """
@@ -123,5 +123,5 @@ class BookChooser(object):
         # Show everything
         self.window.show_all()
 
-    def run(self) -> object:
+    def run(self) -> None:
         Gtk.main()

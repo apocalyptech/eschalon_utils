@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
 import struct
+from abc import ABC
 
 from eschalon.constants import constants as c
 from eschalon.item import Item
@@ -28,7 +29,7 @@ from eschalon.unknowns import B1Unknowns, B2Unknowns
 LOG = logging.getLogger(__name__)
 
 
-class Character(object):
+class Character(ABC):
     """
     The base Character class.  Interestingly, some items which are NOT stored in
     the char file:
@@ -42,7 +43,7 @@ class Character(object):
     to try and work around that.
     """
 
-    book = None
+    book = -1
     form_elements = []
 
     def __init__(self, df):

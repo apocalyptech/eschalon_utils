@@ -25,6 +25,9 @@ import sys
 import time
 import traceback
 
+
+from typing import Optional
+
 import cairo
 import pygtkcompat
 from gi.repository import Gdk, GdkPixbuf, Gtk
@@ -273,7 +276,7 @@ class MapLoaderDialog(Gtk.Dialog):
             try:
                 self.slots.append(Saveslot(slotdir, c.book))
             except LoadException as e:
-                LOG.error(e, exc_info=True)
+                LOG.error(f'error loading slot {slotdir}', exc_info=True)
                 # If there's an error, just don't show the slot
                 pass
         self.slots.sort()
@@ -1095,7 +1098,7 @@ class MapGUI(BaseGUI):
     def run(self) -> object:
 
         # Let's make sure our map object exists
-        self.mapobj = None
+        self.mapobj: Optional[Map] = None
 
         self.tile_x = -1
         self.tile_y = -1
@@ -1262,7 +1265,7 @@ class MapGUI(BaseGUI):
             self.gfx = Gfx.new(self.req_book, self.datadir, self.eschalondata)
             c.set_eschalondata(self.eschalondata)
         except Exception as e:
-            LOG.error(e, exc_info=True)
+            LOG.error("Error loading Graphics", exc_info=True)
             self.errordialog('Error Loading Graphics',
                              'Graphics could not be initialized: %s' % (e))
             sys.exit(1)
