@@ -20,6 +20,7 @@
 import logging
 LOG = logging.getLogger(__name__)
 
+from typing import Optional
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import os
@@ -62,7 +63,7 @@ class Saveslot(object):
     divide this out based on book.
     """
 
-    def __init__(self, directory, load_all=False, book=None):
+    def __init__(self, directory: str, load_all: bool = False, book: Optional[int] = None) -> object:
         """ Empty object. """
         self.directory = directory
 
