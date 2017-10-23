@@ -25,6 +25,8 @@ setup(
         'bidict',
         'coloredlogs',
         'verboselogs',
+        'vext',
+        'vext.gi',
     ],
     scripts=[
         'eschalon/main.py',
