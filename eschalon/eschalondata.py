@@ -26,6 +26,7 @@ import os
 import zipfile
 
 from Crypto.Cipher import AES
+
 from eschalon.constants import constants as c
 from eschalon.savefile import LoadException
 

@@ -27,6 +27,8 @@ import traceback
 
 import cairo
 import pygtkcompat
+from gi.repository import Gdk, GdkPixbuf, Gtk
+
 from eschalon import app_name, authors, url, version
 from eschalon.basegui import BaseGUI, ImageSelWindow, WrapLabel
 from eschalon.constants import constants as c
@@ -42,7 +44,6 @@ from eschalon.smartdraw import SmartDraw
 from eschalon.tile import Tile
 from eschalon.tilecontent import Tilecontent
 from eschalon.undo import Undo
-from gi.repository import Gdk, GdkPixbuf, Gtk
 
 LOG = logging.getLogger(__name__)
 

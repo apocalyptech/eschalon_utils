@@ -23,10 +23,11 @@ import os
 import time
 from typing import Optional
 
+from gi.repository import Gdk, GdkPixbuf, Gtk
+
 from eschalon.map import Map
 from eschalon.savefile import LoadException, Savefile
 from eschalon.savename import Savename
-from gi.repository import Gdk, GdkPixbuf, Gtk
 
 LOG = logging.getLogger(__name__)
 

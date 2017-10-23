@@ -1,7 +1,8 @@
 import unittest
 
-from eschalon.main import parse_args
 from parameterized import parameterized
+
+from eschalon.main import parse_args
 
 
 class MainTest(unittest.TestCase):

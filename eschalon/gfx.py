@@ -27,8 +27,9 @@ import zlib
 from struct import unpack
 
 import cairo
-from eschalon.savefile import LoadException, Savefile
 from gi.repository import GdkPixbuf
+
+from eschalon.savefile import LoadException, Savefile
 
 LOG = logging.getLogger(__name__)
 
