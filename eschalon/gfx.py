@@ -25,9 +25,8 @@ import math
 import os
 import zlib
 from struct import unpack
+from typing import Any, Dict, Set
 
-
-from typing import Set, Any, Dict
 import cairo
 from gi.repository import GdkPixbuf
 

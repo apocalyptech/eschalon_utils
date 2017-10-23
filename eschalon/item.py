@@ -19,8 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import logging
-
-from typing import List, Any
+from typing import Any, List
 
 from eschalon.constants import constants as c
 

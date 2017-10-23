@@ -24,8 +24,6 @@ import random
 import sys
 import time
 import traceback
-
-
 from typing import Optional
 
 import cairo

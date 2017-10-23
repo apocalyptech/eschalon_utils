@@ -22,11 +22,10 @@
 import glob
 import logging
 import os
+from typing import Any, List, Set
 
 import pygtkcompat
 from gi.repository import Gdk, GdkPixbuf, Gtk
-
-from typing import List, Set, Any
 
 from eschalon import app_name, authors, url, version
 from eschalon.basegui import BaseGUI

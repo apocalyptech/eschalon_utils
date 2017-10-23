@@ -18,7 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
-from typing import NoReturn, Any
+from typing import Any, NoReturn
 
 from eschalon.character import Character
 from eschalon.constants import constants as c
