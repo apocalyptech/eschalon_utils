@@ -36,7 +36,7 @@ class MainCLI(object):
         assert isinstance(self.prefs, Prefs)
         self.req_book = req_book
 
-    def run(self):
+    def run(self) -> object:
         # Load in our file
         try:
             char = Character.load(self.filename, self.req_book)

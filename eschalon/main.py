@@ -23,7 +23,6 @@ import sys
 from typing import Type, Callable, Iterable
 
 
-
 import coloredlogs
 
 from eschalon.preferences import Prefs
@@ -97,7 +96,7 @@ def parse_args(args: Iterable[str]):
     return args
 
 
-def main():
+def main() -> object:
 
     args = parse_args(sys.argv[1:])
     coloredlogs.install(milliseconds=True, level=args.logLevel)

@@ -63,7 +63,7 @@ class ComplexObj(object):
         return any([matchtile == step.tile for step in self.steps])
 
 
-    def get_steps(self, tile):
+    def get_steps(self, tile: object):
         fwd = []
         rev = []
         for (i, step) in enumerate(self.steps):

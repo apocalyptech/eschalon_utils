@@ -293,7 +293,7 @@ class MainGUI(BaseGUI):
         # Call out to the base initialization
         self.base_init()
 
-    def run(self):
+    def run(self) -> object:
 
         # Let's make sure that the character var exists
         self.char = None
