@@ -27,7 +27,6 @@ setup(
         'verboselogs',
         'vext',
         'vext.gi',
-        'mypy-extensions',
     ],
     scripts=[
         'eschalon/main.py',
