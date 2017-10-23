@@ -30,7 +30,7 @@ from eschalon.preferences import Prefs
 LOG = logging.getLogger(__name__)
 
 
-def parse_args(args: Iterable[str]):
+def parse_args(input: Iterable[str]):
     """
     Pull out argument parsing into a seperate function.
     It turns out this is a sufficiently complicated task that it should be tested.
@@ -69,7 +69,7 @@ def parse_args(args: Iterable[str]):
                         default='INFO',
                         )
 
-    args = parser.parse_args(args)
+    args = parser.parse_args(input)
 
     manip_options_set = any([args.set_gold, args.unknowns, args.list, args.set_mana_max, args.set_mana_cur,
                              args.set_hp_max, args.set_hp_cur, args.rm_disease, args.reset_hunger])

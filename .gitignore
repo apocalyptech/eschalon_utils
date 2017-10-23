@@ -7,3 +7,4 @@ build
 .coverage
 .tox
 .nose*
+.mypy_cache

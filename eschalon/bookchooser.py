@@ -2,6 +2,7 @@
 
 import os
 import sys
+from typing import Callable
 from gi import pygtkcompat
 pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
@@ -13,7 +14,7 @@ from eschalon.preferences import Prefs
 
 
 class BookChooser(object):
-    def char(self, book_id):
+    def char(self, book_id: object) -> Callable[object]:
         def launcher(widget):
             prog = MainGUI(None, Prefs(), book_id)
             return prog.run()
@@ -123,5 +124,5 @@ class BookChooser(object):
         # Show everything
         self.window.show_all()
 
-    def run(self):
+    def run(self) -> object:
         Gtk.main()

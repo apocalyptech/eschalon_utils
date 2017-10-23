@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-from
 import logging
 LOG = logging.getLogger(__name__)
 from eschalon.constants import constants as c
@@ -28,7 +27,7 @@ from eschalon.preferences import Prefs
 
 class MainCLI(object):
 
-    def __init__(self, filename, prefs, req_book, args):
+    def __init__(self, filename: str, prefs: object, req_book: int, args: object) -> object:
         """ A fresh object, with no data. """
         self.args = args
         self.filename = filename
