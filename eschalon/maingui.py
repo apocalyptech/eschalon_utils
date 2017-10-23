@@ -380,7 +380,7 @@ class MainGUI(BaseGUI):
                     c.book, self.get_current_gamedir())
                 c.set_eschalondata(self.eschalondata)
             except Exception as e:
-                print('Exception instantiating EschalonData: %s' % e)
+                LOG.error("Failed to load echalondata object", exc_info=True)
 
         # Set up our graphics cache
         self.gfx = None
