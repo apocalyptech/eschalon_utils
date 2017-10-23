@@ -24,7 +24,6 @@ from bidict import bidict
 LOG = logging.getLogger(__name__)
 
 
-
 __all__ = ['B2Constants']
 
 

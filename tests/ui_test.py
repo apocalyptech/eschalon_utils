@@ -1,12 +1,11 @@
-import unittest
-
-from parameterized import parameterized
-import xmlunittest
 import fnmatch
 import os
 import sys
+import unittest
 
 import lxml
+import xmlunittest
+from parameterized import parameterized
 
 
 class MainUITestCase(xmlunittest.XmlTestCase):

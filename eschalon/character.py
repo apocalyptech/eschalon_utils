@@ -28,8 +28,6 @@ from eschalon.unknowns import B1Unknowns, B2Unknowns
 LOG = logging.getLogger(__name__)
 
 
-
-
 class Character(object):
     """
     The base Character class.  Interestingly, some items which are NOT stored in
@@ -257,7 +255,7 @@ class Character(object):
         """ Add a new skill at a given level. """
         self.skills[skillnum] = level
 
-    def addreadyslot(self, spell, level):
+    def addreadyslot(self, spell: str, level: int):
         """ Add a new spell to a 'ready' slot. """
         self.readyslots.append([spell, level])
 
@@ -1244,7 +1242,8 @@ class B3Character(Character):
 
             # Readied Spells
             for i in range(10):
-                self.addreadyslot(self.df.readstr().decode('UTF-8'), self.df.readuchar())
+                self.addreadyslot(self.df.readstr().decode(
+                    'UTF-8'), self.df.readuchar())
 
             # Alchemy Recipes
             for i in range(27):

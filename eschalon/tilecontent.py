@@ -26,8 +26,6 @@ from eschalon.savefile import FirstItemLoadException
 LOG = logging.getLogger(__name__)
 
 
-
-
 class Tilecontent(object):
     """
     A class to hold data about a particular tilecontent on a map.

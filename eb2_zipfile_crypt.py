@@ -20,8 +20,9 @@
 # Encrypted: 2Am9Pff522Nn7JTsjxiNdwQsJsW9aa7VaWaPl0qaiEcvqRC5r3lcKdWXNrrlJhtm
 
 
-import os
 import base64
+import os
+
 from Crypto.Cipher import AES
 
 plain_text = ''

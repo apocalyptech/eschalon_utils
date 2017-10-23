@@ -21,9 +21,9 @@
 import logging
 import sys
 import zlib
-
-from eschalon.savefile import Savefile, LoadException
 from struct import unpack
+
+from eschalon.savefile import LoadException, Savefile
 
 LOG = logging.getLogger(__name__)
 

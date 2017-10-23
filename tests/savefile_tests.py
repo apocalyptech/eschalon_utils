@@ -1,9 +1,9 @@
 
 
 import unittest
+from struct import pack
 
 import eschalon.savefile
-from struct import pack
 
 
 class TestSavefile(unittest.TestCase):

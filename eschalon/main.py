@@ -20,7 +20,7 @@
 import argparse
 import logging
 import sys
-from typing import Callable, Iterable, Type, NoReturn
+from typing import Callable, Iterable, NoReturn, Type
 
 import coloredlogs
 

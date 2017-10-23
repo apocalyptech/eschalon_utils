@@ -1,11 +1,11 @@
+import hashlib
 import unittest
 
-import hashlib
 import eschalon.character
+import eschalon.savefile
 from eschalon.constantsb1 import B1Constants
 from eschalon.constantsb2 import B2Constants
 from eschalon.constantsb3 import B3Constants
-import eschalon.savefile
 
 
 class BaseCharacterTests(object):

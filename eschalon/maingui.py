@@ -42,8 +42,6 @@ pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
 
 
-
-
 class CharLoaderDialog(Gtk.Dialog):
     """
     A dialog to load a character.  Embeds FileChooserWidget in one tab of
@@ -332,7 +330,8 @@ class MainGUI(BaseGUI):
         for i in range(10):
             spellboxentries.append('readyslots_spell_%d' % i)
         for var in comboboxentries + spellboxentries + readyentries:
-            self.register_widget(var, self.get_widget('%s_box' % var).get_child())
+            self.register_widget(var, self.get_widget(
+                '%s_box' % var).get_child())
         for var in comboboxentries:
             self.get_widget(var).connect(
                 'changed', self.on_singleval_changed_str)
@@ -1303,7 +1302,8 @@ class MainGUI(BaseGUI):
         self.register_widget('skill_table', table)
         spacelabel = Gtk.Label(label='')
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
+        table.attach(spacelabel, 0, 1, 0, numrows,
+                     Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         # Contents
         for (idx, skill) in enumerate(c.skilltable.values()):
@@ -1349,7 +1349,8 @@ class MainGUI(BaseGUI):
         self.register_widget('status_table', table)
         spacelabel = Gtk.Label(label='')
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, numrows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
+        table.attach(spacelabel, 0, 1, 0, numrows,
+                     Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
 
         # Contents
         for (idx, skill) in enumerate(c.statustable.values()):
@@ -1497,7 +1498,8 @@ class MainGUI(BaseGUI):
         spacelabel = Gtk.Label(label='')
         spacelabel.show()
         spacelabel.set_size_request(20, -1)
-        table.attach(spacelabel, 0, 1, 0, rows, Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
+        table.attach(spacelabel, 0, 1, 0, rows,
+                     Gtk.AttachOptions.FILL, Gtk.AttachOptions.FILL)
         return table
 
     def gui_add_equip_page(self, container):

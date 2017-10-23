@@ -25,7 +25,6 @@ from eschalon.constants import constants as c
 LOG = logging.getLogger(__name__)
 
 
-
 class Item(object):
     """Class to hold a single Item's information."""
 

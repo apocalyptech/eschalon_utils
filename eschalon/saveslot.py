@@ -31,8 +31,6 @@ from gi.repository import Gdk, GdkPixbuf, Gtk
 LOG = logging.getLogger(__name__)
 
 
-
-
 class SaveslotMap(object):
     """
     Simple class to hold some information about maps stored within a
@@ -190,10 +188,10 @@ class Saveslot(object):
         b_short = b.slotname_short()
         try:
             if (a_short[:4] == 'slot' and
-                str(int(a_short[4:])) == a_short[4:] and
-                b_short[:4] == 'slot' and
-                str(int(b_short[4:])) == b_short[4:]
-                ):
+                    str(int(a_short[4:])) == a_short[4:] and
+                    b_short[:4] == 'slot' and
+                    str(int(b_short[4:])) == b_short[4:]
+                    ):
                 return cmp(int(a_short[4:]), int(b_short[4:]))
         except ValueError:
             pass

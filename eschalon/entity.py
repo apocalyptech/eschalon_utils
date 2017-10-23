@@ -25,8 +25,6 @@ from eschalon.savefile import FirstItemLoadException, LoadException
 LOG = logging.getLogger(__name__)
 
 
-
-
 class Entity(object):
     """ A class to hold data about a particular entity on a map. """
 

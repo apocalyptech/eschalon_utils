@@ -30,10 +30,6 @@ from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, Pango
 LOG = logging.getLogger(__name__)
 
 
-
-
-
-
 class WrapLabel(Gtk.Label):
 
     # Taken from http://git.gnome.org/browse/meld/tree/meld/ui/wraplabel.py
@@ -114,8 +110,8 @@ class ImageSelWindow(Gtk.Window):
         vbox = Gtk.VBox()
         self.add(vbox)
 
-        label = Gtk.Label(label=
-            "Selecting an icon or hitting Escape will close this dialog.")
+        label = Gtk.Label(
+            label="Selecting an icon or hitting Escape will close this dialog.")
         label.set_alignment(.5, .5)
         label.set_padding(0, 6)
         vbox.pack_start(label, False, False)
@@ -170,7 +166,7 @@ class ImageSelWindow(Gtk.Window):
         vbox.pack_start(sw, True, True)
 
     def create_drawing_area(self, on_clicked: Callable, on_motion: Callable, on_expose: Callable) -> Tuple[object,
-                                                                                                         object]:
+                                                                                                           object]:
         """
         Creates a new DrawingArea, contained within a Viewport and ScrolledWindow.
         Returns a tuple of the ScrolledWindow and the DrawingArea.
@@ -183,7 +179,8 @@ class ImageSelWindow(Gtk.Window):
         sw.add(vp)
 
         da = Gtk.DrawingArea()
-        da.set_events(Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.BUTTON_PRESS_MASK)
+        da.set_events(Gdk.EventMask.POINTER_MOTION_MASK |
+                      Gdk.EventMask.BUTTON_PRESS_MASK)
         if on_clicked is not None:
             da.connect('button-press-event', on_clicked)
         if on_motion is not None:

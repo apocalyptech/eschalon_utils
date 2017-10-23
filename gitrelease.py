@@ -2,10 +2,9 @@
 # vim: set expandtab tabstop=4 shiftwidth=4:
 
 
-
 import re
-import sys
 import subprocess
+import sys
 
 
 def usage():
