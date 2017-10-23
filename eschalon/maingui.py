@@ -28,7 +28,7 @@ import pygtkcompat
 pygtkcompat.enable()
 pygtkcompat.enable_gtk(version='3.0')
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 # Lookup tables we'll need
 from eschalon.gfx import Gfx

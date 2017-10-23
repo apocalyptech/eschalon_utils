@@ -21,7 +21,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk, GdkPixbuf, Gobject
 
 from eschalon.constants import constants as c
 

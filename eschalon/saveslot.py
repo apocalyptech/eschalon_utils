@@ -20,6 +20,7 @@
 import logging
 LOG = logging.getLogger(__name__)
 
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import os
 import time
