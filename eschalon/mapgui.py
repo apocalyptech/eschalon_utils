@@ -1095,7 +1095,7 @@ class MapGUI(BaseGUI):
         # Call out to the base initialization
         self.base_init()
 
-    def run(self) -> object:
+    def run(self) -> None:
 
         # Let's make sure our map object exists
         self.mapobj: Optional[Map] = None
