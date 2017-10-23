@@ -27,6 +27,7 @@ import zlib
 from struct import unpack
 
 import cairo
+
 from gi.repository import GdkPixbuf
 
 from eschalon.savefile import LoadException, Savefile
@@ -252,7 +253,7 @@ class PakIndex(object):
          self.size_real,
          self.unknowni1) = unpack('<IIII', data[:16])
         self.filename = data[16:]
-        self.filename = self.filename[:self.filename.index(b"\x00")]
+        self.filename = self.filename[:self.filename.index(b"\x00")].decode("UTF-8")
 
 
 class Gfx(object):

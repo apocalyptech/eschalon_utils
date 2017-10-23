@@ -786,9 +786,9 @@ class B2Character(Character):
             # Portal anchor locations
             for i in range(6):
                 portal_anchor = []
-                portal_anchor.append(self.df.readint())
-                portal_anchor.append(self.df.readstr())
-                portal_anchor.append(self.df.readstr())
+                portal_anchor.append(self.df.readint().decode('UTF-8'))
+                portal_anchor.append(self.df.readstr().decode('UTF-8'))
+                portal_anchor.append(self.df.readstr().decode('UTF-8'))
                 self.portal_locs.append(portal_anchor)
 
             # Unknown
@@ -806,7 +806,7 @@ class B2Character(Character):
 
             # Readied Spells
             for i in range(10):
-                self.addreadyslot(self.df.readstr(), self.df.readuchar())
+                self.addreadyslot(self.df.readstr().decode('UTF-8'), self.df.readuchar())
 
             # Alchemy Recipes
             for i in range(25):
@@ -852,7 +852,7 @@ class B2Character(Character):
 
             # Keyring
             for i in range(20):
-                self.keyring.append(self.df.readstr())
+                self.keyring.append(self.df.readstr().decode('UTF-8'))
 
             # More unknowns
             self.unknown.unknowns1 = self.df.readshort()
@@ -900,8 +900,8 @@ class B2Character(Character):
 
             # Equipment Slots
             for i in range(13):
-                self.equip_slot_1.append(self.df.readstr())
-                self.equip_slot_2.append(self.df.readstr())
+                self.equip_slot_1.append(self.df.readstr().decode('UTF-8'))
+                self.equip_slot_2.append(self.df.readstr().decode('UTF-8'))
 
             # If there's extra data at the end, we likely don't have
             # a valid char file
