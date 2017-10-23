@@ -4,16 +4,12 @@ import os
 import sys
 from typing import Callable
 
-from gi import pygtkcompat
 from gi.repository import Gtk
 
 from eschalon import version
 from eschalon.maingui import MainGUI
 from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
-
-pygtkcompat.enable()
-pygtkcompat.enable_gtk(version='3.0')
 
 
 class BookChooser(object):

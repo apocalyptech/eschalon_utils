@@ -20,7 +20,16 @@
 
 import verboselogs
 import logging
+
+try:
+    from gi import pygtkcompat
+    pygtkcompat.enable()
+    pygtkcompat.enable_gtk(version='3.0')
+except ImportError:
+    pass
+
 verboselogs.install()
+
 LOG = logging.getLogger(__name__)
 
 
