@@ -18,11 +18,14 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
+import typing
+
 LOG = logging.getLogger(__name__)
 
 
 import os
 from struct import unpack
+from typing import Tuple, Callable
 
 from gi.repository import Gdk
 from gi.repository import GdkPixbuf
@@ -76,22 +79,22 @@ class WrapLabel(Gtk.Label):
 
         self.set_alignment(0.0, 0.0)
 
-    def do_size_request(self, requisition):
+    def do_size_request(self, requisition: object) -> None:
         layout = self.get_layout()
         width, height = layout.get_pixel_size()
         requisition.width = 0
         requisition.height = height
 
-    def do_size_allocate(self, allocation):
+    def do_size_allocate(self, allocation: object) -> None:
         Gtk.Label.do_size_allocate(self, allocation)
         self.__set_wrap_width(allocation.width)
 
-    def set_text(self, str):
-        Gtk.Label.set_text(self, str)
+    def set_text(self, text: str) -> None:
+        Gtk.Label.set_text(self, text)
         self.__set_wrap_width(self.__wrap_width)
 
-    def set_markup(self, str):
-        Gtk.Label.set_markup(self, str)
+    def set_markup(self, text: str) -> None:
+        Gtk.Label.set_markup(self, text)
         self.__set_wrap_width(self.__wrap_width)
 
     def __set_wrap_width(self, width):
@@ -152,7 +155,7 @@ class ImageSelWindow(Gtk.Window):
 
         vbox.show_all()
 
-    def key_release_event(self, widget, event):
+    def key_release_event(self, widget, event) -> None:
         """
         What to do when the user presses a key.  We're mostly
         looking for 'esc' so we can exit.
@@ -160,16 +163,17 @@ class ImageSelWindow(Gtk.Window):
         if Gdk.keyval_name(event.keyval) == 'Escape':
             self.delete_event(None, None)
 
-    def delete_event(self, widget, event):
+    def delete_event(self, widget, event) -> bool:
         self.hide()
         return True
 
-    def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose):
+    def setup_drawing_area(self, vbox, on_clicked, on_motion, on_expose) -> None:
         (sw, self.drawingarea) = self.create_drawing_area(
             on_clicked, on_motion, on_expose)
         vbox.pack_start(sw, True, True)
 
-    def create_drawing_area(self, on_clicked, on_motion, on_expose):
+    def create_drawing_area(self, on_clicked: Callable, on_motion: Callable, on_expose: Callable) -> Tuple[object,
+                                                                                                         object]:
         """
         Creates a new DrawingArea, contained within a Viewport and ScrolledWindow.
         Returns a tuple of the ScrolledWindow and the DrawingArea.
