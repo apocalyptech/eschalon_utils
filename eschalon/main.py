@@ -20,6 +20,8 @@
 import argparse
 import logging
 import sys
+from typing import Type, Callable, Iterable
+
 
 
 import coloredlogs
@@ -29,7 +31,7 @@ from eschalon.preferences import Prefs
 LOG = logging.getLogger(__name__)
 
 
-def parse_args(args):
+def parse_args(args: Iterable[str]):
     """
     Pull out argument parsing into a seperate function.
     It turns out this is a sufficiently complicated task that it should be tested.
