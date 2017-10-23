@@ -56,5 +56,8 @@ setup(
     options=dict(
         py2app=py2app_options,
     ),
-    setup_requires=['py2app'],
+    setup_requires=[
+        'py2app',
+        'isort'
+    ],
 )
