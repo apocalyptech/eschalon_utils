@@ -358,10 +358,10 @@ class B1Character(Character):
 
             # Character info
             self.name = self.df.readstr().decode('UTF-8')
-            self.unknown.charstring = self.df.readstr()
-            self.origin = self.df.readstr()
-            self.axiom = self.df.readstr()
-            self.classname = self.df.readstr()
+            self.unknown.charstring = self.df.readstr().decode('UTF-8')
+            self.origin = self.df.readstr().decode('UTF-8')
+            self.axiom = self.df.readstr().decode('UTF-8')
+            self.classname = self.df.readstr().decode('UTF-8')
             self.unknown.charone = self.df.readint()
             self.strength = self.df.readint()
             self.dexterity = self.df.readint()
@@ -399,8 +399,8 @@ class B1Character(Character):
                 self.unknown.ssiblocks1.append(self.df.readstr())
                 self.unknown.ssiblocks2.append(self.df.readstr())
                 self.unknown.ssiblocki.append(self.df.readint())
-            self.unknown.extstr1 = self.df.readstr()
-            self.unknown.extstr2 = self.df.readstr()
+            self.unknown.extstr1 = self.df.readstr().decode('UTF-8')
+            self.unknown.extstr2 = self.df.readstr().decode('UTF-8')
 
             # Torches
             self.torches = self.df.readint()
@@ -415,7 +415,7 @@ class B1Character(Character):
 
             # Readied Spells
             for i in range(10):
-                self.addreadyslot(self.df.readstr(), self.df.readint())
+                self.addreadyslot(self.df.readstr().decode('UTF-8'), self.df.readint())
 
             # Position/orientation
             self.orientation = self.df.readint()
@@ -459,11 +459,11 @@ class B1Character(Character):
 
             # More Unknowns.  Apparently there's one 2-byte integer in here, too.
             self.unknown.shortval = self.df.readshort()
-            self.unknown.emptystr = self.df.readstr()
+            self.unknown.emptystr = self.df.readstr().decode('UTF-8')
             for i in range(21):
                 self.unknown.iblock2.append(self.df.readint())
-            self.unknown.preinvs1 = self.df.readstr()
-            self.unknown.preinvs2 = self.df.readstr()
+            self.unknown.preinvs1 = self.df.readstr().decode('UTF-8')
+            self.unknown.preinvs2 = self.df.readstr().decode('UTF-8')
             self.unknown.preinvzero1 = self.df.readint()
             self.unknown.preinvzero2 = self.df.readint()
 
@@ -801,7 +801,7 @@ class B2Character(Character):
                 self.addspell()
 
             # Currently-readied spell
-            self.readied_spell = self.df.readstr()
+            self.readied_spell = self.df.readstr().decode('UTF-8')
             self.readied_spell_lvl = self.df.readuchar()
 
             # Readied Spells
@@ -858,17 +858,17 @@ class B2Character(Character):
             self.unknown.unknowns1 = self.df.readshort()
             LOG.spam("read unknown value (expect ?): {}".format(
                 self.unknown.unknowns1))
-            self.unknown.unknownstr1 = self.df.readstr()
+            self.unknown.unknownstr1 = self.df.readstr().decode('UTF-8')
             LOG.spam("read unknown value (expect ?): {}".format(
                 self.unknown.unknowns2))
             for i in range(29):
                 new_val = self.df.readuchar()
                 self.unknown.twentyninezeros.append(new_val)
                 LOG.spam("read unknown value (expect ?): {}".format(new_val))
-            self.unknown.unknownstr2 = self.df.readstr()
+            self.unknown.unknownstr2 = self.df.readstr().decode('UTF-8')
             LOG.spam("read unknown value (expect ?): {}".format(
                 self.unknown.unknownstr2))
-            self.unknown.unknownstr3 = self.df.readstr()
+            self.unknown.unknownstr3 = self.df.readstr().decode('UTF-8')
             LOG.spam("read unknown value (expect ?): {}".format(
                 self.unknown.unknownstr3))
             self.unknown.unknowns2 = self.df.readshort()

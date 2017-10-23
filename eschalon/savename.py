@@ -111,10 +111,10 @@ class Savename(object):
         if book is None:
             try:
                 df.open_r()
-                name = df.readstr()
-                date = df.readstr()
-                time = df.readstr()
-                map_or_version = df.readstr()
+                name = df.readstr().decode('UTF-8')
+                date = df.readstr().decode('UTF-8')
+                time = df.readstr().decode('UTF-8')
+                map_or_version = df.readstr().decode('UTF-8')
                 df.close()
             except (IOError, struct.error) as e:
                 LOG.error("Failed to load book", exc_info=True)
@@ -167,10 +167,10 @@ class B1Savename(Savename):
             # farthest from the B3 format.  It's also harder to tell where
             # sections begin and end since everything's a 4-byte int.  Not
             # well checked, probably has bugs.
-            self.savename = self.df.readstr()
-            self.savedate = self.df.readstr()
-            self.savetime = self.df.readstr()
-            self.mapname = self.df.readstr()
+            self.savename = self.df.readstr().decode('UTF-8')
+            self.savedate = self.df.readstr().decode('UTF-8')
+            self.savetime = self.df.readstr().decode('UTF-8')
+            self.mapname = self.df.readstr().decode('UTF-8')
             self.totalsecs = self.df.readint()
             self.totalturns = self.df.readint()
             self.totaldays = self.df.readint()
@@ -230,10 +230,10 @@ class B2Savename(Savename):
             # Based on BW's B3 spec and looking at the file manually.
             # Oddly, lines up better than the B3 format.  Not well checked,
             # though, and probably has bugs
-            self.savename = self.df.readstr()
-            self.savedate = self.df.readstr()
-            self.savetime = self.df.readstr()
-            self.mapname = self.df.readstr()
+            self.savename = self.df.readstr().decode('UTF-8')
+            self.savedate = self.df.readstr().decode('UTF-8')
+            self.savetime = self.df.readstr().decode('UTF-8')
+            self.mapname = self.df.readstr().decode('UTF-8')
             self.totalsecs = self.df.readint()
             self.totalturns = self.df.readint()
             self.totaldays = self.df.readint()
@@ -317,11 +317,11 @@ class B3Savename(B2Savename):
             #
             # We evidently screwed something up, though, since we're off by
             # 24 bytes at the end. Almost certainly has bugs
-            self.savename = self.df.readstr()
-            self.savedate = self.df.readstr()
-            self.savetime = self.df.readstr()
-            self.savever = self.df.readstr()
-            self.mapname = self.df.readstr()
+            self.savename = self.df.readstr().decode('UTF-8')
+            self.savedate = self.df.readstr().decode('UTF-8')
+            self.savetime = self.df.readstr().decode('UTF-8')
+            self.savever = self.df.readstr().decode('UTF-8')
+            self.mapname = self.df.readstr().decode('UTF-8')
             self.totalsecs = self.df.readint()
             self.totalturns = self.df.readint()
             self.totaldays = self.df.readint()
@@ -354,7 +354,7 @@ class B3Savename(B2Savename):
             for i in range(6):
                 self.unknowns.append(self.df.readint())
             try:
-                self.modpath = self.df.readstr()
+                self.modpath = self.df.readstr().decode('UTF-8')
             except LoadException:
                 self.modpath = ''
 

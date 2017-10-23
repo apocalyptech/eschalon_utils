@@ -241,8 +241,8 @@ class B1Tilecontent(Tilecontent):
         self.y = int(intcoords / 100)
 
         # ... everything else
-        self.description = df.readstr()
-        self.extratext = df.readstr()
+        self.description = df.readstr().decode('UTF-8')
+        self.extratext = df.readstr().decode('UTF-8')
         self.zeroi1 = df.readint()
         self.zeroh1 = df.readshort()
         self.sturdiness = df.readuchar()
@@ -254,7 +254,7 @@ class B1Tilecontent(Tilecontent):
         self.other = df.readuchar()
         self.state = df.readuchar()
         self.unknownh3 = df.readshort()
-        self.script = df.readstr()
+        self.script = df.readstr().decode('UTF-8')
 
         # Items
         for num in range(8):
@@ -262,7 +262,7 @@ class B1Tilecontent(Tilecontent):
             if (self.savegame):
                 self.items[num].read(df)
             else:
-                self.items[num].item_name = df.readstr()
+                self.items[num].item_name = df.readstr().decode('UTF-8')
 
     def write(self, df):
         """ Write the tilecontent to the file. """
@@ -391,8 +391,8 @@ class B2Tilecontent(Tilecontent):
         self.y = int(intcoords / 100)
 
         # ... everything else
-        self.description = df.readstr()
-        self.extratext = df.readstr()
+        self.description = df.readstr().decode('UTF-8')
+        self.extratext = df.readstr().decode('UTF-8')
         self.cur_condition = df.readint()
         self.max_condition = df.readint()
         self.on_empty = df.readuchar()
@@ -400,7 +400,7 @@ class B2Tilecontent(Tilecontent):
         self.trap = df.readuchar()
         self.slider_loot = df.readshort()
         self.state = df.readuchar()
-        self.script = df.readstr()
+        self.script = df.readstr().decode('UTF-8')
 
         # Items
         for num in range(8):
@@ -408,7 +408,7 @@ class B2Tilecontent(Tilecontent):
             if (self.savegame):
                 self.items[num].read(df)
             else:
-                self.items[num].item_name = df.readstr()
+                self.items[num].item_name = df.readstr().decode('UTF-8')
 
     def write(self, df):
         """ Write the tilecontent to the file. """

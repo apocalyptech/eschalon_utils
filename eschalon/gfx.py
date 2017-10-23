@@ -433,14 +433,14 @@ class B1Gfx(Gfx):
         # Finally call the parent constructor
         super(B1Gfx, self).__init__(datadir, eschalondata)
 
-    def readfile(self, filename):
+    def readfile(self, filename: str) -> object:
         """ Reads a given filename out of the PAK. """
         if self.loaded:
             filepath = os.path.join(
                 self.eschalondata.gamedir, 'packedgraphics', filename)
             if os.path.isfile(filepath):
                 return open(filepath, 'rb').read()
-            if (filename in self.fileindex):
+            if filename in self.fileindex:
                 self.df.open_r()
                 self.df.seek(self.zeroindex +
                              self.fileindex[filename].abs_index)

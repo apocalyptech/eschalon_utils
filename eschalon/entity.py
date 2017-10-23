@@ -231,7 +231,7 @@ class B1Entity(Entity):
         self.x = df.readuchar()
         self.y = df.readuchar()
         self.direction = df.readuchar()
-        self.entscript = df.readstr()
+        self.entscript = df.readstr().decode('UTF-8')
         if self.savegame:
             self.friendly = df.readuchar()
             self.movement = df.readuchar()
@@ -329,7 +329,7 @@ class B2Entity(Entity):
             self.x = df.readuchar()
             self.y = df.readuchar()
             self.direction = df.readuchar()
-            self.entscript = df.readstr()
+            self.entscript = df.readstr().decode('UTF-8')
             if self.savegame:
                 self.friendly = df.readuchar()
                 self.movement = df.readuchar()

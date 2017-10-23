@@ -151,7 +151,7 @@ class Saveslot(object):
             df.readint()
         else:
             df.readuchar()
-        self.charname = df.readstr()
+        self.charname = df.readstr().decode('UTF-8')
         self.char_loaded = True
         df.close()
 
