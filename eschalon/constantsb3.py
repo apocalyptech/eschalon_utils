@@ -3,7 +3,7 @@
 # $Id: constantsb2.py,v 1.17 2010/08/03 22:23:53 pez Exp $
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2014 CJ Kucera, Elliot Kendall
+# Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall, Eitan Adler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

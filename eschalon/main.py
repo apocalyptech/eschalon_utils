@@ -2,7 +2,7 @@
 # vim: set expandtab tabstop=4 shiftwidth=4:
 #
 # Eschalon Savefile Editor
-# Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall
+# Copyright (C) 2008-2017 CJ Kucera, Elliot Kendall, Eitan Adler
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
