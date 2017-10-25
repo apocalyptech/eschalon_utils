@@ -209,8 +209,8 @@ class EschalonData(object):
 
     DATA_DIRS = ['data', 'gfx', 'maps', 'music', 'sound']
 
-    empty_name = None
-    random_name = None
+    empty_name: Optional[str] = None
+    random_name: Optional[str] = None
 
     def __init__(self, gamedir, modpath=None):
         """

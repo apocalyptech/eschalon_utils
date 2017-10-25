@@ -38,12 +38,12 @@ class SaveslotMap(object):
     save slot.  Effectively just a well-defined dict.
     """
 
-    def __init__(self, filename, mapname, book):
+    def __init__(self, filename, mapname, book) -> None:
         self.filename = filename
         self.mapname = mapname
         self.book = book
 
-    def filename_short(self):
+    def filename_short(self) -> str:
         return os.path.basename(self.filename)
 
 
@@ -64,7 +64,7 @@ class Saveslot(object):
     divide this out based on book.
     """
 
-    def __init__(self, directory: str, load_all: bool = False, book: Optional[int] = None) -> object:
+    def __init__(self, directory: str, load_all: bool = False, book: Optional[int] = None) -> None:
         """ Empty object. """
         self.directory = directory
 
@@ -109,7 +109,7 @@ class Saveslot(object):
                 # book
                 self.load_charname(book)
 
-    def load_maps(self):
+    def load_maps(self) -> None:
         """
         Read our collection of maps from the dir
         """
@@ -126,7 +126,7 @@ class Saveslot(object):
                 # typical use cases
                 pass
 
-    def load_charname(self, book=None):
+    def load_charname(self, book=None) -> None:
         """
         Read our character name; this is a bit dependant on the book number,
         which is why we pass it in here.  If the book number is not passed
@@ -158,7 +158,7 @@ class Saveslot(object):
         self.char_loaded = True
         df.close()
 
-    def print_info(self):
+    def print_info(self) -> None:
         """
         Will print our information out to the console.  Only really useful
         for debugging.
@@ -175,13 +175,13 @@ class Saveslot(object):
             print('(Maps have not been loaded yet)')
         print()
 
-    def slotname_short(self):
+    def slotname_short(self) -> str:
         """
         Returns only the slot number portion of the dir
         """
         return os.path.basename(self.directory)
 
-    def __cmp__(self, b):
+    def __cmp__(self, b) -> bool:
         """
         Can be used for sorting so that "slot2" comes after "slot1", instead of "slot11"
         """

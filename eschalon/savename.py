@@ -19,6 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
 import struct
+from typing import Optional
 
 from eschalon.constants import constants as c
 from eschalon.constantsb1 import B1Constants
@@ -28,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Savename(object):
-    book = None
+    book: Optional[int] = None
 
     def __init__(self, df):
         """ A fresh object. """
