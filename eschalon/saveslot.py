@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+import functools
 import glob
 import logging
 import os
 import time
 from typing import Optional
 
-from gi.repository import Gdk, GdkPixbuf, Gtk
-
+from eschalon import util
 from eschalon.map import Map
 from eschalon.savefile import LoadException, Savefile
 from eschalon.savename import Savename
@@ -47,6 +47,7 @@ class SaveslotMap(object):
         return os.path.basename(self.filename)
 
 
+@functools.total_ordering
 class Saveslot(object):
     """
     Class to hold some information about a savegame slot.  Mostly just
@@ -181,7 +182,13 @@ class Saveslot(object):
         """
         return os.path.basename(self.directory)
 
-    def __cmp__(self, b) -> bool:
+    def __eq__(self, other):
+        return self._cmpimpl(other) == 0
+
+    def __lt__(self, other):
+        return self._cmpimpl(other) < 0
+
+    def _cmpimpl(self, b) -> int:
         """
         Can be used for sorting so that "slot2" comes after "slot1", instead of "slot11"
         """
@@ -192,9 +199,9 @@ class Saveslot(object):
                     str(int(a_short[4:])) == a_short[4:] and
                     b_short[:4] == 'slot' and
                     str(int(b_short[4:])) == b_short[4:]
-                    ):
-                return cmp(int(a_short[4:]), int(b_short[4:]))
+                ):
+                return util.cmp(int(a_short[4:]), int(b_short[4:]))
         except ValueError:
             pass
 
-        return cmp(a_short, b_short)
+        return util.cmp(a_short, b_short)
