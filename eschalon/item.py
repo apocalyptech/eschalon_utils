@@ -19,7 +19,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import logging
-from typing import Any, List
+from typing import Any, List, Optional
 
 from eschalon.constants import constants as c
 
@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 class Item(object):
     """Class to hold a single Item's information."""
 
-    book = None
+    book: Optional[int] = None
     form_elements = []  # type: List[Any]
 
     def __init__(self, zero=False):

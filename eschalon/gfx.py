@@ -347,8 +347,8 @@ class B1Gfx(Gfx):
     """
 
     book = 1
-    wall_types = {}
-    wall_gfx_group = {}
+    wall_types: Dict[Any, Any] = {}
+    wall_gfx_group: Dict[Any, Any] = {}
     tilebuf_mult = 1
     item_dim = 42
     item_cols = 10
@@ -613,8 +613,8 @@ class B2Gfx(Gfx):
 
     book = 2
     zip = None
-    wall_types = {}
-    wall_gfx_group = {}
+    wall_types: Dict[Any, Any] = {}
+    wall_gfx_group: Dict[Any, Any] = {}
     tilebuf_mult = 1.5
     item_dim = 50
     item_cols = 10

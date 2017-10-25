@@ -24,7 +24,7 @@ import random
 import sys
 import time
 import traceback
-from typing import Optional
+from typing import Optional, List, Any
 
 import cairo
 import pygtkcompat
@@ -1109,7 +1109,7 @@ class MapGUI(BaseGUI):
         # copying from
         self.copy_source_drag_y = -1
         self.copy_source_drag_x = -1
-        self.cleantiles = []
+        self.cleantiles: List[Tuple[Any,Any]] = []
         self.highlight_tiles = {}
         self.brush_pattern = [[None]]
         self.brush_pattern_prev = [[None]]

@@ -148,7 +148,7 @@ class Saveslot(object):
 
         # Now do the actual loading
         if not os.path.exists(self.char_loc):
-            raise LoadException(f'"char" file not found in {directory}')
+            raise LoadException(f'"char" file not found in {self.char_loc}')
         df = Savefile(self.char_loc)
         df.open_r()
         if book == 1:
@@ -196,9 +196,9 @@ class Saveslot(object):
         b_short = b.slotname_short()
         try:
             if (a_short[:4] == 'slot' and
-                        str(int(a_short[4:])) == a_short[4:] and
-                        b_short[:4] == 'slot' and
-                        str(int(b_short[4:])) == b_short[4:]
+                    str(int(a_short[4:])) == a_short[4:] and
+                    b_short[:4] == 'slot' and
+                    str(int(b_short[4:])) == b_short[4:]
                 ):
                 return util.cmp(int(a_short[4:]), int(b_short[4:]))
         except ValueError:
