@@ -20,6 +20,8 @@
 import logging
 from typing import Any, List
 
+from eschalon.eschalondata import EschalonData
+
 LOG = logging.getLogger(__name__)
 
 
@@ -219,7 +221,7 @@ class B1Constants(object):
     # Should maybe just have a Spell class for this instead
     spelltype = {}
     for spell in list(spelltable.keys()):
-        if (spell < 21):
+        if spell < 21:
             spelltype[spell] = 'DI'
         else:
             spelltype[spell] = 'EL'
@@ -314,8 +316,7 @@ class B1Constants(object):
         38: 'Sound Generator (Waterfall)',
     }
 
-    # EschalonData object
-    eschalondata = None
+    eschalondata: EschalonData = None
 
     # Script Commands
     commands = {

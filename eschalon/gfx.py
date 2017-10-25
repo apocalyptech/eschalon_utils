@@ -857,8 +857,9 @@ class B2Gfx(Gfx):
                 self.hugegfxcache[filename] = SingleImageGfxCache(
                     self.eschalondata.readfile(filename))
             except LoadException:
+                LOG.exception("failed to load huge graphics")
                 return None
-        if (size is None):
+        if size is None:
             size = self.tile_width
         return self.hugegfxcache[filename].getimg(1, int(size * self.hugegfxcache[filename].size_scale), gdk)
 

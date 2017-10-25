@@ -44,7 +44,7 @@ class Entity(object):
         self.health = -1
         self.initial_loc = -1
 
-    def tozero(self, x, y):
+    def tozero(self, x, y) -> None:
         """ Zeroes out the entity object.  Apart from x and y, which are passed in. """
         self.x = x
         self.y = y

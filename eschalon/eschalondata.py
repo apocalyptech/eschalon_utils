@@ -367,7 +367,7 @@ class EschalonData(object):
                             material, row['DESCRIPTION'])] = row['DESCRIPTION']
             df.close()
         except:
-            pass
+            LOG.exception("Failed to load general_items.csv")
 
         # Add RANDOM/EMPTY to the list of valid names, if we actually
         # have data.
