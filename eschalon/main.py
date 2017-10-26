@@ -20,7 +20,7 @@
 import argparse
 import logging
 import sys
-from typing import Callable, NoReturn, Optional, Sequence, Type
+from typing import Any, Optional, Sequence
 
 import coloredlogs
 
@@ -105,7 +105,7 @@ def main() -> None:
     # PyGTK installed, etc). I *am* aware that doing this is discouraged.
     if args.book is None and args.filename is None:
         import eschalon.bookchooser
-        prog = eschalon.bookchooser.BookChooser()
+        prog  = eschalon.bookchooser.BookChooser()
     elif args.char:
         from eschalon.maingui import MainGUI
         prog = MainGUI(args.filename, Prefs(), args.book)

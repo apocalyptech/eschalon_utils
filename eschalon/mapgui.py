@@ -24,7 +24,7 @@ import random
 import sys
 import time
 import traceback
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Tuple, Dict
 
 import cairo
 import pygtkcompat
@@ -1110,14 +1110,14 @@ class MapGUI(BaseGUI):
         self.copy_source_drag_y = -1
         self.copy_source_drag_x = -1
         self.cleantiles: List[Tuple[Any,Any]] = []
-        self.highlight_tiles = {}
+        self.highlight_tiles: Dict[Any, Any] = {}
         self.brush_pattern = [[None]]
         self.brush_pattern_prev = [[None]]
 
         self.mapinit = False
         self.undo = None
         self.smartdraw = SmartDraw.new(c.book)
-        self.decal_edge_pref_map = {}
+        self.decal_edge_pref_map: Dict[Any,Any] = {}
 
         # Start up our GUI
         self.builder = Gtk.Builder()
@@ -1353,7 +1353,7 @@ class MapGUI(BaseGUI):
             GdkPixbuf.Colorspace.RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height * 5)
 
         # Load in our mouse map (to determine which tile we're pointing at)
-        self.mousemap = {}
+        self.mousemap: Dict[Any,Any] = {}
         for zoom in self.zoom_levels:
             mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
             mapbuf = GdkPixbuf.Pixbuf.new_from_file(mapfile)
@@ -2247,7 +2247,7 @@ class MapGUI(BaseGUI):
         """
 
         # Now create a new map
-        self.mapobj = Map.new('', self.req_book)
+        self.mapobj: Map = Map.new('', self.req_book)
         self.mapobj.set_savegame(savegame)
 
         # A few values need to be set to avoid crashes
@@ -2381,7 +2381,7 @@ class MapGUI(BaseGUI):
             return False
 
         # Basic vars
-        self.mapobj = mapobj
+        self.mapobj: Map = mapobj
 
         # Update our status bar
         self.putstatus('Editing ' + self.mapobj.df.filename)

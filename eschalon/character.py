@@ -20,6 +20,7 @@
 import logging
 import struct
 from abc import ABC
+from typing import List
 
 from eschalon.constants import constants as c
 from eschalon.item import Item
@@ -44,7 +45,7 @@ class Character(ABC):
     """
 
     book = -1
-    form_elements = []
+    form_elements: List[str] = []
 
     def __init__(self, df):
         """ A fresh object. """

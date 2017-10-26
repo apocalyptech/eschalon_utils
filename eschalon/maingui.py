@@ -22,7 +22,7 @@
 import glob
 import logging
 import os
-from typing import Any, List, Set
+from typing import Any, List, Dict
 
 import pygtkcompat
 from gi.repository import Gdk, GdkPixbuf, Gtk
@@ -347,7 +347,7 @@ class MainGUI(BaseGUI):
 
         # Avatar Selection Window extras
         self.avatarsel_init = False
-        self.avatarsel_clean = []
+        self.avatarsel_clean: List[int] = []
         self.avatarsel_area = self.get_widget('avatarsel_area')
         if c.book == 1:
             self.avatarsel_x = 480
@@ -429,7 +429,7 @@ class MainGUI(BaseGUI):
         self.sbcontext = self.statusbar.get_context_id('Main Messages')
 
         # If we were given a filename, load it.  If not, display the load dialog
-        self.changed = {}
+        self.changed: Dict[str, bool] = {}
         self.last_char_source = None
         if self.filename is None:
             if not self.on_load():

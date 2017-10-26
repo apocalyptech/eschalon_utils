@@ -22,7 +22,7 @@ import glob
 import logging
 import os
 import time
-from typing import Optional
+from typing import Optional, List, Any
 
 from eschalon import util
 from eschalon.map import Map
@@ -93,7 +93,7 @@ class Saveslot(object):
         self.char_loaded = False
 
         # Set up our map list
-        self.maps = []
+        self.maps: List[Any] = []
         self.maps_loaded = False
 
         # Load all information if asked
@@ -114,7 +114,7 @@ class Saveslot(object):
         """
         Read our collection of maps from the dir
         """
-        self.maps = []
+        self.maps: List[Any] = []
         self.maps_loaded = True
         map_filenames = sorted(
             glob.glob(os.path.join(self.directory, '*.map')))
