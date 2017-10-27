@@ -370,7 +370,7 @@ class Undo(object):
             else:
                 matched = 'DOES NOT MATCH'
             LOG.debug(' * (%d, %d), tilecontent %d, %s' % (tilecontent.x,
-                                                       tilecontent.y, tilecontentcounters[tileval] + 1, matched))
+                                                           tilecontent.y, tilecontentcounters[tileval] + 1, matched))
         LOG.debug('%d total entities in map' % (len(self.mapobj.entities)))
         for entity in self.mapobj.entities:
             tileentity = self.mapobj.tiles[entity.y][entity.x].entity

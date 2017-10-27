@@ -24,7 +24,7 @@ import random
 import sys
 import time
 import traceback
-from typing import Optional, List, Any, Tuple, Dict
+from typing import Any, Dict, List, Optional, Tuple
 
 import cairo
 import pygtkcompat
@@ -1109,7 +1109,7 @@ class MapGUI(BaseGUI):
         # copying from
         self.copy_source_drag_y = -1
         self.copy_source_drag_x = -1
-        self.cleantiles: List[Tuple[Any,Any]] = []
+        self.cleantiles: List[Tuple[Any, Any]] = []
         self.highlight_tiles: Dict[Any, Any] = {}
         self.brush_pattern = [[None]]
         self.brush_pattern_prev = [[None]]
@@ -1117,7 +1117,7 @@ class MapGUI(BaseGUI):
         self.mapinit = False
         self.undo = None
         self.smartdraw = SmartDraw.new(c.book)
-        self.decal_edge_pref_map: Dict[Any,Any] = {}
+        self.decal_edge_pref_map: Dict[Any, Any] = {}
 
         # Start up our GUI
         self.builder = Gtk.Builder()
@@ -1353,7 +1353,7 @@ class MapGUI(BaseGUI):
             GdkPixbuf.Colorspace.RGB, True, 8, self.gfx.tile_width, self.gfx.tile_height * 5)
 
         # Load in our mouse map (to determine which tile we're pointing at)
-        self.mousemap: Dict[Any,Any] = {}
+        self.mousemap: Dict[Any, Any] = {}
         for zoom in self.zoom_levels:
             mapfile = self.datafile('iso_mousemap_%d.png' % (zoom))
             mapbuf = GdkPixbuf.Pixbuf.new_from_file(mapfile)

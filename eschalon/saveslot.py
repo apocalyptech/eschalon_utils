@@ -22,7 +22,7 @@ import glob
 import logging
 import os
 import time
-from typing import Optional, List, Any
+from typing import Any, List, Optional
 
 from eschalon import util
 from eschalon.map import Map

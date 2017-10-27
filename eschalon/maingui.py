@@ -22,7 +22,7 @@
 import glob
 import logging
 import os
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import pygtkcompat
 from gi.repository import Gdk, GdkPixbuf, Gtk
