@@ -75,7 +75,7 @@ class Prefs(object):
             self.set_str(vars[0], vars[1], self.default(vars[0], vars[1]))
         for vars in [('mapgui', 'default_zoom')]:
             self.set_int(vars[0], vars[1], self.default(vars[0], vars[1]))
-        for vars in [('mapgui', 'warn_slow_zip')]:
+        for vars in [('mapgui',)]:
             self.set_bool(vars[0], vars[1], self.default(vars[0], vars[1]))
 
     def load(self):
@@ -127,8 +127,6 @@ class Prefs(object):
         if cat == 'mapgui':
             if name == 'default_zoom':
                 return 4
-            elif name == 'warn_slow_zip':
-                return 'True'
         return None
 
     def no_prefsfile(self):

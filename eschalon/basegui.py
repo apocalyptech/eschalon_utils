@@ -278,8 +278,6 @@ class BaseGUI(object):
             'prefs_default_zoom')
         self.prefs_warn_global = self.prefsbuilder.get_object(
             'prefs_warn_global')
-        self.prefs_warn_slowzip = self.prefsbuilder.get_object(
-            'prefs_warn_slowzip')
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
@@ -704,8 +702,6 @@ class BaseGUI(object):
             gui_gamedir.set_current_folder(cur_gamedir)
         if cur_savegamedir != '':
             gui_savegamedir.set_current_folder(cur_savegamedir)
-        self.prefs_warn_slowzip.set_active(
-            self.prefsobj.get_bool('mapgui', 'warn_slow_zip'))
         # self.prefsnotebook.set_current_page(0)
         self.prefswindow.set_transient_for(self.window)
         response = self.prefswindow.run()
@@ -713,8 +709,6 @@ class BaseGUI(object):
         if (response == Gtk.ResponseType.OK):
             self.prefsobj.set_int('mapgui', 'default_zoom', int(
                 self.prefs_default_zoom.get_value()))
-            self.prefsobj.set_bool(
-                'mapgui', 'warn_slow_zip', self.prefs_warn_slowzip.get_active())
 
             # Save our new game directory.  We actually only want to save under two conditions:
             #   1) We had a previous game directory set already
