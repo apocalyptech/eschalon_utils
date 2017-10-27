@@ -89,9 +89,8 @@ class Prefs(object):
         if self.filename is None:
             return False
         else:
-            df = open(self.filename, 'w')
-            self.cp.write(df)
-            df.close()
+            with open(self.filename, 'w') as df:
+                self.cp.write(df)
             return True
 
     def set_str(self, cat, name, val):
