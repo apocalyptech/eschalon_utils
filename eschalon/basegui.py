@@ -276,8 +276,6 @@ class BaseGUI(object):
             'gamedata_b3_chooser')
         self.prefs_default_zoom = self.prefsbuilder.get_object(
             'prefs_default_zoom')
-        self.prefs_warn_global = self.prefsbuilder.get_object(
-            'prefs_warn_global')
 
         # Explicitly set our widget names (needed for gtk+ 2.20 compatibility)
         # See https://bugzilla.gnome.org/show_bug.cgi?id=591085
