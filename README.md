@@ -100,7 +100,7 @@ There's no official installation scripts for the application.  On a *nix
 system writing a simple shell wrapper is likely easiest.
 
     cd ~/bin
-    printf '#!/bin/sh\n(cd /path/to/eschalon && python2 -m eschalon.main -- "$@")' > eschalon
+    printf '#!/bin/sh\n(cd /path/to/eschalon && python3 -m eschalon.main -- "$@")' > eschalon
     chmod +x eschalon
 
 At this point it  should be possible to run "eschalon" from the
@@ -111,20 +111,17 @@ NOTE ABOUT BOOK II/III MAP EDITING: To edit Book II or III map files, you'll
 need two other packages installed which may not be present on your system.
 The first is PyCrypto: <https://www.dlitz.net/software/pycrypto/> This tends to
 be packaged as "python-crypto" by most distributions.  Gentoo uses
-"pycrypto." The second package is czipfile, available here:
-<https://pypi.python.org/pypi/czipfile> This is probably not packaged by your
-distribution yet.  The easiest way to install it would be via pip:
+"pycrypto."
+The easiest way to install it would be via pip:
 
-    # pip install czipfile pycrypto
+    # pip install pycrypto
 
 If those methods don't work for you, you should be able to just download it
-from the above link.  Note that czipfile isn't ACTUALLY required to edit
-Book II/III maps, but without czipfile, loading maps can take an absurdly
-long time.  Trust me, you will want to have it installed.  Note once again
+from the above link.  Note once again
 that this only affects Book II/III map editing.  The character editors, and
 the Book I map editor are not affected.
 
-The minimum GTK+ required is 2.24.0.
+The minimum GTK+ required is 3.x
 
 INSTALLATION, WINDOWS
 ---------------------
@@ -154,8 +151,8 @@ Install Macports - <https://www.macports.org/install.php>
 
 From the Terminal, run:
 
-sudo port install py27-pygtk
-pip install --user czipfile pycrypto
+sudo port install py37-pygtk
+pip install --user pycrypto
 
 I recommend running the apps from the Terminal so that you can see any error
 output:
@@ -193,6 +190,8 @@ discovered, see <http://apocalyptech.com/eschalon/>
 
 CONTACT
 -------
+
+Ideally, report issues on the issue tracker.
 
 Feel free to email me at `pez@apocalyptech.com` if you've got questions /
 concerns.  I'm also logged in to `irc.freenode.net` as the user "sekhmet" if
