@@ -165,7 +165,10 @@ py2app:
 
 pip install --user py2app
 
-Then run the make-osx-apps.sh script. The resulting apps should be portable
+Then run:
+python3.7 setup.py py2app
+
+The resulting apps should be portable
 to other Macs without having to install any libraries.
 When you first run these apps and identify the location of
 the save files and data files, they crash afterward.  Just re-launch them
