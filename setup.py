@@ -1,6 +1,5 @@
-from setuptools import setup
-
 import eschalon
+from setuptools import setup
 
 py2app_options = dict(
     argv_emulation=True,

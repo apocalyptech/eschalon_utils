@@ -22,10 +22,9 @@ import os
 from struct import unpack
 from typing import Callable, Tuple
 
-from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, Pango
-
 from eschalon.constants import constants as c
 from eschalon.scripteditor import ScriptEditor
+from gi.repository import Gdk, GdkPixbuf, GObject, Gtk, Pango
 
 LOG = logging.getLogger(__name__)
 

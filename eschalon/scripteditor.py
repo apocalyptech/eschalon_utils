@@ -19,9 +19,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import logging
 
-from gi.repository import Gdk, GdkPixbuf, Gtk
-
 from eschalon.constants import constants as c
+from gi.repository import Gdk, GdkPixbuf, Gtk
 
 LOG = logging.getLogger(__name__)
 

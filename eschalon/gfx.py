@@ -28,9 +28,8 @@ from struct import unpack
 from typing import Any, Dict, Set
 
 import cairo
-from gi.repository import GdkPixbuf
-
 from eschalon.savefile import LoadException, Savefile
+from gi.repository import GdkPixbuf
 
 LOG = logging.getLogger(__name__)
 

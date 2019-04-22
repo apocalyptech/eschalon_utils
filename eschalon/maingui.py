@@ -25,8 +25,6 @@ import os
 from typing import Any, Dict, List
 
 import pygtkcompat
-from gi.repository import Gdk, GdkPixbuf, Gtk
-
 from eschalon import app_name, authors, url, version
 from eschalon.basegui import BaseGUI
 from eschalon.character import B1Character, B2Character, B3Character, Character
@@ -37,6 +35,7 @@ from eschalon.gfx import Gfx
 from eschalon.item import B1Item, B2Item, B3Item, Item
 from eschalon.savefile import LoadException
 from eschalon.saveslot import Saveslot
+from gi.repository import Gdk, GdkPixbuf, Gtk
 
 LOG = logging.getLogger(__name__)
 

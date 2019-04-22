@@ -151,7 +151,7 @@ Install Macports - <https://www.macports.org/install.php>
 
 From the Terminal, run:
 
-sudo port install py37-pygtk atk pango
+sudo port install py37-pygtk atk pango gtk3 py37-lxml
 pip install --user pycrypto
 
 I recommend running the apps from the Terminal so that you can see any error

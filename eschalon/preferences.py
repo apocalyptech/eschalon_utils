@@ -22,8 +22,9 @@ import os
 import os.path
 import sys
 
-from eschalon import app_name
 from six.moves import configparser
+
+from eschalon import app_name
 
 LOG = logging.getLogger(__name__)
 

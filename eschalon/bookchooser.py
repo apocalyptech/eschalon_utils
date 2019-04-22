@@ -4,12 +4,11 @@ import os
 import sys
 from typing import Callable
 
-from gi.repository import Gtk
-
 from eschalon import version
 from eschalon.maingui import MainGUI
 from eschalon.mapgui import MapGUI
 from eschalon.preferences import Prefs
+from gi.repository import Gtk
 
 
 class BookChooser(object):
