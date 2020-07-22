@@ -38,7 +38,7 @@ LOG = logging.getLogger(__name__)
 # to provide an upgrade path
 app_name = 'Eschalon Savefile Editor'
 version = '1.0.3rc0'
-url = 'http://apocalyptech.com/eschalon/'
+url = 'https://apocalyptech.com/eschalon/'
 authors = ['Main Code - CJ Kucera',
            'Additional Code / Ideas - WR Goerlich',
            'Book III / OS X Code - Elliot Kendall', '',

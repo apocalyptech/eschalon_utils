@@ -189,7 +189,7 @@ The drawing features on the map editor are fairly new still, and I expect
 that bugs will eventually be found.  Let me know!
 
 Some more documentation on various aspects of the Eschalon map that I've
-discovered, see <http://apocalyptech.com/eschalon/>
+discovered, see <https://apocalyptech.com/eschalon/>
 
 CONTACT
 -------
