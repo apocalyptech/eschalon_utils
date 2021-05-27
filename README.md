@@ -196,6 +196,6 @@ CONTACT
 
 Ideally, report issues on the issue tracker.
 
-Feel free to email me at `pez@apocalyptech.com` if you've got questions /
-concerns.  I'm also logged in to `irc.freenode.net` as the user "sekhmet" if
-you'd prefer that.
+Feel free to contact me at https://apocalyptech.com/contact.php if you've
+got questions/concerns!
+
